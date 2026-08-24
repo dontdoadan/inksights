@@ -1,48 +1,64 @@
+# Stripe Payments for INKSIGHT
 
-# Plan: INKCARE Growth Model page
+## Goal
+Replace the hardcoded Stripe checkout links with Lovable's built-in Stripe payments, add checkout for the two public offers, and record completed payments in the backend.
 
-Add a dedicated, investor-grade `/growth-model` route that explains how INKCARE compounds with studio growth, with interactive calculators for each driver and a partnership/investor CTA.
+## Context
+- The eligibility check recommends **Stripe** (Paddle is not eligible because INKSIGHT sells packaged, done-for-you marketing services, not standalone software).
+- Two offers already have legacy Stripe checkout URLs:
+  - `72-hour-visibility-fix` — £249 one-off
+  - `visibility-watch` — £99/month subscription
+- Three offers are sales-assisted and currently have no checkout:
+  - `revenue-audit` — quote after Growth Check
+  - `booking-retention-engine` — quote after diagnosis
+  - `founding-studio-pilot` — £1,500 setup + £750/month for 3 months, application-only
 
-## New files
+## Tax handling
+Because these are human-delivered marketing services, the default path is **Stripe tax calculation and collection only** (`automatic_tax: { enabled: true }`). Stripe calculates and collects tax at checkout (+0.5% per transaction); the seller remains responsible for registration, filing and remittance. Full compliance handling (`managed_payments`) is not appropriate for professional services.
 
-- `src/routes/growth-model.tsx` — the page route with its own SEO metadata (title, description, og tags).
-- `src/components/growth/Calculator.tsx` — small reusable building blocks (NumberSlider, MetricCard, ResultStat) used across drivers.
-- `src/components/growth/PartnerCTA.tsx` — partnership/investor contact form (mock submit, email field + optional company/role).
+## Plan
 
-## Updates
+### 1. Enable Stripe payments
+Call `enable_stripe_payments`. This creates a test environment immediately. Live payments require account claim/verification later.
 
-- `src/routes/index.tsx` — add a nav link and a teaser section linking to `/growth-model` (so the homepage actually points to the new page). No other homepage changes.
-- Reuse existing tokens from `src/styles.css` (ink-deep, mint, ice). No new color tokens.
+### 2. Create products and prices
+After enabling, create Stripe products for the publicly purchasable offers:
+- `72-hour-visibility-fix` — one-time price, £249 GBP
+- `visibility-watch` — recurring price, £99 GBP/month
 
-## Page structure (`/growth-model`)
+Sales-assisted offers (`revenue-audit`, `booking-retention-engine`, `founding-studio-pilot`) stay quote/invoice only; no self-serve checkout is added.
 
-1. **Sticky nav + hero** — Eyebrow "The Growth Model". Headline: *"INKCARE grows when tattoo studios grow."* Sub: executive-summary paragraph. Two CTAs: "Become a partner" and "Jump to calculators".
-2. **Thesis band** — Static contrast block: "Traditional suppliers vs INKCARE" (two columns, mint accent on INKCARE side).
-3. **The compounding flow** — Vertical arrow diagram (Studios → Artists → Clients → Sessions → Aftercare → Wholesale → Revenue) styled as a stacked stepper with mint connectors.
-4. **Interactive Growth Engine (the master calculator)** — Sliders for: # studios, artists/studio, clients/artist/day, working days/week, GP per product, avg session value, retail conversion %, rebooking rate %, avg revenue-share %. Live outputs: annual sessions, wholesale GP, retail revenue share, rebooking revenue share, ATV revenue share, **total annual INKCARE revenue**. All formulas come straight from the doc.
-5. **The 8 Revenue Drivers** — A grid of 8 cards, each with: number (01–08), title, short narrative, and an inline mini-calculator scoped to that driver (e.g. Driver 2 shows a slider for # studios → annual sessions; Driver 6 shows session-value slider → revenue-share). Each card also surfaces the canonical example numbers from the brief (£3,120, £3,900, etc.).
-6. **Revenue Share model** — Explainer card with a two-input mini-calculator (current monthly revenue + uplift %) → INKCARE monthly/annual cut.
-7. **Compounding effect summary** — A "stacked revenue" visual: bars for Wholesale (£3,120) + Retail (£2,000) + Rebooking (£2,500) + ATV (£3,900) = £11,520+. Recomputes from the master calculator inputs above.
-8. **Core investment thesis** — Multiplicative formula laid out typographically (Studios × Artists × Clients × Sessions × ATV × Retail × Rebooking).
-9. **Partnership / Investor CTA** — Headline: "Partner with INKCARE." Form: name, email, company, role (Investor / Studio Owner / Partner / Other), short message. Mock submit with toast/alert. Separate from the homepage's Revenue Audit form.
-10. **Footer** — Reuse existing footer style.
+### 3. Update offer data and checkout buttons
+- Remove the hardcoded legacy Stripe URLs from `src/lib/offer-data.ts`.
+- Add a `priceId` or `productKey` field for the two public offers.
+- Update `src/routes/offers.$slug.tsx` so the public-offer CTA creates a Stripe checkout session via a server function instead of linking out directly.
+- Keep sales-assisted CTAs pointing to `/studio-growth-check` or `/contact`.
 
-## Calculator technical details
+### 4. Implement checkout server function
+Create a `createCheckoutSession` server function that:
+- Accepts the offer slug.
+- Looks up the Stripe price ID.
+- Creates a Stripe checkout session in `sandbox` mode for test, `live` later.
+- Returns the checkout URL.
 
-- Pure client-side React state with `useState` + `useMemo`. No backend.
-- Single shared state object in the master calculator; per-driver mini-calculators each own their local state for clarity.
-- Number formatting via `Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 })`.
-- Sliders: native `<input type="range">` styled with Tailwind (mint accent), with numeric value pill alongside.
-- All formulas:
-  - `sessions = studios * artists * clientsPerDay * daysPerWeek * 52`
-  - `wholesaleGP = sessions * gpPerProduct`
-  - `atvUplift = sessions * sessionUpliftGBP`; `atvShare = atvUplift * revShare%`
-  - `retailUpliftUnits = sessions * (targetConv% - currentConv%)`; assume £X GP/unit (slider) for retail share
-  - `rebookingExtra = clients * (improvedReturn% - currentReturn%)`; share applied to assumed avg session value
-  - `totalIncome = wholesaleGP + atvShare + retailShare + rebookingShare`
+### 5. Implement webhook handler
+Add a public TanStack route at `src/routes/api/public/stripe-webhook.ts` that:
+- Verifies the Stripe webhook signature.
+- Listens for `checkout.session.completed`.
+- Records the order/customer in the Lovable Cloud database.
+- Returns 200 for handled events.
+
+### 6. Database records
+Create a minimal `orders` table in Lovable Cloud:
+- `id`, `user_id` (nullable for guest checkout), `stripe_session_id`, `stripe_payment_intent_id`, `offer_slug`, `amount_total`, `currency`, `status`, `customer_email`, `created_at`, `updated_at`.
+- Enable RLS and grant authenticated/service_role access.
+
+### 7. Test and verify
+- Run a test checkout for the £249 offer using Stripe's test card.
+- Confirm the webhook records the order.
+- Verify the offer page CTA opens the new checkout.
 
 ## Out of scope
-
-- No new database, auth, or backend persistence.
-- No changes to existing homepage sections beyond adding a nav link + teaser.
-- No new fonts or color tokens.
+- Subscription management portal (cancel/upgrade) — not included in this first pass.
+- Performance-fee invoicing — remains manual/quote-based.
+- Refund UI — handled through Stripe dashboard for now.
