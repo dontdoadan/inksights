@@ -1,0 +1,126 @@
+{
+  "campaigns": [
+    {
+      "campaign_code": "visibility_fix_founders_2026",
+      "name": "INKCARE 72-Hour Studio Visibility Fix — Founding Studios",
+      "objective": "Generate the first paying tattoo studio customers",
+      "primary_offer": "72-Hour Studio Visibility Fix — £249 upfront",
+      "audience": "UK tattoo studio owners",
+      "status": "active",
+      "strategy": {
+        "dm_keyword": "VISIBILITY",
+        "founding_slots": 3,
+        "sequence": [
+          "pain_diagnostic_post",
+          "educational_post",
+          "authority_process_post",
+          "objection_handling_post",
+          "direct_offer_post"
+        ]
+      },
+      "posts": [
+        {
+          "content_type": "pain_diagnostic_post",
+          "objective": "Identify visibility problems and prompt engagement",
+          "topic": "Low enquiries despite active social posting",
+          "hook": "Posting daily but still low bookings?",
+          "caption": "Posting every day and getting few enquiries is frustrating. The issue often isn’t frequency — it’s how your studio appears to new clients in the first 3–5 seconds.\n\nQuick diagnostic: check your profile headline, booking CTA and top three feed images. If any feel vague or busy, you’re losing attention and enquiries.\n\nWant a fast read on what’s costing you bookings? DM VISIBILITY or email contact@getinkcare.co.uk to discuss the 72-Hour Studio Visibility Fix.",
+          "hashtags": [
+            "#TattooStudio",
+            "#StudioVisibility",
+            "#TattooBusiness",
+            "#TattooBookings",
+            "#InkMarketing",
+            "#UKTattooStudio",
+            "#TattooOwners",
+            "#SmallBusinessUK"
+          ],
+          "alt_text": "Square graphic: dark deep-blue background with white and mint accents. Rounded bold text reads: Losing Bookings? Minimal studio icons, high contrast layout.",
+          "cta": "DM VISIBILITY or email contact@getinkcare.co.uk to discuss the 72-Hour Studio Visibility Fix.",
+          "image_prompt": "Square 1:1 premium editorial social graphic using INKCARE's dark deep-blue background, white and mint accents, rounded bold typography aesthetic, high contrast. No logos from other brands, no people with identifiable faces. Minimal studio icon and no more than four words of visible text: Losing Bookings?"
+        },
+        {
+          "content_type": "educational_post",
+          "objective": "Teach a practical visibility improvement studio owners can implement",
+          "topic": "Optimising your profile headline and booking CTA",
+          "hook": "Your headline should convert the scroll into a message.",
+          "caption": "Most potential clients decide in under five seconds. Make your profile headline a clear promise: who you serve, your style, and how to book.\n\nPractical steps: 1) Replace vague phrases with your specialty (e.g. Colour realism | Bespoke portraits). 2) Add a one-line booking CTA with method (e.g. Book: link / DM / phone). 3) Pin a recent portfolio post that demonstrates your core work.\n\nWant us to evaluate your profile and suggest exact changes? Reply to this post or email contact@getinkcare.co.uk to discuss the 72-Hour Studio Visibility Fix.",
+          "hashtags": [
+            "#TattooStudioTips",
+            "#ProfileOptimisation",
+            "#TattooMarketing",
+            "#TattooBookings",
+            "#StudioGrowth",
+            "#INKCARE",
+            "#UKTattooIndustry",
+            "#SmallBizTips"
+          ],
+          "alt_text": "Square graphic: dark deep-blue background with white and mint accents. Rounded bold text reads: Fix Your Headline, with simple arrow visuals and high contrast.",
+          "cta": "Reply to the post or email contact@getinkcare.co.uk to discuss the 72-Hour Studio Visibility Fix.",
+          "image_prompt": "Square 1:1 premium editorial social graphic using INKCARE's dark deep-blue background, white and mint accents, rounded bold typography aesthetic, high contrast. No logos from other brands, no people with identifiable faces. Clean arrow or headline icon and no more than four words of visible text: Fix Your Headline"
+        },
+        {
+          "content_type": "authority_process_post",
+          "objective": "Explain the INKCARE process and build credibility",
+          "topic": "How the 72-Hour Studio Visibility Fix works",
+          "hook": "What we do in 72 hours — a practical breakdown.",
+          "caption": "The 72-Hour Studio Visibility Fix is a focused, hands-on review and micro-optimisation of the elements that drive enquiries.\n\nProcess overview: Day 1 — profile & booking flow audit. Day 2 — feed and pinned post optimisation. Day 3 — call to action and local visibility tweaks. Each stage includes exact changes you can apply immediately.\n\nSpaces limited to three founding studios. Email contact@getinkcare.co.uk or DM VISIBILITY to discuss availability.",
+          "hashtags": [
+            "#StudioProcesses",
+            "#TattooBusiness",
+            "#INKCARE",
+            "#StudioVisibility",
+            "#TattooOwners",
+            "#LocalMarketing",
+            "#TattooStudioGrowth",
+            "#UKTattoo"
+          ],
+          "alt_text": "Square graphic: dark deep-blue background with white and mint accents. Rounded bold text reads: 72-Hour Fix, with three simple numbered dots representing days.",
+          "cta": "Email contact@getinkcare.co.uk or DM VISIBILITY to discuss availability for the 72-Hour Studio Visibility Fix.",
+          "image_prompt": "Square 1:1 premium editorial social graphic using INKCARE's dark deep-blue background, white and mint accents, rounded bold typography aesthetic, high contrast. No logos from other brands, no people with identifiable faces. Simple numbered three-dot timeline and no more than four words of visible text: 72-Hour Fix"
+        },
+        {
+          "content_type": "objection_handling_post",
+          "objective": "Address common objections about cost and results",
+          "topic": "Why invest £249 in a visibility fix?",
+          "hook": "£249 sounds steep — what do you actually get?",
+          "caption": "Fair question. This is a targeted, consultant-led intervention aimed at immediate visibility improvements — not ongoing management.\n\nDeliverables include a three-stage audit, exact copy and CTA edits you can apply, and a short follow-up checklist so changes stick. The goal is to convert more of the audience you already have.\n\nLimited to three founding studios at £249. If you want detail on what’s included, reply to this post or email contact@getinkcare.co.uk.",
+          "hashtags": [
+            "#TattooStudioOwners",
+            "#ROI",
+            "#TattooMarketing",
+            "#StudioVisibility",
+            "#INKCARE",
+            "#TattooBusinessUK",
+            "#BookingsBoost",
+            "#SmallBusiness"
+          ],
+          "alt_text": "Square graphic: dark deep-blue background with white and mint accents. Rounded bold text reads: What £249 Gets, with a simple checklist icon.",
+          "cta": "Reply to the post or email contact@getinkcare.co.uk to get details on what’s included in the 72-Hour Studio Visibility Fix.",
+          "image_prompt": "Square 1:1 premium editorial social graphic using INKCARE's dark deep-blue background, white and mint accents, rounded bold typography aesthetic, high contrast. No logos from other brands, no people with identifiable faces. Checklist icon and no more than four words of visible text: What £249 Gets"
+        },
+        {
+          "content_type": "direct_offer_post",
+          "objective": "Drive sign-ups for the limited 72-Hour offer",
+          "topic": "Sign up for one of three founding studio spots",
+          "hook": "Three founding slots available — book a visibility reset.",
+          "caption": "We’re opening three founding spots for the 72-Hour Studio Visibility Fix at £249. This is a compact, action-first service to improve how your studio converts visitors into enquiries.\n\nIf you want clear, actionable changes applied and explained in 72 hours, tell us which slot you want and the studio name.\n\nTo reserve a place, DM VISIBILITY, reply to this post or email contact@getinkcare.co.uk.",
+          "hashtags": [
+            "#TattooStudio",
+            "#BookNow",
+            "#StudioVisibility",
+            "#TattooBusiness",
+            "#INKCARE",
+            "#UKTattoo",
+            "#TattooOwners",
+            "#StudioGrowth",
+            "#Bookings"
+          ],
+          "alt_text": "Square graphic: dark deep-blue background with white and mint accents. Rounded bold text reads: Reserve A Spot, with a subtle calendar icon.",
+          "cta": "DM VISIBILITY, reply to the post, or email contact@getinkcare.co.uk to reserve a founding spot for the 72-Hour Studio Visibility Fix.",
+          "image_prompt": "Square 1:1 premium editorial social graphic using INKCARE's dark deep-blue background, white and mint accents, rounded bold typography aesthetic, high contrast. No logos from other brands, no people with identifiable faces. Calendar or reservation icon and no more than four words of visible text: Reserve A Spot"
+        }
+      ]
+    }
+  ]
+}

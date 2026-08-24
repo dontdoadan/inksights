@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /command-hub
+Disallow: /mcp
+Disallow: /.mcp/
+Disallow: /.lovable/
+Disallow: /.well-known/
+Disallow: /preview
+Disallow: /test
+
+Sitemap: https://getinksight.co.uk/sitemap.xml

@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://zugdssmhcqorczooznng.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "inksight-mcp",
+      "version": "0.1.0",
+      "title": "INKSIGHT"
+    },
+    "tools": [
+      {
+        "name": "run_growth_calculators",
+        "title": "Run growth-model calculators",
+        "description": "Compute INKSIGHT growth-model outputs from studio inputs. Returns annual sessions, extra retail revenue, ATV uplift, rebooking uplift, and the total extra annual studio revenue.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "studios": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 1,
+              "description": "Number of studios."
+            },
+            "artists_per_studio": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 4,
+              "description": "Artists per studio."
+            },
+            "clients_per_artist_per_day": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 20,
+              "default": 2
+            },
+            "working_days_per_week": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 7,
+              "default": 5
+            },
+            "average_session_value_gbp": {
+              "type": "number",
+              "minimum": 0,
+              "default": 180,
+              "description": "Current average tattoo session value in GBP."
+            },
+            "session_value_uplift_gbp": {
+              "type": "number",
+              "minimum": 0,
+              "default": 20,
+              "description": "Extra £ per session at the aftercare handoff."
+            },
+            "current_retail_conversion_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 5
+            },
+            "target_retail_conversion_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 35
+            },
+            "retail_gp_per_unit_gbp": {
+              "type": "number",
+              "minimum": 0,
+              "default": 12,
+              "description": "Gross profit per aftercare unit sold."
+            },
+            "current_rebooking_rate_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 20
+            },
+            "improved_rebooking_rate_pct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 35
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_scenarios",
+        "title": "List my saved scenarios",
+        "description": "List the signed-in user's saved growth-model scenarios, newest first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "save_scenario",
+        "title": "Save or update a scenario",
+        "description": "Create a new growth-model scenario, or update an existing one when `id` is provided. Stores calculator inputs and (optional) results for the signed-in user.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Existing scenario ID to update."
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "audience": {
+              "type": "string",
+              "enum": [
+                "studio",
+                "investor"
+              ],
+              "default": "studio"
+            },
+            "inputs": {
+              "type": "object",
+              "additionalProperties": {
+                "type": [
+                  "number",
+                  "string",
+                  "boolean"
+                ]
+              }
+            },
+            "results": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "number"
+              }
+            }
+          },
+          "required": [
+            "name",
+            "inputs"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "book_revenue_audit",
+        "title": "Book a Revenue Audit",
+        "description": "Submit a Revenue Audit request as the signed-in user. INKSIGHT reviews these requests and follows up within 48 hours.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "full_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "studio_name": {
+              "type": "string",
+              "maxLength": 120
+            },
+            "phone": {
+              "type": "string",
+              "maxLength": 40
+            },
+            "notes": {
+              "type": "string",
+              "maxLength": 2000
+            }
+          },
+          "required": [
+            "full_name",
+            "email"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

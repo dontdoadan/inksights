@@ -1,0 +1,70 @@
+name: INKSIGHT Social Automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Keep publication disabled
+        type: boolean
+        required: true
+        default: true
+      include_awaiting_approval:
+        description: Validate imported drafts without approving them
+        type: boolean
+        required: true
+        default: true
+      limit:
+        description: Maximum queue items
+        required: true
+        default: "5"
+  schedule:
+    - cron: "30 7 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inksight-social-automation
+  cancel-in-progress: false
+
+jobs:
+  validate-and-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false && 'false' || 'true' }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+      META_PAGE_ID: ${{ secrets.META_PAGE_ID }}
+      META_IG_USER_ID: ${{ secrets.META_IG_USER_ID }}
+      WORKER_ID: github-actions-${{ github.run_id }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test migration package
+        run: python -m unittest discover -s automation/social/tests -p "test_*.py"
+
+      - name: Enforce safe scheduled mode
+        if: github.event_name == 'schedule'
+        run: test "$DRY_RUN" = "true"
+
+      - name: Run against Supabase queue
+        if: env.SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != ''
+        run: |
+          ARGS=(--limit "${{ github.event_name == 'workflow_dispatch' && inputs.limit || '5' }}")
+          if [ "${{ github.event_name == 'workflow_dispatch' && inputs.include_awaiting_approval || 'true' }}" = "true" ]; then
+            ARGS+=(--include-awaiting-approval)
+          fi
+          python automation/social/queue_runner.py "${ARGS[@]}"
+
+      - name: Validate exported queue without secrets
+        if: env.SUPABASE_URL == '' || env.SUPABASE_SERVICE_ROLE_KEY == ''
+        run: python automation/social/queue_runner.py --seed-file automation/social/seed/exported-queue.json --include-awaiting-approval --limit 5
