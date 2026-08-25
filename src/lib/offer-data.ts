@@ -9,6 +9,8 @@ export type PublicOffer = {
   billing: string;
   commercialStatus: string;
   policyVersion: string;
+  stripePriceId?: string;
+  stripeMode?: "payment" | "subscription";
   checkoutUrl?: string;
   growthLevers: GrowthLever[];
   performancePricing: string;
@@ -41,7 +43,8 @@ export const publicOffers: PublicOffer[] = [
     billing: "Paid in full before work begins",
     commercialStatus: "Active public founding offer",
     policyVersion: OFFER_POLICY_VERSION,
-    checkoutUrl: "https://book.stripe.com/28EcN77ZEfsD5zr4X0gQE07",
+    stripePriceId: "price_1U7pEKCVzNmtkbUtk3hp3K9q",
+    stripeMode: "payment",
     growthLevers: ["clients"],
     performancePricing: "Not performance-fee based; this is a fixed-scope intervention.",
     summary:
@@ -98,7 +101,8 @@ export const publicOffers: PublicOffer[] = [
     billing: "Billed monthly in advance until cancelled",
     commercialStatus: "Active public subscription",
     policyVersion: OFFER_POLICY_VERSION,
-    checkoutUrl: "https://buy.stripe.com/14A7sN2Fk2FRe5X614gQE05",
+    stripePriceId: "price_1U8O8ZCVzNmtkbUtaojxzOHU",
+    stripeMode: "subscription",
     growthLevers: ["clients"],
     performancePricing: "Fixed monthly subscription; no performance percentage applies.",
     summary:

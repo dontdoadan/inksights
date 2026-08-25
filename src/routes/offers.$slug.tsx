@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, CheckCircle2, Clock3, ExternalLink, XCircle } from "lucide-react";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { AlertTriangle, CheckCircle2, Clock3, Loader2, XCircle } from "lucide-react";
+import { useState } from "react";
 import type { ReactNode } from "react";
+import { toast } from "sonner";
 import {
   CtaSection,
   JsonLd,
@@ -10,10 +13,14 @@ import {
   SecondaryButton,
   SectionHeading,
 } from "@/components/public-site";
+import { createCheckoutSession } from "@/lib/payments.functions";
 import { getPublicOffer, growthLeverLabels } from "@/lib/offer-data";
 
 export const Route = createFileRoute("/offers/$slug")({
   component: OfferPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    checkout: typeof search.checkout === "string" ? search.checkout : undefined,
+  }),
   head: ({ params }) => {
     const offer = getPublicOffer(params.slug);
     const canonical = `https://getinksight.co.uk/offers/${params.slug}`;
@@ -32,7 +39,9 @@ export const Route = createFileRoute("/offers/$slug")({
 
 function OfferPage() {
   const { slug } = Route.useParams();
+  const search = useSearch({ from: "/offers/$slug" });
   const offer = getPublicOffer(slug);
+
   if (!offer) {
     return (
       <PublicShell>
@@ -65,20 +74,20 @@ function OfferPage() {
           : undefined,
       }} />
       <PageHero eyebrow={offer.eyebrow} title={offer.name} description={offer.summary}>
-        {offer.checkoutUrl ? (
-          <a
-            href={offer.checkoutUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-mint px-6 py-3 text-sm font-bold text-ink-deep transition hover:bg-mint-soft"
-          >
-            Continue to secure checkout <ExternalLink className="h-4 w-4" />
-          </a>
-        ) : (
-          <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>
-        )}
+        {offer.stripePriceId ? <CheckoutButton offer={offer} /> : <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>}
         <SecondaryButton href="/contact">Ask a scope question</SecondaryButton>
       </PageHero>
+
+      {search.checkout === "success" && (
+        <div className="border-b border-mint/30 bg-mint/10 px-6 py-4 text-center text-sm font-medium text-mint">
+          Payment successful. Thank you — INKSIGHT will contact you within one working day to begin intake.
+        </div>
+      )}
+      {search.checkout === "cancelled" && (
+        <div className="border-b border-amber-300/30 bg-amber-300/10 px-6 py-4 text-center text-sm font-medium text-amber-200">
+          Checkout was cancelled. No payment was taken. You can try again whenever you are ready.
+        </div>
+      )}
 
       <section className="border-b border-border bg-ink">
         <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 md:grid-cols-2 lg:grid-cols-4">
@@ -168,6 +177,34 @@ function OfferPage() {
       </section>
       <CtaSection title={`Check whether ${offer.name} is the correct next step.`} />
     </PublicShell>
+  );
+}
+
+function CheckoutButton({ offer }: { offer: { slug: string; name: string } }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const startCheckout = useServerFn(createCheckoutSession);
+
+  return (
+    <button
+      type="button"
+      disabled={isLoading}
+      onClick={async () => {
+        setIsLoading(true);
+        try {
+          const { url } = await startCheckout({ data: { slug: offer.slug } });
+          if (url) window.location.href = url;
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Checkout could not be started.";
+          toast.error(message);
+        } finally {
+          setIsLoading(false);
+        }
+      }}
+      className="inline-flex items-center justify-center gap-2 rounded-full bg-mint px-6 py-3 text-sm font-bold text-ink-deep transition hover:bg-mint-soft disabled:opacity-60"
+    >
+      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+      Continue to secure checkout
+    </button>
   );
 }
 
