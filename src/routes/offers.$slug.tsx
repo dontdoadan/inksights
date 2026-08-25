@@ -69,18 +69,7 @@ function OfferPage() {
           : undefined,
       }} />
       <PageHero eyebrow={offer.eyebrow} title={offer.name} description={offer.summary}>
-        {offer.checkoutUrl ? (
-          <a
-            href={offer.checkoutUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-mint px-6 py-3 text-sm font-bold text-ink-deep transition hover:bg-mint-soft"
-          >
-            Continue to secure checkout <ExternalLink className="h-4 w-4" />
-          </a>
-        ) : (
-          <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>
-        )}
+        {offer.stripePriceId ? <CheckoutButton offer={offer} /> : <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>}
         <SecondaryButton href="/contact">Ask a scope question</SecondaryButton>
       </PageHero>
 
