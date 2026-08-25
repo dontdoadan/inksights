@@ -106,6 +106,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         {children}
         <CookieConsent />
+        <Toaster position="top-center" richColors />
         <Scripts />
       </body>
     </html>
