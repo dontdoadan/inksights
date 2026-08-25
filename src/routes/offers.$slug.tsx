@@ -36,7 +36,9 @@ export const Route = createFileRoute("/offers/$slug")({
 
 function OfferPage() {
   const { slug } = Route.useParams();
+  const search = useSearch({ from: "/offers/$slug" });
   const offer = getPublicOffer(slug);
+
   if (!offer) {
     return (
       <PublicShell>
