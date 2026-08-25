@@ -1,6 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, CheckCircle2, Clock3, ExternalLink, XCircle } from "lucide-react";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { AlertTriangle, CheckCircle2, Clock3, Loader2, XCircle } from "lucide-react";
+import { useState } from "react";
 import type { ReactNode } from "react";
+import { toast } from "sonner";
 import {
   CtaSection,
   JsonLd,
@@ -10,6 +13,7 @@ import {
   SecondaryButton,
   SectionHeading,
 } from "@/components/public-site";
+import { createCheckoutSession } from "@/lib/payments.functions";
 import { getPublicOffer, growthLeverLabels } from "@/lib/offer-data";
 
 export const Route = createFileRoute("/offers/$slug")({
