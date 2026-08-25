@@ -75,6 +75,17 @@ function OfferPage() {
         <SecondaryButton href="/contact">Ask a scope question</SecondaryButton>
       </PageHero>
 
+      {search.checkout === "success" && (
+        <div className="border-b border-mint/30 bg-mint/10 px-6 py-4 text-center text-sm font-medium text-mint">
+          Payment successful. Thank you — INKSIGHT will contact you within one working day to begin intake.
+        </div>
+      )}
+      {search.checkout === "cancelled" && (
+        <div className="border-b border-amber-300/30 bg-amber-300/10 px-6 py-4 text-center text-sm font-medium text-amber-200">
+          Checkout was cancelled. No payment was taken. You can try again whenever you are ready.
+        </div>
+      )}
+
       <section className="border-b border-border bg-ink">
         <div className="mx-auto grid max-w-7xl gap-6 px-6 py-10 md:grid-cols-2 lg:grid-cols-4">
           <Info label="Price" value={offer.price} />
