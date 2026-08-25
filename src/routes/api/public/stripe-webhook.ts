@@ -48,16 +48,14 @@ async function recordCompletedCheckout(session: Stripe.Checkout.Session) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   const offerSlug = session.metadata?.offer_slug ?? "";
-  const lineItem = session.line_items?.data[0] ?? null;
-  const price = lineItem?.price;
 
   const upsert = {
     stripe_customer_id: session.customer as string | undefined,
     stripe_session_id: session.id,
     stripe_payment_intent_id: (session.payment_intent as string | undefined) ?? null,
     stripe_subscription_id: (session.subscription as string | undefined) ?? null,
-    stripe_product_id: (price?.product as string | undefined) ?? null,
-    stripe_price_id: (price?.id as string | undefined) ?? null,
+    stripe_product_id: null as string | null,
+    stripe_price_id: null as string | null,
     offer_slug: offerSlug,
     amount_total: session.amount_total ?? null,
     currency: session.currency ?? null,
