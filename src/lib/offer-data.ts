@@ -101,7 +101,8 @@ export const publicOffers: PublicOffer[] = [
     billing: "Billed monthly in advance until cancelled",
     commercialStatus: "Active public subscription",
     policyVersion: OFFER_POLICY_VERSION,
-    checkoutUrl: "https://buy.stripe.com/14A7sN2Fk2FRe5X614gQE05",
+    stripePriceId: "price_1U8O8ZCVzNmtkbUtaojxzOHU",
+    stripeMode: "subscription",
     growthLevers: ["clients"],
     performancePricing: "Fixed monthly subscription; no performance percentage applies.",
     summary:
