@@ -9,6 +9,8 @@ export type PublicOffer = {
   billing: string;
   commercialStatus: string;
   policyVersion: string;
+  stripePriceId?: string;
+  stripeMode?: "payment" | "subscription";
   checkoutUrl?: string;
   growthLevers: GrowthLever[];
   performancePricing: string;
