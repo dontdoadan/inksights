@@ -18,6 +18,9 @@ import { getPublicOffer, growthLeverLabels } from "@/lib/offer-data";
 
 export const Route = createFileRoute("/offers/$slug")({
   component: OfferPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    checkout: typeof search.checkout === "string" ? search.checkout : undefined,
+  }),
   head: ({ params }) => {
     const offer = getPublicOffer(params.slug);
     const canonical = `https://getinksight.co.uk/offers/${params.slug}`;
