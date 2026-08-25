@@ -43,7 +43,8 @@ export const publicOffers: PublicOffer[] = [
     billing: "Paid in full before work begins",
     commercialStatus: "Active public founding offer",
     policyVersion: OFFER_POLICY_VERSION,
-    checkoutUrl: "https://book.stripe.com/28EcN77ZEfsD5zr4X0gQE07",
+    stripePriceId: "price_1U7pEKCVzNmtkbUtk3hp3K9q",
+    stripeMode: "payment",
     growthLevers: ["clients"],
     performancePricing: "Not performance-fee based; this is a fixed-scope intervention.",
     summary:
