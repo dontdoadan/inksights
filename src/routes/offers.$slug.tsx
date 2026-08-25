@@ -164,6 +164,34 @@ function OfferPage() {
   );
 }
 
+function CheckoutButton({ offer }: { offer: { slug: string; name: string } }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const startCheckout = useServerFn(createCheckoutSession);
+
+  return (
+    <button
+      type="button"
+      disabled={isLoading}
+      onClick={async () => {
+        setIsLoading(true);
+        try {
+          const { url } = await startCheckout({ data: { slug: offer.slug } });
+          if (url) window.location.href = url;
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Checkout could not be started.";
+          toast.error(message);
+        } finally {
+          setIsLoading(false);
+        }
+      }}
+      className="inline-flex items-center justify-center gap-2 rounded-full bg-mint px-6 py-3 text-sm font-bold text-ink-deep transition hover:bg-mint-soft disabled:opacity-60"
+    >
+      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+      Continue to secure checkout
+    </button>
+  );
+}
+
 function Info({ label, value, icon }: { label: string; value: string; icon?: ReactNode }) {
   return (
     <div className="rounded-2xl border border-border bg-ink-deep p-5">
