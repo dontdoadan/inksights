@@ -1,76 +1,62 @@
-# INKSIGHT
+# INKSIGHTS
 
-Build me a website that has a simple, bold, but creative aesthetic for my business INKCARE - 
-Business Framework v1
+## Production architecture
 
-Vision
+INKSIGHTS is the intelligence and growth platform for UK tattoo studios.
 
-INKCARE exists to help tattoo studios unlock the revenue they are already generating but not capturing. By standardising aftercare, building retail systems, and increasing transaction value at the point of demand, INKCARE transforms the post-session experience from an afterthought into a profit centre.
+The production source of truth is this GitHub repository:
 
-The Problem
+- GitHub: `dontdoadan/inksights`
+- Production hosting: Vercel project `inksights`
+- Primary database/backend: Supabase project `INKSIGHTS` (`ukaxsqwnkoqbbsufpzga`)
+- Payments: Stripe
+- CRM: HubSpot
+- AI/automation: OpenAI
 
-Most tattoo studios are leaving significant revenue on the table. 
+## Source-of-truth policy
 
-The aftercare stage — the final touchpoint of every session — is consistently underutilised. Studios send clients away with a verbal rundown and a hope. There is no standardised protocol, no retail system, and no strategy to increase the value of each transaction. 
+GitHub `main` is the canonical application source. Vercel deploys production from this repository. Lovable projects are design/prototyping references only and are not production hosts.
 
-INKCARE solves this.
+The Studio Intelligence Map is a core INKSIGHTS product surface. Its production data should come from Supabase rather than hard-coded frontend demonstration records.
 
-Who We Serve
+## Current product direction
 
-Tattoo studios of all sizes are looking to grow revenue without increasing their client volume. Whether independent artists or multi-chair studios, INKCARE provides the systems, products, and support to make every session worth more.
+The public product is being built around:
 
-The 3 Core Revenue Levers
-
-Generate More Revenue
-
-Identify untapped revenue opportunities within the studio. 
-
-This starts with the Revenue Audit — a free entry offer that maps where money is leaking and where INKCARE can plug the gaps.
-
-Increase Transaction Value
-
-Help studios charge more (and earn more) per session through retail, upsells, and structured aftercare product sales at the point of demand — the moment a client is most invested.
-
-Increase Frequency of Purchase
-
-Build client retention systems that bring people back more often. 
-
-Repeat clients are the most profitable — INKCARE helps studios nurture that relationship beyond the session.
-
-The Flagship Opportunity
-
-Monetising the Post-Session Stage
-
-The moment a session ends is the highest point of client trust and engagement. INKCARE captures this by:
-
-Standardising what happens at session end (the aftercare handoff)
-
-Providing the products to sell at that moment
-
-Training artists on how to present and sell naturally
-
-Tracking results and iterating
-
-Use a deep dark blue theme, with white or light green/blue/mint text. 
-Font: Lexend or something similar with bold headings titles and headers
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/2baa96bb-c4bc-479d-8aaf-ddc39c892bb1).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+1. UK tattoo-studio intelligence
+2. Interactive studio map and search
+3. Studio-level intelligence profiles
+4. Studio Growth Check / diagnosis
+5. Growth systems, implementation and benchmarking
+6. Future subscription intelligence products
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Install dependencies and run the application locally with:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm install
 npm run dev
 ```
+
+Production build:
+
+```sh
+npm run build
+```
+
+Lint:
+
+```sh
+npm run lint
+```
+
+## Deployment
+
+Production deployment is managed by Vercel through the GitHub integration. The application uses TanStack Start with Vite and is configured for Vercel deployment.
+
+## Data and security
+
+Supabase RLS is required on exposed application tables. Privileged database functions must not be executable by `anon` or `authenticated` unless explicitly designed as public APIs. Never expose service-role or secret credentials to browser code.
+
+The legacy `rls_auto_enable()` database helper remains restricted to `postgres` and `service_role`; it is not a public API.
