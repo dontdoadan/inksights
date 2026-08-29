@@ -7,8 +7,8 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
-const CANONICAL_ORIGIN = "https://getinksight.co.uk";
-const CANONICAL_HOST = "getinksight.co.uk";
+const CANONICAL_ORIGIN = "https://getinksights.co.uk";
+const CANONICAL_HOST = "getinksights.co.uk";
 const PUBLIC_SITEMAP_PATHS = [
   "/",
   "/growth-model",
