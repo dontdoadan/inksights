@@ -20,13 +20,13 @@ import {
 } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksight.co.uk/support";
-const SUPPORT_EMAIL = "contact@getinksight.co.uk";
+const SUPPORT_EMAIL = "dontdoadan@icloud.com";
 
 const faq = [
   {
     question: "How do I contact INKSIGHT support?",
     answer:
-      "Use the secure contact form at getinksight.co.uk/contact or email contact@getinksight.co.uk. Include your studio name, the service involved and enough detail for INKSIGHT to identify the issue. Do not send passwords, full card details, private API keys or verification codes.",
+      "Use the secure contact form at getinksight.co.uk/contact or email dontdoadan@icloud.com. Include your studio name, the service involved and enough detail for INKSIGHT to identify the issue. Do not send passwords, full card details, private API keys or verification codes.",
   },
   {
     question: "When does the 72-Hour Studio Visibility Fix delivery period begin?",
@@ -46,7 +46,7 @@ const faq = [
   {
     question: "Where do I send a privacy or data-rights request?",
     answer:
-      "Send the request to contact@getinksight.co.uk. The Privacy Notice explains how INKSIGHT handles access, correction, deletion, restriction, objection, portability and consent-withdrawal requests where applicable.",
+      "Send the request to dontdoadan@icloud.com. The Privacy Notice explains how INKSIGHT handles access, correction, deletion, restriction, objection, portability and consent-withdrawal requests where applicable.",
   },
   {
     question: "Can INKSIGHT support diagnose a medical or tattoo-healing problem?",
