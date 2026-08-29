@@ -44,12 +44,14 @@ function canonicalPath(pathname: string): string {
   return pathname;
 }
 
-// Preview/local hosts keep their own origin so the app is reachable before the
-// canonical domain is live; only the path is normalised for them.
+// Preview/local hosts must keep their own origin. Production is canonicalised
+// to the primary INKSIGHTS domain. Vercel preview hosts are intentionally
+// recognised so preview deployments can be tested without redirecting away.
 function isNonCanonicalPreviewHost(hostname: string): boolean {
   return (
     hostname === "localhost" ||
     hostname === "127.0.0.1" ||
+    hostname.endsWith(".vercel.app") ||
     hostname.endsWith(".lovable.app") ||
     hostname.endsWith(".lovable.dev") ||
     hostname.endsWith(".lovableproject.com")
@@ -134,7 +136,7 @@ function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
   if (contentType.includes("text/html")) {
     const canonical = new URL(canonicalUrl);
     canonical.search = "";
-    headers.set("link", `<${canonical.toString()}>; rel="canonical"`);
+    headers.set("link", `<${canonical.toString()}>; rel="canonical");
     headers.set(
       "x-robots-tag",
       isNoindexPath(canonical.pathname) ? "noindex, nofollow" : "index, follow",
@@ -148,8 +150,6 @@ function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
   });
 }
 
-// h3 swallows in-handler throws into a normal 500 Response with body
-// {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
 async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
   if (response.status < 500) return response;
   const contentType = response.headers.get("content-type") ?? "";
