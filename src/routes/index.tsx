@@ -4,7 +4,7 @@ import { Reveal, TiltCard } from "@/components/interactive-home";
 import { Card, JsonLd, PrimaryButton, PublicShell, SecondaryButton } from "@/components/public-site";
 import { StudioIntelligenceMap } from "@/components/studio-intelligence-map";
 
-const CANONICAL_URL = "https://getinksight.co.uk/";
+const CANONICAL_URL = "https://getinksights.co.uk/";
 
 export const Route = createFileRoute("/")({
   component: Index,
