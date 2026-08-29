@@ -129,17 +129,17 @@ function isNoindexPath(pathname: string): boolean {
   );
 }
 
-function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
+function withSeoHeaders(response: Response, canonicalUrl: URL, previewHost: boolean): Response {
   const headers = new Headers(response.headers);
   const contentType = headers.get("content-type") ?? "";
 
   if (contentType.includes("text/html")) {
     const canonical = new URL(canonicalUrl);
     canonical.search = "";
-    headers.set("link", `<${canonical.toString()}>; rel="canonical");
+    headers.set("link", `<${canonical.toString()}>; rel="canonical"`);
     headers.set(
       "x-robots-tag",
-      isNoindexPath(canonical.pathname) ? "noindex, nofollow" : "index, follow",
+      previewHost || isNoindexPath(canonical.pathname) ? "noindex, nofollow" : "index, follow",
     );
   }
 
@@ -170,6 +170,7 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const requestUrl = new URL(request.url);
+    const previewHost = isNonCanonicalPreviewHost(requestUrl.hostname);
     const canonicalUrl = canonicalRequestUrl(request);
 
     if (shouldRedirectToCanonical(requestUrl, canonicalUrl)) {
@@ -183,7 +184,7 @@ export default {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       const normalized = await normalizeCatastrophicSsrResponse(response);
-      return withSeoHeaders(normalized, canonicalUrl);
+      return withSeoHeaders(normalized, canonicalUrl, previewHost);
     } catch (error) {
       console.error(error);
       return withSeoHeaders(
@@ -192,6 +193,7 @@ export default {
           headers: { "content-type": "text/html; charset=utf-8" },
         }),
         canonicalUrl,
+        previewHost,
       );
     }
   },
