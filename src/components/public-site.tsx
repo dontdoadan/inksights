@@ -114,8 +114,8 @@ export function SiteFooter() {
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
               Growth, booking and retention systems designed specifically for UK tattoo studios.
             </p>
-            <a href="mailto:contact@getinksight.co.uk" className="mt-5 inline-block text-sm font-semibold text-mint hover:text-mint-soft">
-              contact@getinksight.co.uk
+            <a href="mailto:dontdoadan@icloud.com" className="mt-5 inline-block text-sm font-semibold text-mint hover:text-mint-soft">
+              dontdoadan@icloud.com
             </a>
           </div>
           <div className="grid gap-8 sm:grid-cols-3">
