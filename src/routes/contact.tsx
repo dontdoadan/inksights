@@ -44,7 +44,7 @@ function ContactPage() {
 
     if (functionError || !data?.ok) {
       setStatus("error");
-      setError(functionError?.message || data?.error || "The message could not be recorded. Email contact@getinksight.co.uk instead.");
+      setError(functionError?.message || data?.error || "The message could not be recorded. Email dontdoadan@icloud.com instead.");
       return;
     }
     setStatus("done");
@@ -64,7 +64,7 @@ function ContactPage() {
             <div className="rounded-2xl border border-border bg-ink p-6">
               <Mail className="h-7 w-7 text-mint" />
               <h2 className="mt-5 font-display text-2xl font-black text-ice">Direct email</h2>
-              <a href="mailto:contact@getinksight.co.uk" className="mt-3 inline-block font-bold text-mint hover:text-mint-soft">contact@getinksight.co.uk</a>
+              <a href="mailto:dontdoadan@icloud.com" className="mt-3 inline-block font-bold text-mint hover:text-mint-soft">dontdoadan@icloud.com</a>
             </div>
             <div className="rounded-2xl border border-border bg-ink p-6">
               <MessageSquareText className="h-7 w-7 text-mint" />
