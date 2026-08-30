@@ -44,12 +44,14 @@ function canonicalPath(pathname: string): string {
   return pathname;
 }
 
-// Preview/local hosts keep their own origin so the app is reachable before the
-// canonical domain is live; only the path is normalised for them.
+// Preview/local hosts must keep their own origin. Production is canonicalised
+// to the primary INKSIGHTS domain. Vercel preview hosts are intentionally
+// recognised so preview deployments can be tested without redirecting away.
 function isNonCanonicalPreviewHost(hostname: string): boolean {
   return (
     hostname === "localhost" ||
     hostname === "127.0.0.1" ||
+    hostname.endsWith(".vercel.app") ||
     hostname.endsWith(".lovable.app") ||
     hostname.endsWith(".lovable.dev") ||
     hostname.endsWith(".lovableproject.com")
@@ -127,7 +129,7 @@ function isNoindexPath(pathname: string): boolean {
   );
 }
 
-function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
+function withSeoHeaders(response: Response, canonicalUrl: URL, previewHost: boolean): Response {
   const headers = new Headers(response.headers);
   const contentType = headers.get("content-type") ?? "";
 
@@ -137,7 +139,7 @@ function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
     headers.set("link", `<${canonical.toString()}>; rel="canonical"`);
     headers.set(
       "x-robots-tag",
-      isNoindexPath(canonical.pathname) ? "noindex, nofollow" : "index, follow",
+      previewHost || isNoindexPath(canonical.pathname) ? "noindex, nofollow" : "index, follow",
     );
   }
 
@@ -148,8 +150,6 @@ function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
   });
 }
 
-// h3 swallows in-handler throws into a normal 500 Response with body
-// {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
 async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
   if (response.status < 500) return response;
   const contentType = response.headers.get("content-type") ?? "";
@@ -170,6 +170,7 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const requestUrl = new URL(request.url);
+    const previewHost = isNonCanonicalPreviewHost(requestUrl.hostname);
     const canonicalUrl = canonicalRequestUrl(request);
 
     if (shouldRedirectToCanonical(requestUrl, canonicalUrl)) {
@@ -183,7 +184,7 @@ export default {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       const normalized = await normalizeCatastrophicSsrResponse(response);
-      return withSeoHeaders(normalized, canonicalUrl);
+      return withSeoHeaders(normalized, canonicalUrl, previewHost);
     } catch (error) {
       console.error(error);
       return withSeoHeaders(
@@ -192,6 +193,7 @@ export default {
           headers: { "content-type": "text/html; charset=utf-8" },
         }),
         canonicalUrl,
+        previewHost,
       );
     }
   },
