@@ -2,8 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { FormEvent, useState } from "react";
 
-const AUDIT_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/revenue-audit-v1";
-
 export const Route = createFileRoute("/studio-growth-check")({
   head: () => ({
     meta: [
@@ -19,15 +17,20 @@ export const Route = createFileRoute("/studio-growth-check")({
   component: RevenueAuditPage,
 });
 
+type Finding = { label: string; annual_low: number; annual_high: number };
 type Result = {
   estimate: { annual_low: number; annual_high: number; primary_opportunity: string; score: number };
-  findings: Array<{ label: string; annual_low: number; annual_high: number }>;
+  findings: Finding[];
   recommendations: string[];
   disclaimer: string;
 };
 
 const currency = (value: number) =>
-  new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(value);
+  new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+    maximumFractionDigits: 0,
+  }).format(value);
 
 function RevenueAuditPage() {
   const [loading, setLoading] = useState(false);
@@ -64,15 +67,20 @@ function RevenueAuditPage() {
     };
 
     try {
-      const response = await fetch(AUDIT_URL, {
+      // Same-origin proxy avoids browser CORS/DNS failures when calling Supabase directly.
+      const response = await fetch("/api/public/revenue-audit", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      if (!response.ok || !data.ok) throw new Error(data.error || "The audit could not be generated.");
-      setResult(data);
-      window.setTimeout(() => document.getElementById("audit-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "The audit could not be generated.");
+      }
+      setResult(data as Result);
+      window.setTimeout(() => {
+        document.getElementById("audit-result")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 50);
     } catch (err) {
       setError(err instanceof Error ? err.message : "The audit could not be generated. Please try again.");
     } finally {
@@ -87,7 +95,9 @@ function RevenueAuditPage() {
           <Link to="/" className="text-xl font-black tracking-tight text-ice">
             INK<span className="text-mint">SIGHTS</span>
           </Link>
-          <Link to="/" className="text-sm font-semibold text-muted-foreground hover:text-mint">Back to INKSIGHTS</Link>
+          <Link to="/" className="text-sm font-semibold text-muted-foreground hover:text-mint">
+            Back to INKSIGHTS
+          </Link>
         </div>
       </header>
 
@@ -109,7 +119,11 @@ function RevenueAuditPage() {
                 "Takes about 3 minutes",
                 "Result shown immediately",
                 "No payment required",
-              ].map((item) => <span key={item} className="rounded-full border border-border px-3 py-2">✓ {item}</span>)}
+              ].map((item) => (
+                <span key={item} className="rounded-full border border-border px-3 py-2">
+                  ✓ {item}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -152,7 +166,17 @@ function RevenueAuditPage() {
                 <Field label="Repeat-client rate (%)" name="repeat_client_rate" type="number" min="0" max="100" placeholder="35" required />
                 <Field label="Cancellation rate (%)" name="cancellation_rate" type="number" min="0" max="100" placeholder="5" required />
                 <Field label="No-show rate (%)" name="no_show_rate" type="number" min="0" max="100" placeholder="2" required />
-                <label className="text-sm font-semibold text-ice">Biggest concern<select name="primary_problem" className="mt-2 w-full rounded-xl border border-border bg-ink-deep px-4 py-3 font-normal text-ice"><option value="capacity">Empty / underused artist time</option><option value="conversion">Enquiries not becoming bookings</option><option value="cancellation">Cancellations / no-shows</option><option value="retention">Clients not returning</option><option value="pricing">Pricing / average booking value</option><option value="unknown">I'm not sure</option></select></label>
+                <label className="text-sm font-semibold text-ice">
+                  Biggest concern
+                  <select name="primary_problem" className="mt-2 w-full rounded-xl border border-border bg-ink-deep px-4 py-3 font-normal text-ice">
+                    <option value="capacity">Empty / underused artist time</option>
+                    <option value="conversion">Enquiries not becoming bookings</option>
+                    <option value="cancellation">Cancellations / no-shows</option>
+                    <option value="retention">Clients not returning</option>
+                    <option value="pricing">Pricing / average booking value</option>
+                    <option value="unknown">I&apos;m not sure</option>
+                  </select>
+                </label>
               </div>
             </div>
 
@@ -164,9 +188,17 @@ function RevenueAuditPage() {
                   <p className="text-sm leading-relaxed text-muted-foreground">Your result is generated from the figures you provide. We will clearly distinguish an estimate from verified studio data.</p>
                 </div>
               </div>
-              <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden"><input name="website_honeypot" tabIndex={-1} autoComplete="off" /></div>
-              <label className="mt-5 flex gap-3 text-sm text-muted-foreground"><input className="mt-1" type="checkbox" name="consent" required /><span>I agree to INKSIGHTS using these details to generate and follow up this Revenue Audit. <b className="text-mint">Required.</b></span></label>
-              <label className="mt-3 flex gap-3 text-sm text-muted-foreground"><input className="mt-1" type="checkbox" name="marketing_consent" /><span>Send me occasional INKSIGHTS growth insights.</span></label>
+              <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden">
+                <input name="website_honeypot" tabIndex={-1} autoComplete="off" />
+              </div>
+              <label className="mt-5 flex gap-3 text-sm text-muted-foreground">
+                <input className="mt-1" type="checkbox" name="consent" required />
+                <span>I agree to INKSIGHTS using these details to generate and follow up this Revenue Audit. <b className="text-mint">Required.</b></span>
+              </label>
+              <label className="mt-3 flex gap-3 text-sm text-muted-foreground">
+                <input className="mt-1" type="checkbox" name="marketing_consent" />
+                <span>Send me occasional INKSIGHTS growth insights.</span>
+              </label>
               <button disabled={loading} className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep transition hover:bg-mint-soft disabled:cursor-wait disabled:opacity-60" type="submit">
                 {loading ? "Calculating…" : "Generate My Revenue Audit"} <ArrowRight className="h-4 w-4" />
               </button>
@@ -196,15 +228,39 @@ function RevenueAuditPage() {
           <div className="mx-auto max-w-7xl px-6 py-14 md:py-20">
             <div className="max-w-4xl">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Your Revenue Audit V1</p>
-              <h2 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">Estimated opportunity: <span className="text-mint">{currency(result.estimate.annual_low)}–{currency(result.estimate.annual_high)}</span> / year</h2>
-              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">The largest estimated opportunity in your inputs is <b className="text-ice">{result.estimate.primary_opportunity}</b>.</p>
+              <h2 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">
+                Estimated opportunity: <span className="text-mint">{currency(result.estimate.annual_low)}–{currency(result.estimate.annual_high)}</span> / year
+              </h2>
+              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                The largest estimated opportunity in your inputs is <b className="text-ice">{result.estimate.primary_opportunity}</b>.
+              </p>
             </div>
             <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {result.findings.map((finding) => <div key={finding.label} className="rounded-2xl border border-border bg-ink-deep p-5"><p className="text-sm font-bold text-ice">{finding.label}</p><p className="mt-3 font-display text-2xl font-black text-mint">{currency(finding.annual_low)}–{currency(finding.annual_high)}</p><p className="mt-1 text-xs text-muted-foreground">estimated annual opportunity</p></div>)}
+              {result.findings.map((finding) => (
+                <div key={finding.label} className="rounded-2xl border border-border bg-ink-deep p-5">
+                  <p className="text-sm font-bold text-ice">{finding.label}</p>
+                  <p className="mt-3 font-display text-2xl font-black text-mint">{currency(finding.annual_low)}–{currency(finding.annual_high)}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">estimated annual opportunity</p>
+                </div>
+              ))}
             </div>
             <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]">
-              <div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What to do next</p><ol className="mt-5 space-y-4">{result.recommendations.map((item, i) => <li key={item} className="flex gap-4 text-sm leading-relaxed text-muted-foreground"><span className="font-mono text-mint">0{i + 1}</span><span>{item}</span></li>)}</ol></div>
-              <div className="rounded-2xl border border-mint/20 bg-mint/5 p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Next step</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Want the estimate replaced with real data?</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">The next version connects or imports your studio data and identifies actual revenue leakage rather than relying on assumptions.</p><a href="mailto:hello@getinksights.co.uk?subject=Revenue%20Audit%20V1%20follow-up" className="mt-5 inline-flex items-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Discuss the full audit <ArrowRight className="h-4 w-4" /></a></div>
+              <div className="rounded-2xl border border-border bg-ink-deep p-6">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What to do next</p>
+                <ol className="mt-5 space-y-4">
+                  {result.recommendations.map((item, i) => (
+                    <li key={item} className="flex gap-4 text-sm leading-relaxed text-muted-foreground">
+                      <span className="font-mono text-mint">0{i + 1}</span><span>{item}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div className="rounded-2xl border border-mint/20 bg-mint/5 p-6">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Next step</p>
+                <h3 className="mt-2 font-display text-2xl font-black text-ice">Want the estimate replaced with real data?</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The next version connects or imports your studio data and identifies actual revenue leakage rather than relying on assumptions.</p>
+                <a href="mailto:hello@getinksights.co.uk?subject=Revenue%20Audit%20V1%20follow-up" className="mt-5 inline-flex items-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Discuss the full audit <ArrowRight className="h-4 w-4" /></a>
+              </div>
             </div>
             <p className="mt-8 max-w-3xl text-xs leading-relaxed text-muted-foreground">{result.disclaimer}</p>
           </div>
@@ -214,6 +270,35 @@ function RevenueAuditPage() {
   );
 }
 
-function Field({ label, name, type = "text", placeholder, required, min, max }: { label: string; name: string; type?: string; placeholder?: string; required?: boolean; min?: string; max?: string }) {
-  return <label className="text-sm font-semibold text-ice">{label}{required && <span className="ml-1 text-mint">*</span>}<input className="mt-2 w-full rounded-xl border border-border bg-ink-deep px-4 py-3 font-normal text-ice outline-none transition focus:border-mint" name={name} type={type} placeholder={placeholder} required={required} min={min} max={max} /></label>;
+function Field({
+  label,
+  name,
+  type = "text",
+  placeholder,
+  required,
+  min,
+  max,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  required?: boolean;
+  min?: string;
+  max?: string;
+}) {
+  return (
+    <label className="text-sm font-semibold text-ice">
+      {label}
+      <input
+        className="mt-2 w-full rounded-xl border border-border bg-ink-deep px-4 py-3 font-normal text-ice outline-none transition focus:border-mint"
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        required={required}
+        min={min}
+        max={max}
+      />
+    </label>
+  );
 }
