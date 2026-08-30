@@ -64,9 +64,17 @@ function Consent() {
     const { data, error } = approve
       ? await oauth().approveAuthorization(authorization_id)
       : await oauth().denyAuthorization(authorization_id);
-    if (error) { setBusy(false); setError(error.message); return; }
+    if (error) {
+      setBusy(false);
+      setError(error.message);
+      return;
+    }
     const target = data?.redirect_url ?? data?.redirect_to;
-    if (!target) { setBusy(false); setError("No redirect returned by the authorization server."); return; }
+    if (!target) {
+      setBusy(false);
+      setError("No redirect returned by the authorization server.");
+      return;
+    }
     window.location.href = target;
   }
 
@@ -85,23 +93,34 @@ function Consent() {
           Connect <span className="text-mint">{clientName}</span> to your account
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          This lets {clientName} use INKSIGHT tools as you — reading your saved
-          scenarios, running the growth-model calculators, and submitting audit
-          requests on your behalf.
+          This lets {clientName} use INKSIGHT tools as you — reading your saved scenarios, running
+          the growth-model calculators, and submitting audit requests on your behalf.
         </p>
 
         <ul className="mt-6 space-y-2 text-sm">
-          <li className="flex gap-2"><span className="text-mint">✓</span> Read your saved growth-model scenarios</li>
-          <li className="flex gap-2"><span className="text-mint">✓</span> Create and update scenarios</li>
-          <li className="flex gap-2"><span className="text-mint">✓</span> Run the growth-model calculators</li>
-          <li className="flex gap-2"><span className="text-mint">✓</span> Submit Revenue Audit requests as you</li>
+          <li className="flex gap-2">
+            <span className="text-mint">✓</span> Read your saved growth-model scenarios
+          </li>
+          <li className="flex gap-2">
+            <span className="text-mint">✓</span> Create and update scenarios
+          </li>
+          <li className="flex gap-2">
+            <span className="text-mint">✓</span> Run the growth-model calculators
+          </li>
+          <li className="flex gap-2">
+            <span className="text-mint">✓</span> Submit Revenue Audit requests as you
+          </li>
         </ul>
 
         <p className="mt-6 text-xs text-muted-foreground">
           This does not bypass INKSIGHT's permissions or backend policies.
         </p>
 
-        {error ? <p className="mt-4 text-sm text-red-400" role="alert">{error}</p> : null}
+        {error ? (
+          <p className="mt-4 text-sm text-red-400" role="alert">
+            {error}
+          </p>
+        ) : null}
 
         <div className="mt-8 flex gap-3">
           <button

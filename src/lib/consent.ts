@@ -23,7 +23,9 @@ const META_PIXEL_ID = "1358457972311385";
 export function readConsent(): InksightConsent | null {
   if (typeof window === "undefined") return null;
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "null") as InksightConsent | null;
+    const parsed = JSON.parse(
+      window.localStorage.getItem(STORAGE_KEY) || "null",
+    ) as InksightConsent | null;
     if (!parsed || parsed.essential !== true) return null;
     return parsed;
   } catch {
@@ -31,7 +33,9 @@ export function readConsent(): InksightConsent | null {
   }
 }
 
-export function saveConsent(value: Omit<InksightConsent, "essential" | "updatedAt">): InksightConsent {
+export function saveConsent(
+  value: Omit<InksightConsent, "essential" | "updatedAt">,
+): InksightConsent {
   const consent: InksightConsent = {
     essential: true,
     analytics: Boolean(value.analytics),

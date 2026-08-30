@@ -8,9 +8,7 @@ export const gbp = (n: number) =>
   }).format(Math.max(0, Math.round(n)));
 
 export const num = (n: number) =>
-  new Intl.NumberFormat("en-GB", { maximumFractionDigits: 0 }).format(
-    Math.round(n),
-  );
+  new Intl.NumberFormat("en-GB", { maximumFractionDigits: 0 }).format(Math.round(n));
 
 export function NumberSlider({
   label,
@@ -68,9 +66,7 @@ export function ResultStat({
   return (
     <div
       className={`rounded-xl border p-5 ${
-        emphasis
-          ? "border-mint bg-mint/10"
-          : "border-border bg-ink-deep"
+        emphasis ? "border-mint bg-mint/10" : "border-border bg-ink-deep"
       }`}
     >
       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -95,9 +91,7 @@ export function MetricCard({
   className?: string;
 }) {
   return (
-    <div
-      className={`rounded-2xl border border-border bg-ink-elev p-6 ${className}`}
-    >
+    <div className={`rounded-2xl border border-border bg-ink-elev p-6 ${className}`}>
       {children}
     </div>
   );

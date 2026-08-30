@@ -14,11 +14,23 @@ export default defineTool({
     artists_per_studio: z.number().int().min(1).max(200).default(4).describe("Artists per studio."),
     clients_per_artist_per_day: z.number().min(0).max(20).default(2),
     working_days_per_week: z.number().min(1).max(7).default(5),
-    average_session_value_gbp: z.number().min(0).default(180).describe("Current average tattoo session value in GBP."),
-    session_value_uplift_gbp: z.number().min(0).default(20).describe("Extra £ per session at the aftercare handoff."),
+    average_session_value_gbp: z
+      .number()
+      .min(0)
+      .default(180)
+      .describe("Current average tattoo session value in GBP."),
+    session_value_uplift_gbp: z
+      .number()
+      .min(0)
+      .default(20)
+      .describe("Extra £ per session at the aftercare handoff."),
     current_retail_conversion_pct: z.number().min(0).max(100).default(5),
     target_retail_conversion_pct: z.number().min(0).max(100).default(35),
-    retail_gp_per_unit_gbp: z.number().min(0).default(12).describe("Gross profit per aftercare unit sold."),
+    retail_gp_per_unit_gbp: z
+      .number()
+      .min(0)
+      .default(12)
+      .describe("Gross profit per aftercare unit sold."),
     current_rebooking_rate_pct: z.number().min(0).max(100).default(20),
     improved_rebooking_rate_pct: z.number().min(0).max(100).default(35),
   },
@@ -55,7 +67,10 @@ export default defineTool({
 
     return {
       content: [
-        { type: "text", text: `Modelled extra annual studio revenue: £${results.total_extra_annual_revenue_gbp.toLocaleString("en-GB")}` },
+        {
+          type: "text",
+          text: `Modelled extra annual studio revenue: £${results.total_extra_annual_revenue_gbp.toLocaleString("en-GB")}`,
+        },
       ],
       structuredContent: results,
     };

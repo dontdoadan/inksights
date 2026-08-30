@@ -29,7 +29,9 @@ function AuthCallback() {
       }
     };
     finalize();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [navigate]);
 
   return (

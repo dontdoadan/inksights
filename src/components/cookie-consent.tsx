@@ -36,39 +36,84 @@ export function CookieConsent() {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-[90] p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="cookie-title">
+    <div
+      className="fixed inset-x-0 bottom-0 z-[90] p-4 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cookie-title"
+    >
       <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-ink p-5 shadow-2xl shadow-black/50 sm:p-6">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="max-w-2xl">
-            <h2 id="cookie-title" className="font-display text-xl font-black text-ice">Your privacy choices</h2>
+            <h2 id="cookie-title" className="font-display text-xl font-black text-ice">
+              Your privacy choices
+            </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Essential storage keeps the website working. Optional marketing technology helps us measure campaign journeys. It stays off unless you choose it.
+              Essential storage keeps the website working. Optional marketing technology helps us
+              measure campaign journeys. It stays off unless you choose it.
             </p>
           </div>
-          <a href="/cookies" className="shrink-0 text-sm font-semibold text-mint hover:text-mint-soft">Cookie details</a>
+          <a
+            href="/cookies"
+            className="shrink-0 text-sm font-semibold text-mint hover:text-mint-soft"
+          >
+            Cookie details
+          </a>
         </div>
 
         {customising ? (
           <div className="mt-5 space-y-3 border-y border-border py-5">
-            <ConsentRow title="Essential" description="Required for security, saved form progress and consent preferences." checked disabled onChange={() => undefined} />
-            <ConsentRow title="Analytics" description="Reserved for privacy-conscious site measurement. No analytics provider is currently active." checked={analytics} onChange={setAnalytics} />
-            <ConsentRow title="Marketing" description="Allows Meta Pixel to load after consent and record page and conversion events." checked={marketing} onChange={setMarketing} />
+            <ConsentRow
+              title="Essential"
+              description="Required for security, saved form progress and consent preferences."
+              checked
+              disabled
+              onChange={() => undefined}
+            />
+            <ConsentRow
+              title="Analytics"
+              description="Reserved for privacy-conscious site measurement. No analytics provider is currently active."
+              checked={analytics}
+              onChange={setAnalytics}
+            />
+            <ConsentRow
+              title="Marketing"
+              description="Allows Meta Pixel to load after consent and record page and conversion events."
+              checked={marketing}
+              onChange={setMarketing}
+            />
           </div>
         ) : null}
 
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <button type="button" onClick={() => commit(true, true)} className="rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep hover:bg-mint-soft">
+          <button
+            type="button"
+            onClick={() => commit(true, true)}
+            className="rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep hover:bg-mint-soft"
+          >
             Accept optional cookies
           </button>
-          <button type="button" onClick={() => commit(false, false)} className="rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">
+          <button
+            type="button"
+            onClick={() => commit(false, false)}
+            className="rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint"
+          >
             Reject optional cookies
           </button>
           {customising ? (
-            <button type="button" onClick={() => commit(analytics, marketing)} className="rounded-full border border-mint px-5 py-3 text-sm font-bold text-mint hover:bg-mint/10">
+            <button
+              type="button"
+              onClick={() => commit(analytics, marketing)}
+              className="rounded-full border border-mint px-5 py-3 text-sm font-bold text-mint hover:bg-mint/10"
+            >
               Save preferences
             </button>
           ) : (
-            <button type="button" onClick={() => setCustomising(true)} className="rounded-full px-5 py-3 text-sm font-semibold text-muted-foreground hover:text-mint">
+            <button
+              type="button"
+              onClick={() => setCustomising(true)}
+              className="rounded-full px-5 py-3 text-sm font-semibold text-muted-foreground hover:text-mint"
+            >
               Manage preferences
             </button>
           )}
@@ -95,7 +140,9 @@ function ConsentRow({
     <label className="flex items-start justify-between gap-5 rounded-xl bg-ink-deep p-4">
       <span>
         <span className="block font-bold text-ice">{title}</span>
-        <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{description}</span>
+        <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
+          {description}
+        </span>
       </span>
       <input
         type="checkbox"

@@ -31,7 +31,10 @@ function StudioGrowthCheckRecoveryRoute() {
   return (
     <main className="min-h-screen bg-ink-deep px-6 py-20 text-foreground">
       <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-ink p-8 shadow-2xl shadow-black/10 md:p-12">
-        <Link to="/" className="inline-flex items-center gap-2 font-display text-xl font-black text-ice">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 font-display text-xl font-black text-ice"
+        >
           INK<span className="text-mint">SIGHT</span>
         </Link>
         <div className="mt-10 inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-mint">
@@ -41,7 +44,8 @@ function StudioGrowthCheckRecoveryRoute() {
           Opening the live Studio Growth Check.
         </h1>
         <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-          INKSIGHT is transferring you to the current diagnostic service. Your existing campaign parameters are preserved.
+          INKSIGHT is transferring you to the current diagnostic service. Your existing campaign
+          parameters are preserved.
         </p>
         <a
           href={LIVE_GROWTH_CHECK}

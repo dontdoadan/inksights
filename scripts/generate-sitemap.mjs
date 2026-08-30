@@ -28,9 +28,12 @@ const routes = [
   ["/accessibility", "yearly", "0.3"],
 ];
 
-const body = routes.map(([path, changefreq, priority]) =>
-  `  <url><loc>${domain}${path}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`,
-).join("\n");
+const body = routes
+  .map(
+    ([path, changefreq, priority]) =>
+      `  <url><loc>${domain}${path}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`,
+  )
+  .join("\n");
 
 writeFileSync(
   "public/sitemap.xml",

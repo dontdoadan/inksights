@@ -26,8 +26,15 @@ function NotFoundComponent() {
           The page may have moved. Use the resource library or return to the INKSIGHT homepage.
         </p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Link to="/" className="rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Go home</Link>
-          <a href="/resources" className="rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">Browse resources</a>
+          <Link to="/" className="rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">
+            Go home
+          </Link>
+          <a
+            href="/resources"
+            className="rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint"
+          >
+            Browse resources
+          </a>
         </div>
       </div>
     </div>
@@ -45,7 +52,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-ink-deep px-4 text-ice">
       <div className="max-w-md text-center">
         <h1 className="font-display text-3xl font-black">This page did not load</h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Try the page again or return to the homepage.</p>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Try the page again or return to the homepage.
+        </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
@@ -56,7 +65,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          <a href="/" className="rounded-full border border-border px-5 py-3 text-sm font-bold text-ice">Go home</a>
+          <a
+            href="/"
+            className="rounded-full border border-border px-5 py-3 text-sm font-bold text-ice"
+          >
+            Go home
+          </a>
         </div>
       </div>
     </div>
@@ -83,14 +97,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:image", content: "https://getinksight.co.uk/og/inksight-growth-systems.png" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: "https://getinksight.co.uk/og/inksight-growth-systems.png" },
+      {
+        name: "twitter:image",
+        content: "https://getinksight.co.uk/og/inksight-growth-systems.png",
+      },
     ],
     links: [
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hind:wght@300;400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Archivo+Black&family=Hind:wght@300;400;500;600;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -102,7 +122,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en-GB">
-      <head><HeadContent /></head>
+      <head>
+        <HeadContent />
+      </head>
       <body>
         {children}
         <CookieConsent />
@@ -128,10 +150,15 @@ function RootComponent() {
         router.invalidate();
         if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
       });
-      (window as unknown as { __inksightAuthSub?: { unsubscribe: () => void } }).__inksightAuthSub?.unsubscribe();
-      (window as unknown as { __inksightAuthSub?: { unsubscribe: () => void } }).__inksightAuthSub = sub.subscription;
+      (
+        window as unknown as { __inksightAuthSub?: { unsubscribe: () => void } }
+      ).__inksightAuthSub?.unsubscribe();
+      (window as unknown as { __inksightAuthSub?: { unsubscribe: () => void } }).__inksightAuthSub =
+        sub.subscription;
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [queryClient, router]);
 
   useEffect(() => {

@@ -60,7 +60,12 @@ const levers = [
     label: "Value",
     description:
       "Increase the value created per transaction through appropriate project planning, aftercare, retail, packages and premium options.",
-    examples: ["Aftercare attachment", "Project packages", "Premium options", "Better pricing structure"],
+    examples: [
+      "Aftercare attachment",
+      "Project packages",
+      "Premium options",
+      "Better pricing structure",
+    ],
   },
   {
     icon: Repeat2,
@@ -130,12 +135,17 @@ function GrowthModel() {
         title={<>Grow the studio through three measurable revenue levers.</>}
         description={
           <>
-            Revenue is modelled as <strong>clients × average transaction value × purchase frequency</strong>. INKSIGHT diagnoses the weakest lever, implements the smallest useful system and measures the resulting change.
+            Revenue is modelled as{" "}
+            <strong>clients × average transaction value × purchase frequency</strong>. INKSIGHT
+            diagnoses the weakest lever, implements the smallest useful system and measures the
+            resulting change.
           </>
         }
       >
         <PrimaryButton href="/studio-growth-check">Diagnose the studio</PrimaryButton>
-        <SecondaryButton href="/offers/founding-studio-pilot">Review the implementation package</SecondaryButton>
+        <SecondaryButton href="/offers/founding-studio-pilot">
+          Review the implementation package
+        </SecondaryButton>
       </PageHero>
 
       <section className="border-b border-border bg-ink">
@@ -154,7 +164,9 @@ function GrowthModel() {
                     <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-mint/10 text-mint">
                       <Icon className="h-6 w-6" />
                     </span>
-                    <span className="text-xs font-bold uppercase tracking-[0.16em] text-mint">{lever.label}</span>
+                    <span className="text-xs font-bold uppercase tracking-[0.16em] text-mint">
+                      {lever.label}
+                    </span>
                   </div>
                   <h2 className="mt-7 font-display text-2xl font-black text-ice">{lever.title}</h2>
                   <p className="mt-3 leading-relaxed text-muted-foreground">{lever.description}</p>
@@ -185,28 +197,78 @@ function GrowthModel() {
             <Card className="bg-ink p-7">
               <h2 className="font-display text-2xl font-black text-ice">Baseline</h2>
               <div className="mt-6 grid gap-5 sm:grid-cols-3">
-                <NumberField label="Clients" value={baselineClients} min={0} step={1} onChange={setBaselineClients} />
-                <NumberField label="Average value" value={baselineValue} min={0} step={25} prefix="£" onChange={setBaselineValue} />
-                <NumberField label="Purchases per client" value={baselineFrequency} min={0} step={0.05} onChange={setBaselineFrequency} />
+                <NumberField
+                  label="Clients"
+                  value={baselineClients}
+                  min={0}
+                  step={1}
+                  onChange={setBaselineClients}
+                />
+                <NumberField
+                  label="Average value"
+                  value={baselineValue}
+                  min={0}
+                  step={25}
+                  prefix="£"
+                  onChange={setBaselineValue}
+                />
+                <NumberField
+                  label="Purchases per client"
+                  value={baselineFrequency}
+                  min={0}
+                  step={0.05}
+                  onChange={setBaselineFrequency}
+                />
               </div>
               <div className="mt-7 rounded-2xl border border-border bg-ink-deep p-6">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">Baseline revenue</p>
-                <p className="mt-2 font-display text-5xl font-black text-ice">{currency(model.baseline)}</p>
-                <p className="mt-3 text-sm text-muted-foreground">{baselineClients} × {currency(baselineValue)} × {baselineFrequency}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  Baseline revenue
+                </p>
+                <p className="mt-2 font-display text-5xl font-black text-ice">
+                  {currency(model.baseline)}
+                </p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {baselineClients} × {currency(baselineValue)} × {baselineFrequency}
+                </p>
               </div>
             </Card>
 
             <Card className="border-mint/35 bg-ink p-7">
               <h2 className="font-display text-2xl font-black text-ice">Improved position</h2>
               <div className="mt-6 grid gap-5 sm:grid-cols-3">
-                <NumberField label="Clients" value={improvedClients} min={0} step={1} onChange={setImprovedClients} />
-                <NumberField label="Average value" value={improvedValue} min={0} step={25} prefix="£" onChange={setImprovedValue} />
-                <NumberField label="Purchases per client" value={improvedFrequency} min={0} step={0.05} onChange={setImprovedFrequency} />
+                <NumberField
+                  label="Clients"
+                  value={improvedClients}
+                  min={0}
+                  step={1}
+                  onChange={setImprovedClients}
+                />
+                <NumberField
+                  label="Average value"
+                  value={improvedValue}
+                  min={0}
+                  step={25}
+                  prefix="£"
+                  onChange={setImprovedValue}
+                />
+                <NumberField
+                  label="Purchases per client"
+                  value={improvedFrequency}
+                  min={0}
+                  step={0.05}
+                  onChange={setImprovedFrequency}
+                />
               </div>
               <div className="mt-7 rounded-2xl border border-mint/35 bg-mint/5 p-6">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Improved revenue</p>
-                <p className="mt-2 font-display text-5xl font-black text-mint">{currency(model.improved)}</p>
-                <p className="mt-3 text-sm text-muted-foreground">{improvedClients} × {currency(improvedValue)} × {improvedFrequency}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">
+                  Improved revenue
+                </p>
+                <p className="mt-2 font-display text-5xl font-black text-mint">
+                  {currency(model.improved)}
+                </p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {improvedClients} × {currency(improvedValue)} × {improvedFrequency}
+                </p>
               </div>
             </Card>
           </div>
@@ -221,7 +283,9 @@ function GrowthModel() {
           <Card className="mt-6 bg-ink p-7">
             <div className="grid gap-6 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
               <div>
-                <label className="text-sm font-bold text-ice" htmlFor="performance-fee">Illustrative performance fee: {illustrativeFee}%</label>
+                <label className="text-sm font-bold text-ice" htmlFor="performance-fee">
+                  Illustrative performance fee: {illustrativeFee}%
+                </label>
                 <input
                   id="performance-fee"
                   type="range"
@@ -235,7 +299,12 @@ function GrowthModel() {
               </div>
               <div className="flex gap-3 rounded-2xl border border-amber-300/35 bg-amber-300/5 p-5 text-sm leading-relaxed text-amber-100">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-200" />
-                <p>This percentage is for modelling only. INKSIGHT has no default public performance-fee percentage. A fee applies only where the signed scope defines the baseline, direct costs, attribution adjustments, measurement window and approval process.</p>
+                <p>
+                  This percentage is for modelling only. INKSIGHT has no default public
+                  performance-fee percentage. A fee applies only where the signed scope defines the
+                  baseline, direct costs, attribution adjustments, measurement window and approval
+                  process.
+                </p>
               </div>
             </div>
           </Card>
@@ -251,16 +320,32 @@ function GrowthModel() {
           />
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {[
-              [BarChart3, "Diagnosis or implementation fee", "Pays for baseline work, analysis, setup and delivery even where later performance cannot be attributed reliably."],
-              [TrendingUp, "Ongoing management fee", "Pays for monitoring, exception handling, reporting, maintenance and continuing optimisation."],
-              [ArrowRight, "Optional verified-uplift fee", "An agreed percentage may apply only to verified incremental revenue or contribution that meets the written attribution rules."],
+              [
+                BarChart3,
+                "Diagnosis or implementation fee",
+                "Pays for baseline work, analysis, setup and delivery even where later performance cannot be attributed reliably.",
+              ],
+              [
+                TrendingUp,
+                "Ongoing management fee",
+                "Pays for monitoring, exception handling, reporting, maintenance and continuing optimisation.",
+              ],
+              [
+                ArrowRight,
+                "Optional verified-uplift fee",
+                "An agreed percentage may apply only to verified incremental revenue or contribution that meets the written attribution rules.",
+              ],
             ].map(([Icon, title, description]) => {
               const ItemIcon = Icon as typeof BarChart3;
               return (
                 <Card key={String(title)} className="bg-ink-deep p-7">
                   <ItemIcon className="h-7 w-7 text-mint" />
-                  <h2 className="mt-6 font-display text-2xl font-black text-ice">{String(title)}</h2>
-                  <p className="mt-3 leading-relaxed text-muted-foreground">{String(description)}</p>
+                  <h2 className="mt-6 font-display text-2xl font-black text-ice">
+                    {String(title)}
+                  </h2>
+                  <p className="mt-3 leading-relaxed text-muted-foreground">
+                    {String(description)}
+                  </p>
                 </Card>
               );
             })}
@@ -276,10 +361,26 @@ function GrowthModel() {
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
-              ["01", "Baseline", "Record clients, average transaction value, frequency, capacity, prices, advertising and other material conditions."],
-              ["02", "Implement", "Document exactly what INKSIGHT changes and which growth lever each intervention is intended to affect."],
-              ["03", "Verify", "Measure collected revenue or agreed contribution over the defined window and apply agreed adjustments."],
-              ["04", "Approve", "The studio reviews the evidence before any performance-linked invoice is raised."],
+              [
+                "01",
+                "Baseline",
+                "Record clients, average transaction value, frequency, capacity, prices, advertising and other material conditions.",
+              ],
+              [
+                "02",
+                "Implement",
+                "Document exactly what INKSIGHT changes and which growth lever each intervention is intended to affect.",
+              ],
+              [
+                "03",
+                "Verify",
+                "Measure collected revenue or agreed contribution over the defined window and apply agreed adjustments.",
+              ],
+              [
+                "04",
+                "Approve",
+                "The studio reviews the evidence before any performance-linked invoice is raised.",
+              ],
             ].map(([number, title, text]) => (
               <Card key={number} className="bg-ink p-6">
                 <div className="font-display text-4xl font-black text-mint/35">{number}</div>
@@ -289,10 +390,15 @@ function GrowthModel() {
             ))}
           </div>
           <div className="mt-10 flex flex-wrap gap-3">
-            <PrimaryButton href="/studio-growth-check">Start with the free Growth Check</PrimaryButton>
+            <PrimaryButton href="/studio-growth-check">
+              Start with the free Growth Check
+            </PrimaryButton>
             <SecondaryButton href="/offers/revenue-audit">Review the Revenue Audit</SecondaryButton>
           </div>
-          <p className="mt-6 text-xs text-muted-foreground">Commercial policy version {POLICY_VERSION}. Calculators provide educational illustrations only.</p>
+          <p className="mt-6 text-xs text-muted-foreground">
+            Commercial policy version {POLICY_VERSION}. Calculators provide educational
+            illustrations only.
+          </p>
         </div>
       </section>
     </PublicShell>
@@ -316,7 +422,9 @@ function NumberField({
 }) {
   return (
     <label className="block">
-      <span className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
+      <span className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+        {label}
+      </span>
       <div className="mt-2 flex items-center rounded-xl border border-border bg-ink-deep px-4 py-3 focus-within:border-mint">
         {prefix ? <span className="mr-1 text-muted-foreground">{prefix}</span> : null}
         <input
@@ -332,11 +440,23 @@ function NumberField({
   );
 }
 
-function Metric({ label, value, emphasis = false }: { label: string; value: string; emphasis?: boolean }) {
+function Metric({
+  label,
+  value,
+  emphasis = false,
+}: {
+  label: string;
+  value: string;
+  emphasis?: boolean;
+}) {
   return (
-    <div className={`rounded-2xl border p-5 ${emphasis ? "border-mint/40 bg-mint/5" : "border-border bg-ink"}`}>
+    <div
+      className={`rounded-2xl border p-5 ${emphasis ? "border-mint/40 bg-mint/5" : "border-border bg-ink"}`}
+    >
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-      <p className={`mt-2 font-display text-3xl font-black ${emphasis ? "text-mint" : "text-ice"}`}>{value}</p>
+      <p className={`mt-2 font-display text-3xl font-black ${emphasis ? "text-mint" : "text-ice"}`}>
+        {value}
+      </p>
     </div>
   );
 }

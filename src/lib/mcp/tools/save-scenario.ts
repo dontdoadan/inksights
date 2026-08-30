@@ -23,12 +23,17 @@ export default defineTool({
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
   handler: async ({ id, name, audience, inputs, results }, ctx) => {
-    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+    if (!ctx.isAuthenticated())
+      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     const sb = supabaseForUser(ctx);
     const payload = { name, audience, inputs, results: results ?? {} };
     const { data, error } = id
       ? await sb.from("scenarios").update(payload).eq("id", id).select().single()
-      : await sb.from("scenarios").insert({ ...payload, user_id: ctx.getUserId() }).select().single();
+      : await sb
+          .from("scenarios")
+          .insert({ ...payload, user_id: ctx.getUserId() })
+          .select()
+          .single();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
       content: [{ type: "text", text: `${id ? "Updated" : "Saved"} scenario '${name}'.` }],

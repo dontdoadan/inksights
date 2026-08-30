@@ -9,13 +9,10 @@ const allowedOrigins = new Set([
 ]);
 
 function cors(origin: string | null) {
-  const allowed = origin && allowedOrigins.has(origin)
-    ? origin
-    : "https://getinkcare.co.uk";
+  const allowed = origin && allowedOrigins.has(origin) ? origin : "https://getinkcare.co.uk";
   return {
     "Access-Control-Allow-Origin": allowed,
-    "Access-Control-Allow-Headers":
-      "content-type,apikey,authorization,x-client-info",
+    "Access-Control-Allow-Headers": "content-type,apikey,authorization,x-client-info",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Cache-Control": "no-store",
     "Content-Type": "application/json",
@@ -50,10 +47,7 @@ function serviceKey() {
 }
 
 async function digest(value: string) {
-  const bytes = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(value),
-  );
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return Array.from(new Uint8Array(bytes))
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
@@ -61,21 +55,16 @@ async function digest(value: string) {
 
 async function rest(path: string, init: RequestInit = {}) {
   const key = serviceKey();
-  const authorization = key.startsWith("sb_secret_")
-    ? {}
-    : { Authorization: `Bearer ${key}` };
-  const result = await fetch(
-    `${Deno.env.get("SUPABASE_URL")}/rest/v1/${path}`,
-    {
-      ...init,
-      headers: {
-        apikey: key,
-        ...authorization,
-        "Content-Type": "application/json",
-        ...(init.headers || {}),
-      },
+  const authorization = key.startsWith("sb_secret_") ? {} : { Authorization: `Bearer ${key}` };
+  const result = await fetch(`${Deno.env.get("SUPABASE_URL")}/rest/v1/${path}`, {
+    ...init,
+    headers: {
+      apikey: key,
+      ...authorization,
+      "Content-Type": "application/json",
+      ...(init.headers || {}),
     },
-  );
+  });
   const text = await result.text();
   if (!result.ok) {
     console.error("REST failure", result.status, text.slice(0, 500));
@@ -121,30 +110,21 @@ Deno.serve(async (req: Request) => {
   if (!name || !validEmail || !topic || message.length < 10 || !consent) {
     return response(
       {
-        error:
-          "Name, valid email, topic, message and consent are required.",
+        error: "Name, valid email, topic, message and consent are required.",
       },
       400,
       origin,
     );
   }
 
-  const ip = (req.headers.get("x-forwarded-for") || "unknown")
-    .split(",")[0]
-    .trim();
-  const fingerprint = await digest(
-    `${ip}|contact|${Deno.env.get("RATE_LIMIT_SALT") || "inkcare"}`,
-  );
+  const ip = (req.headers.get("x-forwarded-for") || "unknown").split(",")[0].trim();
+  const fingerprint = await digest(`${ip}|contact|${Deno.env.get("RATE_LIMIT_SALT") || "inkcare"}`);
   const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const recent = await rest(
     `growth_rate_limits?select=id&fingerprint=eq.${encodeURIComponent(fingerprint)}&action=eq.contact&window_start=gte.${encodeURIComponent(since)}`,
   );
   if (Array.isArray(recent) && recent.length >= 5) {
-    return response(
-      { error: "Too many messages. Try again later." },
-      429,
-      origin,
-    );
+    return response({ error: "Too many messages. Try again later." }, 429, origin);
   }
   await rest("growth_rate_limits", {
     method: "POST",
@@ -173,11 +153,7 @@ Deno.serve(async (req: Request) => {
   });
   const contact = Array.isArray(inserted) ? inserted[0] : null;
   if (!contact?.id) {
-    return response(
-      { error: "The request could not be stored." },
-      500,
-      origin,
-    );
+    return response({ error: "The request could not be stored." }, 500, origin);
   }
 
   await rest("communication_outbox", {
@@ -212,8 +188,7 @@ Deno.serve(async (req: Request) => {
     {
       ok: true,
       contact_request_id: contact.id,
-      message:
-        "Your message has been recorded. INKCARE will reply using the email provided.",
+      message: "Your message has been recorded. INKCARE will reply using the email provided.",
     },
     200,
     origin,

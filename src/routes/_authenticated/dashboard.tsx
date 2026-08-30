@@ -52,11 +52,24 @@ function Dashboard() {
     const { data: userData } = await supabase.auth.getUser();
     setEmail(userData.user?.email ?? "");
     const uid = userData.user?.id;
-    if (!uid) { setLoading(false); return; }
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
     const [{ data: p }, { data: s }, { data: sub }] = await Promise.all([
-      supabase.from("profiles").select("full_name, studio_name, location, artist_count, onboarding_stage").eq("id", uid).maybeSingle(),
-      supabase.from("scenarios").select("id, name, inputs, results, updated_at").order("updated_at", { ascending: false }),
-      supabase.from("audit_submissions").select("id, full_name, email, studio_name, status, created_at").order("created_at", { ascending: false }),
+      supabase
+        .from("profiles")
+        .select("full_name, studio_name, location, artist_count, onboarding_stage")
+        .eq("id", uid)
+        .maybeSingle(),
+      supabase
+        .from("scenarios")
+        .select("id, name, inputs, results, updated_at")
+        .order("updated_at", { ascending: false }),
+      supabase
+        .from("audit_submissions")
+        .select("id, full_name, email, studio_name, status, created_at")
+        .order("created_at", { ascending: false }),
     ]);
     setProfile(p as Profile | null);
     setScenarios((s ?? []) as Scenario[]);
@@ -64,7 +77,9 @@ function Dashboard() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -97,9 +112,14 @@ function Dashboard() {
             </span>
           </Link>
           <div className="flex items-center gap-4 text-sm">
-            <Link to="/growth-model" className="text-muted-foreground hover:text-mint">Growth Model</Link>
+            <Link to="/growth-model" className="text-muted-foreground hover:text-mint">
+              Growth Model
+            </Link>
             <span className="text-muted-foreground hidden md:inline">{email}</span>
-            <button onClick={handleSignOut} className="rounded-full border border-border px-4 py-1.5 hover:border-mint hover:text-mint transition-colors">
+            <button
+              onClick={handleSignOut}
+              className="rounded-full border border-border px-4 py-1.5 hover:border-mint hover:text-mint transition-colors"
+            >
               Sign out
             </button>
           </div>
@@ -116,17 +136,12 @@ function Dashboard() {
           </p>
         </section>
 
-        {loading ? (
-          <p className="text-muted-foreground">Loading…</p>
-        ) : null}
+        {loading ? <p className="text-muted-foreground">Loading…</p> : null}
 
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display font-bold text-2xl">Saved scenarios</h2>
-            <Link
-              to="/growth-model"
-              className="text-sm text-mint hover:underline"
-            >
+            <Link to="/growth-model" className="text-sm text-mint hover:underline">
               + Build a new scenario
             </Link>
           </div>
@@ -134,7 +149,9 @@ function Dashboard() {
             <div className="rounded-2xl border border-border/60 bg-ink-elev/40 p-8 text-center">
               <p className="text-muted-foreground">
                 No scenarios saved yet. Head to the{" "}
-                <Link to="/growth-model" className="text-mint hover:underline">Growth Model</Link>{" "}
+                <Link to="/growth-model" className="text-mint hover:underline">
+                  Growth Model
+                </Link>{" "}
                 page and save one — it will appear here.
               </p>
             </div>
@@ -161,7 +178,9 @@ function Dashboard() {
                       {gbp(s.results.totalYr)}
                     </p>
                   ) : null}
-                  <p className="text-xs text-muted-foreground">extra annual studio revenue (modelled)</p>
+                  <p className="text-xs text-muted-foreground">
+                    extra annual studio revenue (modelled)
+                  </p>
                 </div>
               ))}
             </div>
@@ -186,9 +205,13 @@ function Dashboard() {
                 <tbody>
                   {submissions.map((sub) => (
                     <tr key={sub.id} className="border-t border-border/40">
-                      <td className="px-4 py-3">{new Date(sub.created_at).toLocaleDateString("en-GB")}</td>
+                      <td className="px-4 py-3">
+                        {new Date(sub.created_at).toLocaleDateString("en-GB")}
+                      </td>
                       <td className="px-4 py-3">{sub.studio_name || "—"}</td>
-                      <td className="px-4 py-3">{sub.full_name} · {sub.email}</td>
+                      <td className="px-4 py-3">
+                        {sub.full_name} · {sub.email}
+                      </td>
                       <td className="px-4 py-3">
                         <span className="rounded-full bg-mint/10 text-mint px-2 py-0.5 text-xs font-semibold">
                           {sub.status}
@@ -211,7 +234,13 @@ function Dashboard() {
   );
 }
 
-function ProfileForm({ profile, onSave }: { profile: Profile | null; onSave: (p: Partial<Profile>) => void }) {
+function ProfileForm({
+  profile,
+  onSave,
+}: {
+  profile: Profile | null;
+  onSave: (p: Partial<Profile>) => void;
+}) {
   const [studioName, setStudioName] = useState(profile?.studio_name ?? "");
   const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [location, setLocation] = useState(profile?.location ?? "");
@@ -238,22 +267,43 @@ function ProfileForm({ profile, onSave }: { profile: Profile | null; onSave: (p:
     >
       <label className="text-sm space-y-1.5">
         <span className="text-muted-foreground">Your name</span>
-        <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-full bg-ink-deep border border-border px-4 py-2.5 text-ice focus:outline-none focus:border-mint" />
+        <input
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="w-full rounded-full bg-ink-deep border border-border px-4 py-2.5 text-ice focus:outline-none focus:border-mint"
+        />
       </label>
       <label className="text-sm space-y-1.5">
         <span className="text-muted-foreground">Studio name</span>
-        <input value={studioName} onChange={(e) => setStudioName(e.target.value)} className="w-full rounded-full bg-ink-deep border border-border px-4 py-2.5 text-ice focus:outline-none focus:border-mint" />
+        <input
+          value={studioName}
+          onChange={(e) => setStudioName(e.target.value)}
+          className="w-full rounded-full bg-ink-deep border border-border px-4 py-2.5 text-ice focus:outline-none focus:border-mint"
+        />
       </label>
       <label className="text-sm space-y-1.5">
         <span className="text-muted-foreground">Location</span>
-        <input value={location} onChange={(e) => setLocation(e.target.value)} className="w-full rounded-full bg-ink-deep border border-border px-4 py-2.5 text-ice focus:outline-none focus:border-mint" />
+        <input
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full rounded-full bg-ink-deep border border-border px-4 py-2.5 text-ice focus:outline-none focus:border-mint"
+        />
       </label>
       <label className="text-sm space-y-1.5">
         <span className="text-muted-foreground">Number of artists</span>
-        <input type="number" min={0} value={artistCount} onChange={(e) => setArtistCount(e.target.value === "" ? "" : Number(e.target.value))} className="w-full rounded-full bg-ink-deep border border-border px-4 py-2.5 text-ice focus:outline-none focus:border-mint" />
+        <input
+          type="number"
+          min={0}
+          value={artistCount}
+          onChange={(e) => setArtistCount(e.target.value === "" ? "" : Number(e.target.value))}
+          className="w-full rounded-full bg-ink-deep border border-border px-4 py-2.5 text-ice focus:outline-none focus:border-mint"
+        />
       </label>
       <div className="sm:col-span-2">
-        <button type="submit" className="rounded-full bg-mint text-ink-deep px-5 py-2.5 font-bold hover:bg-mint-soft transition-colors">
+        <button
+          type="submit"
+          className="rounded-full bg-mint text-ink-deep px-5 py-2.5 font-bold hover:bg-mint-soft transition-colors"
+        >
           Save profile
         </button>
       </div>

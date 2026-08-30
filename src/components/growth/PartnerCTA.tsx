@@ -16,8 +16,8 @@ export function PartnerCTA() {
               Partner with <span className="text-mint">INKSIGHT.</span>
             </h2>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed">
-              We're building a studio growth platform powered by aftercare. If
-              you're an investor, operator, or strategic partner — let's talk.
+              We're building a studio growth platform powered by aftercare. If you're an investor,
+              operator, or strategic partner — let's talk.
             </p>
 
             {submitted ? (
@@ -38,12 +38,7 @@ export function PartnerCTA() {
                 }}
               >
                 <Input name="name" placeholder="Full name" required />
-                <Input
-                  name="email"
-                  type="email"
-                  placeholder="you@company.com"
-                  required
-                />
+                <Input name="email" type="email" placeholder="you@company.com" required />
                 <Input name="company" placeholder="Company" />
                 <select
                   name="role"

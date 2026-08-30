@@ -23,7 +23,8 @@ export default defineTool({
   },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
   handler: async (input, ctx) => {
-    if (!ctx.isAuthenticated()) return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
+    if (!ctx.isAuthenticated())
+      return { content: [{ type: "text", text: "Not authenticated" }], isError: true };
     const { data, error } = await supabaseForUser(ctx)
       .from("audit_submissions")
       .insert({ ...input, user_id: ctx.getUserId() })
@@ -31,7 +32,12 @@ export default defineTool({
       .single();
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
     return {
-      content: [{ type: "text", text: `Audit request submitted. INKSIGHT will be in touch within 48 hours.` }],
+      content: [
+        {
+          type: "text",
+          text: `Audit request submitted. INKSIGHT will be in touch within 48 hours.`,
+        },
+      ],
       structuredContent: { submission: data },
     };
   },

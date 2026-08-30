@@ -51,7 +51,8 @@ export const publicOffers: PublicOffer[] = [
       "A tightly scoped visibility and conversion correction for UK tattoo studios that already produce strong work but present it through a weak public booking path.",
     problem:
       "Potential clients reach the studio profile or website but cannot quickly understand the work, trust the studio or identify the correct booking action.",
-    timeframe: "Three working days after payment, complete intake and the required access are received.",
+    timeframe:
+      "Three working days after payment, complete intake and the required access are received.",
     idealFor: [
       "Independent and multi-artist UK tattoo studios",
       "Studios with credible work but inconsistent enquiries",
@@ -81,15 +82,39 @@ export const publicOffers: PublicOffer[] = [
       "Complex CRM or booking-system migration",
     ],
     process: [
-      { title: "Day 1 — Diagnose", description: "Review the public profile, website, booking route, local search presentation and first-impression proof." },
-      { title: "Day 2 — Correct", description: "Produce exact copy, CTA, pinned-content and visibility corrections within the agreed scope." },
-      { title: "Day 3 — Implement and verify", description: "Apply or hand over approved corrections, verify the route and identify the next measurable constraint." },
+      {
+        title: "Day 1 — Diagnose",
+        description:
+          "Review the public profile, website, booking route, local search presentation and first-impression proof.",
+      },
+      {
+        title: "Day 2 — Correct",
+        description:
+          "Produce exact copy, CTA, pinned-content and visibility corrections within the agreed scope.",
+      },
+      {
+        title: "Day 3 — Implement and verify",
+        description:
+          "Apply or hand over approved corrections, verify the route and identify the next measurable constraint.",
+      },
     ],
     faqs: [
-      ["When does the three-day period begin?", "Only after payment, complete intake, required access and a named approver are in place."],
-      ["Does checkout require terms acceptance?", "Yes. The live Stripe checkout requires the buyer to actively accept INKSIGHT's Terms of Service before completing payment."],
-      ["Does £249 include ad spend?", "No. The offer fixes the public conversion foundation before paid traffic is considered."],
-      ["What happens afterwards?", "The studio receives a follow-up review and a recommendation to stop, maintain, or consider a larger system only where the evidence supports it."],
+      [
+        "When does the three-day period begin?",
+        "Only after payment, complete intake, required access and a named approver are in place.",
+      ],
+      [
+        "Does checkout require terms acceptance?",
+        "Yes. The live Stripe checkout requires the buyer to actively accept INKSIGHT's Terms of Service before completing payment.",
+      ],
+      [
+        "Does £249 include ad spend?",
+        "No. The offer fixes the public conversion foundation before paid traffic is considered.",
+      ],
+      [
+        "What happens afterwards?",
+        "The studio receives a follow-up review and a recommendation to stop, maintain, or consider a larger system only where the evidence supports it.",
+      ],
     ],
   },
   {
@@ -137,14 +162,34 @@ export const publicOffers: PublicOffer[] = [
       "Review manipulation or fabricated reviews",
     ],
     process: [
-      { title: "Baseline", description: "Record the studio's current public profiles, local visibility and known risks." },
-      { title: "Monitor", description: "Check agreed signals and compare meaningful changes against the baseline." },
-      { title: "Escalate", description: "Send a prioritised correction with evidence when a relevant threshold is crossed." },
+      {
+        title: "Baseline",
+        description:
+          "Record the studio's current public profiles, local visibility and known risks.",
+      },
+      {
+        title: "Monitor",
+        description: "Check agreed signals and compare meaningful changes against the baseline.",
+      },
+      {
+        title: "Escalate",
+        description:
+          "Send a prioritised correction with evidence when a relevant threshold is crossed.",
+      },
     ],
     faqs: [
-      ["Is this rank tracking only?", "No. It combines available search signals with public-profile, reputation and conversion checks."],
-      ["Will every fluctuation create an alert?", "No. The goal is to escalate changes that affect action, trust or booking potential."],
-      ["How does cancellation work?", "Cancel before the next renewal to avoid the next charge. Service continues until the end of the paid billing period."],
+      [
+        "Is this rank tracking only?",
+        "No. It combines available search signals with public-profile, reputation and conversion checks.",
+      ],
+      [
+        "Will every fluctuation create an alert?",
+        "No. The goal is to escalate changes that affect action, trust or booking potential.",
+      ],
+      [
+        "How does cancellation work?",
+        "Cancel before the next renewal to avoid the next charge. Service continues until the end of the paid billing period.",
+      ],
     ],
   },
   {
@@ -156,7 +201,8 @@ export const publicOffers: PublicOffer[] = [
     commercialStatus: "Active sales-assisted service",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
-    performancePricing: "May define a later performance-linked arrangement, but the audit itself is quoted in writing.",
+    performancePricing:
+      "May define a later performance-linked arrangement, but the audit itself is quoted in writing.",
     summary:
       "A structured review of the commercial path from discovery and enquiry through booking, attendance, transaction value, repeat work and post-session revenue.",
     problem:
@@ -190,14 +236,31 @@ export const publicOffers: PublicOffer[] = [
     ],
     process: [
       { title: "Map", description: "Document the current path from discovery to repeat purchase." },
-      { title: "Measure", description: "Establish clients, average transaction value, frequency and material operating conditions." },
-      { title: "Prioritise", description: "Rank corrections by dependency, effort, risk and likely commercial usefulness." },
+      {
+        title: "Measure",
+        description:
+          "Establish clients, average transaction value, frequency and material operating conditions.",
+      },
+      {
+        title: "Prioritise",
+        description:
+          "Rank corrections by dependency, effort, risk and likely commercial usefulness.",
+      },
     ],
     faqs: [
       ["Is this accountancy advice?", "No. It is an operational and commercial systems diagnosis."],
-      ["Do we need perfect data?", "No, but missing information is marked as unknown rather than replaced with invented assumptions."],
-      ["Can it lead to performance pricing?", "Yes, only where a later written scope defines the baseline, fee percentage, attribution rules, adjustments, evidence and approval process."],
-      ["What will it cost?", "A fixed quote is issued after the Growth Check confirms the locations, data, workflows and questions to review."],
+      [
+        "Do we need perfect data?",
+        "No, but missing information is marked as unknown rather than replaced with invented assumptions.",
+      ],
+      [
+        "Can it lead to performance pricing?",
+        "Yes, only where a later written scope defines the baseline, fee percentage, attribution rules, adjustments, evidence and approval process.",
+      ],
+      [
+        "What will it cost?",
+        "A fixed quote is issued after the Growth Check confirms the locations, data, workflows and questions to review.",
+      ],
     ],
   },
   {
@@ -209,12 +272,14 @@ export const publicOffers: PublicOffer[] = [
     commercialStatus: "Active sales-assisted implementation capability",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
-    performancePricing: "Optional verified-uplift terms may be included in the written scope where attribution is defensible.",
+    performancePricing:
+      "Optional verified-uplift terms may be included in the written scope where attribution is defensible.",
     summary:
       "A studio-specific enquiry, booking, reminder, cancellation, follow-up and client-return system using tools the studio can realistically maintain.",
     problem:
       "Enquiries are fragmented, responses are inconsistent, booking protection is manual and clients leave without a structured return path.",
-    timeframe: "Phased implementation after workflow mapping, scope approval and access confirmation.",
+    timeframe:
+      "Phased implementation after workflow mapping, scope approval and access confirmation.",
     idealFor: [
       "Studios handling meaningful enquiry volume manually",
       "Teams losing time to repetitive booking administration",
@@ -243,15 +308,40 @@ export const publicOffers: PublicOffer[] = [
       "Guaranteed booking, retention or revenue results",
     ],
     process: [
-      { title: "Design", description: "Agree the controlled client journey, ownership, measures and exception paths." },
-      { title: "Build", description: "Configure forms, records, routing, reminders and follow-up in the approved stack." },
-      { title: "Validate", description: "Run labelled sample records and dry-run scenarios before a controlled live launch." },
-      { title: "Measure", description: "Track clients, transaction value, frequency, response time, cancellations and return activity." },
+      {
+        title: "Design",
+        description:
+          "Agree the controlled client journey, ownership, measures and exception paths.",
+      },
+      {
+        title: "Build",
+        description:
+          "Configure forms, records, routing, reminders and follow-up in the approved stack.",
+      },
+      {
+        title: "Validate",
+        description:
+          "Run labelled sample records and dry-run scenarios before a controlled live launch.",
+      },
+      {
+        title: "Measure",
+        description:
+          "Track clients, transaction value, frequency, response time, cancellations and return activity.",
+      },
     ],
     faqs: [
-      ["Does INKSIGHT replace the studio's booking platform?", "Not automatically. The first preference is to improve the existing stack where it can support the required workflow."],
-      ["Can every message be automated?", "No. High-risk, emotional, unusual or clinically relevant situations need human escalation."],
-      ["What will it cost?", "The price is quoted after diagnosis confirms locations, workflows, integrations, users and exception routes. Where appropriate, the Founding Studio Pilot package is used."],
+      [
+        "Does INKSIGHT replace the studio's booking platform?",
+        "Not automatically. The first preference is to improve the existing stack where it can support the required workflow.",
+      ],
+      [
+        "Can every message be automated?",
+        "No. High-risk, emotional, unusual or clinically relevant situations need human escalation.",
+      ],
+      [
+        "What will it cost?",
+        "The price is quoted after diagnosis confirms locations, workflows, integrations, users and exception routes. Where appropriate, the Founding Studio Pilot package is used.",
+      ],
     ],
   },
   {
@@ -259,16 +349,19 @@ export const publicOffers: PublicOffer[] = [
     name: "INKSIGHT Founding Studio Pilot",
     eyebrow: "Application-only implementation package",
     price: "£1,500 setup + £750/month for 3 months",
-    billing: "£1,500 before implementation; £750 monthly in advance; minimum three-month management term",
+    billing:
+      "£1,500 before implementation; £750 monthly in advance; minimum three-month management term",
     commercialStatus: "Active application-only package",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
-    performancePricing: "An optional agreed percentage of verified uplift may be added only through the signed service order.",
+    performancePricing:
+      "An optional agreed percentage of verified uplift may be added only through the signed service order.",
     summary:
       "A controlled implementation and management engagement for one UK tattoo studio location, focused on one primary commercial constraint and up to two workflows.",
     problem:
       "The studio has a clear commercial constraint but needs diagnosis, implementation, monitoring and exception handling rather than another disconnected tactic.",
-    timeframe: "The implementation schedule is confirmed after qualification, payment, intake and access approval.",
+    timeframe:
+      "The implementation schedule is confirmed after qualification, payment, intake and access approval.",
     idealFor: [
       "One-location UK tattoo studios with a named decision-maker",
       "Studios able to provide the data and account access required",
@@ -299,16 +392,44 @@ export const publicOffers: PublicOffer[] = [
       "Professional legal, tax, accountancy or regulated financial advice",
     ],
     process: [
-      { title: "Qualify and scope", description: "Confirm fit, one primary constraint, up to two workflows, dependencies, access and success measures." },
-      { title: "Baseline and design", description: "Document the current three-lever position, risks, data quality and implementation plan." },
-      { title: "Build and validate", description: "Configure the agreed system, run labelled sample records and complete acceptance checks before live use." },
-      { title: "Manage and improve", description: "Monitor exceptions, report performance and review the next constraint during the management term." },
+      {
+        title: "Qualify and scope",
+        description:
+          "Confirm fit, one primary constraint, up to two workflows, dependencies, access and success measures.",
+      },
+      {
+        title: "Baseline and design",
+        description:
+          "Document the current three-lever position, risks, data quality and implementation plan.",
+      },
+      {
+        title: "Build and validate",
+        description:
+          "Configure the agreed system, run labelled sample records and complete acceptance checks before live use.",
+      },
+      {
+        title: "Manage and improve",
+        description:
+          "Monitor exceptions, report performance and review the next constraint during the management term.",
+      },
     ],
     faqs: [
-      ["What is the minimum commitment?", "£1,500 installation plus £750 per month for three months, totalling £3,750."],
-      ["Can it be purchased through open checkout?", "No. It is application-only and requires qualification, an approved scope and a quote or invoice."],
-      ["Is a performance fee included automatically?", "No. A percentage of verified uplift applies only where the signed service order states the percentage, baseline, measurement window, attribution rules and approval process."],
-      ["What happens if scope changes?", "New locations, workflows, integrations or requirements may require a revised scope, schedule and price."],
+      [
+        "What is the minimum commitment?",
+        "£1,500 installation plus £750 per month for three months, totalling £3,750.",
+      ],
+      [
+        "Can it be purchased through open checkout?",
+        "No. It is application-only and requires qualification, an approved scope and a quote or invoice.",
+      ],
+      [
+        "Is a performance fee included automatically?",
+        "No. A percentage of verified uplift applies only where the signed service order states the percentage, baseline, measurement window, attribution rules and approval process.",
+      ],
+      [
+        "What happens if scope changes?",
+        "New locations, workflows, integrations or requirements may require a revised scope, schedule and price.",
+      ],
     ],
   },
 ];
