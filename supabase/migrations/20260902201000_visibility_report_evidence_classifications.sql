@@ -1,0 +1,2 @@
+alter table public.visibility_report_runs drop constraint if exists visibility_report_runs_data_classification_check;
+alter table public.visibility_report_runs add constraint visibility_report_runs_data_classification_check check (data_classification = any (array['sample','internal_test','internal_unverified','external_unverified','verified_client','verified_external','verified_website_plus_studio_submitted','verified_external_plus_studio_submitted']));
