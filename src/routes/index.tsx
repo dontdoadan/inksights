@@ -50,7 +50,7 @@ function Index() {
                   INKSIGHTS turns fragmented studio, market and visibility signals into clear intelligence, measurable opportunities and decisions you can act on.
                 </p>
                 <div className="mt-9 flex flex-wrap gap-3">
-                  <PrimaryButton href="#studio-map">Explore the UK studio map</PrimaryButton>
+                  <PrimaryButton href="/studio-visibility-report">Get the free visibility report</PrimaryButton>
                   <SecondaryButton href="/studio-growth-check">Run a studio diagnosis</SecondaryButton>
                 </div>
                 <div className="mt-10 flex flex-wrap gap-3 text-xs font-bold uppercase tracking-[.13em] text-muted-foreground">
@@ -106,7 +106,7 @@ function Index() {
           <div className="rounded-3xl border border-mint/30 bg-ink-deep p-8 md:p-12">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
               <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">For tattoo studio owners</p><h2 className="mt-4 max-w-3xl text-balance font-display text-4xl font-black text-ice md:text-6xl">Stop guessing where the growth is.</h2><p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">Start with a structured diagnosis, understand the strongest constraint and use intelligence to decide what deserves attention next.</p></div>
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><PrimaryButton href="/studio-growth-check">Start the free diagnosis</PrimaryButton><SecondaryButton href="/contact">Talk to INKSIGHTS</SecondaryButton></div>
+              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><PrimaryButton href="/studio-visibility-report">Get the free report</PrimaryButton><SecondaryButton href="/contact">Talk to INKSIGHTS</SecondaryButton></div>
             </div>
           </div>
         </div>
