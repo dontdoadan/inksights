@@ -1,184 +1,137 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight, BarChart3, CheckCircle2, Search, ShieldCheck, Target, TrendingUp } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { ArrowRight, CheckCircle2, Globe2, Printer, Search, ShieldCheck, Target } from "lucide-react";
+import { FormEvent, useEffect, useState } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 import { supabase } from "@/integrations/supabase/client";
 
-const DEMO = {
-  studio: { name: "INKSIGHT Demo Studio", website: "https://example.com" },
-  visibility_score: 44,
-  score_components: { keyword_visibility: 50, top_10_share: 20, tracked_keywords: 5, total_search_volume: 13180 },
-  top_opportunities: [
-    { keyword: "tattoo artist london", search_volume: 3600, current_rank: 42, lsos_score: 68.85 },
-    { keyword: "tattoo shop london", search_volume: 2400, current_rank: null, lsos_score: 68.85 },
-    { keyword: "fine line tattoo london", search_volume: 1900, current_rank: 27, lsos_score: 68.85 },
-    { keyword: "tattoo studio london", search_volume: 4400, current_rank: 18, lsos_score: 55.08 },
-    { keyword: "blackwork tattoo london", search_volume: 880, current_rank: 9, lsos_score: 37.87 },
-  ],
-  methodology: { formula: "Demand × Commercial Intent × Local Relevance × Search Position Opportunity × Conversion Potential", classification: "Modelled opportunity; not verified lost revenue" },
-};
+const REPORT_FUNCTION = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/studio-visibility-report-v2";
 
-type Report = typeof DEMO;
+type Keyword = { keyword: string; search_volume: number; current_rank: number | null; lsos_score: number; target_url?: string | null; keyword_difficulty?: number | null };
+type ReportPayload = {
+  report: { id: string; visibility_score: number | null; score_components: any; executive_summary: string | null; search_demand: any; current_visibility: any; opportunity_summary: any; action_plan: any; methodology: any; data_classification: string; created_at: string };
+  studio: { studio_name: string; website_url: string | null; town: string | null; artist_count: number };
+  observations: Array<{ observation_type: string; raw_data: any; observed_at: string }>;
+  keywords: Keyword[];
+  opportunities: Array<{ title: string; description: string; lsos_score: number; priority: number; evidence: any; recommended_action: string | null }>;
+};
 
 export const Route = createFileRoute("/studio-visibility-report")({
   component: StudioVisibilityReport,
   head: () => ({
     meta: [
       { title: "Studio Visibility Report | INKSIGHT" },
-      { name: "description", content: "INKSIGHT Studio Visibility Report: search demand, visibility, competition, opportunity and commercial potential." },
+      { name: "description", content: "A verified studio visibility report built from source measurements and a factual website snapshot." },
     ],
   }),
 });
 
-function scoreLabel(score: number) {
-  if (score >= 85) return "Strong visibility";
-  if (score >= 65) return "Competitive foundation";
-  if (score >= 40) return "Material visibility gaps";
-  return "High-priority visibility rebuild";
-}
-
-function money(value: number) {
-  return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(value);
+function scoreLabel(score: number | null) {
+  if (score === null) return "Search data not available";
+  if (score >= 80) return "Strong top-10 coverage";
+  if (score >= 50) return "Mixed visibility";
+  return "Limited top-10 coverage";
 }
 
 function StudioVisibilityReport() {
-  const [report, setReport] = useState<Report>(DEMO);
-  const [loading, setLoading] = useState(false);
+  const params = typeof window === "undefined" ? new URLSearchParams() : new URLSearchParams(window.location.search);
+  const reportId = params.get("reportId");
+  const token = params.get("token");
+  const [report, setReport] = useState<ReportPayload | null>(null);
+  const [loading, setLoading] = useState(Boolean(reportId));
   const [error, setError] = useState<string | null>(null);
-  const reportId = new URLSearchParams(typeof window === "undefined" ? "" : window.location.search).get("reportId");
 
   useEffect(() => {
-    if (!reportId) return;
+    if (!reportId || !token) return;
     let active = true;
-    setLoading(true);
     (async () => {
-      const client = supabase as any;
-      const { data, error: queryError } = await client
-        .from("visibility_report_runs")
-        .select("visibility_score,score_components,opportunity_summary,methodology,studio_id")
-        .eq("id", reportId)
-        .single();
+      const { data, error: rpcError } = await (supabase as any).rpc("publish_visibility_report", { p_report_id: reportId, p_public_token: token });
       if (!active) return;
-      if (queryError) {
-        setError(queryError.message);
-        setLoading(false);
-        return;
-      }
-      const { data: studio } = await client.from("visibility_studios").select("studio_name,website_url").eq("id", data.studio_id).single();
-      setReport({
-        studio: { name: studio?.studio_name || "Studio", website: studio?.website_url || "" },
-        visibility_score: data.visibility_score ?? 0,
-        score_components: data.score_components || DEMO.score_components,
-        top_opportunities: data.opportunity_summary?.top_opportunities || [],
-        methodology: data.methodology || DEMO.methodology,
-      });
+      if (rpcError) setError("This report link is invalid or has expired.");
+      else setReport(data as ReportPayload);
       setLoading(false);
     })();
     return () => { active = false; };
-  }, [reportId]);
+  }, [reportId, token]);
 
-  const score = report.visibility_score;
-  const components = report.score_components;
-  const opportunities = report.top_opportunities || [];
-  const totalVolume = Number(components.total_search_volume || 0);
-  const estimatedAnnualOpportunity = opportunities.reduce((sum, item) => {
-    const clicks = Number(item.search_volume || 0) * (item.current_rank == null ? 0.12 : item.current_rank <= 10 ? 0.04 : 0.08);
-    return sum + clicks * 0.08 * 250;
-  }, 0) * 12;
+  if (!reportId || !token) return <ReportRequest />;
+  if (loading) return <PublicShell><div className="mx-auto max-w-4xl px-6 py-24 text-center text-muted-foreground">Preparing your report…</div></PublicShell>;
+  if (error || !report) return <PublicShell><div className="mx-auto max-w-4xl px-6 py-24 text-center"><ShieldCheck className="mx-auto h-8 w-8 text-mint" /><h1 className="mt-5 font-display text-4xl font-black text-ice">Report unavailable</h1><p className="mt-4 text-muted-foreground">{error || "We could not load this report."}</p></div></PublicShell>;
 
-  return (
-    <PublicShell>
-      <PageHero
-        eyebrow={reportId ? "Live report · INKSIGHT Intelligence Engine" : "Preview · INKSIGHT Intelligence Engine"}
-        title={<>Studio Visibility Report</>}
-        description={<>A commercial visibility assessment built from search demand, rankings, local relevance, competitive pressure and conversion potential.</>}
-      />
-
-      {error && <div className="mx-auto max-w-7xl px-6 pt-8"><div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">Unable to load this report: {error}</div></div>}
-      {loading && <div className="mx-auto max-w-7xl px-6 pt-8"><div className="rounded-xl border border-border bg-ink p-4 text-sm text-muted-foreground">Loading report data…</div></div>}
-
-      <main className="bg-ink">
-        <section className="mx-auto max-w-7xl px-6 py-14">
-          <div className="grid gap-5 md:grid-cols-4">
-            <Metric icon={<Target />} label="Visibility score" value={`${score}/100`} note={scoreLabel(score)} />
-            <Metric icon={<Search />} label="Tracked demand" value={totalVolume.toLocaleString("en-GB")} note="monthly search volume" />
-            <Metric icon={<TrendingUp />} label="Top 10 coverage" value={`${components.top_10_share || 0}%`} note={`${components.tracked_keywords || 0} keywords tracked`} />
-            <Metric icon={<BarChart3 />} label="Modelled opportunity" value={money(estimatedAnnualOpportunity)} note="annualised estimate" />
-          </div>
-        </section>
-
-        <section className="border-y border-border bg-ink-deep">
-          <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[1fr_360px] lg:items-center">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Executive snapshot</p>
-              <h2 className="mt-3 font-display text-4xl font-black text-ice md:text-5xl">{report.studio.name}</h2>
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">The studio has a measurable search footprint, but material demand sits outside the current top 10. The highest-value opportunities are concentrated around commercially relevant local searches where movement in rankings can plausibly create additional qualified enquiries.</p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <span className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground">{components.keyword_visibility || 0}% keyword visibility index</span>
-                <span className="rounded-full border border-border px-4 py-2 text-sm text-muted-foreground">{opportunities.length} priority opportunities</span>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-mint/30 bg-ink p-7 text-center">
-              <div className="mx-auto flex h-36 w-36 items-center justify-center rounded-full border-8 border-mint/20">
-                <div><div className="font-display text-5xl font-black text-ice">{score}</div><div className="text-xs font-bold uppercase tracking-widest text-mint">/100</div></div>
-              </div>
-              <p className="mt-5 font-bold text-ice">{scoreLabel(score)}</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-6 py-16">
-          <div className="flex flex-wrap items-end justify-between gap-5">
-            <div><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Opportunity engine</p><h2 className="mt-2 font-display text-4xl font-black text-ice">Where the demand is</h2></div>
-            <p className="max-w-md text-sm leading-relaxed text-muted-foreground">LSOS prioritises opportunities rather than reporting rankings in isolation.</p>
-          </div>
-          <div className="mt-8 overflow-hidden rounded-2xl border border-border">
-            <div className="grid grid-cols-[minmax(220px,1.5fr)_110px_100px_100px] bg-ink-deep px-5 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground"><span>Keyword</span><span>Demand</span><span>Rank</span><span>LSOS</span></div>
-            {opportunities.map((item, index) => <div key={item.keyword} className="grid grid-cols-[minmax(220px,1.5fr)_110px_100px_100px] items-center border-t border-border bg-ink px-5 py-5 text-sm"><span className="font-semibold text-ice">{index + 1}. {item.keyword}</span><span className="text-muted-foreground">{Number(item.search_volume).toLocaleString("en-GB")}</span><span className="font-bold text-ice">{item.current_rank == null ? "—" : `#${item.current_rank}`}</span><span className="font-bold text-mint">{Number(item.lsos_score).toFixed(1)}</span></div>)}
-          </div>
-        </section>
-
-        <section className="border-t border-border bg-ink-deep">
-          <div className="mx-auto max-w-7xl px-6 py-16">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Commercial interpretation</p>
-            <h2 className="mt-2 font-display text-4xl font-black text-ice">From search visibility to revenue opportunity</h2>
-            <div className="mt-8 grid gap-5 md:grid-cols-3">
-              <Insight title="Demand" text={`${totalVolume.toLocaleString("en-GB")} monthly searches are represented in the tracked keyword set.`} />
-              <Insight title="Position" text={`${components.top_10_share || 0}% of tracked keywords currently sit in the top 10 in this model.`} />
-              <Insight title="Opportunity" text={`The model indicates approximately ${money(estimatedAnnualOpportunity)} of annualised search-derived opportunity before intervention costs.`} />
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-6 py-16">
-          <div className="grid gap-5 md:grid-cols-3">
-            <Action number="01" title="Capture striking-distance demand" text="Improve pages already ranking beyond the first page where demand and commercial intent justify intervention." />
-            <Action number="02" title="Build local relevance" text="Align service, style and location signals around the searches that matter commercially." />
-            <Action number="03" title="Measure the baseline" text="Track ranking, enquiries and bookings against the same opportunity set so improvements can be verified." />
-          </div>
-        </section>
-
-        <section className="border-t border-border">
-          <div className="mx-auto max-w-4xl px-6 py-14 text-center">
-            <div className="flex justify-center"><ShieldCheck className="h-7 w-7 text-mint" /></div>
-            <h2 className="mt-4 font-display text-3xl font-black text-ice">Evidence hierarchy</h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">Search volume and ranking observations are source measurements. Revenue figures are modelled estimates unless supported by first-party attribution. The report does not represent estimated opportunity as verified lost revenue.</p>
-            <p className="mt-4 text-xs text-muted-foreground">Method: {report.methodology.formula}</p>
-          </div>
-        </section>
-      </main>
-    </PublicShell>
-  );
+  return <ReportView data={report} />;
 }
 
-function Metric({ icon, label, value, note }: { icon: ReactNode; label: string; value: string; note: string }) {
-  return <div className="rounded-2xl border border-border bg-ink-deep p-6"><div className="flex items-center gap-2 text-mint">{icon}<span className="text-xs font-bold uppercase tracking-wider">{label}</span></div><div className="mt-4 font-display text-4xl font-black text-ice">{value}</div><div className="mt-1 text-xs text-muted-foreground">{note}</div></div>;
+function ReportRequest() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault(); setError(""); setLoading(true);
+    const form = new FormData(event.currentTarget);
+    const payload = {
+      studio_name: String(form.get("studio_name") || ""), contact_name: String(form.get("contact_name") || ""), email: String(form.get("email") || ""), website: String(form.get("website") || ""), area: String(form.get("area") || ""), artist_count: Number(form.get("artist_count") || 0),
+      services: String(form.get("services") || "").split(",").map(s => s.trim()).filter(Boolean).slice(0, 10), website_honeypot: String(form.get("website_honeypot") || ""),
+    };
+    try {
+      const response = await fetch(REPORT_FUNCTION, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || "The report could not be generated.");
+      window.location.assign(data.reportUrl);
+    } catch (err) { setError(err instanceof Error ? err.message : "The report could not be generated."); setLoading(false); }
+  }
+  return <PublicShell>
+    <PageHero eyebrow="Free · verified studio visibility report" title={<>See what your studio can verify today.</>} description={<>Submit your studio details and receive a live report built from source measurements. We do not invent search volume, rankings or revenue figures.</>} />
+    <main className="bg-ink">
+      <section className="mx-auto grid max-w-6xl gap-8 px-6 py-14 lg:grid-cols-[1fr_360px]">
+        <form onSubmit={submit} className="rounded-3xl border border-border bg-ink-deep p-7 md:p-9">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field label="Studio name" name="studio_name" required />
+            <Field label="Your name" name="contact_name" required />
+            <Field label="Email" name="email" type="email" required />
+            <Field label="Website" name="website" placeholder="https://yourstudio.co.uk" required />
+            <Field label="Town / city" name="area" required />
+            <Field label="Artists" name="artist_count" type="number" min="3" max="100" placeholder="3+" required />
+          </div>
+          <label className="mt-5 block text-sm font-semibold text-ice">Main services / styles <span className="font-normal text-muted-foreground">(comma separated)</span><input name="services" className="mt-2 w-full rounded-xl border border-border bg-ink px-4 py-3 font-normal text-ice" placeholder="fine line, realism, blackwork" /></label>
+          <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden"><input name="website_honeypot" tabIndex={-1} autoComplete="off" /></div>
+          <label className="mt-6 flex gap-3 text-sm text-muted-foreground"><input type="checkbox" required className="mt-1" /><span>I agree to INKSIGHTS using these details to generate the report and contact me about the result.</span></label>
+          <button disabled={loading} type="submit" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-7 py-3 font-bold text-ink-deep disabled:opacity-60">{loading ? "Generating…" : "Generate my report"}<ArrowRight className="h-4 w-4" /></button>
+          {error && <p className="mt-4 text-sm font-semibold text-red-300">{error}</p>}
+        </form>
+        <aside className="h-max rounded-3xl border border-border bg-ink-deep p-7">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">What you receive</p>
+          <div className="mt-6 space-y-5 text-sm text-muted-foreground">
+            <Feature icon={<Search />} title="Search measurements" text="UK search volume and organic ranking observations when the search-data provider is configured." />
+            <Feature icon={<Globe2 />} title="Website snapshot" text="HTTP status, title, description, H1s, canonical, robots and sitemap availability." />
+            <Feature icon={<Target />} title="Priority opportunities" text="Transparent INKSIGHT indices derived from the observed search data." />
+            <Feature icon={<ShieldCheck />} title="Evidence controls" text="Every section identifies whether a value is source-measured or studio-submitted." />
+          </div>
+        </aside>
+      </section>
+    </main>
+  </PublicShell>;
 }
 
-function Insight({ title, text }: { title: string; text: string }) {
-  return <div className="rounded-2xl border border-border bg-ink p-6"><p className="font-bold text-mint">{title}</p><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p></div>;
+function ReportView({ data }: { data: ReportPayload }) {
+  const r = data.report; const s = data.studio; const website = data.observations.find(o => o.observation_type === "website_snapshot")?.raw_data || {};
+  const kws = data.keywords || []; const score = r.visibility_score; const totalVolume = kws.reduce((sum, k) => sum + Number(k.search_volume || 0), 0); const ranked = kws.filter(k => k.current_rank !== null); const top10 = ranked.filter(k => Number(k.current_rank) <= 10).length;
+  return <PublicShell>
+    <PageHero eyebrow="Verified report · INKSIGHT" title={<>Studio Visibility Report</>} description={<>A source-led snapshot of your search visibility and website footprint. <b className="text-ice">No revenue is estimated in this report.</b></>} />
+    <main className="bg-ink print:bg-white">
+      <div className="mx-auto max-w-7xl px-6 py-8 flex justify-end print:hidden"><button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ice"><Printer className="h-4 w-4" /> Save / print PDF</button></div>
+      <section className="mx-auto max-w-7xl px-6 pb-14"><div className="grid gap-5 md:grid-cols-4">
+        <Metric label="Visibility index" value={score === null ? "—" : `${score}/100`} note={scoreLabel(score)} />
+        <Metric label="Tracked searches" value={String(kws.length)} note="initial local sample" />
+        <Metric label="Search demand" value={totalVolume ? totalVolume.toLocaleString("en-GB") : "—"} note={totalVolume ? "monthly UK volume" : "not measured"} />
+        <Metric label="Top-10 coverage" value={kws.length ? `${Math.round((top10 / kws.length) * 100)}%` : "—"} note={kws.length ? `${top10} of ${kws.length} sampled searches` : "not measured"} />
+      </div></section>
+      <section className="border-y border-border bg-ink-deep"><div className="mx-auto max-w-7xl px-6 py-14"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Executive snapshot</p><h2 className="mt-3 font-display text-4xl font-black text-ice">{s.studio_name}</h2><p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">{r.executive_summary}</p><div className="mt-7 flex flex-wrap gap-3 text-xs text-muted-foreground"><span className="rounded-full border border-border px-3 py-2">{s.town || "Location supplied"}</span><span className="rounded-full border border-border px-3 py-2">{s.artist_count} artists supplied</span><span className="rounded-full border border-border px-3 py-2">Observed {new Date(r.created_at).toLocaleDateString("en-GB")}</span></div></div></section>
+      <section className="mx-auto max-w-7xl px-6 py-14"><div className="grid gap-8 lg:grid-cols-[1fr_380px]"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Search evidence</p><h2 className="mt-2 font-display text-4xl font-black text-ice">Observed search positions</h2><div className="mt-7 overflow-hidden rounded-2xl border border-border"><div className="grid grid-cols-[1fr_110px_90px_90px] bg-ink-deep px-5 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground"><span>Search</span><span>Volume</span><span>Rank</span><span>Index</span></div>{kws.sort((a,b) => Number(b.lsos_score)-Number(a.lsos_score)).map(k => <div key={k.keyword} className="grid grid-cols-[1fr_110px_90px_90px] items-center border-t border-border px-5 py-4 text-sm"><span className="font-semibold text-ice">{k.keyword}</span><span className="text-muted-foreground">{Number(k.search_volume).toLocaleString("en-GB")}</span><span className="font-bold text-ice">{k.current_rank == null ? "Not in top 100" : `#${k.current_rank}`}</span><span className="font-bold text-mint">{Number(k.lsos_score).toFixed(1)}</span></div>)}</div></div>
+        <div><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Website evidence</p><h2 className="mt-2 font-display text-4xl font-black text-ice">What we verified</h2><div className="mt-7 space-y-3">{[["HTTP status", website.http_status ? String(website.http_status) : "Not measured"],["Title", website.title || "Not found"],["Meta description", website.meta_description || "Not found"],["H1 count", String((website.h1s || []).length)],["Canonical", website.canonical || "Not found"],["robots.txt", website.robots_available ? "Available" : "Not confirmed"],["sitemap.xml", website.sitemap_available ? "Available" : "Not confirmed"]].map(([label,value]) => <div key={label} className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p><p className="mt-1 break-words text-sm font-semibold text-ice">{value}</p></div>)}</div></div></div></section>
+      <section className="border-t border-border bg-ink-deep"><div className="mx-auto max-w-7xl px-6 py-14"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Priority opportunities</p><h2 className="mt-2 font-display text-4xl font-black text-ice">What the evidence points to</h2><div className="mt-7 grid gap-4 md:grid-cols-2">{(data.opportunities || []).slice(0, 6).map(o => <div key={`${o.priority}-${o.title}`} className="rounded-2xl border border-border bg-ink p-6"><div className="flex items-center justify-between"><span className="font-mono text-mint">0{o.priority}</span><span className="text-xs font-bold text-muted-foreground">INDEX {Number(o.lsos_score).toFixed(1)}</span></div><h3 className="mt-4 text-lg font-bold text-ice">{o.title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{o.description}</p><p className="mt-4 text-sm font-semibold text-mint">{o.recommended_action}</p></div>)}</div></div></section>
+      <section><div className="mx-auto max-w-4xl px-6 py-14 text-center"><ShieldCheck className="mx-auto h-7 w-7 text-mint" /><h2 className="mt-4 font-display text-3xl font-black text-ice">Evidence & limitations</h2><p className="mt-4 text-sm leading-relaxed text-muted-foreground">This report separates source measurements from studio-submitted information. Search measurements use the UK database available from the configured provider and represent the sampled searches shown above; they are not a substitute for city-level position tracking. Revenue opportunity is intentionally not calculated because no first-party attribution has been supplied.</p><p className="mt-4 text-xs leading-relaxed text-muted-foreground">Method: {r.methodology?.scoring || "Transparent source-derived index."} Data classification: {r.data_classification}.</p></div></section>
+    </main>
+  </PublicShell>;
 }
 
-function Action({ number, title, text }: { number: string; title: string; text: string }) {
-  return <div className="rounded-2xl border border-border bg-ink p-7"><div className="flex items-center justify-between"><span className="font-display text-3xl font-black text-ice">{number}</span><ArrowUpRight className="h-5 w-5 text-mint" /></div><h3 className="mt-7 text-xl font-bold text-ice">{title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p><div className="mt-5 flex items-center gap-2 text-xs font-semibold text-mint"><CheckCircle2 className="h-4 w-4" />Priority action</div></div>;
-}
+function Field({ label, name, type = "text", placeholder, required, min, max }: { label: string; name: string; type?: string; placeholder?: string; required?: boolean; min?: string; max?: string }) { return <label className="text-sm font-semibold text-ice">{label}<input name={name} type={type} placeholder={placeholder} required={required} min={min} max={max} className="mt-2 w-full rounded-xl border border-border bg-ink px-4 py-3 font-normal text-ice" /></label>; }
+function Feature({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) { return <div className="flex gap-3"><div className="mt-0.5 text-mint">{icon}</div><div><p className="font-semibold text-ice">{title}</p><p className="mt-1 leading-relaxed">{text}</p></div></div>; }
+function Metric({ label, value, note }: { label: string; value: string; note: string }) { return <div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-wider text-mint">{label}</p><div className="mt-4 font-display text-4xl font-black text-ice">{value}</div><p className="mt-1 text-xs text-muted-foreground">{note}</p></div>; }
