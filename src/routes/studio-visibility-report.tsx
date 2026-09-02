@@ -1,18 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, Globe2, Printer, Search, ShieldCheck, Target } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState, type ReactNode } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 import { supabase } from "@/integrations/supabase/client";
 
 const REPORT_FUNCTION = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/studio-visibility-report-v2";
 
+type ScoreComponents = { tracked_keywords?: number; top_10_share?: number | null; total_search_volume?: number | null };
+type WebsiteSnapshot = { http_status?: number; final_url?: string; title?: string | null; meta_description?: string | null; h1s?: string[]; canonical?: string | null; robots_available?: boolean; sitemap_available?: boolean };
 type Keyword = { keyword: string; search_volume: number; current_rank: number | null; lsos_score: number; target_url?: string | null; keyword_difficulty?: number | null };
 type ReportPayload = {
-  report: { id: string; visibility_score: number | null; score_components: any; executive_summary: string | null; search_demand: any; current_visibility: any; opportunity_summary: any; action_plan: any; methodology: any; data_classification: string; created_at: string };
+  report: { id: string; visibility_score: number | null; score_components: ScoreComponents; executive_summary: string | null; search_demand: unknown; current_visibility: unknown; opportunity_summary: unknown; action_plan: unknown; methodology: { scoring?: string; provider?: string; geography?: string; search_set?: string }; data_classification: string; created_at: string };
   studio: { studio_name: string; website_url: string | null; town: string | null; artist_count: number };
-  observations: Array<{ observation_type: string; raw_data: any; observed_at: string }>;
+  observations: Array<{ observation_type: string; raw_data: WebsiteSnapshot; observed_at: string }>;
   keywords: Keyword[];
-  opportunities: Array<{ title: string; description: string; lsos_score: number; priority: number; evidence: any; recommended_action: string | null }>;
+  opportunities: Array<{ title: string; description: string; lsos_score: number; priority: number; evidence: unknown; recommended_action: string | null }>;
 };
 
 export const Route = createFileRoute("/studio-visibility-report")({
@@ -44,7 +46,8 @@ function StudioVisibilityReport() {
     if (!reportId || !token) return;
     let active = true;
     (async () => {
-      const { data, error: rpcError } = await (supabase as any).rpc("publish_visibility_report", { p_report_id: reportId, p_public_token: token });
+      const rpcClient = supabase as unknown as { rpc: (name: string, args: Record<string, string>) => Promise<{ data: unknown; error: Error | null }> };
+      const { data, error: rpcError } = await rpcClient.rpc("publish_visibility_report", { p_report_id: reportId, p_public_token: token });
       if (!active) return;
       if (rpcError) setError("This report link is invalid or has expired.");
       else setReport(data as ReportPayload);
@@ -72,8 +75,8 @@ function ReportRequest() {
     };
     try {
       const response = await fetch(REPORT_FUNCTION, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
-      const data = await response.json();
-      if (!response.ok || !data.ok) throw new Error(data.error || "The report could not be generated.");
+      const data = await response.json() as { ok?: boolean; reportUrl?: string; error?: string };
+      if (!response.ok || !data.ok || !data.reportUrl) throw new Error(data.error || "The report could not be generated.");
       window.location.assign(data.reportUrl);
     } catch (err) { setError(err instanceof Error ? err.message : "The report could not be generated."); setLoading(false); }
   }
@@ -111,7 +114,7 @@ function ReportRequest() {
 }
 
 function ReportView({ data }: { data: ReportPayload }) {
-  const r = data.report; const s = data.studio; const website = data.observations.find(o => o.observation_type === "website_snapshot")?.raw_data || {};
+  const r = data.report; const s = data.studio; const website = data.observations.find(o => o.observation_type === "website")?.raw_data || {};
   const kws = data.keywords || []; const score = r.visibility_score; const totalVolume = kws.reduce((sum, k) => sum + Number(k.search_volume || 0), 0); const ranked = kws.filter(k => k.current_rank !== null); const top10 = ranked.filter(k => Number(k.current_rank) <= 10).length;
   return <PublicShell>
     <PageHero eyebrow="Verified report · INKSIGHT" title={<>Studio Visibility Report</>} description={<>A source-led snapshot of your search visibility and website footprint. <b className="text-ice">No revenue is estimated in this report.</b></>} />
@@ -133,5 +136,5 @@ function ReportView({ data }: { data: ReportPayload }) {
 }
 
 function Field({ label, name, type = "text", placeholder, required, min, max }: { label: string; name: string; type?: string; placeholder?: string; required?: boolean; min?: string; max?: string }) { return <label className="text-sm font-semibold text-ice">{label}<input name={name} type={type} placeholder={placeholder} required={required} min={min} max={max} className="mt-2 w-full rounded-xl border border-border bg-ink px-4 py-3 font-normal text-ice" /></label>; }
-function Feature({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) { return <div className="flex gap-3"><div className="mt-0.5 text-mint">{icon}</div><div><p className="font-semibold text-ice">{title}</p><p className="mt-1 leading-relaxed">{text}</p></div></div>; }
+function Feature({ icon, title, text }: { icon: ReactNode; title: string; text: string }) { return <div className="flex gap-3"><div className="mt-0.5 text-mint">{icon}</div><div><p className="font-semibold text-ice">{title}</p><p className="mt-1 leading-relaxed">{text}</p></div></div>; }
 function Metric({ label, value, note }: { label: string; value: string; note: string }) { return <div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-wider text-mint">{label}</p><div className="mt-4 font-display text-4xl font-black text-ice">{value}</div><p className="mt-1 text-xs text-muted-foreground">{note}</p></div>; }
