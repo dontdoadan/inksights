@@ -16,7 +16,10 @@ export const Route = createFileRoute("/api/public/revenue-audit")({
 
         const contentType = request.headers.get("content-type") || "";
         if (!contentType.toLowerCase().includes("application/json")) {
-          return json({ ok: false, error: "Content-Type must be application/json." }, 415);
+          return json(
+            { ok: false, error: "Content-Type must be application/json." },
+            415,
+          );
         }
 
         const contentLength = Number(request.headers.get("content-length") || 0);
@@ -36,15 +39,24 @@ export const Route = createFileRoute("/api/public/revenue-audit")({
         }
 
         try {
-          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          const { data, error } = await supabaseAdmin.functions.invoke("revenue-audit-v1", {
-            body: payload,
-          });
+          const { supabaseAdmin } = await import(
+            "@/integrations/supabase/client.server"
+          );
+          const { data, error } = await supabaseAdmin.functions.invoke(
+            "revenue-audit-v1",
+            {
+              body: payload,
+            },
+          );
 
           if (error) {
             console.error("Revenue Audit function invocation failed:", error);
             return json(
-              { ok: false, error: "We could not generate the audit right now. Please try again." },
+              {
+                ok: false,
+                error:
+                  "We could not generate the audit right now. Please try again.",
+              },
               503,
             );
           }
@@ -52,7 +64,11 @@ export const Route = createFileRoute("/api/public/revenue-audit")({
           if (!data || typeof data !== "object") {
             console.error("Revenue Audit function returned an invalid response.");
             return json(
-              { ok: false, error: "We could not generate the audit right now. Please try again." },
+              {
+                ok: false,
+                error:
+                  "We could not generate the audit right now. Please try again.",
+              },
               503,
             );
           }
@@ -64,7 +80,10 @@ export const Route = createFileRoute("/api/public/revenue-audit")({
             error instanceof Error ? error.message : String(error),
           );
           return json(
-            { ok: false, error: "We could not generate the audit right now. Please try again." },
+            {
+              ok: false,
+              error: "We could not generate the audit right now. Please try again.",
+            },
             503,
           );
         }
