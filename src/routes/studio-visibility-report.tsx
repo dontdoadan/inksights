@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, Globe2, Printer, Search, ShieldCheck, Target } from "lucide-react";
 import { FormEvent, useEffect, useState, type ReactNode } from "react";
