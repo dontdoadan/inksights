@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight, BarChart3, CheckCircle2, Search, ShieldCheck, Target, TrendingUp } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -171,7 +171,7 @@ function StudioVisibilityReport() {
   );
 }
 
-function Metric({ icon, label, value, note }: { icon: React.ReactNode; label: string; value: string; note: string }) {
+function Metric({ icon, label, value, note }: { icon: ReactNode; label: string; value: string; note: string }) {
   return <div className="rounded-2xl border border-border bg-ink-deep p-6"><div className="flex items-center gap-2 text-mint">{icon}<span className="text-xs font-bold uppercase tracking-wider">{label}</span></div><div className="mt-4 font-display text-4xl font-black text-ice">{value}</div><div className="mt-1 text-xs text-muted-foreground">{note}</div></div>;
 }
 
