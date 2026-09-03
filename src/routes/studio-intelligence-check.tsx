@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Search, MapPin, Instagram, Globe2 } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { PublicShell, PageHero } from "@/components/public-site";
@@ -64,7 +64,7 @@ function StudioIntelligenceCheck() {
             <Field label="Email" name="email" type="email" required />
             <Field label="Website" name="website" placeholder="https://yourstudio.co.uk" required />
             <Field label="Town / city" name="area" required />
-            <Field label="Artists" name="artist_count" type="number" min="1" max="100" placeholder="e.g. 5" required />
+            <Field label="Artists" name="artist_count" type="number" min="3" max="100" placeholder="e.g. 5" required />
             <Field label="Google / Maps profile" name="google_url" placeholder="Paste Google / Maps URL" />
             <Field label="Social profile(s)" name="social_urls" placeholder="Instagram, Facebook, etc." />
           </div>
