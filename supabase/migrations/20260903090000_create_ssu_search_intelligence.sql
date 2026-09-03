@@ -119,6 +119,11 @@ alter table public.visibility_provider_observations enable row level security;
 alter table public.visibility_serp_observations enable row level security;
 alter table public.visibility_competitor_observations enable row level security;
 
+drop policy if exists "visibility capabilities authenticated management" on public.visibility_studio_capabilities;
+drop policy if exists "visibility ssu authenticated management" on public.visibility_search_universe;
+drop policy if exists "visibility provider observations authenticated management" on public.visibility_provider_observations;
+drop policy if exists "visibility serp authenticated management" on public.visibility_serp_observations;
+drop policy if exists "visibility competitor authenticated management" on public.visibility_competitor_observations;
 create policy "visibility capabilities authenticated management" on public.visibility_studio_capabilities for all to authenticated using (true) with check (true);
 create policy "visibility ssu authenticated management" on public.visibility_search_universe for all to authenticated using (true) with check (true);
 create policy "visibility provider observations authenticated management" on public.visibility_provider_observations for all to authenticated using (true) with check (true);
@@ -158,7 +163,7 @@ begin
 
   for v_service in select value from public.visibility_studio_capabilities where studio_id=p_studio_id and dimension='service' and active order by value limit 12 loop
     v_query := lower(trim(v_service || ' tattoo ' || v_area));
-    v_canonical := regexp_replace(v_query, '\\s+', ' ', 'g');
+    v_canonical := regexp_replace(v_query, '\s+', ' ', 'g');
     v_intent := 'commercial'; v_commercial := 90; v_local := 100; v_studio_rel := 100; v_capability := 100; v_conversion := 75;
     v_lsos := round((v_demand*0.20 + v_commercial*0.20 + v_local*0.15 + v_position*0.20 + v_conversion*0.10 + v_studio_rel*0.10 + v_capability*0.05)::numeric, 2);
     insert into public.visibility_search_universe(studio_id,report_run_id,search_id,query,canonical_query,category,service,location,location_level,intent,commercial_intent,local_relevance,demand,ranking_opportunity,conversion_potential,studio_relevance,capability,lsos,status,source_type,dimension_values)
@@ -169,7 +174,7 @@ begin
 
   for v_style in select value from public.visibility_studio_capabilities where studio_id=p_studio_id and dimension='style' and active order by value limit 12 loop
     v_query := lower(trim(v_style || ' tattoo ' || v_area));
-    v_canonical := regexp_replace(v_query, '\\s+', ' ', 'g');
+    v_canonical := regexp_replace(v_query, '\s+', ' ', 'g');
     v_intent := 'commercial'; v_commercial := 92; v_local := 100; v_studio_rel := 100; v_capability := 100; v_conversion := 80;
     v_lsos := round((v_demand*0.20 + v_commercial*0.20 + v_local*0.15 + v_position*0.20 + v_conversion*0.10 + v_studio_rel*0.10 + v_capability*0.05)::numeric, 2);
     insert into public.visibility_search_universe(studio_id,report_run_id,search_id,query,canonical_query,category,style,location,location_level,intent,commercial_intent,local_relevance,demand,ranking_opportunity,conversion_potential,studio_relevance,capability,lsos,status,source_type,dimension_values)
@@ -181,7 +186,7 @@ begin
   for v_style in select value from public.visibility_studio_capabilities where studio_id=p_studio_id and dimension='style' and active order by value limit 6 loop
     for v_body in select value from public.visibility_studio_capabilities where studio_id=p_studio_id and dimension='body_area' and active order by value limit 6 loop
       v_query := lower(trim(v_style || ' ' || v_body || ' tattoo ' || v_area));
-      v_canonical := regexp_replace(v_query, '\\s+', ' ', 'g');
+      v_canonical := regexp_replace(v_query, '\s+', ' ', 'g');
       v_intent := 'commercial'; v_commercial := 94; v_local := 100; v_studio_rel := 100; v_capability := 100; v_conversion := 85;
       v_lsos := round((v_demand*0.20 + v_commercial*0.20 + v_local*0.15 + v_position*0.20 + v_conversion*0.10 + v_studio_rel*0.10 + v_capability*0.05)::numeric, 2);
       insert into public.visibility_search_universe(studio_id,report_run_id,search_id,query,canonical_query,category,style,body_area,location,location_level,intent,commercial_intent,local_relevance,demand,ranking_opportunity,conversion_potential,studio_relevance,capability,lsos,status,source_type,dimension_values)
@@ -190,10 +195,8 @@ begin
       v_count := v_count + 1;
     end loop;
   end loop;
-
   return v_count;
 end;
 $$;
-
 revoke all on function public.generate_studio_search_universe(uuid,uuid) from public;
 grant execute on function public.generate_studio_search_universe(uuid,uuid) to authenticated;
