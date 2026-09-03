@@ -1,0 +1,10 @@
+drop policy if exists "visibility capabilities authenticated management" on public.visibility_studio_capabilities;
+drop policy if exists "visibility ssu authenticated management" on public.visibility_search_universe;
+drop policy if exists "visibility provider observations authenticated management" on public.visibility_provider_observations;
+drop policy if exists "visibility serp authenticated management" on public.visibility_serp_observations;
+drop policy if exists "visibility competitor authenticated management" on public.visibility_competitor_observations;
+revoke all on table public.visibility_studio_capabilities from anon, authenticated;
+revoke all on table public.visibility_search_universe from anon, authenticated;
+revoke all on table public.visibility_provider_observations from anon, authenticated;
+revoke all on table public.visibility_serp_observations from anon, authenticated;
+revoke all on table public.visibility_competitor_observations from anon, authenticated;
