@@ -1,7 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const CORS = { "Access-Control-Allow-Origin": "https://getinksights.co.uk", "Access-Control-Allow-Headers": "content-type", "Access-Control-Allow-Methods": "POST, OPTIONS", "Content-Type": "application/json" };
+const CORS = { "Access-Control-Allow-Origin": "https://getinksight.co.uk", "Access-Control-Allow-Headers": "content-type", "Access-Control-Allow-Methods": "POST, OPTIONS", "Content-Type": "application/json" };
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: CORS });
 const clean = (value: unknown, max = 500) => String(value ?? "").trim().replace(/\s+/g, " ").slice(0, max);
 const list = (value: unknown) => Array.isArray(value) ? [...new Set(value.map(v => clean(v, 120)).filter(Boolean))].slice(0, 12) : [];
@@ -21,7 +21,7 @@ Deno.serve(async req => {
     const body = await req.json(); if (clean(body.website_honeypot)) return json({ ok: false, error: "Invalid submission." }, 400);
     const studioName = clean(body.studio_name,160), contactName = clean(body.contact_name,120), email = clean(body.email,254).toLowerCase(), area = clean(body.area,120), website = publicUrl(body.website);
     const googleUrl = optionalUrl(body.google_url); const socialUrls = list(body.social_urls).map(optionalUrl).filter(Boolean) as string[]; const artistCount = Number(body.artist_count);
-    if (!studioName || !contactName || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !area || !Number.isInteger(artistCount) || artistCount < 1) return json({ ok:false, error:"Please provide a valid studio name, name, email, area and artist count." },400);
+    if (!studioName || !contactName || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !area || !Number.isInteger(artistCount) || artistCount < 3) return json({ok:false, error:"Please provide a valid studio name, name, email, area and an artist count of 3 or more."},400);
     const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!); const token = crypto.randomUUID().replaceAll("-", "") + crypto.randomUUID().replaceAll("-", "");
     const studioInsert = await sb.from("visibility_studios").insert({ studio_name: studioName, website_url: website, town: area, artist_count: artistCount, location_count: 1, average_booking_value_pence: null, monthly_search_to_booking_rate: null, status: "collecting" }).select("id").single(); if (studioInsert.error) throw new Error(`studio_insert: ${studioInsert.error.message}`); studioId = studioInsert.data.id;
     const websiteData = await snapshot(website); const submittedServices = list(body.services), submittedStyles = list(body.styles), submittedBodies = list(body.body_areas); const sourceText = `${websiteData.title || ""} ${websiteData.meta_description || ""} ${websiteData.text_sample || ""}`; const inferredServices = infer(sourceText, serviceDictionary), inferredStyles = infer(sourceText, styleDictionary), inferredBodies = infer(sourceText, bodyDictionary); const finalServices = submittedServices.length ? submittedServices : inferredServices, finalStyles = submittedStyles.length ? submittedStyles : inferredStyles, finalBodies = submittedBodies.length ? submittedBodies : inferredBodies;
