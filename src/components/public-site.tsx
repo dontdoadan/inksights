@@ -135,7 +135,7 @@ export function SiteFooter() {
           <p>© {new Date().getFullYear()} INKSIGHTS. All rights reserved.</p>
           <button
             type="button"
-            onClick={() => window.dispatchEvent(new Event("inksights:open-consent"))}
+            onClick={() => window.dispatchEvent(new Event("inksight:open-consent"))}
             className="text-left transition hover:text-mint"
           >
             Change cookie preferences
