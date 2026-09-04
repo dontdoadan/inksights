@@ -23,6 +23,17 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
     }
 
     headers.set('apikey', supabaseKey);
+
+    // The public visibility report is client-readable and must never leave
+    // the UI in an indeterminate loading state if the public RPC stalls.
+    // Keep this narrowly scoped so other Supabase requests retain their
+    // existing behaviour and timeout characteristics.
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url;
+    const isPublicReportRpc = url.includes('/rest/v1/rpc/publish_visibility_report');
+    if (isPublicReportRpc && !init?.signal) {
+      return fetch(input, { ...init, headers, signal: AbortSignal.timeout(15000) });
+    }
+
     return fetch(input, { ...init, headers });
   };
 }
@@ -39,7 +50,7 @@ function createSupabaseClient() {
       ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
       ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
+    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}`;
     console.error(`[Supabase] ${message}`);
     throw new Error(message);
   }
