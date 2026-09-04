@@ -37,6 +37,9 @@ jobs:
       - name: Build and generate route types
         run: npm run build
 
+      - name: Enforce generated route tree is committed
+        run: git diff --exit-code -- src/routeTree.gen.ts
+
       - name: Typecheck
         id: typecheck
         continue-on-error: true
