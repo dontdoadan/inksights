@@ -2,15 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Eye, ShieldCheck, Workflow } from "lucide-react";
 import { CtaSection, JsonLd, PageHero, PublicShell, SectionHeading } from "@/components/public-site";
 
-const CANONICAL_URL = "https://getinksight.co.uk/about";
+const CANONICAL_URL = "https://getinksights.co.uk/about";
 
 export const Route = createFileRoute("/about")({
   component: AboutPage,
   head: () => ({
     meta: [
-      { title: "About INKSIGHT | Built Inside the Tattoo Industry" },
-      { name: "description", content: "Why INKSIGHT is building practical visibility, booking, retention and revenue systems specifically for tattoo studios." },
-      { property: "og:title", content: "About INKSIGHT" },
+      { title: "About INKSIGHTS | Built Inside the Tattoo Industry" },
+      { name: "description", content: "Why INKSIGHTS is building practical visibility, booking, retention and revenue systems specifically for tattoo studios." },
+      { property: "og:title", content: "About INKSIGHTS" },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
@@ -46,11 +46,11 @@ function AboutPage() {
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "AboutPage",
-        name: "About INKSIGHT",
+        name: "About INKSIGHTS",
         url: CANONICAL_URL,
         mainEntity: {
           "@type": "Organization",
-          name: "INKSIGHT",
+          name: "INKSIGHTS",
           foundingLocation: { "@type": "Country", name: "United Kingdom" },
           description: "Growth systems for UK tattoo studios, built from direct tattoo-industry experience.",
         },
@@ -58,7 +58,7 @@ function AboutPage() {
       <PageHero
         eyebrow="Built inside tattooing"
         title={<>A tattoo studio is not a generic appointment business.</>}
-        description={<>INKSIGHT exists because custom tattoo work has a distinct commercial journey: portfolios create trust, enquiries require qualification, deposits protect project time, sleeves span months, healing affects outcomes and the relationship continues after the session.</>}
+        description={<>INKSIGHTS exists because custom tattoo work has a distinct commercial journey: portfolios create trust, enquiries require qualification, deposits protect project time, sleeves span months, client communication affects outcomes and the relationship continues after the session.</>}
       />
 
       <section>
@@ -67,19 +67,19 @@ function AboutPage() {
             <SectionHeading
               eyebrow="Founder context"
               title="Direct operating experience, not niche selection."
-              description="INKSIGHT was started by a working black-and-grey realism tattoo artist. The business is being built around problems observed from inside tattooing rather than by selecting tattoo studios from a marketing niche list."
+              description="INKSIGHTS was started by a working black-and-grey realism tattoo artist. The business is being built around problems observed from inside tattooing rather than by selecting tattoo studios from a marketing niche list."
             />
             <div className="mt-7 space-y-4 text-base leading-relaxed text-muted-foreground">
-              <p>That experience does not automatically make every INKSIGHT recommendation correct. It does make the starting assumptions more relevant: custom projects are qualified before booking, artists have different styles and availability, and client trust is built through healed work and communication—not only lead volume.</p>
+              <p>That experience does not automatically make every INKSIGHTS recommendation correct. It does make the starting assumptions more relevant: custom projects are qualified before booking, artists have different styles and availability, and client trust is built through healed work and communication—not only lead volume.</p>
               <p>The operating goal is to combine that industry context with measurable systems, transparent limitations and evidence as real studio implementations accumulate.</p>
             </div>
           </div>
           <div className="rounded-3xl border border-mint/35 bg-gradient-to-br from-ink-elev to-ink p-8 md:p-10">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What INKSIGHT is building</p>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What INKSIGHTS is building</p>
             <ul className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground">
               <li className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Visibility intelligence:</strong> identify where studios disappear or lose trust before the enquiry.</li>
               <li className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Booking control:</strong> qualify projects, protect appointments and preserve human exceptions.</li>
-              <li className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Retention systems:</strong> connect aftercare, healed work, reviews, rebooking and client return.</li>
+              <li className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Retention systems:</strong> connect healed work, reviews, rebooking and client return.</li>
               <li className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Owner control:</strong> make work, approvals, metrics and integration health visible.</li>
             </ul>
           </div>
@@ -109,7 +109,7 @@ function AboutPage() {
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Current stage</p>
           <h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">Founding systems, controlled pilots and transparent proof.</h2>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-            INKSIGHT is early-stage. The public proof library therefore shows methodology, working infrastructure and clearly labelled demonstrations until genuine client outcomes can be documented with permission.
+            INKSIGHTS is early-stage. The public proof library therefore shows methodology, working infrastructure and clearly labelled demonstrations until genuine client outcomes can be documented with permission.
           </p>
           <a href="/case-studies" className="mt-8 inline-flex rounded-full border border-mint px-6 py-3 font-bold text-mint hover:bg-mint/10">Review the proof library</a>
         </div>
