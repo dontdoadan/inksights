@@ -12,6 +12,7 @@ const routes = [
   ["/offers/founding-studio-pilot", "monthly", "0.8"],
   ["/studio-growth-check", "monthly", "0.9"],
   ["/studio-visibility-report", "weekly", "0.95"],
+  ["/full-audit", "weekly", "0.95"],
   ["/resources", "weekly", "0.9"],
   ["/tattoo-studio-visibility-scorecard", "monthly", "0.9"],
   ["/tattoo-studio-software", "monthly", "0.8"],
