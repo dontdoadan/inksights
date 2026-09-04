@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, ExternalLink, Workflow } from "lucide-react";
 import { CtaSection, JsonLd, PageHero, PublicShell, SectionHeading } from "@/components/public-site";
 
-const CANONICAL_URL = "https://getinksight.co.uk/tattoo-studio-software";
+const CANONICAL_URL = "https://getinksights.co.uk/tattoo-studio-software";
 
 const platforms = [
   { name: "Tattoo Studio Pro", emphasis: "Tattoo-specific studio administration", strengths: "Client profiles, consent workflows, deposits, point of sale and scheduling.", evaluate: "Confirm current UK payment support, reporting depth, data export and multi-artist controls.", href: "https://tattoostudiopro.com/" },
@@ -20,7 +20,7 @@ const evaluationAreas = [
   ["2. Approval and scheduling", "Can the studio review requests before offering controlled appointment options rather than exposing the entire diary?"],
   ["3. Deposits and no-show protection", "Can deposits be collected, attributed, transferred and reported without manual reconciliation?"],
   ["4. Consent and client records", "Can health questionnaires, policies and signed consent remain linked to the correct client and appointment?"],
-  ["5. Communication", "Can confirmations, reminders, preparation, aftercare and follow-up be automated with a human escalation path?"],
+  ["5. Communication", "Can confirmations, reminders, preparation, post-session follow-up and review requests be automated with a human escalation path?"],
   ["6. Studio economics", "Can the system report artist revenue, deposits, cancellations, retail, repeat bookings and outstanding balances clearly?"],
 ] as const;
 
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/tattoo-studio-software")({
   component: TattooStudioSoftwarePage,
   head: () => ({
     meta: [
-      { title: "Tattoo Studio Software Comparison 2026 | INKSIGHT" },
+      { title: "Tattoo Studio Software Comparison 2026 | INKSIGHTS" },
       { name: "description", content: "Compare tattoo studio booking and management software by enquiry, deposits, consent, communication, workflow and reporting." },
       { property: "og:title", content: "Tattoo Studio Software Comparison 2026" },
       { property: "og:description", content: "Compare tattoo studio software by the complete workflow it must support—not feature-count marketing." },
@@ -47,12 +47,12 @@ function TattooStudioSoftwarePage() {
         headline: "Tattoo Studio Software Comparison 2026",
         url: CANONICAL_URL,
         dateModified: "2026-07-26",
-        publisher: { "@type": "Organization", name: "INKSIGHT" },
+        publisher: { "@type": "Organization", name: "INKSIGHTS" },
       }} />
       <PageHero
         eyebrow="Independent workflow guide · Last verified 26 July 2026"
         title={<>Tattoo studio software should fit the way tattoo work is actually sold.</>}
-        description={<>The correct platform is not necessarily the one with the longest feature list. It is the one that reliably moves a custom request from enquiry to approval, deposit, consent, appointment, aftercare and repeat booking with the least duplicate administration.</>}
+        description={<>The correct platform is not necessarily the one with the longest feature list. It is the one that reliably moves a custom request from enquiry to approval, deposit, consent, appointment, post-session follow-up and repeat booking with the least duplicate administration.</>}
       />
 
       <section className="border-b border-border bg-ink">
