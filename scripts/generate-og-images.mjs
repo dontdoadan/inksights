@@ -152,10 +152,10 @@ function background(buffer, variant) {
   circle(buffer, 1065, 92, 28, palette.deep);
   rect(buffer, 70, 55, 36, 36, palette.mint);
   circle(buffer, 88, 73, 7, palette.deep);
-  drawText(buffer, "INKSIGHT", 128, 58, 5, palette.ice, 1);
+  drawText(buffer, "INKSIGHTS", 128, 58, 5, palette.ice, 1);
   drawText(buffer, variant, 92, 510, 4, palette.mint, 1);
   rect(buffer, 92, 565, 1015, 2, palette.raised);
-  drawText(buffer, "GETINKSIGHT CO UK", 92, 586, 3, palette.muted, 1);
+  drawText(buffer, "GETINKSIGHTS CO UK", 92, 586, 3, palette.muted, 1);
 }
 
 function addPattern(buffer, kind) {
@@ -205,7 +205,7 @@ function png(buffer) {
 }
 
 const images = [
-  { file: "inksight-growth-systems.png", label: "GROWTH SYSTEMS", lines: ["TURN VISIBILITY INTO", "BOOKED CLIENTS"], pattern: "growth" },
+  { file: "inksights-growth-systems.png", label: "GROWTH SYSTEMS", lines: ["TURN VISIBILITY INTO", "BOOKED CLIENTS"], pattern: "growth" },
   { file: "tattoo-pain-reality-check.png", label: "CLIENT EDUCATION", lines: ["TATTOO PAIN CHART", "REALITY CHECK"], pattern: "pain" },
   { file: "full-sleeve-cost-uk.png", label: "UK PRICING GUIDE", lines: ["WHAT DOES A FULL", "SLEEVE COST"], pattern: "cost" },
   { file: "grey-line-healing.png", label: "HEALING GUIDE", lines: ["GREY LINE HEALING", "WEEK BY WEEK"], pattern: "healing" },
