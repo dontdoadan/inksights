@@ -156,7 +156,7 @@ function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
   if (contentType.includes("text/html")) {
     const canonical = new URL(canonicalUrl);
     canonical.search = "";
-    headers.set("link", `<${canonical.toString()}>; rel="canonical");
+    headers.set("link", `<${canonical.toString()}>; rel="canonical"`);
     headers.set(
       "x-robots-tag",
       isNoindexPath(canonical.pathname) ? "noindex, nofollow" : "index, follow",
