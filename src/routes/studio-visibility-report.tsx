@@ -22,8 +22,10 @@ export const Route = createFileRoute("/studio-visibility-report")({
   component: StudioVisibilityReport,
   head: () => ({
     meta: [
-      { title: "Studio Visibility Report | INKSIGHT" },
+      { title: "Studio Visibility Report | INKSIGHTS" },
       { name: "description", content: "A verified studio visibility report built from source measurements and a factual website snapshot." },
+      { property: "og:title", content: "Studio Visibility Report | INKSIGHTS" },
+      { property: "og:description", content: "A source-led snapshot of studio search visibility and website evidence." },
     ],
   }),
 });
@@ -105,7 +107,7 @@ function ReportRequest() {
           <div className="mt-6 space-y-5 text-sm text-muted-foreground">
             <Feature icon={<Search />} title="Search measurements" text="UK search volume and organic ranking observations when the search-data provider is configured." />
             <Feature icon={<Globe2 />} title="Website snapshot" text="HTTP status, title, description, H1s, canonical, robots and sitemap availability." />
-            <Feature icon={<Target />} title="Priority opportunities" text="Transparent INKSIGHT indices derived from the observed search data." />
+            <Feature icon={<Target />} title="Priority opportunities" text="Transparent INKSIGHTS indices derived from the observed search data." />
             <Feature icon={<ShieldCheck />} title="Evidence controls" text="Every section identifies whether a value is source-measured or studio-submitted." />
           </div>
         </aside>
@@ -118,7 +120,7 @@ function ReportView({ data }: { data: ReportPayload }) {
   const r = data.report; const s = data.studio; const website = data.observations.find(o => o.observation_type === "website")?.raw_data || {};
   const kws = data.keywords || []; const score = r.visibility_score; const totalVolume = kws.reduce((sum, k) => sum + Number(k.search_volume || 0), 0); const ranked = kws.filter(k => k.current_rank !== null); const top10 = ranked.filter(k => Number(k.current_rank) <= 10).length;
   return <PublicShell>
-    <PageHero eyebrow="Verified report · INKSIGHT" title={<>Studio Visibility Report</>} description={<>A source-led snapshot of your search visibility and website footprint. <b className="text-ice">No revenue is estimated in this report.</b></>} />
+    <PageHero eyebrow="Verified report · INKSIGHTS" title={<>Studio Visibility Report</>} description={<>A source-led snapshot of your search visibility and website footprint. <b className="text-ice">No revenue is estimated in this report.</b></>} />
     <main className="bg-ink print:bg-white">
       <div className="mx-auto max-w-7xl px-6 py-8 flex justify-end print:hidden"><button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ice"><Printer className="h-4 w-4" /> Save / print PDF</button></div>
       <section className="mx-auto max-w-7xl px-6 pb-14"><div className="grid gap-5 md:grid-cols-4">
