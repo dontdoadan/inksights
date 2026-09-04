@@ -20,20 +20,20 @@ import {
   SectionHeading,
 } from "@/components/public-site";
 
-const CANONICAL_URL = "https://getinksight.co.uk/growth-model";
+const CANONICAL_URL = "https://getinksights.co.uk/growth-model";
 const POLICY_VERSION = "2026-07-28";
 
 export const Route = createFileRoute("/growth-model")({
   component: GrowthModel,
   head: () => ({
     meta: [
-      { title: "Tattoo Studio Performance Uplift Model | INKSIGHT" },
+      { title: "Tattoo Studio Performance Uplift Model | INKSIGHTS" },
       {
         name: "description",
         content:
           "Model tattoo studio growth by increasing client numbers, average transaction value and purchase frequency, with optional verified-uplift pricing.",
       },
-      { property: "og:title", content: "The INKSIGHT Performance Uplift Model" },
+      { property: "og:title", content: "The INKSIGHTS Performance Uplift Model" },
       {
         property: "og:description",
         content:
@@ -59,8 +59,8 @@ const levers = [
     title: "Increase average transaction value",
     label: "Value",
     description:
-      "Increase the value created per transaction through appropriate project planning, aftercare, retail, packages and premium options.",
-    examples: ["Aftercare attachment", "Project packages", "Premium options", "Better pricing structure"],
+      "Increase the value created per transaction through appropriate project planning, client guidance, retail, packages and premium options.",
+    examples: ["Value-add services", "Project packages", "Premium options", "Better pricing structure"],
   },
   {
     icon: Repeat2,
@@ -118,7 +118,7 @@ function GrowthModel() {
         data={{
           "@context": "https://schema.org",
           "@type": "WebPage",
-          name: "INKSIGHT Performance Uplift Model",
+          name: "INKSIGHTS Performance Uplift Model",
           url: CANONICAL_URL,
           description:
             "A tattoo studio growth model based on client numbers, average transaction value and purchase frequency.",
@@ -126,11 +126,11 @@ function GrowthModel() {
       />
 
       <PageHero
-        eyebrow="The INKSIGHT commercial model"
+        eyebrow="The INKSIGHTS commercial model"
         title={<>Grow the studio through three measurable revenue levers.</>}
         description={
           <>
-            Revenue is modelled as <strong>clients × average transaction value × purchase frequency</strong>. INKSIGHT diagnoses the weakest lever, implements the smallest useful system and measures the resulting change.
+            Revenue is modelled as <strong>clients × average transaction value × purchase frequency</strong>. INKSIGHTS diagnoses the weakest lever, implements the smallest useful system and measures the resulting change.
           </>
         }
       >
@@ -214,7 +214,7 @@ function GrowthModel() {
           <div className="mt-6 grid gap-4 md:grid-cols-4">
             <Metric label="Verified-model uplift" value={currency(model.uplift)} />
             <Metric label="Percentage uplift" value={`${model.upliftPercent.toFixed(1)}%`} />
-            <Metric label="Illustrative INKSIGHT fee" value={currency(model.performanceFee)} />
+            <Metric label="Illustrative INKSIGHTS fee" value={currency(model.performanceFee)} />
             <Metric label="Studio retains" value={currency(model.retainedUplift)} emphasis />
           </div>
 
@@ -235,7 +235,7 @@ function GrowthModel() {
               </div>
               <div className="flex gap-3 rounded-2xl border border-amber-300/35 bg-amber-300/5 p-5 text-sm leading-relaxed text-amber-100">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-200" />
-                <p>This percentage is for modelling only. INKSIGHT has no default public performance-fee percentage. A fee applies only where the signed scope defines the baseline, direct costs, attribution adjustments, measurement window and approval process.</p>
+                <p>This percentage is for modelling only. INKSIGHTS has no default public performance-fee percentage. A fee applies only where the signed scope defines the baseline, direct costs, attribution adjustments, measurement window and approval process.</p>
               </div>
             </div>
           </Card>
@@ -245,7 +245,7 @@ function GrowthModel() {
       <section className="border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <SectionHeading
-            eyebrow="How INKSIGHT is paid"
+            eyebrow="How INKSIGHTS is paid"
             title="A hybrid model that can align payment with delivered value."
             description="The commercial structure depends on the scope and confidence of measurement; not every engagement includes every fee layer."
           />
@@ -277,7 +277,7 @@ function GrowthModel() {
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
               ["01", "Baseline", "Record clients, average transaction value, frequency, capacity, prices, advertising and other material conditions."],
-              ["02", "Implement", "Document exactly what INKSIGHT changes and which growth lever each intervention is intended to affect."],
+              ["02", "Implement", "Document exactly what INKSIGHTS changes and which growth lever each intervention is intended to affect."],
               ["03", "Verify", "Measure collected revenue or agreed contribution over the defined window and apply agreed adjustments."],
               ["04", "Approve", "The studio reviews the evidence before any performance-linked invoice is raised."],
             ].map(([number, title, text]) => (
