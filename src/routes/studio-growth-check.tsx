@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { FormEvent, useState } from "react";
 
 const AUDIT_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/revenue-audit-v1";
+const CANONICAL_URL = "https://getinksights.co.uk/studio-growth-check";
 
 export const Route = createFileRoute("/studio-growth-check")({
   head: () => ({
@@ -13,8 +14,11 @@ export const Route = createFileRoute("/studio-growth-check")({
         content:
           "Get a first-pass estimate of the revenue your tattoo studio may be leaving on the table across capacity, enquiries, cancellations and repeat clients.",
       },
+      { property: "og:title", content: "Free Revenue Audit V1 — INKSIGHTS" },
+      { property: "og:description", content: "Get a first-pass commercial diagnosis, then move into a full evidence-led Revenue Audit where appropriate." },
+      { property: "og:url", content: CANONICAL_URL },
     ],
-    links: [{ rel: "canonical", href: "https://getinksights.co.uk/studio-growth-check" }],
+    links: [{ rel: "canonical", href: CANONICAL_URL }],
   }),
   component: RevenueAuditPage,
 });
@@ -64,8 +68,6 @@ function RevenueAuditPage() {
     };
 
     try {
-      // Use a CORS-simple content type. The Edge Function already parses the body
-      // with req.json(), so this avoids a browser OPTIONS preflight entirely.
       const response = await fetch(AUDIT_URL, {
         method: "POST",
         mode: "cors",
@@ -172,7 +174,7 @@ function RevenueAuditPage() {
       {result && <section id="audit-result" className="border-t border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-14 md:py-20">
         <div className="max-w-4xl"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Your Revenue Audit V1</p><h2 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">Estimated opportunity: <span className="text-mint">{currency(result.estimate.annual_low)}–{currency(result.estimate.annual_high)}</span> / year</h2><p className="mt-4 text-lg leading-relaxed text-muted-foreground">The largest estimated opportunity in your inputs is <b className="text-ice">{result.estimate.primary_opportunity}</b>.</p></div>
         <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{result.findings.map((finding) => <div key={finding.label} className="rounded-2xl border border-border bg-ink-deep p-5"><p className="text-sm font-bold text-ice">{finding.label}</p><p className="mt-3 font-display text-2xl font-black text-mint">{currency(finding.annual_low)}–{currency(finding.annual_high)}</p><p className="mt-1 text-xs text-muted-foreground">estimated annual opportunity</p></div>)}</div>
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]"><div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What to do next</p><ol className="mt-5 space-y-4">{result.recommendations.map((item, i) => <li key={item} className="flex gap-4 text-sm leading-relaxed text-muted-foreground"><span className="font-mono text-mint">0{i + 1}</span><span>{item}</span></li>)}</ol></div><div className="rounded-2xl border border-mint/20 bg-mint/5 p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Next step</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Want the estimate replaced with real data?</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">The next version connects or imports your studio data and identifies actual revenue leakage rather than relying on assumptions.</p><a href="mailto:hello@getinksights.co.uk?subject=Revenue%20Audit%20V1%20follow-up" className="mt-5 inline-flex items-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Discuss the full audit <ArrowRight className="h-4 w-4" /></a></div></div>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]"><div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What to do next</p><ol className="mt-5 space-y-4">{result.recommendations.map((item, i) => <li key={item} className="flex gap-4 text-sm leading-relaxed text-muted-foreground"><span className="font-mono text-mint">0{i + 1}</span><span>{item}</span></li>)}</ol></div><div className="rounded-2xl border border-mint/20 bg-mint/5 p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Next step</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Want the estimate replaced with real data?</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">The full INKSIGHTS Revenue Audit replaces the V1 estimate with a structured review of your acquisition, booking, pricing, retention and operating data. Scope is confirmed before work begins.</p><a href="/offers/revenue-audit" className="mt-5 inline-flex items-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Review the full Revenue Audit <ArrowRight className="h-4 w-4" /></a></div></div>
         <p className="mt-8 max-w-3xl text-xs leading-relaxed text-muted-foreground">{result.disclaimer}</p>
       </div></section>}
     </main>

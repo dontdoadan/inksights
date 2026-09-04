@@ -19,7 +19,7 @@ export function Logo() {
         </span>
       </span>
       <span className="text-xl font-extrabold tracking-tight text-ice">
-        INK<span className="text-mint">SIGHT</span>
+        INK<span className="text-mint">SIGHTS</span>
       </span>
     </span>
   );
@@ -34,7 +34,7 @@ export function SiteHeader() {
       </a>
       <header className="site-header sticky top-0 z-50 border-b border-border/50 bg-ink-deep/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-6">
-          <Link to="/" aria-label="INKSIGHT home"><Logo /></Link>
+          <Link to="/" aria-label="INKSIGHTS home"><Logo /></Link>
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground lg:flex" aria-label="Primary navigation">
             {navItems.map(([href, label]) => (
               <a key={href} href={href} className="nav-link transition hover:text-mint">{label}</a>
@@ -93,7 +93,7 @@ export function SiteFooter() {
     {
       title: "Company",
       links: [
-        ["/about", "About INKSIGHT"],
+        ["/about", "About INKSIGHTS"],
         ["/case-studies", "Proof and demonstrations"],
         ["/support", "Customer support"],
         ["/contact", "Contact"],
@@ -132,7 +132,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} INKSIGHT. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} INKSIGHTS. All rights reserved.</p>
           <button
             type="button"
             onClick={() => window.dispatchEvent(new Event("inksight:open-consent"))}

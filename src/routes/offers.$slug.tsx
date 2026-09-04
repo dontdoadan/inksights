@@ -23,13 +23,13 @@ export const Route = createFileRoute("/offers/$slug")({
   }),
   head: ({ params }) => {
     const offer = getPublicOffer(params.slug);
-    const canonical = `https://getinksight.co.uk/offers/${params.slug}`;
+    const canonical = `https://getinksights.co.uk/offers/${params.slug}`;
     return {
       meta: [
-        { title: offer ? `${offer.name} | INKSIGHT` : "INKSIGHT Offer" },
-        { name: "description", content: offer?.summary || "INKSIGHT tattoo studio growth solution." },
-        { property: "og:title", content: offer?.name || "INKSIGHT Offer" },
-        { property: "og:description", content: offer?.summary || "INKSIGHT tattoo studio growth solution." },
+        { title: offer ? `${offer.name} | INKSIGHTS` : "INKSIGHTS Offer" },
+        { name: "description", content: offer?.summary || "INKSIGHTS tattoo studio growth solution." },
+        { property: "og:title", content: offer?.name || "INKSIGHTS Offer" },
+        { property: "og:description", content: offer?.summary || "INKSIGHTS tattoo studio growth solution." },
         { property: "og:url", content: canonical },
       ],
       links: [{ rel: "canonical", href: canonical }],
@@ -45,14 +45,14 @@ function OfferPage() {
   if (!offer) {
     return (
       <PublicShell>
-        <PageHero eyebrow="Offer not found" title="This solution is not currently published." description="Return to the complete INKSIGHT offer catalogue." compact>
+        <PageHero eyebrow="Offer not found" title="This solution is not currently published." description="Return to the complete INKSIGHTS offer catalogue." compact>
           <PrimaryButton href="/offers">View all solutions</PrimaryButton>
         </PageHero>
       </PublicShell>
     );
   }
 
-  const canonical = `https://getinksight.co.uk/offers/${offer.slug}`;
+  const canonical = `https://getinksights.co.uk/offers/${offer.slug}`;
   return (
     <PublicShell>
       <JsonLd data={{
@@ -61,7 +61,7 @@ function OfferPage() {
         name: offer.name,
         description: offer.summary,
         url: canonical,
-        provider: { "@type": "Organization", name: "INKSIGHT", url: "https://getinksight.co.uk" },
+        provider: { "@type": "Organization", name: "INKSIGHTS", url: "https://getinksights.co.uk" },
         areaServed: { "@type": "Country", name: "United Kingdom" },
         offers: offer.structuredPrice
           ? {
@@ -80,7 +80,7 @@ function OfferPage() {
 
       {search.checkout === "success" && (
         <div className="border-b border-mint/30 bg-mint/10 px-6 py-4 text-center text-sm font-medium text-mint">
-          Payment successful. Thank you — INKSIGHT will contact you within one working day to begin intake.
+          Payment successful. Thank you — INKSIGHTS will contact you within one working day to begin intake.
         </div>
       )}
       {search.checkout === "cancelled" && (

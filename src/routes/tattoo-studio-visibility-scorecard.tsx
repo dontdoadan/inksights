@@ -3,7 +3,7 @@ import { Check, Clipboard, RotateCcw, ShieldCheck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { JsonLd, PageHero, PublicShell } from "@/components/public-site";
 
-const CANONICAL_URL = "https://getinksight.co.uk/tattoo-studio-visibility-scorecard";
+const CANONICAL_URL = "https://getinksights.co.uk/tattoo-studio-visibility-scorecard";
 const STORAGE_KEY = "inksight-visibility-scorecard-v1";
 
 type CheckItem = { id: string; label: string; evidence: string };
@@ -55,7 +55,7 @@ const sections: readonly Section[] = [
     title: "Retention and reputation systems",
     description: "Does the studio continue the relationship after the appointment?",
     checks: [
-      { id: "aftercare", label: "Aftercare is standardised and easy to revisit.", evidence: "Written or digital guidance connected to the studio and appointment." },
+      { id: "post-session", label: "Post-session guidance is standardised and easy to revisit.", evidence: "Clear recovery guidance connected to the studio and appointment." },
       { id: "followup", label: "Clients receive a structured follow-up.", evidence: "Healing check, review request, healed-photo request or rebooking prompt." },
       { id: "measurement", label: "The studio measures lead and booking outcomes.", evidence: "Source, response time, conversion, cancellations, deposits and repeat bookings." },
     ],
@@ -68,7 +68,7 @@ export const Route = createFileRoute("/tattoo-studio-visibility-scorecard")({
   component: TattooStudioVisibilityScorecard,
   head: () => ({
     meta: [
-      { title: "Free Tattoo Studio Visibility Scorecard | INKSIGHT" },
+      { title: "Free Tattoo Studio Visibility Scorecard | INKSIGHTS" },
       { name: "description", content: "Score a tattoo studio across local search, website indexability, portfolio trust, booking conversion and client retention." },
       { property: "og:title", content: "Free Tattoo Studio Visibility Scorecard" },
       { property: "og:description", content: "A practical 15-point diagnostic for tattoo studio owners." },
@@ -131,7 +131,7 @@ function TattooStudioVisibilityScorecard() {
   }
 
   async function copyResult() {
-    const text = `INKSIGHT Tattoo Studio Visibility Score: ${score}/100 — ${scoreLabel(score)}. Weakest area: ${weakest?.title || "not assessed"}.`;
+    const text = `INKSIGHTS Tattoo Studio Visibility Score: ${score}/100 — ${scoreLabel(score)}. Weakest area: ${weakest?.title || "not assessed"}.`;
     await navigator.clipboard.writeText(text);
     setCopied(true);
   }
