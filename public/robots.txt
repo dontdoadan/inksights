@@ -10,4 +10,4 @@ Disallow: /.well-known/
 Disallow: /preview
 Disallow: /test
 
-Sitemap: https://getinksight.co.uk/sitemap.xml
+Sitemap: https://getinksights.co.uk/sitemap.xml
