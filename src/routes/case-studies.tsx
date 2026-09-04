@@ -2,15 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Database, GitPullRequest, ShieldCheck, Workflow } from "lucide-react";
 import { CtaSection, JsonLd, PageHero, PublicShell, SectionHeading } from "@/components/public-site";
 
-const CANONICAL_URL = "https://getinksight.co.uk/case-studies";
+const CANONICAL_URL = "https://getinksights.co.uk/case-studies";
 
 export const Route = createFileRoute("/case-studies")({
   component: ProofPage,
   head: () => ({
     meta: [
-      { title: "INKSIGHT Proof Library | Systems and Demonstrations" },
-      { name: "description", content: "Review clearly labelled INKSIGHT demonstrations, working systems, validation standards and future client case-study criteria." },
-      { property: "og:title", content: "INKSIGHT Proof Library" },
+      { title: "INKSIGHTS Proof Library | Systems and Demonstrations" },
+      { name: "description", content: "Review clearly labelled INKSIGHTS demonstrations, working systems, validation standards and future client case-study criteria." },
+      { property: "og:title", content: "INKSIGHTS Proof Library" },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
@@ -23,14 +23,14 @@ function ProofPage() {
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        name: "INKSIGHT proof library",
+        name: "INKSIGHTS proof library",
         url: CANONICAL_URL,
-        description: "Transparent demonstrations and system validation for INKSIGHT.",
+        description: "Transparent demonstrations and system validation for INKSIGHTS.",
       }} />
       <PageHero
         eyebrow="Proof without fabrication"
         title={<>Demonstrations are labelled. Unknowns stay unknown.</>}
-        description={<>INKSIGHT is early-stage. This library shows working infrastructure, transparent methodology and simulated examples until genuine studio outcomes can be published with permission.</>}
+        description={<>INKSIGHTS is early-stage. This library shows working infrastructure, transparent methodology and simulated examples until genuine studio outcomes can be published with permission.</>}
       />
 
       <section className="border-b border-border bg-ink">

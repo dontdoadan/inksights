@@ -20,24 +20,24 @@ import {
   SectionHeading,
 } from "@/components/public-site";
 
-const CANONICAL_URL = "https://getinksight.co.uk/growth-model";
+const CANONICAL_URL = "https://getinksights.co.uk/growth-model";
 const POLICY_VERSION = "2026-07-28";
 
 export const Route = createFileRoute("/growth-model")({
   component: GrowthModel,
   head: () => ({
     meta: [
-      { title: "Tattoo Studio Performance Uplift Model | INKSIGHT" },
+      { title: "Tattoo Studio Revenue Growth Model | INKSIGHTS" },
       {
         name: "description",
         content:
-          "Model tattoo studio growth by increasing client numbers, average transaction value and purchase frequency, with optional verified-uplift pricing.",
+          "Model tattoo studio revenue using client numbers, average transaction value and purchase frequency, with explicit assumptions and measurement guardrails.",
       },
-      { property: "og:title", content: "The INKSIGHT Performance Uplift Model" },
+      { property: "og:title", content: "Tattoo Studio Revenue Growth Model | INKSIGHTS" },
       {
         property: "og:description",
         content:
-          "Three commercial levers, one measurable system: more clients, higher value and greater purchase frequency.",
+          "Explore the three core revenue levers for a tattoo studio: clients, transaction value and purchase frequency.",
       },
       { property: "og:url", content: CANONICAL_URL },
     ],
@@ -59,16 +59,16 @@ const levers = [
     title: "Increase average transaction value",
     label: "Value",
     description:
-      "Increase the value created per transaction through appropriate project planning, aftercare, retail, packages and premium options.",
-    examples: ["Aftercare attachment", "Project packages", "Premium options", "Better pricing structure"],
+      "Increase the value created per transaction through appropriate project planning, pricing discipline, packages and premium options.",
+    examples: ["Project packages", "Premium options", "Better pricing structure", "Clearer project scope"],
   },
   {
     icon: Repeat2,
     title: "Increase purchase frequency",
     label: "Frequency",
     description:
-      "Create consistent reasons and processes for clients to return, continue projects, refer others and make relevant recurring purchases.",
-    examples: ["Rebooking", "Project continuation", "Memberships", "Client reactivation"],
+      "Create consistent reasons and processes for clients to return, continue projects, refer others and reactivate later.",
+    examples: ["Rebooking", "Project continuation", "Referral systems", "Client reactivation"],
   },
 ] as const;
 
@@ -118,23 +118,23 @@ function GrowthModel() {
         data={{
           "@context": "https://schema.org",
           "@type": "WebPage",
-          name: "INKSIGHT Performance Uplift Model",
+          name: "INKSIGHTS Tattoo Studio Revenue Growth Model",
           url: CANONICAL_URL,
           description:
-            "A tattoo studio growth model based on client numbers, average transaction value and purchase frequency.",
+            "A tattoo studio revenue model based on client numbers, average transaction value and purchase frequency.",
         }}
       />
 
       <PageHero
-        eyebrow="The INKSIGHT commercial model"
-        title={<>Grow the studio through three measurable revenue levers.</>}
+        eyebrow="Tattoo studio commercial model"
+        title={<>Model growth through three measurable revenue levers.</>}
         description={
           <>
-            Revenue is modelled as <strong>clients × average transaction value × purchase frequency</strong>. INKSIGHT diagnoses the weakest lever, implements the smallest useful system and measures the resulting change.
+            Revenue is modelled as <strong>clients × average transaction value × purchase frequency</strong>. INKSIGHTS uses this as a diagnostic framework, not a guarantee: the inputs, constraints and measured outcome still have to be verified.
           </>
         }
       >
-        <PrimaryButton href="/studio-growth-check">Diagnose the studio</PrimaryButton>
+        <PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton>
         <SecondaryButton href="/offers/founding-studio-pilot">Review the implementation package</SecondaryButton>
       </PageHero>
 
@@ -142,8 +142,8 @@ function GrowthModel() {
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <SectionHeading
             eyebrow="Three ways to grow"
-            title="Each improvement multiplies the others."
-            description="A studio does not need one dramatic breakthrough. Several controlled improvements can compound into a meaningful commercial change."
+            title="Each lever can compound the others — but only within real studio capacity."
+            description="A studio does not need one dramatic breakthrough. Several controlled improvements can compound into a meaningful commercial change, provided the diary and delivery capacity can absorb it."
           />
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {levers.map((lever) => {
@@ -212,9 +212,9 @@ function GrowthModel() {
           </div>
 
           <div className="mt-6 grid gap-4 md:grid-cols-4">
-            <Metric label="Verified-model uplift" value={currency(model.uplift)} />
+            <Metric label="Modelled uplift" value={currency(model.uplift)} />
             <Metric label="Percentage uplift" value={`${model.upliftPercent.toFixed(1)}%`} />
-            <Metric label="Illustrative INKSIGHT fee" value={currency(model.performanceFee)} />
+            <Metric label="Illustrative INKSIGHTS fee" value={currency(model.performanceFee)} />
             <Metric label="Studio retains" value={currency(model.retainedUplift)} emphasis />
           </div>
 
@@ -235,7 +235,7 @@ function GrowthModel() {
               </div>
               <div className="flex gap-3 rounded-2xl border border-amber-300/35 bg-amber-300/5 p-5 text-sm leading-relaxed text-amber-100">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-200" />
-                <p>This percentage is for modelling only. INKSIGHT has no default public performance-fee percentage. A fee applies only where the signed scope defines the baseline, direct costs, attribution adjustments, measurement window and approval process.</p>
+                <p>This percentage is for modelling only. INKSIGHTS has no default public performance-fee percentage. A fee applies only where the signed scope defines the baseline, direct costs, attribution adjustments, measurement window and approval process.</p>
               </div>
             </div>
           </Card>
@@ -245,7 +245,7 @@ function GrowthModel() {
       <section className="border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <SectionHeading
-            eyebrow="How INKSIGHT is paid"
+            eyebrow="How INKSIGHTS is paid"
             title="A hybrid model that can align payment with delivered value."
             description="The commercial structure depends on the scope and confidence of measurement; not every engagement includes every fee layer."
           />
@@ -277,7 +277,7 @@ function GrowthModel() {
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
               ["01", "Baseline", "Record clients, average transaction value, frequency, capacity, prices, advertising and other material conditions."],
-              ["02", "Implement", "Document exactly what INKSIGHT changes and which growth lever each intervention is intended to affect."],
+              ["02", "Implement", "Document exactly what INKSIGHTS changes and which growth lever each intervention is intended to affect."],
               ["03", "Verify", "Measure collected revenue or agreed contribution over the defined window and apply agreed adjustments."],
               ["04", "Approve", "The studio reviews the evidence before any performance-linked invoice is raised."],
             ].map(([number, title, text]) => (
@@ -289,7 +289,7 @@ function GrowthModel() {
             ))}
           </div>
           <div className="mt-10 flex flex-wrap gap-3">
-            <PrimaryButton href="/studio-growth-check">Start with the free Growth Check</PrimaryButton>
+            <PrimaryButton href="/studio-growth-check">Start with the free Revenue Audit</PrimaryButton>
             <SecondaryButton href="/offers/revenue-audit">Review the Revenue Audit</SecondaryButton>
           </div>
           <p className="mt-6 text-xs text-muted-foreground">Commercial policy version {POLICY_VERSION}. Calculators provide educational illustrations only.</p>
