@@ -4,15 +4,15 @@ import { useState } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 import { supabase } from "@/integrations/supabase/client";
 
-const CANONICAL_URL = "https://getinksight.co.uk/contact";
+const CANONICAL_URL = "https://getinksights.co.uk/contact";
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
   head: () => ({
     meta: [
-      { title: "Contact INKSIGHT" },
-      { name: "description", content: "Contact INKSIGHT about tattoo studio growth, existing-client support, billing, cancellations, partnerships or website support." },
-      { property: "og:title", content: "Contact INKSIGHT" },
+      { title: "Contact INKSIGHTS" },
+      { name: "description", content: "Contact INKSIGHTS about tattoo studio growth, existing-client support, billing, cancellations, partnerships or website support." },
+      { property: "og:title", content: "Contact INKSIGHTS" },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
@@ -53,7 +53,7 @@ function ContactPage() {
   return (
     <PublicShell>
       <PageHero
-        eyebrow="Contact INKSIGHT"
+        eyebrow="Contact INKSIGHTS"
         title={<>Ask a specific question or start with the diagnosis.</>}
         description={<>Use the form for existing-client support, billing or cancellation questions, offer scope, partnerships, technical issues or general enquiries. Studio owners seeking a recommendation should normally complete the free Growth Check first.</>}
       />
@@ -91,7 +91,7 @@ function ContactPage() {
               <div className="flex min-h-[480px] flex-col justify-center">
                 <CheckCircle2 className="h-12 w-12 text-mint" />
                 <h2 className="mt-6 font-display text-4xl font-black text-ice">Message recorded.</h2>
-                <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">INKSIGHT will review the message and reply using the email provided. No payment or booking has been created.</p>
+                <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">INKSIGHTS will review the message and reply using the email provided. No payment or booking has been created.</p>
                 <div className="mt-7"><a href="/resources" className="inline-flex rounded-full border border-mint px-5 py-3 font-bold text-mint">Browse resources</a></div>
               </div>
             ) : (
@@ -127,7 +127,7 @@ function ContactPage() {
                 </div>
                 <label className="flex items-start gap-3 rounded-xl border border-border bg-ink-deep p-4 text-sm leading-relaxed text-muted-foreground">
                   <input name="consent" type="checkbox" required className="mt-1 h-4 w-4 accent-[var(--mint)]" />
-                  <span>I agree that INKSIGHT may store and use these details to respond to this enquiry. <span className="text-mint">Required.</span></span>
+                  <span>I agree that INKSIGHTS may store and use these details to respond to this enquiry. <span className="text-mint">Required.</span></span>
                 </label>
                 {error ? <p role="alert" className="rounded-xl border border-red-400/35 bg-red-400/10 p-4 text-sm text-red-200">{error}</p> : null}
                 <button type="submit" disabled={status === "sending"} className="rounded-full bg-mint px-6 py-3.5 font-bold text-ink-deep hover:bg-mint-soft disabled:opacity-60">
