@@ -19,6 +19,7 @@ const PUBLIC_SITEMAP_PATHS = [
   "/offers/founding-studio-pilot",
   "/studio-growth-check",
   "/studio-visibility-report",
+  "/full-audit",
   "/resources",
   "/tattoo-studio-visibility-scorecard",
   "/tattoo-studio-software",
@@ -72,7 +73,8 @@ function isNonCanonicalPreviewHost(hostname: string): boolean {
     hostname === "127.0.0.1" ||
     hostname.endsWith(".lovable.app") ||
     hostname.endsWith(".lovable.dev") ||
-    hostname.endsWith(".lovableproject.com")
+    hostname.endsWith(".lovableproject.com") ||
+    hostname.endsWith(".vercel.app")
   );
 }
 
@@ -154,7 +156,7 @@ function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
   if (contentType.includes("text/html")) {
     const canonical = new URL(canonicalUrl);
     canonical.search = "";
-    headers.set("link", `<${canonical.toString()}>; rel="canonical"`);
+    headers.set("link", `<${canonical.toString()}>; rel="canonical");
     headers.set(
       "x-robots-tag",
       isNoindexPath(canonical.pathname) ? "noindex, nofollow" : "index, follow",
