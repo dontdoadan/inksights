@@ -11,9 +11,30 @@ const CANONICAL_ORIGIN = "https://getinksights.co.uk";
 const CANONICAL_HOST = "getinksights.co.uk";
 const PUBLIC_SITEMAP_PATHS = [
   "/",
-  "/growth-model",
-  "/tattoo-studio-software",
+  "/solutions",
+  "/tattoo-studio-growth",
+  "/tattoo-studio-seo",
+  "/tattoo-studio-revenue",
+  "/tattoo-studio-booking",
+  "/offers",
+  "/offers/72-hour-visibility-fix",
+  "/offers/visibility-watch",
+  "/offers/revenue-audit",
+  "/offers/booking-retention-engine",
+  "/offers/founding-studio-pilot",
+  "/studio-growth-check",
+  "/studio-visibility-report",
+  "/resources",
   "/tattoo-studio-visibility-scorecard",
+  "/tattoo-studio-software",
+  "/tools/tattoo-pain-chart-reality-check",
+  "/guides/full-sleeve-cost-uk",
+  "/guides/grey-line-healing-week-by-week",
+  "/growth-model",
+  "/case-studies",
+  "/about",
+  "/support",
+  "/contact",
 ] as const;
 const NOINDEX_PATH_PREFIXES = [
   "/auth",
@@ -52,7 +73,8 @@ function isNonCanonicalPreviewHost(hostname: string): boolean {
     hostname === "127.0.0.1" ||
     hostname.endsWith(".lovable.app") ||
     hostname.endsWith(".lovable.dev") ||
-    hostname.endsWith(".lovableproject.com")
+    hostname.endsWith(".lovableproject.com") ||
+    hostname.endsWith(".vercel.app")
   );
 }
 
@@ -134,7 +156,7 @@ function withSeoHeaders(response: Response, canonicalUrl: URL): Response {
   if (contentType.includes("text/html")) {
     const canonical = new URL(canonicalUrl);
     canonical.search = "";
-    headers.set("link", `<${canonical.toString()}>; rel="canonical"`);
+    headers.set("link", `<${canonical.toString()}>; rel="canonical");
     headers.set(
       "x-robots-tag",
       isNoindexPath(canonical.pathname) ? "noindex, nofollow" : "index, follow",
