@@ -118,6 +118,17 @@ function Index() {
         </div>
       </section>
 
+      <section className="border-b border-border bg-ink-deep">
+        <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
+          <div className="rounded-3xl border border-mint/20 bg-ink p-8 md:p-10">
+            <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Free studio tool</p><h2 className="mt-3 max-w-3xl font-display text-3xl font-black text-ice md:text-4xl">Benchmark your pricing — without sending your data to a third party.</h2><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">Use the native INKSIGHTS Pricing Benchmark to compare current rates with reference bands and interpret them alongside booking lead time.</p></div>
+              <PrimaryButton href="/pricing-benchmark">Open Pricing Benchmark</PrimaryButton>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="rounded-3xl border border-mint/30 bg-ink-deep p-8 md:p-12">
