@@ -4,22 +4,77 @@ import { useState } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/contact";
+const ALLOWED_ORIGINS = new Set(["https://getinksights.co.uk", "https://www.getinksights.co.uk"]);
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
   head: () => ({
     meta: [
       { title: "Contact INKSIGHTS" },
-      {
-        name: "description",
-        content: "Contact INKSIGHTS about tattoo studio growth, support, partnerships, technical issues or general enquiries.",
-      },
+      { name: "description", content: "Contact INKSIGHTS about tattoo studio growth, support, partnerships, technical issues or general enquiries." },
       { property: "og:title", content: "Contact INKSIGHTS" },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
   }),
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const origin = request.headers.get("origin");
+        if (origin && !ALLOWED_ORIGINS.has(origin)) return json({ ok: false, error: "Origin not allowed." }, 403);
+        const contentType = request.headers.get("content-type") || "";
+        if (!contentType.toLowerCase().includes("application/json")) return json({ ok: false, error: "Content-Type must be application/json." }, 415);
+        const contentLength = Number(request.headers.get("content-length") || 0);
+        if (contentLength > 20000) return json({ ok: false, error: "Request too large." }, 413);
+
+        let body: Record<string, unknown>;
+        try {
+          body = await request.json();
+        } catch {
+          return json({ ok: false, error: "Invalid request." }, 400);
+        }
+
+        const name = String(body.name || "").trim();
+        const email = String(body.email || "").trim().toLowerCase();
+        const topic = String(body.topic || "").trim();
+        const message = String(body.message || "").trim();
+        const consent = body.consent === true;
+        if (String(body.company_url || "").trim()) return json({ ok: true, suppressed: true });
+        if (!name || name.length > 120 || !/^\S+@\S+\.\S+$/.test(email) || !topic || !message || message.length < 10 || message.length > 10000 || !consent) {
+          return json({ ok: false, error: "Please complete the required fields." }, 400);
+        }
+
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data, error } = await supabaseAdmin.from("enquiries").insert({
+            name,
+            email,
+            brief: message,
+            project_type: topic,
+            source: "website_contact",
+            status: "new",
+            consent_at: new Date().toISOString(),
+          }).select("id").single();
+          if (error || !data?.id) {
+            console.error("Contact enquiry persistence failed:", error);
+            return json({ ok: false, error: "The message could not be recorded right now. Please try again." }, 503);
+          }
+          return json({ ok: true, enquiry_id: data.id });
+        } catch (error) {
+          console.error("Contact intake failed:", error instanceof Error ? error.message : String(error));
+          return json({ ok: false, error: "The message could not be recorded right now. Please try again." }, 503);
+        }
+      },
+    },
+  },
 });
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" },
+  });
+}
 
 function ContactPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
@@ -29,10 +84,9 @@ function ContactPage() {
     event.preventDefault();
     setStatus("sending");
     setError(null);
-
     const form = new FormData(event.currentTarget);
     try {
-      const response = await fetch("/api/public/contact", {
+      const response = await fetch("/contact", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -56,68 +110,28 @@ function ContactPage() {
 
   return (
     <PublicShell>
-      <PageHero
-        eyebrow="Contact INKSIGHTS"
-        title={<>Ask a specific question or start with the diagnosis.</>}
-        description={<>Use the form for support, billing, offer scope, partnerships, technical issues or general enquiries. Studio owners seeking a recommendation should normally start with the free Revenue Audit.</>}
-      />
-
+      <PageHero eyebrow="Contact INKSIGHTS" title={<>Ask a specific question or start with the diagnosis.</>} description={<>Use the form for support, billing, offer scope, partnerships, technical issues or general enquiries. Studio owners seeking a recommendation should normally start with the free Revenue Audit.</>} />
       <section>
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:py-24 lg:grid-cols-[.8fr_1.2fr]">
           <div className="space-y-5">
-            <div className="rounded-2xl border border-border bg-ink p-6">
-              <Mail className="h-7 w-7 text-mint" />
-              <h2 className="mt-5 font-display text-2xl font-black text-ice">Direct email</h2>
-              <a href="mailto:dontdoadan@icloud.com" className="mt-3 inline-block font-bold text-mint hover:text-mint-soft">dontdoadan@icloud.com</a>
-            </div>
-            <div className="rounded-2xl border border-border bg-ink p-6">
-              <ShieldCheck className="h-7 w-7 text-mint" />
-              <h2 className="mt-5 font-display text-2xl font-black text-ice">Privacy</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Messages are stored securely for response and operational follow-up. They are not sold to advertisers.</p>
-              <Link to="/privacy" className="mt-4 inline-block text-sm font-bold text-mint">Read the privacy notice</Link>
-            </div>
+            <div className="rounded-2xl border border-border bg-ink p-6"><Mail className="h-7 w-7 text-mint" /><h2 className="mt-5 font-display text-2xl font-black text-ice">Direct email</h2><a href="mailto:dontdoadan@icloud.com" className="mt-3 inline-block font-bold text-mint hover:text-mint-soft">dontdoadan@icloud.com</a></div>
+            <div className="rounded-2xl border border-border bg-ink p-6"><ShieldCheck className="h-7 w-7 text-mint" /><h2 className="mt-5 font-display text-2xl font-black text-ice">Privacy</h2><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Messages are stored securely for response and operational follow-up. They are not sold to advertisers.</p><Link to="/privacy" className="mt-4 inline-block text-sm font-bold text-mint">Read the privacy notice</Link></div>
           </div>
-
           <div className="rounded-3xl border border-border bg-ink p-6 md:p-9">
             {status === "done" ? (
-              <div className="flex min-h-[480px] flex-col justify-center">
-                <CheckCircle2 className="h-12 w-12 text-mint" />
-                <h2 className="mt-6 font-display text-4xl font-black text-ice">Message recorded.</h2>
-                <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">INKSIGHTS will review the message and reply using the email provided. No payment or booking has been created.</p>
-              </div>
+              <div className="flex min-h-[480px] flex-col justify-center"><CheckCircle2 className="h-12 w-12 text-mint" /><h2 className="mt-6 font-display text-4xl font-black text-ice">Message recorded.</h2><p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">INKSIGHTS will review the message and reply using the email provided. No payment or booking has been created.</p></div>
             ) : (
               <form onSubmit={submit} className="space-y-5">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Secure contact form</p>
-                  <h2 className="mt-2 font-display text-3xl font-black text-ice">What do you need help with?</h2>
-                </div>
+                <div><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Secure contact form</p><h2 className="mt-2 font-display text-3xl font-black text-ice">What do you need help with?</h2></div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field label="Name" required><input name="name" required autoComplete="name" className="form-control" /></Field>
                   <Field label="Email" required><input name="email" type="email" required autoComplete="email" className="form-control" /></Field>
                   <Field label="Studio name"><input name="studio_name" autoComplete="organization" className="form-control" /></Field>
-                  <Field label="Topic" required>
-                    <select name="topic" required className="form-control">
-                      <option value="">Select a topic</option>
-                      <option value="existing-client-support">Existing client support</option>
-                      <option value="billing-cancellation">Billing, subscription or cancellation</option>
-                      <option value="72-hour-visibility-fix">72-Hour Visibility Fix</option>
-                      <option value="revenue-audit">Revenue Audit or recommendation</option>
-                      <option value="partnership">Partnership or case study</option>
-                      <option value="website-support">Website or technical issue</option>
-                      <option value="privacy-data-request">Privacy or data request</option>
-                      <option value="media">Media or research</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </Field>
+                  <Field label="Topic" required><select name="topic" required className="form-control"><option value="">Select a topic</option><option value="existing-client-support">Existing client support</option><option value="billing-cancellation">Billing, subscription or cancellation</option><option value="72-hour-visibility-fix">72-Hour Visibility Fix</option><option value="revenue-audit">Revenue Audit or recommendation</option><option value="partnership">Partnership or case study</option><option value="website-support">Website or technical issue</option><option value="privacy-data-request">Privacy or data request</option><option value="media">Media or research</option><option value="other">Other</option></select></Field>
                 </div>
-                <Field label="Message" required>
-                  <textarea name="message" required minLength={10} rows={7} className="form-control resize-y" placeholder="Include the studio, relevant links or references, what happened and the outcome you need. Do not include passwords, full card details, private API keys or verification codes." />
-                </Field>
+                <Field label="Message" required><textarea name="message" required minLength={10} rows={7} className="form-control resize-y" placeholder="Include the studio, relevant links or references, what happened and the outcome you need. Do not include passwords, full card details, private API keys or verification codes." /></Field>
                 <div className="hidden" aria-hidden="true"><label>Company URL<input name="company_url" tabIndex={-1} autoComplete="off" /></label></div>
-                <label className="flex items-start gap-3 rounded-xl border border-border bg-ink-deep p-4 text-sm leading-relaxed text-muted-foreground">
-                  <input name="consent" type="checkbox" required className="mt-1 h-4 w-4 accent-[var(--mint)]" />
-                  <span>I agree that INKSIGHTS may store and use these details to respond to this enquiry. <span className="text-mint">Required.</span></span>
-                </label>
+                <label className="flex items-start gap-3 rounded-xl border border-border bg-ink-deep p-4 text-sm leading-relaxed text-muted-foreground"><input name="consent" type="checkbox" required className="mt-1 h-4 w-4 accent-[var(--mint)]" /><span>I agree that INKSIGHTS may store and use these details to respond to this enquiry. <span className="text-mint">Required.</span></span></label>
                 {error ? <p role="alert" className="rounded-xl border border-red-400/35 bg-red-400/10 p-4 text-sm text-red-200">{error}</p> : null}
                 <button type="submit" disabled={status === "sending"} className="rounded-full bg-mint px-6 py-3.5 font-bold text-ink-deep hover:bg-mint-soft disabled:opacity-60">{status === "sending" ? "Recording message…" : "Send message"}</button>
               </form>
@@ -130,10 +144,5 @@ function ContactPage() {
 }
 
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
-  return (
-    <label className="block">
-      <span className="mb-2 block text-sm font-bold text-ice">{label}{required ? <span className="text-mint"> *</span> : null}</span>
-      {children}
-    </label>
-  );
+  return <label className="block"><span className="mb-2 block text-sm font-bold text-ice">{label}{required ? <span className="text-mint"> *</span> : null}</span>{children}</label>;
 }
