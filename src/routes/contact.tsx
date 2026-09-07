@@ -21,7 +21,7 @@ export const Route = createFileRoute("/contact")({
     handlers: {
       POST: async ({ request }) => {
         const origin = request.headers.get("origin");
-        if (origin && !ALLOWED_ORIGINS.has(origin)) return json({ ok: false, error: "Origin not allowed." }, 403);
+        if (!origin || !ALLOWED_ORIGINS.has(origin)) return json({ ok: false, error: "Origin not allowed." }, 403);
         const contentType = request.headers.get("content-type") || "";
         if (!contentType.toLowerCase().includes("application/json")) return json({ ok: false, error: "Content-Type must be application/json." }, 415);
         const contentLength = Number(request.headers.get("content-length") || 0);
@@ -36,20 +36,22 @@ export const Route = createFileRoute("/contact")({
 
         const name = String(body.name || "").trim();
         const email = String(body.email || "").trim().toLowerCase();
+        const studioName = String(body.studio_name || "").trim();
         const topic = String(body.topic || "").trim();
         const message = String(body.message || "").trim();
         const consent = body.consent === true;
         if (String(body.company_url || "").trim()) return json({ ok: true, suppressed: true });
-        if (!name || name.length > 120 || !/^\S+@\S+\.\S+$/.test(email) || !topic || !message || message.length < 10 || message.length > 10000 || !consent) {
+        if (!name || name.length > 120 || email.length > 254 || !/^\S+@\S+\.\S+$/.test(email) || studioName.length > 200 || !topic || !message || message.length < 10 || message.length > 10000 || !consent) {
           return json({ ok: false, error: "Please complete the required fields." }, 400);
         }
 
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const persistedBrief = studioName ? `Studio: ${studioName}\n\n${message}` : message;
           const { data, error } = await supabaseAdmin.from("enquiries").insert({
             name,
             email,
-            brief: message,
+            brief: persistedBrief,
             project_type: topic,
             source: "website_contact",
             status: "new",
