@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -59,3 +60,22 @@ jobs:
 
       - name: Test social migration package
         run: python -m unittest discover -s automation/social/tests -p "test_*.py"
+
+      - name: Mint GitHub Actions OIDC token
+        id: vercel_oidc
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken();
+            core.setSecret(token);
+            core.setOutput('token', token);
+
+      - name: Verify protected Preview deployment access
+        env:
+          VERCEL_OIDC_TOKEN: ${{ steps.vercel_oidc.outputs.token }}
+        run: |
+          curl --fail --silent --show-error \
+            "https://inksight-main-git-fix-revenue-audit-e2e-current-main-inksights.vercel.app/" \
+            -H "x-vercel-trusted-oidc-idp-token: ${VERCEL_OIDC_TOKEN}" \
+            -o /tmp/inksights-preview-response.html
+          test -s /tmp/inksights-preview-response.html
