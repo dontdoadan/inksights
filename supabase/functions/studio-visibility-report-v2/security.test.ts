@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects } from "jsr:@std/assert@1";
+import { assertEquals, assertRejects, assertThrows } from "jsr:@std/assert@1";
 import { assertPublicNetworkTarget, isBlockedAddress, validatePublicUrl } from "./security.ts";
 
 test("blocks private and link-local IPv4 and IPv6 addresses", () => {
@@ -34,7 +34,7 @@ test("rejects credentials, non-web protocols and non-standard ports", () => {
     "http://127.0.0.1",
     "http://[::1]",
   ]) {
-    assertRejects(() => Promise.resolve(validatePublicUrl(value)));
+    assertThrows(() => validatePublicUrl(value));
   }
 });
 
