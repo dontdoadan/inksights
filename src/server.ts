@@ -52,7 +52,13 @@ function isNonCanonicalPreviewHost(hostname: string): boolean {
     hostname === "127.0.0.1" ||
     hostname.endsWith(".lovable.app") ||
     hostname.endsWith(".lovable.dev") ||
-    hostname.endsWith(".lovableproject.com")
+    hostname.endsWith(".lovableproject.com") ||
+    // v0 preview/proxy hosts — keep their origin so the preview is reachable
+    // instead of being redirected to the canonical production domain.
+    hostname.endsWith(".vusercontent.net") ||
+    hostname.endsWith(".v0.dev") ||
+    hostname.endsWith(".v0.build") ||
+    hostname.endsWith(".vercel.app")
   );
 }
 
@@ -172,7 +178,9 @@ export default {
     const requestUrl = new URL(request.url);
     const canonicalUrl = canonicalRequestUrl(request);
 
-    if (shouldRedirectToCanonical(requestUrl, canonicalUrl)) {
+    // Never force the canonical production domain while running the dev server,
+    // so previews on any host (localhost, v0 preview proxy, etc.) stay reachable.
+    if (!import.meta.env.DEV && shouldRedirectToCanonical(requestUrl, canonicalUrl)) {
       return Response.redirect(canonicalUrl, 301);
     }
 
