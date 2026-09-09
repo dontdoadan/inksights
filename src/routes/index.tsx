@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, Database, Eye, Gauge, Search, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
-import { Reveal, TiltCard } from "@/components/interactive-home";
+import { HeroSignalPanel, Reveal, TiltCard } from "@/components/interactive-home";
 import { Card, JsonLd, PrimaryButton, PublicShell, RevenueLeakageMap, SecondaryButton } from "@/components/public-site";
 import { StudioIntelligenceMap } from "@/components/studio-intelligence-map";
 
@@ -52,39 +52,23 @@ function Index() {
             <Reveal>
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-mint backdrop-blur-xl">
-                  <Sparkles className="h-4 w-4" /> FOR UK TATTOO STUDIO OWNERS
+                  <Sparkles className="h-4 w-4" /> GROWTH SYSTEMS BUILT FOR TATTOO STUDIOS
                 </div>
-                <h1 className="mt-7 max-w-5xl text-balance font-display text-5xl font-black leading-[.92] tracking-tight text-ice sm:text-6xl md:text-7xl xl:text-8xl">
-                  Growth intelligence for <span className="text-mint">UK tattoo studios.</span>
+                <h1 className="mt-7 max-w-4xl text-balance font-display text-5xl font-black leading-[.92] tracking-tight text-ice sm:text-6xl md:text-7xl xl:text-8xl">
+                  Turn more studio visibility into <span className="text-mint">booked, retained and higher-value clients.</span>
                 </h1>
                 <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-                  Find where your studio is losing visibility, enquiries, bookings, capacity or revenue — then fix the constraint that matters most.
+                  INKSIGHTS diagnoses and improves the commercial systems behind tattoo studio growth—from Google visibility and enquiry conversion to cancellations, retention and client value.
                 </p>
                 <div className="mt-9 flex flex-wrap gap-3">
-                  <PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton>
-                  <SecondaryButton href="/tattoo-studio-visibility-scorecard">Check studio visibility</SecondaryButton>
+                  <PrimaryButton href="/studio-growth-check">Start the free Growth Check</PrimaryButton>
+                  <SecondaryButton href="/offers/72-hour-visibility-fix">See the £249 Visibility Fix</SecondaryButton>
                 </div>
-                <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                  Built for established and multi-artist studios, especially teams with 3+ artists that have outgrown ad-hoc Instagram, email and spreadsheet management.
-                </p>
               </div>
             </Reveal>
 
             <Reveal delay={120}>
-              <div className="relative rounded-3xl border border-mint/25 bg-ink/80 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
-                <div className="flex items-center justify-between border-b border-border pb-5">
-                  <div><p className="text-xs font-bold uppercase tracking-[.15em] text-mint">Studio intelligence</p><h2 className="mt-2 font-display text-2xl font-black text-ice">From signal to decision</h2></div>
-                  <Eye className="h-8 w-8 text-mint" />
-                </div>
-                <div className="mt-6 space-y-3">
-                  {["VISIBILITY", "ENQUIRIES", "BOOKINGS", "CAPACITY", "REVENUE"].map((step, i) => (
-                    <div key={step} className="flex items-center gap-4 rounded-xl border border-border bg-ink-deep px-4 py-4">
-                      <span className="font-mono text-xs text-mint">0{i + 1}</span><span className="text-sm font-black tracking-[.12em] text-ice">{step}</span><span className="ml-auto h-1.5 w-1.5 rounded-full bg-mint" />
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-5 text-sm leading-relaxed text-muted-foreground">The public website is the interface. The proprietary studio dataset, diagnostics and monitoring models are the long-term asset.</p>
-              </div>
+              <HeroSignalPanel />
             </Reveal>
           </div>
         </div>
