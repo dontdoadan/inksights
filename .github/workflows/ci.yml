@@ -28,6 +28,11 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Set up Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.x
+
       - name: Install dependencies
         run: npm install --legacy-peer-deps --no-audit --no-fund
 
@@ -62,3 +67,6 @@ jobs:
 
       - name: Test social migration package
         run: python -m unittest discover -s automation/social/tests -p "test_*.py"
+
+      - name: Test Edge Function security boundaries
+        run: deno test --allow-net supabase/functions/studio-visibility-report-v2/security.test.ts
