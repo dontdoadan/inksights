@@ -1,0 +1,6 @@
+-- Cover foreign keys introduced by the canonical growth engine V1.
+create index if not exists idx_opportunity_scores_diagnostic_id on public.intelligence_opportunity_scores(diagnostic_id);
+create index if not exists idx_opportunity_scores_diagnosis_id on public.intelligence_opportunity_scores(diagnosis_id);
+create index if not exists idx_opportunity_scores_playbook_id on public.intelligence_opportunity_scores(playbook_id);
+create index if not exists idx_opportunity_scores_scoring_version on public.intelligence_opportunity_scores(scoring_version);
+create index if not exists idx_recommendations_opportunity_score_id on public.intelligence_recommendations(opportunity_score_id);
