@@ -1,7 +1,7 @@
 # INKSIGHTS recovery and activation plan
 
-> **Date:** 13 September 2026  
-> **Status:** Active  
+> **Date:** 13 September 2026
+> **Status:** Active
 > **Evidence:** production read audit across GitHub, Vercel, Supabase, Stripe and HubSpot; remediation PR #23.
 
 ## Decision
@@ -21,7 +21,7 @@ Treat `dontdoadan/inksights` → Vercel `inksight-main` → Supabase project `uk
 
 ### 1. Merge the remediation source of truth
 
-**Owner:** Product/technical owner  
+**Owner:** Product/technical owner
 **Status:** awaiting review
 
 Review and merge [PR #23](https://github.com/dontdoadan/inksights/pull/23). Production Supabase already contains the defensive migration and Edge Function v8, so the merge is required to make `main` the accurate recovery source.
@@ -34,7 +34,7 @@ Review and merge [PR #23](https://github.com/dontdoadan/inksights/pull/23). Prod
 
 ### 2. Restore a reproducible web build
 
-**Owner:** Engineering  
+**Owner:** Engineering
 **Status:** unresolved release-engineering blocker
 
 `package.json` and `package-lock.json` disagree, so `npm ci` fails. The repository also has a Bun lockfile, while this workspace has no Bun runtime. Do not blindly regenerate or delete lockfiles.
@@ -55,7 +55,7 @@ Review and merge [PR #23](https://github.com/dontdoadan/inksights/pull/23). Prod
 
 ### 3. Resolve PostGIS API ownership safely
 
-**Owner:** Supabase platform owner / Supabase Support  
+**Owner:** Supabase platform owner / Supabase Support
 **Status:** blocked by extension ownership
 
 `public.spatial_ref_sys` is extension-owned. It has RLS disabled in an API-exposed schema and the current credentials cannot alter it (`must be owner of table spatial_ref_sys`). A direct migration was correctly rejected and was not retained.
@@ -76,7 +76,7 @@ Open a Supabase Support request requesting the supported method to: preserve rea
 
 ### 4. Make the Growth Check a measurable acquisition funnel
 
-**Owner:** Product + Growth  
+**Owner:** Product + Growth
 **Status:** product flow exists; commercial activation is not evidenced
 
 The Visibility Report is a credible lead magnet only if every submitted studio becomes an attributable commercial opportunity.
@@ -97,7 +97,7 @@ The Visibility Report is a credible lead magnet only if every submitted studio b
 
 ### 5. Implement payments only after the offer is explicit
 
-**Owner:** Commercial + Engineering  
+**Owner:** Commercial + Engineering
 **Status:** Stripe account is live but no live Payment Links, webhook endpoints or Payment Intents exist as of this audit.
 
 Choose one initial paid offer before integrating Stripe: a paid studio intelligence pilot, a monthly intelligence subscription, or a paid implementation plus subscription. The recommendation is a time-bounded paid pilot that proves revenue improvement, then converts to recurring intelligence access.
@@ -118,7 +118,7 @@ Choose one initial paid offer before integrating Stripe: a paid studio intellige
 
 ### 6. Turn report data into defensible intelligence
 
-**Owner:** Product + Data  
+**Owner:** Product + Data
 **Status:** canonical intelligence schema exists; live provider and attribution activation are not yet evidenced.
 
 Prioritise data that causes a studio decision, not dashboard breadth:
