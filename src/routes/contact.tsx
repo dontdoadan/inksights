@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Mail, MessageSquareText, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
-import { supabase } from "@/integrations/supabase/client";
 
 const CANONICAL_URL = "https://getinksights.co.uk/contact";
+const CONTACT_INTAKE_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/public-contact-intake";
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
@@ -28,25 +28,34 @@ function ContactPage() {
     setStatus("sending");
     setError(null);
     const form = new FormData(event.currentTarget);
-    const { data, error: functionError } = await supabase.functions.invoke("public-contact-intake", {
-      body: {
-        name: String(form.get("name") || ""),
-        email: String(form.get("email") || ""),
-        studio_name: String(form.get("studio_name") || ""),
-        topic: String(form.get("topic") || ""),
-        message: String(form.get("message") || ""),
-        consent: form.get("consent") === "on",
-        company_url: String(form.get("company_url") || ""),
-        page_path: window.location.pathname,
-        referrer: document.referrer || null,
-      },
-    });
 
-    if (functionError || !data?.ok) {
+    let data: { ok?: boolean; error?: string } | null = null;
+    try {
+      const response = await fetch(CONTACT_INTAKE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: String(form.get("name") || ""),
+          email: String(form.get("email") || ""),
+          studio_name: String(form.get("studio_name") || ""),
+          topic: String(form.get("topic") || ""),
+          message: String(form.get("message") || ""),
+          consent: form.get("consent") === "on",
+          company_url: String(form.get("company_url") || ""),
+          page_path: window.location.pathname,
+          referrer: document.referrer || null,
+        }),
+      });
+      data = await response.json().catch(() => null);
+      if (!response.ok || !data?.ok) {
+        throw new Error(data?.error || `Contact service returned ${response.status}.`);
+      }
+    } catch (submitError) {
       setStatus("error");
-      setError(functionError?.message || data?.error || "The message could not be recorded. Email dontdoadan@icloud.com instead.");
+      setError(submitError instanceof Error ? submitError.message : "The message could not be recorded. Email dontdoadan@icloud.com instead.");
       return;
     }
+
     setStatus("done");
   }
 
