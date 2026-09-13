@@ -63,14 +63,17 @@ Evidence required before freeze:
 
 ### Search intelligence maintenance
 
-Current state:
+Evidence required before freeze:
 
 - [x] Legacy `search-console-sync` inspected and found hard-coded to former INKCARE semantics/domain.
 - [x] Canonical Search Intelligence v1 exists.
-- [ ] Reconcile what `seo_refresh_opportunities()` and `seo_publish_command_centre_metrics()` still produce.
-- [ ] Confirm no current INKSIGHTS page/report reads the resulting legacy tables/metrics.
-- [ ] Either recreate genuinely useful scheduled maintenance in canonical INKSIGHTS or classify it obsolete.
-- [ ] Disable cron job 4 only after the above checks pass.
+- [x] `seo_refresh_opportunities()` and `seo_publish_command_centre_metrics()` inspected.
+- [x] Legacy Search Console property is `sc-domain:getinkcare.co.uk`, status `awaiting_authorization`.
+- [x] Legacy `seo_query_daily` contains zero rows and therefore no current Search Console observations.
+- [x] Legacy `seo_opportunities` contains zero rows.
+- [x] The daily job only republishes legacy Command Centre metrics from that empty/stale SEO source.
+- [x] `inkcare-search-intelligence-maintenance` schedule disabled via `cron.alter_job` on 2026-09-14.
+- [ ] Rebuild Search Console ingestion later only if it becomes a deliberate canonical INKSIGHTS requirement.
 
 ## Phase 3 — Legacy Edge Function retirement
 
@@ -83,8 +86,8 @@ For each function, record one of: `replacement verified`, `no caller`, `historic
 - [ ] `growth-funnel-event` → retire after no caller is confirmed.
 - [ ] `visibility-watch*` → Visibility Intelligence v2 / Search Intelligence.
 - [ ] `visibility-fix-*` → archive historical offer workflow unless reintroduced deliberately.
-- [ ] legacy `public-contact-intake` → canonical contact intake.
-- [ ] `studio-growth-check` legacy hosted page → canonical site route.
+- [x] legacy `public-contact-intake` → canonical replacement exists and passed integration test; legacy endpoint remains deployed only for rollback until route cutover is live.
+- [x] `studio-growth-check` legacy hosted page → canonical site route is the intended replacement; old function is INKCARE-branded and should not be migrated.
 
 ### Historical/test-only Stripe
 
@@ -106,8 +109,11 @@ For each function, record one of: `replacement verified`, `no caller`, `historic
 
 ### Separate Daniel Hughes Tattoos destination
 
-- [ ] `ingest-dht-submission` — move/rebuild in tattoo-business backend or explicitly retire.
-- [ ] `upload-dht-reference` — move/rebuild in tattoo-business backend or explicitly retire.
+- [x] DHT backend confirmed isolated in the `daniel_hughes_tattoos` schema rather than INKSIGHTS tables.
+- [x] DHT current production site inspected: current landing page uses email enquiry only and does not invoke Supabase.
+- [x] DHT backend data checked: 0 submissions, 0 assets, 0 submission events; one historic rate-limit row.
+- [ ] `ingest-dht-submission` — preserve as separate-business standby source or rebuild only when the tattoo site needs structured intake.
+- [ ] `upload-dht-reference` — preserve as separate-business standby source or rebuild only when the tattoo site needs reference uploads.
 
 No function is deleted merely because it contains `inkcare` in its name.
 
@@ -122,27 +128,27 @@ No function is deleted merely because it contains `inkcare` in its name.
 
 ## Phase 5 — Documentation/brand cleanup
 
-- [ ] Add legacy banner to `docs/replication/README.md`.
+- [x] Add legacy banner to `docs/replication/README.md`.
 - [ ] Add legacy banner to `docs/replication/CURRENT_INKCARE_BASELINE.md`.
 - [ ] Add legacy banner to remaining dated replication runbooks where useful.
-- [ ] Preserve original historical names and dates below the banner.
+- [x] Preserve original historical names and dates below the banner.
 - [ ] Search active product code/copy for `INKCARE`, `inkcare`, `getinkcare.co.uk` and old project ref.
 - [ ] Replace only current/future references; retain provenance references explicitly marked legacy.
 
 ## Phase 6 — Repository/database reconciliation
 
-Canonical production currently contains migrations that must be represented in the repository. Reconcile at minimum:
+Canonical production migrations recovered into the cutover branch:
 
-- `20260911024506_create_uk_studio_intelligence_registry`
-- `20260913014953_secure_visibility_public_report_payload`
-- `20260913044331_create_canonical_growth_engine_v1`
-- `20260913044539_index_growth_engine_foreign_keys`
-- `20260913225306_create_intelligence_diagnostic_support`
-- `20260913225333_seed_legacy_intelligence_assets`
-- `20260913225357_tighten_intelligence_diagnostic_support_grants`
-- `20260913230122_create_public_contact_requests`
+- [x] `20260911024506_create_uk_studio_intelligence_registry`
+- [x] `20260913014953_secure_visibility_public_report_payload`
+- [x] `20260913044331_create_canonical_growth_engine_v1`
+- [x] `20260913044539_index_growth_engine_foreign_keys`
+- [x] `20260913225306_create_intelligence_diagnostic_support`
+- [x] `20260913225333_seed_legacy_intelligence_assets`
+- [x] `20260913225357_tighten_intelligence_diagnostic_support_grants`
+- [x] `20260913230122_create_public_contact_requests`
 
-Do not invent SQL for missing production migrations. Recover the exact applied statements or generate a verified equivalent snapshot with explicit drift documentation.
+These files represent the applied production statements in source-control form. Merge remains gated on CI/build/deployment verification.
 
 ## Phase 7 — Deployment verification
 
@@ -165,6 +171,13 @@ Before merging the migration branch:
 8. verify canonical contact write and remove the controlled test record;
 9. search deployed/current source for old Supabase project ref.
 
+Current verification state:
+
+- [x] PR changed-file set inspected.
+- [x] PR reports mergeable against `main`.
+- [ ] GitHub CI for the latest head must finish green.
+- [ ] Vercel preview for the cutover branch has not yet appeared and must be resolved before merge.
+
 ## Phase 8 — Credential retirement
 
 After all callers are cut over:
@@ -185,7 +198,9 @@ Start the clock only when:
 - all current public traffic routes to canonical INKSIGHTS or a separate intended business backend;
 - no legitimate integration is expected to write to legacy.
 
-Observe for **14 consecutive days**.
+The first condition is now satisfied: cron jobs 2, 3 and 4 are inactive. The quiescence clock is **not started** because public legacy Edge Functions remain reachable and the migration branch has not yet completed live route cutover.
+
+Observe for **14 consecutive days** after all conditions are met.
 
 Monitor:
 
@@ -222,12 +237,12 @@ select cron.alter_job(job_id := <job_id>, active := true);
 
 Reactivation is temporary. Record the dependency, repair the canonical replacement, validate it, then restart the freeze.
 
-## Current state snapshot — 2026-09-13
+## Current state snapshot — 2026-09-14
 
 ```text
 Legacy cron 2  stripe-sync-worker                      INACTIVE
 Legacy cron 3  growth-automation-worker                INACTIVE
-Legacy cron 4  inkcare-search-intelligence-maintenance ACTIVE
+Legacy cron 4  inkcare-search-intelligence-maintenance INACTIVE
 Legacy project deletion                                PROHIBITED
 Canonical INKSIGHTS development                        ACTIVE
 14-day quiescence                                      NOT STARTED
