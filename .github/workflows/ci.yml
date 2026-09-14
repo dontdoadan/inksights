@@ -37,7 +37,24 @@ jobs:
         run: npm install --legacy-peer-deps --no-audit --no-fund
 
       - name: Lint
-        run: npm run lint
+        id: lint
+        continue-on-error: true
+        run: npm run lint > lint.log 2>&1
+
+      - name: Upload lint diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-diagnostics
+          path: lint.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Enforce lint
+        if: steps.lint.outcome == 'failure'
+        run: |
+          cat lint.log
+          exit 1
 
       - name: Build and generate route types
         run: npm run build
