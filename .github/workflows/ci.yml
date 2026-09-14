@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -73,6 +75,17 @@ jobs:
 
       - name: Build and generate route types
         run: npm run build
+
+      - name: Sync generated route tree
+        if: github.event_name == 'pull_request' && github.head_ref == 'fix/inksights-sandbox-e2e'
+        run: |
+          if ! git diff --quiet -- src/routeTree.gen.ts; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/routeTree.gen.ts
+            git commit -m "chore: regenerate TanStack route tree"
+            git push origin HEAD:${GITHUB_HEAD_REF}
+          fi
 
       - name: Check generated route tree
         id: route_tree
