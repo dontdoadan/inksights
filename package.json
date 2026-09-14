@@ -13,6 +13,7 @@
     "build:dev": "npm run generate:public-assets && vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test:calc-v2": "node --experimental-strip-types --test src/lib/intelligence/calculation-engine-v2.test.ts",
     "format": "prettier --write ."
   },
   "dependencies": {

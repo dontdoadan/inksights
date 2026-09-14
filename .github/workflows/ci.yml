@@ -103,6 +103,9 @@ jobs:
       - name: Test Supabase client config fallback
         run: node --test tests/supabase-config.test.mjs
 
+      - name: Test Calculation Engine V2
+        run: npm run test:calc-v2
+
       - name: Test social migration package
         run: python -m unittest discover -s automation/social/tests -p "test_*.py"
 
