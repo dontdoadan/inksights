@@ -4,9 +4,9 @@ type Band = { low: number; base: number; high: number };
 type BandKey = keyof Band;
 
 export type EvidenceQualityInput = {
-  sourceReliability?: number;
-  completeness?: number;
-  confidence?: number;
+  sourceReliability: number;
+  completeness: number;
+  confidence: number;
   sampleAdequacy?: number;
   freshnessScore?: number;
   ageDays?: number;
@@ -18,7 +18,7 @@ export type CalculationEngineV2Input = {
     revenuePence: number;
     uniqueCustomers: number;
     transactions: number;
-    grossMarginRate?: number;
+    contributionMarginRate?: number;
     capacityUnits?: number;
     bookedCapacityUnits?: number;
     capacityUnitsPerTransaction?: number;
@@ -76,10 +76,22 @@ export function calculateEvidenceQuality(evidence: EvidenceQualityInput[] = []) 
   if (evidence.length === 0) return null;
 
   const itemScores = evidence.map((item, index) => {
-    const freshness = item.freshnessScore ?? (
-      item.ageDays !== undefined && item.freshnessHalfLifeDays !== undefined
-        ? calculateFreshnessScore(item.ageDays, item.freshnessHalfLifeDays)
-        : undefined
+    const hasFreshnessScore = item.freshnessScore !== undefined;
+    const hasFreshnessInputs = item.ageDays !== undefined && item.freshnessHalfLifeDays !== undefined;
+    if (
+      item.sourceReliability === undefined
+      || item.completeness === undefined
+      || item.confidence === undefined
+      || (!hasFreshnessScore && !hasFreshnessInputs)
+    ) {
+      throw new Error(
+        `evidence[${index}] requires sourceReliability, completeness, confidence and freshness`,
+      );
+    }
+
+    const freshness = item.freshnessScore ?? calculateFreshnessScore(
+      item.ageDays!,
+      item.freshnessHalfLifeDays!,
     );
     const components = [
       item.sourceReliability,
@@ -89,7 +101,6 @@ export function calculateEvidenceQuality(evidence: EvidenceQualityInput[] = []) 
       freshness,
     ].filter((value): value is number => value !== undefined);
 
-    if (components.length === 0) throw new Error(`evidence[${index}] has no quality components`);
     components.forEach((value, componentIndex) => {
       requireRate(value, `evidence[${index}].component[${componentIndex}]`);
     });
@@ -109,8 +120,8 @@ export function runCalculationEngineV2(input: CalculationEngineV2Input) {
   requireFinitePositive(baseline.revenuePence, "baseline.revenuePence");
   requireFinitePositive(baseline.uniqueCustomers, "baseline.uniqueCustomers");
   requireFinitePositive(baseline.transactions, "baseline.transactions");
-  if (baseline.grossMarginRate !== undefined) {
-    requireRate(baseline.grossMarginRate, "baseline.grossMarginRate");
+  if (baseline.contributionMarginRate !== undefined) {
+    requireRate(baseline.contributionMarginRate, "baseline.contributionMarginRate");
   }
   validateBand(scenario.customers, "scenario.customers");
   validateBand(scenario.averageTransactionValue, "scenario.averageTransactionValue");
@@ -118,13 +129,14 @@ export function runCalculationEngineV2(input: CalculationEngineV2Input) {
 
   const purchaseFrequency = baseline.transactions / baseline.uniqueCustomers;
   const averageTransactionValuePence = baseline.revenuePence / baseline.transactions;
-  const modelledRevenuePence = roundMoney(
+  // This is the three-lever accounting identity, not an independent reconciliation test.
+  const identityRevenuePence = roundMoney(
     baseline.uniqueCustomers * purchaseFrequency * averageTransactionValuePence,
   );
-  const reconciliationVariancePence = modelledRevenuePence - baseline.revenuePence;
-  const reconciliationVarianceRate = roundRate(reconciliationVariancePence / baseline.revenuePence);
 
-  const hasCapacityInputs = baseline.capacityUnits !== undefined || baseline.bookedCapacityUnits !== undefined;
+  const hasCapacityInputs = baseline.capacityUnits !== undefined
+    || baseline.bookedCapacityUnits !== undefined
+    || baseline.capacityUnitsPerTransaction !== undefined;
   const capacityMeasured = baseline.capacityUnits !== undefined
     && baseline.bookedCapacityUnits !== undefined
     && baseline.capacityUnitsPerTransaction !== undefined;
@@ -200,13 +212,12 @@ export function runCalculationEngineV2(input: CalculationEngineV2Input) {
     purchaseFrequency: calculateBand((key) => roundMoney(baseline.revenuePence * scenario.purchaseFrequency[key])),
   };
 
-  const constrainedContributionPence = baseline.grossMarginRate === undefined
+  const constrainedContributionPence = baseline.contributionMarginRate === undefined
     ? null
-    : calculateBand((key) => roundMoney(constrainedRevenuePence[key] * baseline.grossMarginRate!));
+    : calculateBand((key) => roundMoney(
+      constrainedRevenuePence[key] * baseline.contributionMarginRate!,
+    ));
 
-  if (Math.abs(reconciliationVarianceRate) > 0.02) {
-    warnings.push("revenue_identity_variance_above_2_percent");
-  }
   if (BAND_KEYS.some((key) => capacityScaleFactor[key] < 1)) {
     warnings.push("capacity_constrains_growth_scenario");
   }
@@ -219,10 +230,8 @@ export function runCalculationEngineV2(input: CalculationEngineV2Input) {
       transactions: baseline.transactions,
       purchaseFrequency: roundRate(purchaseFrequency),
       averageTransactionValuePence: roundMoney(averageTransactionValuePence),
-      modelledRevenuePence,
-      reconciliationVariancePence,
-      reconciliationVarianceRate,
-      grossMarginRate: baseline.grossMarginRate ?? null,
+      identityRevenuePence,
+      contributionMarginRate: baseline.contributionMarginRate ?? null,
     },
     constraints: {
       capacityMeasured,
