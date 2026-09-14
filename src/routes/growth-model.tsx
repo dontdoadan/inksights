@@ -19,9 +19,10 @@ import {
   SecondaryButton,
   SectionHeading,
 } from "@/components/public-site";
+import { calculateGrowthScenario } from "@/lib/intelligence/growth-engine";
 
 const CANONICAL_URL = "https://getinksights.co.uk/growth-model";
-const POLICY_VERSION = "2026-07-28";
+const POLICY_VERSION = "2026-09-14";
 
 export const Route = createFileRoute("/growth-model")({
   component: GrowthModel,
@@ -60,7 +61,12 @@ const levers = [
     label: "Value",
     description:
       "Increase the value created per transaction through appropriate project planning, pricing discipline, packages and premium options.",
-    examples: ["Project packages", "Premium options", "Better pricing structure", "Clearer project scope"],
+    examples: [
+      "Project packages",
+      "Premium options",
+      "Better pricing structure",
+      "Clearer project scope",
+    ],
   },
   {
     icon: Repeat2,
@@ -80,36 +86,60 @@ function currency(value: number) {
   }).format(Number.isFinite(value) ? value : 0);
 }
 
+function growthRate(baseline: number, improved: number) {
+  if (baseline <= 0) return improved > 0 ? 1 : 0;
+  return Math.max(0, improved / baseline - 1);
+}
+
 function GrowthModel() {
-  const [baselineClients, setBaselineClients] = useState(10);
+  const [baselineClients, setBaselineClients] = useState(100);
   const [baselineValue, setBaselineValue] = useState(400);
-  const [baselineFrequency, setBaselineFrequency] = useState(1);
-  const [improvedClients, setImprovedClients] = useState(12);
+  const [baselineFrequency, setBaselineFrequency] = useState(1.5);
+  const [improvedClients, setImprovedClients] = useState(120);
   const [improvedValue, setImprovedValue] = useState(450);
-  const [improvedFrequency, setImprovedFrequency] = useState(1.25);
+  const [improvedFrequency, setImprovedFrequency] = useState(1.8);
+  const [annualCapacity, setAnnualCapacity] = useState(250);
+  const [cancellationPct, setCancellationPct] = useState(5);
+  const [noShowPct, setNoShowPct] = useState(2);
+  const [grossMarginPct, setGrossMarginPct] = useState(65);
   const [illustrativeFee, setIllustrativeFee] = useState(10);
 
   const model = useMemo(() => {
-    const baseline = baselineClients * baselineValue * baselineFrequency;
-    const improved = improvedClients * improvedValue * improvedFrequency;
-    const uplift = Math.max(0, improved - baseline);
-    const performanceFee = uplift * (illustrativeFee / 100);
+    const scenario = calculateGrowthScenario({
+      customers: baselineClients,
+      purchaseFrequency: baselineFrequency,
+      averageTransactionValue: baselineValue,
+      annualCapacityTransactions: annualCapacity > 0 ? annualCapacity : undefined,
+      cancellationRate: cancellationPct / 100,
+      noShowRate: noShowPct / 100,
+      grossMarginRate: grossMarginPct / 100,
+      customerGrowthPct: growthRate(baselineClients, improvedClients),
+      frequencyGrowthPct: growthRate(baselineFrequency, improvedFrequency),
+      atvGrowthPct: growthRate(baselineValue, improvedValue),
+    });
+
+    const performanceFee = scenario.combinedRevenueUplift * (illustrativeFee / 100);
     return {
-      baseline,
-      improved,
-      uplift,
+      ...scenario,
       performanceFee,
-      retainedUplift: Math.max(0, uplift - performanceFee),
-      upliftPercent: baseline > 0 ? (uplift / baseline) * 100 : 0,
+      retainedUplift: Math.max(0, scenario.combinedRevenueUplift - performanceFee),
+      upliftPercent:
+        scenario.baseline.revenue > 0
+          ? (scenario.combinedRevenueUplift / scenario.baseline.revenue) * 100
+          : 0,
     };
   }, [
+    annualCapacity,
     baselineClients,
-    baselineValue,
     baselineFrequency,
-    improvedClients,
-    improvedValue,
-    improvedFrequency,
+    baselineValue,
+    cancellationPct,
+    grossMarginPct,
     illustrativeFee,
+    improvedClients,
+    improvedFrequency,
+    improvedValue,
+    noShowPct,
   ]);
 
   return (
@@ -130,12 +160,17 @@ function GrowthModel() {
         title={<>Model growth through three measurable revenue levers.</>}
         description={
           <>
-            Revenue is modelled as <strong>clients × average transaction value × purchase frequency</strong>. INKSIGHTS uses this as a diagnostic framework, not a guarantee: the inputs, constraints and measured outcome still have to be verified.
+            Revenue is modelled as{" "}
+            <strong>clients × average transaction value × purchase frequency</strong>. INKSIGHTS
+            then applies operational constraints such as available capacity, cancellations and
+            no-shows. This is a diagnostic model, not a guarantee.
           </>
         }
       >
         <PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton>
-        <SecondaryButton href="/offers/founding-studio-pilot">Review the implementation package</SecondaryButton>
+        <SecondaryButton href="/offers/founding-studio-pilot">
+          Review the implementation package
+        </SecondaryButton>
       </PageHero>
 
       <section className="border-b border-border bg-ink">
@@ -143,7 +178,7 @@ function GrowthModel() {
           <SectionHeading
             eyebrow="Three ways to grow"
             title="Each lever can compound the others — but only within real studio capacity."
-            description="A studio does not need one dramatic breakthrough. Several controlled improvements can compound into a meaningful commercial change, provided the diary and delivery capacity can absorb it."
+            description="A studio does not need one dramatic breakthrough. Several controlled improvements can compound into meaningful commercial change, provided the diary and delivery capacity can absorb it."
           />
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {levers.map((lever) => {
@@ -154,7 +189,9 @@ function GrowthModel() {
                     <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-mint/10 text-mint">
                       <Icon className="h-6 w-6" />
                     </span>
-                    <span className="text-xs font-bold uppercase tracking-[0.16em] text-mint">{lever.label}</span>
+                    <span className="text-xs font-bold uppercase tracking-[0.16em] text-mint">
+                      {lever.label}
+                    </span>
                   </div>
                   <h2 className="mt-7 font-display text-2xl font-black text-ice">{lever.title}</h2>
                   <p className="mt-3 leading-relaxed text-muted-foreground">{lever.description}</p>
@@ -177,51 +214,158 @@ function GrowthModel() {
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <SectionHeading
             eyebrow="Interactive model"
-            title="See how modest changes compound."
-            description="These figures are illustrations, not a forecast or guarantee. A paid performance arrangement requires a written baseline, attribution rules and an agreed measurement window."
+            title="See how controlled changes compound — and where constraints suppress them."
+            description="The same canonical calculation engine is used by the INKSIGHTS scenario tool and regression tests. Figures remain modelled until verified against an agreed baseline and measurement window."
           />
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_1fr]">
+          <div className="mt-10 grid gap-6 lg:grid-cols-2">
             <Card className="bg-ink p-7">
               <h2 className="font-display text-2xl font-black text-ice">Baseline</h2>
               <div className="mt-6 grid gap-5 sm:grid-cols-3">
-                <NumberField label="Clients" value={baselineClients} min={0} step={1} onChange={setBaselineClients} />
-                <NumberField label="Average value" value={baselineValue} min={0} step={25} prefix="£" onChange={setBaselineValue} />
-                <NumberField label="Purchases per client" value={baselineFrequency} min={0} step={0.05} onChange={setBaselineFrequency} />
+                <NumberField
+                  label="Clients / year"
+                  value={baselineClients}
+                  min={0}
+                  step={1}
+                  onChange={setBaselineClients}
+                />
+                <NumberField
+                  label="Average value"
+                  value={baselineValue}
+                  min={0}
+                  step={25}
+                  prefix="£"
+                  onChange={setBaselineValue}
+                />
+                <NumberField
+                  label="Purchases / client"
+                  value={baselineFrequency}
+                  min={0}
+                  step={0.05}
+                  onChange={setBaselineFrequency}
+                />
               </div>
               <div className="mt-7 rounded-2xl border border-border bg-ink-deep p-6">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">Baseline revenue</p>
-                <p className="mt-2 font-display text-5xl font-black text-ice">{currency(model.baseline)}</p>
-                <p className="mt-3 text-sm text-muted-foreground">{baselineClients} × {currency(baselineValue)} × {baselineFrequency}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  Realisable baseline revenue
+                </p>
+                <p className="mt-2 font-display text-5xl font-black text-ice">
+                  {currency(model.baseline.revenue)}
+                </p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {model.baseline.capacityConstrainedTransactions.toFixed(1)} completed/capacity-limited
+                  transactions × {currency(model.baseline.averageTransactionValue)}
+                </p>
               </div>
             </Card>
 
             <Card className="border-mint/35 bg-ink p-7">
               <h2 className="font-display text-2xl font-black text-ice">Improved position</h2>
               <div className="mt-6 grid gap-5 sm:grid-cols-3">
-                <NumberField label="Clients" value={improvedClients} min={0} step={1} onChange={setImprovedClients} />
-                <NumberField label="Average value" value={improvedValue} min={0} step={25} prefix="£" onChange={setImprovedValue} />
-                <NumberField label="Purchases per client" value={improvedFrequency} min={0} step={0.05} onChange={setImprovedFrequency} />
+                <NumberField
+                  label="Clients / year"
+                  value={improvedClients}
+                  min={0}
+                  step={1}
+                  onChange={setImprovedClients}
+                />
+                <NumberField
+                  label="Average value"
+                  value={improvedValue}
+                  min={0}
+                  step={25}
+                  prefix="£"
+                  onChange={setImprovedValue}
+                />
+                <NumberField
+                  label="Purchases / client"
+                  value={improvedFrequency}
+                  min={0}
+                  step={0.05}
+                  onChange={setImprovedFrequency}
+                />
               </div>
               <div className="mt-7 rounded-2xl border border-mint/35 bg-mint/5 p-6">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Improved revenue</p>
-                <p className="mt-2 font-display text-5xl font-black text-mint">{currency(model.improved)}</p>
-                <p className="mt-3 text-sm text-muted-foreground">{improvedClients} × {currency(improvedValue)} × {improvedFrequency}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">
+                  Modelled realisable revenue
+                </p>
+                <p className="mt-2 font-display text-5xl font-black text-mint">
+                  {currency(model.modelled.revenue)}
+                </p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Primary lever: {model.primaryLever?.replaceAll("_", " ") ?? "none"}
+                </p>
               </div>
             </Card>
           </div>
 
+          <Card className="mt-6 bg-ink p-7">
+            <h2 className="font-display text-2xl font-black text-ice">Operating constraints</h2>
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <NumberField
+                label="Annual capacity"
+                value={annualCapacity}
+                min={0}
+                step={10}
+                onChange={setAnnualCapacity}
+              />
+              <NumberField
+                label="Cancellation rate"
+                value={cancellationPct}
+                min={0}
+                max={100}
+                step={1}
+                suffix="%"
+                onChange={setCancellationPct}
+              />
+              <NumberField
+                label="No-show rate"
+                value={noShowPct}
+                min={0}
+                max={100}
+                step={1}
+                suffix="%"
+                onChange={setNoShowPct}
+              />
+              <NumberField
+                label="Gross margin"
+                value={grossMarginPct}
+                min={0}
+                max={100}
+                step={1}
+                suffix="%"
+                onChange={setGrossMarginPct}
+              />
+            </div>
+            <p className="mt-5 text-sm text-muted-foreground">
+              Set annual capacity to 0 for an unconstrained model. Current detected constraints:{" "}
+              <strong className="text-ice">
+                {model.constraints.length ? model.constraints.join(", ") : "none"}
+              </strong>
+              .
+            </p>
+          </Card>
+
           <div className="mt-6 grid gap-4 md:grid-cols-4">
-            <Metric label="Modelled uplift" value={currency(model.uplift)} />
+            <Metric label="Modelled revenue uplift" value={currency(model.combinedRevenueUplift)} />
             <Metric label="Percentage uplift" value={`${model.upliftPercent.toFixed(1)}%`} />
-            <Metric label="Illustrative INKSIGHTS fee" value={currency(model.performanceFee)} />
-            <Metric label="Studio retains" value={currency(model.retainedUplift)} emphasis />
+            <Metric
+              label="Modelled gross-profit uplift"
+              value={currency(model.combinedGrossProfitUplift)}
+            />
+            <Metric
+              label="Studio retains after example fee"
+              value={currency(model.retainedUplift)}
+              emphasis
+            />
           </div>
 
           <Card className="mt-6 bg-ink p-7">
             <div className="grid gap-6 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
               <div>
-                <label className="text-sm font-bold text-ice" htmlFor="performance-fee">Illustrative performance fee: {illustrativeFee}%</label>
+                <label className="text-sm font-bold text-ice" htmlFor="performance-fee">
+                  Illustrative performance fee: {illustrativeFee}%
+                </label>
                 <input
                   id="performance-fee"
                   type="range"
@@ -232,10 +376,18 @@ function GrowthModel() {
                   onChange={(event) => setIllustrativeFee(Number(event.target.value))}
                   className="mt-4 w-full accent-current"
                 />
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Illustrative fee: {currency(model.performanceFee)}
+                </p>
               </div>
               <div className="flex gap-3 rounded-2xl border border-amber-300/35 bg-amber-300/5 p-5 text-sm leading-relaxed text-amber-100">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-200" />
-                <p>This percentage is for modelling only. INKSIGHTS has no default public performance-fee percentage. A fee applies only where the signed scope defines the baseline, direct costs, attribution adjustments, measurement window and approval process.</p>
+                <p>
+                  This percentage is for modelling only. INKSIGHTS has no default public
+                  performance-fee percentage. A fee applies only where the signed scope defines the
+                  baseline, direct costs, attribution adjustments, measurement window and approval
+                  process.
+                </p>
               </div>
             </div>
           </Card>
@@ -251,16 +403,30 @@ function GrowthModel() {
           />
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {[
-              [BarChart3, "Diagnosis or implementation fee", "Pays for baseline work, analysis, setup and delivery even where later performance cannot be attributed reliably."],
-              [TrendingUp, "Ongoing management fee", "Pays for monitoring, exception handling, reporting, maintenance and continuing optimisation."],
-              [ArrowRight, "Optional verified-uplift fee", "An agreed percentage may apply only to verified incremental revenue or contribution that meets the written attribution rules."],
+              [
+                BarChart3,
+                "Diagnosis or implementation fee",
+                "Pays for baseline work, analysis, setup and delivery even where later performance cannot be attributed reliably.",
+              ],
+              [
+                TrendingUp,
+                "Ongoing management fee",
+                "Pays for monitoring, exception handling, reporting, maintenance and continuing optimisation.",
+              ],
+              [
+                ArrowRight,
+                "Optional verified-uplift fee",
+                "An agreed percentage may apply only to verified incremental revenue or contribution that meets the written attribution rules.",
+              ],
             ].map(([Icon, title, description]) => {
               const ItemIcon = Icon as typeof BarChart3;
               return (
                 <Card key={String(title)} className="bg-ink-deep p-7">
                   <ItemIcon className="h-7 w-7 text-mint" />
                   <h2 className="mt-6 font-display text-2xl font-black text-ice">{String(title)}</h2>
-                  <p className="mt-3 leading-relaxed text-muted-foreground">{String(description)}</p>
+                  <p className="mt-3 leading-relaxed text-muted-foreground">
+                    {String(description)}
+                  </p>
                 </Card>
               );
             })}
@@ -276,10 +442,26 @@ function GrowthModel() {
           />
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
-              ["01", "Baseline", "Record clients, average transaction value, frequency, capacity, prices, advertising and other material conditions."],
-              ["02", "Implement", "Document exactly what INKSIGHTS changes and which growth lever each intervention is intended to affect."],
-              ["03", "Verify", "Measure collected revenue or agreed contribution over the defined window and apply agreed adjustments."],
-              ["04", "Approve", "The studio reviews the evidence before any performance-linked invoice is raised."],
+              [
+                "01",
+                "Baseline",
+                "Record clients, average transaction value, frequency, capacity, prices, advertising and other material conditions.",
+              ],
+              [
+                "02",
+                "Implement",
+                "Document exactly what INKSIGHTS changes and which growth lever each intervention is intended to affect.",
+              ],
+              [
+                "03",
+                "Verify",
+                "Measure collected revenue or agreed contribution over the defined window and apply agreed adjustments.",
+              ],
+              [
+                "04",
+                "Approve",
+                "The studio reviews the evidence before any performance-linked invoice is raised.",
+              ],
             ].map(([number, title, text]) => (
               <Card key={number} className="bg-ink p-6">
                 <div className="font-display text-4xl font-black text-mint/35">{number}</div>
@@ -292,7 +474,10 @@ function GrowthModel() {
             <PrimaryButton href="/studio-growth-check">Start with the free Revenue Audit</PrimaryButton>
             <SecondaryButton href="/offers/revenue-audit">Review the Revenue Audit</SecondaryButton>
           </div>
-          <p className="mt-6 text-xs text-muted-foreground">Commercial policy version {POLICY_VERSION}. Calculators provide educational illustrations only.</p>
+          <p className="mt-6 text-xs text-muted-foreground">
+            Commercial policy version {POLICY_VERSION}. Calculators provide educational,
+            explicitly modelled illustrations only.
+          </p>
         </div>
       </section>
     </PublicShell>
@@ -303,40 +488,68 @@ function NumberField({
   label,
   value,
   min,
+  max,
   step,
   prefix,
+  suffix,
   onChange,
 }: {
   label: string;
   value: number;
   min: number;
+  max?: number;
   step: number;
   prefix?: string;
+  suffix?: string;
   onChange: (value: number) => void;
 }) {
   return (
     <label className="block">
-      <span className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
+      <span className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+        {label}
+      </span>
       <div className="mt-2 flex items-center rounded-xl border border-border bg-ink-deep px-4 py-3 focus-within:border-mint">
         {prefix ? <span className="mr-1 text-muted-foreground">{prefix}</span> : null}
         <input
           type="number"
           min={min}
+          max={max}
           step={step}
           value={value}
-          onChange={(event) => onChange(Math.max(min, Number(event.target.value) || 0))}
+          onChange={(event) => {
+            const parsed = Number(event.target.value) || 0;
+            const bounded = Math.max(min, max === undefined ? parsed : Math.min(max, parsed));
+            onChange(bounded);
+          }}
           className="w-full bg-transparent font-display text-xl font-bold text-ice outline-none"
         />
+        {suffix ? <span className="ml-1 text-muted-foreground">{suffix}</span> : null}
       </div>
     </label>
   );
 }
 
-function Metric({ label, value, emphasis = false }: { label: string; value: string; emphasis?: boolean }) {
+function Metric({
+  label,
+  value,
+  emphasis = false,
+}: {
+  label: string;
+  value: string;
+  emphasis?: boolean;
+}) {
   return (
-    <div className={`rounded-2xl border p-5 ${emphasis ? "border-mint/40 bg-mint/5" : "border-border bg-ink"}`}>
+    <div
+      className={`rounded-2xl border p-5 ${
+        emphasis ? "border-mint/40 bg-mint/5" : "border-border bg-ink"
+      }`}
+    >
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-      <p className={`mt-2 font-display text-3xl font-black ${emphasis ? "text-mint" : "text-ice"}`}>{value}</p>
+      <p
+        className={`mt-2 font-display text-3xl font-black ${emphasis ? "text-mint" : "text-ice"}`}
+      >
+        {value}
+      </p>
     </div>
   );
 }
