@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -35,6 +35,24 @@ jobs:
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: Repair lockfile on recovery branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'fix/public-report-security-source-parity'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            exit 0
+          fi
+          cp package-lock.json /tmp/package-lock.json
+          git fetch origin "$HEAD_REF"
+          git checkout -B "$HEAD_REF" "origin/$HEAD_REF"
+          cp /tmp/package-lock.json package-lock.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore: sync npm lockfile"
+          git push origin "HEAD:$HEAD_REF"
 
       - name: Lint
         id: lint
