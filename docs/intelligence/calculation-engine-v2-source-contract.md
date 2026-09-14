@@ -25,11 +25,23 @@ Where available, each input should preserve:
 - source reliability (0–1)
 - completeness (0–1)
 - source/analyst confidence (0–1)
-- sample adequacy (0–1)
+- sample adequacy (0–1), where statistically meaningful
 - freshness half-life appropriate to the source
 - transformation lineage for derived values
 
-Missing quality metadata does not change the pound-value calculation. It reduces how much confidence INKSIGHTS can place in the result and should remain visible.
+Economic value and evidence quality are separate. Missing quality metadata must never silently scale the pound-value estimate.
+
+When INKSIGHTS emits an **evidence quality score**, each scored evidence item must provide source reliability, completeness, confidence and freshness. Freshness may be supplied directly or calculated from `age_days` and a source-specific `freshness_half_life_days`. If the minimum quality metadata is unavailable, evidence quality remains unscored rather than being inferred from one favourable dimension.
+
+## Three-lever identity
+
+For one declared measurement period:
+
+`revenue = unique customers × purchase frequency × average transaction value`
+
+When purchase frequency is derived as `transactions / unique customers` and ATV as `revenue / transactions`, reconstructing revenue from those same values is an **algebraic identity**, not an independent reconciliation test. Calculation Engine V2 therefore exposes the identity decomposition but does not claim that a zero variance validates source quality.
+
+Source reconciliation must happen upstream when independent systems or independently observed measures disagree.
 
 ## Capacity normalisation
 
@@ -45,6 +57,12 @@ Examples:
 - Hour-based studio: 800 available hours, 680 booked hours, 5.5 average booked hours per incremental transaction.
 
 The engine must not assume that one hour, one chair, one day and one transaction are equivalent.
+
+## Contribution economics
+
+Incremental contribution is calculated only when an evidence-backed **contribution margin rate** is supplied. Gross margin is not automatically substituted for contribution margin because the two measures answer different economic questions.
+
+If contribution margin is unavailable, the engine returns revenue opportunity and leaves contribution opportunity null.
 
 ## Supermetrics contract
 
@@ -75,4 +93,4 @@ At minimum:
 - capacity units must use one consistent unit within a run;
 - recent or partial periods must be explicitly labelled;
 - provider-supplied rates must not be re-aggregated contrary to their field contract;
-- the engine should surface reconciliation variance rather than silently forcing inputs to agree.
+- independently sourced metrics that disagree must be reconciled upstream and their lineage retained.
