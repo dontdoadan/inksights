@@ -25,8 +25,7 @@ test("calculates an exact three-lever baseline identity", () => {
 
   assert.equal(result.baseline.purchaseFrequency, 1.5);
   assert.equal(result.baseline.averageTransactionValuePence, 50_000);
-  assert.equal(result.baseline.modelledRevenuePence, 7_500_000);
-  assert.equal(result.baseline.reconciliationVariancePence, 0);
+  assert.equal(result.baseline.identityRevenuePence, 7_500_000);
 });
 
 test("compounds 10% improvements across all three revenue levers to 33.1%", () => {
@@ -100,13 +99,13 @@ test("freshness score halves at the configured evidence half-life", () => {
   assert.ok(Math.abs(score - 0.5) < 1e-12);
 });
 
-test("returns contribution opportunity only when gross margin evidence is supplied", () => {
+test("returns contribution opportunity only when contribution margin evidence is supplied", () => {
   const result = runCalculationEngineV2({
     baseline: {
       revenuePence: 5_000_000,
       uniqueCustomers: 100,
       transactions: 100,
-      grossMarginRate: 0.6,
+      contributionMarginRate: 0.6,
     },
     scenario: {
       customers: band(0, 0.1, 0.1),
@@ -117,6 +116,36 @@ test("returns contribution opportunity only when gross margin evidence is suppli
 
   assert.equal(result.opportunity.constrainedRevenuePence.base, 500_000);
   assert.equal(result.opportunity.constrainedContributionPence?.base, 300_000);
+});
+
+test("does not present the three-lever algebraic identity as an independent reconciliation signal", () => {
+  const result = runCalculationEngineV2({
+    baseline: { revenuePence: 5_000_000, uniqueCustomers: 100, transactions: 100 },
+    scenario: {
+      customers: band(0, 0, 0),
+      averageTransactionValue: band(0, 0, 0),
+      purchaseFrequency: band(0, 0, 0),
+    },
+  });
+
+  assert.equal("reconciliationVariancePence" in result.baseline, false);
+  assert.equal("reconciliationVarianceRate" in result.baseline, false);
+});
+
+test("requires minimum quality metadata before assigning an evidence quality score", () => {
+  assert.throws(() => runCalculationEngineV2({
+    baseline: { revenuePence: 5_000_000, uniqueCustomers: 100, transactions: 100 },
+    scenario: {
+      customers: band(0, 0.1, 0.2),
+      averageTransactionValue: band(0, 0, 0),
+      purchaseFrequency: band(0, 0, 0),
+    },
+    evidence: [{
+      sourceReliability: 1,
+      completeness: undefined as unknown as number,
+      confidence: undefined as unknown as number,
+    }],
+  }), /requires sourceReliability, completeness, confidence and freshness/);
 });
 
 test("rejects non-monotonic scenario bands", () => {
