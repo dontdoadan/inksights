@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -58,6 +58,24 @@ jobs:
 
       - name: Build and generate route types
         run: npm run build
+
+      - name: Repair generated route tree on recovery branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'fix/public-report-security-source-parity'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if git diff --quiet -- src/routeTree.gen.ts; then
+            exit 0
+          fi
+          cp src/routeTree.gen.ts /tmp/routeTree.gen.ts
+          git fetch origin "$HEAD_REF"
+          git checkout -B "$HEAD_REF" "origin/$HEAD_REF"
+          cp /tmp/routeTree.gen.ts src/routeTree.gen.ts
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/routeTree.gen.ts
+          git commit -m "chore: sync generated TanStack route tree"
+          git push origin "HEAD:$HEAD_REF"
 
       - name: Upload generated route tree
         if: always()
