@@ -1,0 +1,3 @@
+-- Migration-history marker for the migration previously applied directly to canonical Supabase.
+-- The idempotent schema reconciliation in 20260914030000_reconcile_growth_engine_and_sandbox.sql
+-- reconstructs the required current-state objects for a clean database rebuild.
