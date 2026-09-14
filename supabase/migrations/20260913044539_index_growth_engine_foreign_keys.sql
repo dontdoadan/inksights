@@ -1,0 +1,2 @@
+-- Migration-history marker for the foreign-key index migration previously applied directly to canonical Supabase.
+-- The final reconciliation migration creates the required covering indexes idempotently.
