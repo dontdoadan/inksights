@@ -42,6 +42,10 @@ export type GrowthScenarioResult = {
 
 const DEFAULT_RATE = 0;
 
+function roundMoney(value: number) {
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
 function assertFiniteNonNegative(name: string, value: number | undefined) {
   if (value === undefined) return;
   if (!Number.isFinite(value) || value < 0) {
@@ -82,7 +86,9 @@ function calculateSnapshot(
     completedTransactions,
     input.annualCapacityTransactions ?? Number.POSITIVE_INFINITY,
   );
-  const revenue = capacityConstrainedTransactions * averageTransactionValue;
+  const revenue = roundMoney(
+    capacityConstrainedTransactions * averageTransactionValue,
+  );
 
   return {
     customers,
@@ -92,7 +98,7 @@ function calculateSnapshot(
     purchaseFrequency,
     averageTransactionValue,
     revenue,
-    grossProfit: revenue * grossMarginRate,
+    grossProfit: roundMoney(revenue * grossMarginRate),
   };
 }
 
@@ -181,9 +187,15 @@ export function calculateGrowthScenario(
   );
 
   const leverRevenueUplift: Record<GrowthLever, number> = {
-    customers: Math.max(0, customersOnly.revenue - baseline.revenue),
-    frequency: Math.max(0, frequencyOnly.revenue - baseline.revenue),
-    average_transaction_value: Math.max(0, atvOnly.revenue - baseline.revenue),
+    customers: roundMoney(
+      Math.max(0, customersOnly.revenue - baseline.revenue),
+    ),
+    frequency: roundMoney(
+      Math.max(0, frequencyOnly.revenue - baseline.revenue),
+    ),
+    average_transaction_value: roundMoney(
+      Math.max(0, atvOnly.revenue - baseline.revenue),
+    ),
   };
 
   const rankedLevers = (
@@ -205,10 +217,11 @@ export function calculateGrowthScenario(
     baseline,
     modelled,
     leverRevenueUplift,
-    combinedRevenueUplift: Math.max(0, modelled.revenue - baseline.revenue),
-    combinedGrossProfitUplift: Math.max(
-      0,
-      modelled.grossProfit - baseline.grossProfit,
+    combinedRevenueUplift: roundMoney(
+      Math.max(0, modelled.revenue - baseline.revenue),
+    ),
+    combinedGrossProfitUplift: roundMoney(
+      Math.max(0, modelled.grossProfit - baseline.grossProfit),
     ),
     primaryLever,
     constraints,
