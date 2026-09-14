@@ -13,7 +13,8 @@ Build a defensible, versioned calculation layer that converts business evidence 
 5. **Constraints are first-class.** Transaction-generating growth cannot exceed measurable capacity headroom. ATV uplift does not consume capacity unless a later model explicitly says it does.
 6. **Three growth levers compound.** Revenue = customers × average transaction value × purchase frequency. Combined uplift is multiplicative, not the sum of percentage changes.
 7. **No double-counting by summing isolated lever values.** Isolated customer, ATV and frequency opportunity values are ceteris-paribus diagnostics only. The portfolio result is calculated from the combined state once.
-8. **Version everything.** V1 remains reproducible. V2 is additive.
+8. **Contribution is not gross margin.** Contribution opportunity is emitted only when an evidence-backed contribution margin rate is supplied.
+9. **Version everything.** V1 remains reproducible. V2 is additive.
 
 ## Canonical V2 economic model
 
@@ -21,7 +22,9 @@ For a measurement period:
 
 - `F = transactions / unique_customers`
 - `ATV = revenue / transactions`
-- `modelled_revenue = unique_customers × F × ATV`
+- `identity_revenue = unique_customers × F × ATV`
+
+The final expression is the three-lever accounting identity. Because `F` and `ATV` are derived from the same transaction and revenue inputs, it is **not** an independent data-reconciliation test.
 
 For each scenario band `b ∈ {low, base, high}`:
 
@@ -34,31 +37,36 @@ For each scenario band `b ∈ {low, base, high}`:
 - `constrained_revenue_opportunity_b = ((transactions + constrained_incremental_transactions_b) × projected_ATV_b) - revenue`
 - `unconstrained_revenue_opportunity_b = ((transactions + requested_incremental_transactions_b) × projected_ATV_b) - revenue`
 
-When gross-margin evidence exists:
+When evidence-backed contribution-margin data exists:
 
-- `constrained_contribution_opportunity_b = constrained_revenue_opportunity_b × gross_margin_rate`
+- `constrained_contribution_opportunity_b = constrained_revenue_opportunity_b × contribution_margin_rate`
 
-The model never invents a gross margin when none is supplied.
+Gross margin is not substituted automatically. If contribution margin is unavailable, contribution opportunity remains null.
 
 ## Evidence quality
 
-Evidence quality is a separate 0–100 diagnostic. V2 uses the equal-weight harmonic mean of the quality dimensions that are actually supplied:
+Evidence quality is a separate 0–100 diagnostic. Each evidence item that receives a score must provide:
 
 - source reliability
 - completeness
 - source/analyst confidence
-- sample adequacy
-- freshness
+- freshness, either directly or via an age plus source-specific half-life
+
+Sample adequacy is included where it is statistically meaningful.
+
+V2 uses the equal-weight harmonic mean of the applicable quality dimensions. This prevents one strong dimension from fully compensating for a weak one.
 
 Freshness is calculated from an explicit source-specific half-life:
 
 `freshness = 2 ^ (-age_days / half_life_days)`
 
-No universal freshness half-life is baked into the engine. A low evidence-quality score does not multiply the economic value; downstream prioritisation may use the two values side-by-side.
+No universal freshness half-life is baked into the engine. If minimum evidence-quality metadata is absent, quality remains unscored rather than inferred from partial favourable evidence. Evidence quality never multiplies or otherwise silently modifies the economic value.
 
-## Reconciliation
+## Source reconciliation
 
-The engine reports observed revenue, modelled three-lever revenue, absolute reconciliation variance and proportional variance. A variance above the operational 2% warning threshold is flagged for investigation; the observed input is not overwritten.
+Independent source reconciliation is an upstream data-quality responsibility. If CRM revenue, payment-processor revenue, booking-system transactions or independently observed ATV/frequency values disagree, INKSIGHTS must retain their separate lineage and resolve the discrepancy before treating the combination as verified evidence.
+
+Calculation Engine V2 therefore exposes the three-lever identity decomposition without presenting the algebraic reconstruction as proof that the inputs are correct.
 
 ## Capacity contract
 
@@ -72,8 +80,6 @@ This prevents hours, chairs, sessions or other capacity units from being treated
 
 ## Persistence
 
-Add two tenant-scoped structures:
-
 ### `intelligence_calculation_versions`
 
 Stores version metadata and transparent configuration for every calculation-engine version.
@@ -86,22 +92,24 @@ Stores reproducible input/output snapshots, evidence IDs, assumptions, warnings 
 
 Stores the resulting low/base/high unconstrained and constrained revenue opportunity, optional contribution opportunity, evidence quality, capacity scale and lineage. These rows are modelled outputs, not observed financial results.
 
-All exposed tables use RLS and the existing `studio_members` ownership rule. `anon` receives no access.
+All exposed tables use RLS and the existing `studio_members` ownership rule. `anon` receives no access. Economic-opportunity rows are also constrained by a composite foreign key so the row's `studio_id` must match the parent calculation run's `studio_id`.
 
 ## Metric dictionary changes
 
-Add V2 definitions for:
+V2 adds or versions definitions for:
 
 - purchase frequency
 - average transaction value
-- revenue identity variance
+- isolated customer, ATV and frequency opportunity diagnostics
 - capacity headroom
 - evidence quality score
 - unconstrained economic opportunity
 - constrained economic opportunity
 - constrained contribution opportunity
 
-Existing V1 metric definitions remain unchanged.
+The initially proposed revenue-identity variance metric is deprecated because, with purchase frequency and ATV derived from the same baseline inputs, it is algebraically tautological rather than an independent validation signal.
+
+Existing V1 metric definitions remain intact for reproducibility.
 
 ## Supermetrics source contract
 
@@ -118,9 +126,11 @@ The V2 core must prove:
 3. capacity caps customer/frequency transaction growth without suppressing ATV uplift;
 4. evidence quality cannot change the economic estimate;
 5. freshness halves at one configured half-life;
-6. contribution is emitted only when margin evidence exists;
-7. invalid scenario bands fail closed;
-8. V1 data and tables remain intact.
+6. contribution is emitted only when contribution-margin evidence exists;
+7. the algebraic identity is not exposed as an independent reconciliation signal;
+8. insufficient evidence-quality metadata fails closed rather than generating an inflated quality score;
+9. invalid scenario bands fail closed;
+10. V1 data and tables remain intact.
 
 ## Calibration status
 
