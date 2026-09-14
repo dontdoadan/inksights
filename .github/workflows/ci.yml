@@ -52,7 +52,24 @@ jobs:
           exit 1
 
       - name: Test intelligence engine
-        run: npm run test:intelligence
+        id: intelligence_tests
+        continue-on-error: true
+        run: npm run test:intelligence > intelligence-test.log 2>&1
+
+      - name: Upload intelligence test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: intelligence-test-diagnostics
+          path: intelligence-test.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Enforce intelligence tests
+        if: steps.intelligence_tests.outcome == 'failure'
+        run: |
+          cat intelligence-test.log
+          exit 1
 
       - name: Build and generate route types
         run: npm run build
