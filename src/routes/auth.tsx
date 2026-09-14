@@ -1,18 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({
-    next: typeof s.next === "string" ? s.next : "",
+  validateSearch: (search: Record<string, unknown>) => ({
+    next: typeof search.next === "string" ? search.next : "",
   }),
   component: AuthPage,
   head: () => ({
     meta: [
-      { title: "Sign in — INKSIGHT" },
-      { name: "description", content: "Sign in to your INKSIGHT studio dashboard." },
+      { title: "Sign in — INKSIGHTS" },
+      { name: "description", content: "Sign in to your INKSIGHTS studio dashboard." },
     ],
   }),
 });
@@ -37,19 +37,19 @@ function AuthPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // If already signed in, bounce.
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: dest });
     });
   }, [dest, navigate]);
 
-  async function handleEmail(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleEmail(event: React.FormEvent) {
+    event.preventDefault();
     setBusy(true);
     setError(null);
+
     try {
       if (mode === "signup") {
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -57,28 +57,27 @@ function AuthPage() {
             data: { full_name: fullName, studio_name: studioName },
           },
         });
-        if (error) throw error;
-        if (data.session) {
-          // Best-effort profile update with studio_name
-          if (studioName) {
-            await supabase
-              .from("profiles")
-              .update({ studio_name: studioName, full_name: fullName })
-              .eq("id", data.user!.id);
-          }
+        if (signUpError) throw signUpError;
+
+        if (data.session && data.user) {
+          const { error: profileError } = await supabase.from("profiles").upsert({
+            id: data.user.id,
+            studio_name: studioName || null,
+            full_name: fullName || null,
+            updated_at: new Date().toISOString(),
+          });
+          if (profileError) throw profileError;
           navigate({ to: dest });
         } else {
-          setError(
-            "Check your inbox to confirm your email, then sign in.",
-          );
+          setError("Check your inbox to confirm your email, then sign in.");
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) throw signInError;
         navigate({ to: dest });
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
     } finally {
       setBusy(false);
     }
@@ -88,36 +87,32 @@ function AuthPage() {
     setBusy(true);
     setError(null);
     try {
-      // Store desired destination for after OAuth returns.
-      sessionStorage.setItem("inksight:next", dest);
+      sessionStorage.setItem("inksights:next", dest);
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + "/auth/callback",
+        redirect_uri: `${window.location.origin}/auth/callback`,
       });
       if (result.error) throw result.error;
-      if (!result.redirected) {
-        // Popup path — tokens set. Navigate.
-        navigate({ to: dest });
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      if (!result.redirected) navigate({ to: dest });
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
       setBusy(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-ink-deep text-foreground font-sans flex items-center justify-center px-6 py-16">
+    <div className="flex min-h-screen items-center justify-center bg-ink-deep px-6 py-16 font-sans text-foreground">
       <div className="w-full max-w-md">
-        <Link to="/" className="flex items-center gap-2.5 mb-8 justify-center">
-          <div className="h-8 w-8 rounded-md bg-mint flex items-center justify-center">
+        <Link to="/" className="mb-8 flex items-center justify-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-mint">
             <div className="h-3.5 w-3.5 rounded-full bg-ink-deep" />
           </div>
           <span className="text-2xl font-extrabold tracking-tight">
-            INK<span className="text-mint">SIGHT</span>
+            INK<span className="text-mint">SIGHTS</span>
           </span>
         </Link>
 
         <div className="rounded-3xl border border-border/60 bg-ink-elev/50 p-8">
-          <h1 className="font-display font-black text-3xl">
+          <h1 className="font-display text-3xl font-black">
             {mode === "signin" ? "Welcome back" : "Create your studio account"}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -129,13 +124,25 @@ function AuthPage() {
           <button
             onClick={handleGoogle}
             disabled={busy}
-            className="mt-6 w-full inline-flex items-center justify-center gap-3 rounded-full bg-ice text-ink-deep px-5 py-3 font-bold hover:bg-white transition-colors disabled:opacity-50"
+            className="mt-6 inline-flex w-full items-center justify-center gap-3 rounded-full bg-ice px-5 py-3 font-bold text-ink-deep transition-colors hover:bg-white disabled:opacity-50"
           >
             <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              <path
+                fill="#EA4335"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+              />
+              <path
+                fill="#4285F4"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+              />
+              <path
+                fill="#34A853"
+                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+              />
             </svg>
             Continue with Google
           </button>
@@ -153,15 +160,15 @@ function AuthPage() {
                   type="text"
                   placeholder="Your name"
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full rounded-full bg-ink-deep border border-border px-5 py-3 text-ice focus:outline-none focus:border-mint"
+                  onChange={(event) => setFullName(event.target.value)}
+                  className="w-full rounded-full border border-border bg-ink-deep px-5 py-3 text-ice focus:border-mint focus:outline-none"
                 />
                 <input
                   type="text"
                   placeholder="Studio name"
                   value={studioName}
-                  onChange={(e) => setStudioName(e.target.value)}
-                  className="w-full rounded-full bg-ink-deep border border-border px-5 py-3 text-ice focus:outline-none focus:border-mint"
+                  onChange={(event) => setStudioName(event.target.value)}
+                  className="w-full rounded-full border border-border bg-ink-deep px-5 py-3 text-ice focus:border-mint focus:outline-none"
                 />
               </>
             ) : null}
@@ -170,8 +177,8 @@ function AuthPage() {
               required
               placeholder="you@studio.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-full bg-ink-deep border border-border px-5 py-3 text-ice focus:outline-none focus:border-mint"
+              onChange={(event) => setEmail(event.target.value)}
+              className="w-full rounded-full border border-border bg-ink-deep px-5 py-3 text-ice focus:border-mint focus:outline-none"
             />
             <input
               type="password"
@@ -179,25 +186,27 @@ function AuthPage() {
               minLength={6}
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-full bg-ink-deep border border-border px-5 py-3 text-ice focus:outline-none focus:border-mint"
+              onChange={(event) => setPassword(event.target.value)}
+              className="w-full rounded-full border border-border bg-ink-deep px-5 py-3 text-ice focus:border-mint focus:outline-none"
             />
             {error ? (
-              <p className="text-sm text-red-400" role="alert">{error}</p>
+              <p className="text-sm text-red-400" role="alert">
+                {error}
+              </p>
             ) : null}
             <button
               type="submit"
               disabled={busy}
-              className="w-full inline-flex items-center justify-center rounded-full bg-mint text-ink-deep px-5 py-3 font-bold hover:bg-mint-soft transition-colors disabled:opacity-50"
+              className="inline-flex w-full items-center justify-center rounded-full bg-mint px-5 py-3 font-bold text-ink-deep transition-colors hover:bg-mint-soft disabled:opacity-50"
             >
               {busy ? "Working…" : mode === "signin" ? "Sign in" : "Create account"}
             </button>
           </form>
 
-          <p className="mt-6 text-sm text-muted-foreground text-center">
-            {mode === "signin" ? "New to INKSIGHT?" : "Already have an account?"}{" "}
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            {mode === "signin" ? "New to INKSIGHTS?" : "Already have an account?"}{" "}
             <button
-              className="text-mint hover:underline font-semibold"
+              className="font-semibold text-mint hover:underline"
               onClick={() => {
                 setMode(mode === "signin" ? "signup" : "signin");
                 setError(null);
@@ -209,7 +218,9 @@ function AuthPage() {
         </div>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-mint">← Back to inksight.co</Link>
+          <Link to="/" className="hover:text-mint">
+            ← Back to INKSIGHTS
+          </Link>
         </p>
       </div>
     </div>
