@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Database, GitPullRequest, ShieldCheck, Workflow } from "lucide-react";
-import { CtaSection, JsonLd, PageHero, PublicShell, SectionHeading } from "@/components/public-site";
+import {
+  CtaSection,
+  JsonLd,
+  PageHero,
+  PublicShell,
+  SectionHeading,
+} from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/case-studies";
 
@@ -9,7 +15,11 @@ export const Route = createFileRoute("/case-studies")({
   head: () => ({
     meta: [
       { title: "INKSIGHTS Proof Library | Systems and Demonstrations" },
-      { name: "description", content: "Review clearly labelled INKSIGHTS demonstrations, working systems, validation standards and future client case-study criteria." },
+      {
+        name: "description",
+        content:
+          "Review clearly labelled INKSIGHTS demonstrations, working systems, validation standards and future client case-study criteria.",
+      },
       { property: "og:title", content: "INKSIGHTS Proof Library" },
       { property: "og:url", content: CANONICAL_URL },
     ],
@@ -20,24 +30,36 @@ export const Route = createFileRoute("/case-studies")({
 function ProofPage() {
   return (
     <PublicShell>
-      <JsonLd data={{
-        "@context": "https://schema.org",
-        "@type": "CollectionPage",
-        name: "INKSIGHTS proof library",
-        url: CANONICAL_URL,
-        description: "Transparent demonstrations and system validation for INKSIGHTS.",
-      }} />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "INKSIGHTS proof library",
+          url: CANONICAL_URL,
+          description: "Transparent demonstrations and system validation for INKSIGHTS.",
+        }}
+      />
       <PageHero
         eyebrow="Proof without fabrication"
         title={<>Demonstrations are labelled. Unknowns stay unknown.</>}
-        description={<>INKSIGHTS is early-stage. This library shows working infrastructure, transparent methodology and simulated examples until genuine studio outcomes can be published with permission.</>}
+        description={
+          <>
+            INKSIGHTS is early-stage. This library explains the methodology and clearly labelled
+            simulated examples. The current priority is validating the full loop on one real
+            business; no completed validation or client outcome is claimed.
+          </>
+        }
       />
 
       <section className="border-b border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-10">
           <div className="flex items-start gap-3 rounded-2xl border border-amber-300/35 bg-amber-300/10 p-5 text-sm leading-relaxed text-amber-100">
             <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-200" />
-            <p><strong className="text-amber-200">Current proof status:</strong> no performance result on this page is presented as a completed paying-client case study. Demonstration numbers illustrate how the reporting system works.</p>
+            <p>
+              <strong className="text-amber-200">Current proof status:</strong> no performance
+              result on this page is presented as a completed paying-client case study.
+              Demonstration numbers illustrate how the reporting system works.
+            </p>
           </div>
         </div>
       </section>
@@ -51,7 +73,9 @@ function ProofPage() {
           />
           <div className="mt-10 grid gap-6 lg:grid-cols-[.85fr_1.15fr]">
             <div className="rounded-3xl border border-border bg-ink p-7">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Simulated input</p>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">
+                Simulated input
+              </p>
               <ul className="mt-6 space-y-3 text-sm leading-relaxed text-muted-foreground">
                 <li>• Multi-artist UK studio</li>
                 <li>• Strong recent portfolio</li>
@@ -63,7 +87,12 @@ function ProofPage() {
             </div>
             <div className="rounded-3xl border border-mint/35 bg-gradient-to-br from-ink-elev to-ink p-7">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {[["Visibility", "64"], ["Trust", "78"], ["Conversion", "36"], ["Readiness", "85"]].map(([label, value]) => (
+                {[
+                  ["Visibility", "64"],
+                  ["Trust", "78"],
+                  ["Conversion", "36"],
+                  ["Readiness", "85"],
+                ].map(([label, value]) => (
                   <div key={label} className="rounded-xl border border-border bg-ink-deep p-4">
                     <div className="font-display text-3xl font-black text-mint">{value}</div>
                     <div className="mt-1 text-xs text-muted-foreground">{label}</div>
@@ -71,14 +100,27 @@ function ProofPage() {
                 ))}
               </div>
               <div className="mt-5 rounded-xl border border-border bg-ink-deep p-5">
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Primary diagnosis</p>
-                <h2 className="mt-2 font-display text-2xl font-black text-ice">The studio is visible enough to lose enquiries.</h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Visitors can see credible work but must decide between several unclear routes. The first intervention is conversion clarity, not more content volume.</p>
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                  Primary diagnosis
+                </p>
+                <h2 className="mt-2 font-display text-2xl font-black text-ice">
+                  The studio is visible enough to lose enquiries.
+                </h2>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  Visitors can see credible work but must decide between several unclear routes. The
+                  first intervention is conversion clarity, not more content volume.
+                </p>
               </div>
               <div className="mt-5 grid gap-3 sm:grid-cols-3">
                 {[
-                  ["Day 1", "Replace vague profile headline and separate client-facing booking action."],
-                  ["Day 2", "Create one pinned booking explainer and reduce competing profile links."],
+                  [
+                    "Day 1",
+                    "Replace vague profile headline and separate client-facing booking action.",
+                  ],
+                  [
+                    "Day 2",
+                    "Create one pinned booking explainer and reduce competing profile links.",
+                  ],
                   ["Day 3", "Verify mobile journey, enquiry fields and response expectation."],
                 ].map(([day, action]) => (
                   <div key={day} className="rounded-xl border border-border bg-ink p-4">
@@ -94,20 +136,44 @@ function ProofPage() {
 
       <section className="border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
-          <SectionHeading eyebrow="Working system proof" title="Infrastructure that can be inspected and validated." />
+          <SectionHeading
+            eyebrow="Implementation and validation status"
+            title="Code and demonstrations are not outcome proof."
+          />
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
-              [Database, "Server-side lead qualification", "Studio answers are scored and stored in Supabase rather than trusted to a browser-only result."],
-              [Workflow, "Qualified booking routing", "Hot and warm leads can request times; lower-readiness leads receive a non-calendar route."],
-              [GitPullRequest, "Version-controlled changes", "Public-site and automation changes are built in GitHub branches, reviewed through pull requests and validated by CI."],
-              [ShieldCheck, "Approval and dry-run controls", "Automation replacements remain gated until credentials, approval and controlled live tests are complete."],
+              [
+                Database,
+                "Server-side lead qualification",
+                "The free check has server-side estimate and storage code. Its estimates use studio-supplied inputs and do not verify commercial outcomes.",
+              ],
+              [
+                Workflow,
+                "Qualified booking routing",
+                "Qualification and routing workflows exist in the codebase. Their existence does not establish a validated end-to-end delivery or acquisition system.",
+              ],
+              [
+                GitPullRequest,
+                "Version-controlled changes",
+                "Website changes are version-controlled and checked before production release. Build checks verify software, not studio performance.",
+              ],
+              [
+                ShieldCheck,
+                "Approval and dry-run controls",
+                "Automation replacements remain gated until credentials, approval and controlled live tests are complete.",
+              ],
             ].map(([Icon, title, description]) => {
               const ProofIcon = Icon as typeof Database;
               return (
-                <div key={String(title)} className="rounded-2xl border border-border bg-ink-deep p-6">
+                <div
+                  key={String(title)}
+                  className="rounded-2xl border border-border bg-ink-deep p-6"
+                >
                   <ProofIcon className="h-7 w-7 text-mint" />
                   <h2 className="mt-5 font-display text-xl font-black text-ice">{String(title)}</h2>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{String(description)}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {String(description)}
+                  </p>
                 </div>
               );
             })}
@@ -131,14 +197,18 @@ function ProofPage() {
               "Outcome window long enough to avoid claiming short-term noise as a result",
               "Commercial metrics alongside limitations and unsuccessful elements",
             ].map((item) => (
-              <div key={item} className="flex gap-3 rounded-xl border border-border bg-ink p-5 text-sm leading-relaxed text-muted-foreground">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-mint" />{item}
+              <div
+                key={item}
+                className="flex gap-3 rounded-xl border border-border bg-ink p-5 text-sm leading-relaxed text-muted-foreground"
+              >
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-mint" />
+                {item}
               </div>
             ))}
           </div>
         </div>
       </section>
-      <CtaSection title="Apply as a founding studio and help create the first verified case study." />
+      <CtaSection title="Start with a Studio Growth Check." />
     </PublicShell>
   );
 }

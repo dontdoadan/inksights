@@ -1,29 +1,183 @@
+import { BusinessProgress, IntelligenceMethodology } from "@/components/business-progress";
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Eye, ShieldCheck, Workflow } from "lucide-react";
-import { CtaSection, JsonLd, PageHero, PublicShell, SectionHeading } from "@/components/public-site";
+import {
+  CtaSection,
+  JsonLd,
+  PageHero,
+  PublicShell,
+  SectionHeading,
+} from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/about";
-export const Route = createFileRoute("/about")({ component: AboutPage, head: () => ({ meta: [
-  { title: "About INKSIGHTS | Tattoo Studio Intelligence" },
-  { name: "description", content: "Why INKSIGHTS is building growth intelligence, diagnostics and commercial systems specifically for UK tattoo studios." },
-  { property: "og:title", content: "About INKSIGHTS | Tattoo Studio Intelligence" },
-  { property: "og:url", content: CANONICAL_URL },
-], links: [{ rel: "canonical", href: CANONICAL_URL }] }) });
+export const Route = createFileRoute("/about")({
+  component: AboutPage,
+  head: () => ({
+    meta: [
+      { title: "About INKSIGHTS | Tattoo Studio Intelligence" },
+      {
+        name: "description",
+        content:
+          "Why INKSIGHTS is building growth intelligence, diagnostics and commercial systems specifically for UK tattoo studios.",
+      },
+      { property: "og:title", content: "About INKSIGHTS | Tattoo Studio Intelligence" },
+      { property: "og:url", content: CANONICAL_URL },
+    ],
+    links: [{ rel: "canonical", href: CANONICAL_URL }],
+  }),
+});
 
 const principles = [
-  { icon: Eye, title: "Evidence over theatre", description: "Demonstrations are labelled. Estimates stay estimates. Unknown data stays unknown rather than being dressed up as a result." },
-  { icon: Workflow, title: "Workflow before software", description: "A booking platform cannot repair unclear ownership, weak policies or a broken enquiry journey. Map the process first." },
-  { icon: ShieldCheck, title: "Automation with boundaries", description: "Human escalation, consent, validation and stop controls are part of the system, especially where unusual or sensitive situations arise." },
-  { icon: CheckCircle2, title: "Smallest useful intervention", description: "A studio with one material problem should not be sold an oversized engagement. Scope expands only when evidence justifies it." },
+  {
+    icon: Eye,
+    title: "Evidence over theatre",
+    description:
+      "Demonstrations are labelled. Estimates stay estimates. Unknown data stays unknown rather than being dressed up as a result.",
+  },
+  {
+    icon: Workflow,
+    title: "Workflow before software",
+    description:
+      "A booking platform cannot repair unclear ownership, weak policies or a broken enquiry journey. Map the process first.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Automation with boundaries",
+    description:
+      "Human escalation, consent, validation and stop controls are part of the system, especially where unusual or sensitive situations arise.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Smallest useful intervention",
+    description:
+      "A studio with one material problem should not be sold an oversized engagement. Scope expands only when evidence justifies it.",
+  },
 ] as const;
 
 function AboutPage() {
-  return <PublicShell>
-    <JsonLd data={{ "@context": "https://schema.org", "@type": "AboutPage", name: "About INKSIGHTS", url: CANONICAL_URL, mainEntity: { "@type": "Organization", name: "INKSIGHTS", description: "Growth intelligence and commercial systems designed specifically for UK tattoo studios." } }} />
-    <PageHero eyebrow="Built around tattoo studios" title={<>A tattoo studio is not a generic appointment business.</>} description={<>Custom projects have a different commercial journey: style and portfolio create trust, enquiries need qualification, deposits protect valuable artist time, multi-session work spans months and the relationship can continue long after the first appointment.</>} />
-    <section><div className="mx-auto grid max-w-7xl gap-10 px-6 py-20 lg:grid-cols-2 lg:items-center md:py-28"><div><SectionHeading eyebrow="Why INKSIGHTS exists" title="The commercial system behind the artwork matters." description="INKSIGHTS was started from inside tattooing with a simple premise: studio owners need decisions based on the economics and workflow of tattooing, not generic advice copied from unrelated service businesses." /><div className="mt-7 space-y-4 text-base leading-relaxed text-muted-foreground"><p>That means looking at the full path from local discovery and portfolio trust through enquiry, booking, deposits, artist capacity, attendance, revenue and client return.</p><p>Industry experience provides useful context. It does not make a recommendation automatically correct. The aim is to combine that context with measurable data, transparent assumptions and evidence from real studio implementations.</p></div></div><div className="rounded-3xl border border-mint/35 bg-gradient-to-br from-ink-elev to-ink p-8 md:p-10"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What we are building</p><div className="mt-6 space-y-4"><div className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Studio visibility intelligence</strong><p className="mt-1 text-sm text-muted-foreground">Understand where the right local clients discover or fail to discover the studio.</p></div><div className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Revenue diagnostics</strong><p className="mt-1 text-sm text-muted-foreground">Separate client volume, transaction value, frequency, capacity and leakage instead of treating revenue as one number.</p></div><div className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Booking and retention systems</strong><p className="mt-1 text-sm text-muted-foreground">Improve qualification, deposits, reminders, rebooking, referrals and client reactivation with clear ownership.</p></div><div className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Proprietary studio dataset</strong><p className="mt-1 text-sm text-muted-foreground">Accumulate structured studio-level signals that make future benchmarks and intelligence more useful.</p></div></div></div></div></section>
-    <section className="border-y border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-20 md:py-28"><SectionHeading eyebrow="Operating principles" title="How trust is earned." /><div className="mt-10 grid gap-5 md:grid-cols-2">{principles.map(({ icon: Icon, title, description }) => <div key={title} className="rounded-2xl border border-border bg-ink-deep p-7"><Icon className="h-7 w-7 text-mint" /><h2 className="mt-5 font-display text-2xl font-black text-ice">{title}</h2><p className="mt-3 leading-relaxed text-muted-foreground">{description}</p></div>)}</div></div></section>
-    <section><div className="mx-auto max-w-5xl px-6 py-20 text-center md:py-28"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Current stage</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">Founding systems, controlled pilots and verified proof.</h2><p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">INKSIGHTS is early-stage. The methodology and working infrastructure can be shown now; genuine client outcomes will only be published with permission and enough measurement context to make the claim credible.</p><a href="/case-studies" className="mt-8 inline-flex rounded-full border border-mint px-6 py-3 font-bold text-mint hover:bg-mint/10">Review the proof library</a></div></section>
-    <CtaSection title="Start by finding the constraint." description="Run the free Revenue Audit and use the evidence to decide what the studio actually needs next." />
-  </PublicShell>;
+  return (
+    <PublicShell>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          name: "About INKSIGHTS",
+          url: CANONICAL_URL,
+          mainEntity: {
+            "@type": "Organization",
+            name: "INKSIGHTS",
+            description:
+              "Growth intelligence and commercial systems designed specifically for UK tattoo studios.",
+          },
+        }}
+      />
+      <PageHero
+        eyebrow="Built around tattoo studios"
+        title={<>A tattoo studio is not a generic appointment business.</>}
+        description={
+          <>
+            Custom projects have a different commercial journey: style and portfolio create trust,
+            enquiries need qualification, deposits protect valuable artist time, multi-session work
+            spans months and the relationship can continue long after the first appointment.
+          </>
+        }
+      />
+      <section>
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-20 lg:grid-cols-2 lg:items-center md:py-28">
+          <div>
+            <SectionHeading
+              eyebrow="Why INKSIGHTS exists"
+              title="The commercial system behind the artwork matters."
+              description="INKSIGHTS was started from inside tattooing with a simple premise: studio owners need decisions based on the economics and workflow of tattooing, not generic advice copied from unrelated service businesses."
+            />
+            <div className="mt-7 space-y-4 text-base leading-relaxed text-muted-foreground">
+              <p>
+                That means looking at the full path from local discovery and portfolio trust through
+                enquiry, booking, deposits, artist capacity, attendance, revenue and client return.
+              </p>
+              <p>
+                Industry experience provides useful context. It does not make a recommendation
+                automatically correct. The aim is to combine that context with measurable data,
+                transparent assumptions and evidence from real studio implementations.
+              </p>
+            </div>
+          </div>
+          <div className="rounded-3xl border border-mint/35 bg-gradient-to-br from-ink-elev to-ink p-8 md:p-10">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">
+              What we are building
+            </p>
+            <div className="mt-6 space-y-4">
+              <div className="rounded-xl border border-border bg-ink-deep p-4">
+                <strong className="text-ice">Studio visibility intelligence</strong>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Understand where the right local clients discover or fail to discover the studio.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-ink-deep p-4">
+                <strong className="text-ice">Revenue diagnostics</strong>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Separate client volume, transaction value, frequency, capacity and leakage instead
+                  of treating revenue as one number.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-ink-deep p-4">
+                <strong className="text-ice">Booking and retention systems</strong>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Improve qualification, deposits, reminders, rebooking, referrals and client
+                  reactivation with clear ownership.
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-ink-deep p-4">
+                <strong className="text-ice">Proprietary studio dataset</strong>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Accumulate structured studio-level signals that make future benchmarks and
+                  intelligence more useful.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="border-y border-border bg-ink">
+        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+          <SectionHeading eyebrow="Operating principles" title="How trust is earned." />
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            {principles.map(({ icon: Icon, title, description }) => (
+              <div key={title} className="rounded-2xl border border-border bg-ink-deep p-7">
+                <Icon className="h-7 w-7 text-mint" />
+                <h2 className="mt-5 font-display text-2xl font-black text-ice">{title}</h2>
+                <p className="mt-3 leading-relaxed text-muted-foreground">{description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section>
+        <div className="mx-auto max-w-5xl px-6 py-20 text-center md:py-28">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Current stage</p>
+          <h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">
+            Validate one real business before expanding.
+          </h2>
+          <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
+            The current priority is to validate the complete observation-to-learning loop on one
+            real business. Completion is not yet claimed. Wider integrations and acquisition follow
+            that validation; studio outcomes will only be published with permission and enough
+            measurement context to make them credible.
+          </p>
+          <a
+            href="/case-studies"
+            className="mt-8 inline-flex rounded-full border border-mint px-6 py-3 font-bold text-mint hover:bg-mint/10"
+          >
+            Review the proof library
+          </a>
+        </div>
+      </section>
+      <BusinessProgress />
+      <IntelligenceMethodology />
+      <CtaSection
+        title="Start by finding the constraint."
+        description="Run the free Studio Growth Check and use the evidence to decide what the studio actually needs next."
+      />
+    </PublicShell>
+  );
 }
