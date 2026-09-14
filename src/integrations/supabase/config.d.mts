@@ -7,12 +7,6 @@ export interface SupabasePublicConfig {
 }
 
 export function resolveSupabaseConfig(
-  viteEnv?: {
-    VITE_SUPABASE_URL?: unknown;
-    VITE_SUPABASE_PUBLISHABLE_KEY?: unknown;
-  },
-  processEnv?: {
-    SUPABASE_URL?: unknown;
-    SUPABASE_PUBLISHABLE_KEY?: unknown;
-  },
+  viteEnv?: object,
+  processEnv?: object,
 ): SupabasePublicConfig;
