@@ -74,8 +74,25 @@ jobs:
       - name: Build and generate route types
         run: npm run build
 
+      - name: Check generated route tree
+        id: route_tree
+        continue-on-error: true
+        run: git diff --exit-code -- src/routeTree.gen.ts > route-tree.diff
+
+      - name: Upload generated route tree diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: route-tree-diagnostics
+          path: route-tree.diff
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Enforce generated route tree is committed
-        run: git diff --exit-code -- src/routeTree.gen.ts
+        if: steps.route_tree.outcome == 'failure'
+        run: |
+          cat route-tree.diff
+          exit 1
 
       - name: Typecheck
         id: typecheck
