@@ -1,0 +1,3 @@
+-- Migration-history marker for the growth-engine migration previously applied directly to canonical Supabase.
+-- The idempotent 20260914030000 reconciliation migration defines the current canonical objects and
+-- ensures a clean database reaches the same effective state without relying on undocumented remote drift.
