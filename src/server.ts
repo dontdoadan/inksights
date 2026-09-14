@@ -50,6 +50,7 @@ function isNonCanonicalPreviewHost(hostname: string): boolean {
   return (
     hostname === "localhost" ||
     hostname === "127.0.0.1" ||
+    hostname.endsWith(".vercel.app") ||
     hostname.endsWith(".lovable.app") ||
     hostname.endsWith(".lovable.dev") ||
     hostname.endsWith(".lovableproject.com")
