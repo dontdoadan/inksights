@@ -125,7 +125,7 @@ function ReportRequest() {
   }
   return <PublicShell>
     <PageHero eyebrow="Free · evidence-led studio visibility report" title={<>See what your studio can verify today.</>} description={<>Submit your studio details and receive a report built from source observations. We do not invent search volume, rankings or revenue figures.</>} />
-    <main className="bg-ink">
+    <div className="bg-ink">
       <section className="mx-auto grid max-w-6xl gap-8 px-6 py-14 lg:grid-cols-[1fr_360px]">
         <form onSubmit={submit} className="rounded-3xl border border-border bg-ink-deep p-7 md:p-9">
           <div className="grid gap-5 sm:grid-cols-2">
@@ -146,7 +146,7 @@ function ReportRequest() {
           <Feature icon={<ShieldCheck />} title="Evidence controls" text="Unmeasured demand, Google rankings and revenue remain explicitly unmeasured." />
         </div></aside>
       </section>
-    </main>
+    </div>
   </PublicShell>;
 }
 
@@ -159,7 +159,7 @@ function ReportView({ data }: { data: ReportPayload }) {
   const providerLabel = r.current_visibility?.provider || r.methodology?.provider || "external observation";
   return <PublicShell>
     <PageHero eyebrow="Evidence-led report · INKSIGHTS" title={<>Studio Visibility Report</>} description={<>A source-led snapshot of observed search coverage, competitors and website evidence. <b className="text-ice">No revenue is estimated in this report.</b></>} />
-    <main className="bg-ink print:bg-white">
+    <div className="bg-ink print:bg-white">
       <div className="mx-auto max-w-7xl px-6 py-8 flex justify-end print:hidden"><button onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ice"><Printer className="h-4 w-4" /> Save / print PDF</button></div>
       <section className="mx-auto max-w-7xl px-6 pb-14"><div className="grid gap-5 md:grid-cols-4">
         <Metric label="Observed searches" value={String(searches.length)} note="studio-specific validation sample" />
@@ -178,7 +178,7 @@ function ReportView({ data }: { data: ReportPayload }) {
       <section className="mx-auto max-w-7xl px-6 py-14"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Priority actions</p><h2 className="mt-2 font-display text-4xl font-black text-ice">What the evidence points to</h2><div className="mt-7 grid gap-4 md:grid-cols-3">{(data.opportunities || []).slice(0, 6).map(o => <div key={`${o.priority}-${o.title}`} className="rounded-2xl border border-border bg-ink-deep p-6"><span className="font-mono text-mint">PRIORITY 0{o.priority}</span><h3 className="mt-4 text-lg font-bold text-ice">{o.title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{o.description}</p><p className="mt-5 border-t border-border pt-4 text-sm font-semibold leading-relaxed text-mint">{o.recommended_action}</p></div>)}</div></section>
 
       <section className="border-t border-border bg-ink-deep"><div className="mx-auto max-w-4xl px-6 py-14 text-center"><ShieldCheck className="mx-auto h-7 w-7 text-mint" /><h2 className="mt-4 font-display text-3xl font-black text-ice">Evidence & limitations</h2><p className="mt-4 text-sm leading-relaxed text-muted-foreground">This report uses website evidence and provider-specific web-search observations. They are not represented as Google rankings. Absolute monthly search demand has not been measured, so LSOS is not scored and revenue opportunity is not calculated. Competitor overlap describes only this sampled query set.</p><p className="mt-4 text-xs leading-relaxed text-muted-foreground">Provider: {providerLabel}. Data classification: {r.data_classification}. Method: {r.methodology?.lsos || "Evidence-first, unscored where inputs are unmeasured."}</p></div></section>
-    </main>
+    </div>
   </PublicShell>;
 }
 

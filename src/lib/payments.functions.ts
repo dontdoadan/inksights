@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { getPublicOffer } from "./offer-data";
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
-  .inputValidator((data: { slug: string; email?: string }) => data)
+  .validator((data: { slug: string; email?: string }) => data)
   .handler(async ({ data }) => {
     const offer = getPublicOffer(data.slug);
     if (!offer || !offer.stripePriceId || !offer.stripeMode) {
