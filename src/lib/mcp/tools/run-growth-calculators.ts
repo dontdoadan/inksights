@@ -1,63 +1,58 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 
-// Pure calculators — same math as the Growth Model page.
-// Formulas mirror src/routes/growth-model.tsx (studio and investor views).
+import { calculateGrowthScenario } from "@/lib/intelligence/growth-engine";
 
 export default defineTool({
   name: "run_growth_calculators",
-  title: "Run growth-model calculators",
+  title: "Run INKSIGHTS growth scenario",
   description:
-    "Compute INKSIGHT growth-model outputs from studio inputs. Returns annual sessions, extra retail revenue, ATV uplift, rebooking uplift, and the total extra annual studio revenue.",
+    "Model the three canonical growth levers — customers, purchase frequency and average transaction value — with conversion, capacity, cancellation, no-show and margin constraints.",
   inputSchema: {
-    studios: z.number().int().min(1).max(10000).default(1).describe("Number of studios."),
-    artists_per_studio: z.number().int().min(1).max(200).default(4).describe("Artists per studio."),
-    clients_per_artist_per_day: z.number().min(0).max(20).default(2),
-    working_days_per_week: z.number().min(1).max(7).default(5),
-    average_session_value_gbp: z.number().min(0).default(180).describe("Current average tattoo session value in GBP."),
-    session_value_uplift_gbp: z.number().min(0).default(20).describe("Extra £ per session at the aftercare handoff."),
-    current_retail_conversion_pct: z.number().min(0).max(100).default(5),
-    target_retail_conversion_pct: z.number().min(0).max(100).default(35),
-    retail_gp_per_unit_gbp: z.number().min(0).default(12).describe("Gross profit per aftercare unit sold."),
-    current_rebooking_rate_pct: z.number().min(0).max(100).default(20),
-    improved_rebooking_rate_pct: z.number().min(0).max(100).default(35),
+    customers: z.number().min(0).optional(),
+    annual_leads: z.number().min(0).optional(),
+    lead_to_customer_conversion_rate: z.number().min(0).max(1).optional(),
+    purchase_frequency: z.number().min(0),
+    average_transaction_value_gbp: z.number().min(0),
+    annual_capacity_transactions: z.number().min(0).optional(),
+    cancellation_rate: z.number().min(0).max(1).default(0),
+    no_show_rate: z.number().min(0).max(1).default(0),
+    gross_margin_rate: z.number().min(0).max(1).default(1),
+    customer_growth_pct: z.number().min(0).default(0),
+    frequency_growth_pct: z.number().min(0).default(0),
+    atv_growth_pct: z.number().min(0).default(0),
   },
-  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  annotations: {
+    readOnlyHint: true,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   handler: async (input) => {
-    const weeksPerYear = 52;
-    const sessions =
-      input.studios *
-      input.artists_per_studio *
-      input.clients_per_artist_per_day *
-      input.working_days_per_week *
-      weeksPerYear;
-
-    const atvUpliftYr = sessions * input.session_value_uplift_gbp;
-    const retailConvDelta =
-      Math.max(0, input.target_retail_conversion_pct - input.current_retail_conversion_pct) / 100;
-    const retailYr = sessions * retailConvDelta * input.retail_gp_per_unit_gbp;
-    const rebookDelta =
-      Math.max(0, input.improved_rebooking_rate_pct - input.current_rebooking_rate_pct) / 100;
-    const rebookingYr = sessions * rebookDelta * input.average_session_value_gbp;
-
-    const totalYr = atvUpliftYr + retailYr + rebookingYr;
-
-    const results = {
-      annual_sessions: Math.round(sessions),
-      atv_uplift_per_year_gbp: Math.round(atvUpliftYr),
-      retail_revenue_per_year_gbp: Math.round(retailYr),
-      rebooking_revenue_per_year_gbp: Math.round(rebookingYr),
-      total_extra_annual_revenue_gbp: Math.round(totalYr),
-      extra_revenue_per_artist_per_month_gbp: Math.round(
-        totalYr / (input.studios * input.artists_per_studio) / 12,
-      ),
-    };
+    const result = calculateGrowthScenario({
+      customers: input.customers,
+      annualLeads: input.annual_leads,
+      leadToCustomerConversionRate: input.lead_to_customer_conversion_rate,
+      purchaseFrequency: input.purchase_frequency,
+      averageTransactionValue: input.average_transaction_value_gbp,
+      annualCapacityTransactions: input.annual_capacity_transactions,
+      cancellationRate: input.cancellation_rate,
+      noShowRate: input.no_show_rate,
+      grossMarginRate: input.gross_margin_rate,
+      customerGrowthPct: input.customer_growth_pct,
+      frequencyGrowthPct: input.frequency_growth_pct,
+      atvGrowthPct: input.atv_growth_pct,
+    });
 
     return {
       content: [
-        { type: "text", text: `Modelled extra annual studio revenue: £${results.total_extra_annual_revenue_gbp.toLocaleString("en-GB")}` },
+        {
+          type: "text",
+          text: `Modelled annual revenue uplift: £${Math.round(
+            result.combinedRevenueUplift,
+          ).toLocaleString("en-GB")}`,
+        },
       ],
-      structuredContent: results,
+      structuredContent: result,
     };
   },
 });
