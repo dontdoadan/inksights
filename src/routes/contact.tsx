@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/contact";
+const CANONICAL_ORIGIN = "https://getinksights.co.uk";
 const CONTACT_INTAKE_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/public-contact-intake";
 
 export const Route = createFileRoute("/contact")({
@@ -17,7 +18,81 @@ export const Route = createFileRoute("/contact")({
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
   }),
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const requestOrigin = new URL(request.url).origin;
+        const suppliedOrigin = request.headers.get("origin");
+        if (suppliedOrigin && suppliedOrigin !== requestOrigin) {
+          return json({ ok: false, error: "Origin not allowed." }, 403);
+        }
+
+        const contentType = request.headers.get("content-type") || "";
+        if (!contentType.toLowerCase().includes("application/json")) {
+          return json({ ok: false, error: "Content-Type must be application/json." }, 415);
+        }
+
+        const contentLength = Number(request.headers.get("content-length") || 0);
+        if (contentLength > 32768) {
+          return json({ ok: false, error: "Request too large." }, 413);
+        }
+
+        let payload: unknown;
+        try {
+          payload = await request.json();
+        } catch {
+          return json({ ok: false, error: "Invalid request." }, 400);
+        }
+
+        if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+          return json({ ok: false, error: "Invalid request." }, 400);
+        }
+
+        try {
+          const forwardedFor = request.headers.get("x-forwarded-for");
+          const userAgent = request.headers.get("user-agent");
+          const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+            Origin: CANONICAL_ORIGIN,
+          };
+          if (forwardedFor) headers["X-Forwarded-For"] = forwardedFor;
+          if (userAgent) headers["User-Agent"] = userAgent;
+
+          const response = await fetch(CONTACT_INTAKE_URL, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(payload),
+          });
+          const data = await response.json().catch(() => null);
+
+          if (!response.ok || !data || typeof data !== "object") {
+            console.error("Contact intake proxy failed", { status: response.status });
+            return json({ ok: false, error: "The message could not be recorded right now. Please try again." }, 503);
+          }
+
+          return json(data, response.status);
+        } catch (proxyError) {
+          console.error(
+            "Contact intake proxy failed",
+            proxyError instanceof Error ? proxyError.message : String(proxyError),
+          );
+          return json({ ok: false, error: "The message could not be recorded right now. Please try again." }, 503);
+        }
+      },
+    },
+  },
 });
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
 
 function ContactPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
@@ -31,7 +106,7 @@ function ContactPage() {
 
     let data: { ok?: boolean; error?: string } | null = null;
     try {
-      const response = await fetch(CONTACT_INTAKE_URL, {
+      const response = await fetch("/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
