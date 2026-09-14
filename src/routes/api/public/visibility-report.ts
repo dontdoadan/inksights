@@ -2,6 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+type PublicVisibilityReportRpc = {
+  rpc: (
+    fn: "publish_visibility_report",
+    args: {
+      p_report_id: string;
+      p_public_token: string;
+    },
+  ) => PromiseLike<{
+    data: unknown;
+    error: { code?: string } | null;
+  }>;
+};
+
 export const Route = createFileRoute("/api/public/visibility-report")({
   server: {
     handlers: {
@@ -15,7 +28,8 @@ export const Route = createFileRoute("/api/public/visibility-report")({
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data, error } = await supabaseAdmin.rpc("publish_visibility_report", {
+        const visibilityReportRpc = supabaseAdmin as unknown as PublicVisibilityReportRpc;
+        const { data, error } = await visibilityReportRpc.rpc("publish_visibility_report", {
           p_report_id: reportId,
           p_public_token: token,
         });
