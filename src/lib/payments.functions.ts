@@ -16,11 +16,11 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     }
 
     const stripe = new Stripe(secretKey, {
-      apiVersion: "2026-07-29.dahlia",
+      apiVersion: "2026-08-26.dahlia",
       typescript: true,
     });
 
-    const origin = process.env["VITE_APP_ORIGIN"] || "https://getinksight.co.uk";
+    const origin = process.env["VITE_APP_ORIGIN"] || "https://getinksights.co.uk";
     const successUrl = `${origin}/offers/${offer.slug}?checkout=success&session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${origin}/offers/${offer.slug}?checkout=cancelled`;
 
