@@ -1,0 +1,3 @@
+-- Migration-history marker for the migration previously applied directly to canonical Supabase.
+-- The canonical database already contains this change. The final reconciliation migration preserves
+-- the current public-report contract while the repository catches up with remote migration history.
