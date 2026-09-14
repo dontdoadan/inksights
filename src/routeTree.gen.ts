@@ -35,14 +35,19 @@ import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/tools.tattoo-pain-chart-reality-check'
-import { Route as OffersSlugRouteImport } from './routes/offers._slug'
+import { Route as OffersSlugRouteImport } from './routes/offers.$slug'
 import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/guides.grey-line-healing-week-by-week'
 import { Route as GuidesFullSleeveCostUkRouteImport } from './routes/guides.full-sleeve-cost-uk'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated/route'
-import { Route as DotLovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
+import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -176,6 +181,15 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsTattooPainChartRealityCheckRoute =
   ToolsTattooPainChartRealityCheckRouteImport.update({
     id: '/tools/tattoo-pain-chart-reality-check',
@@ -203,22 +217,42 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/callback',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe-webhook',
+  path: '/api/public/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DotLovableOauthConsentRoute = DotLovableOauthConsentRouteImport.update({
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
   path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/auth': typeof AuthRouteWithChildren
@@ -245,15 +279,20 @@ export interface FileRoutesByFullPath {
   '/tattoo-studio-software': typeof TattooStudioSoftwareRoute
   '/tattoo-studio-visibility-scorecard': typeof TattooStudioVisibilityScorecardRoute
   '/terms': typeof TermsRoute
-  '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
-  '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
-  '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
-  '/auth/callback': typeof AuthCallbackRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/.lovable/oauth/consent': typeof DotLovableOauthConsentRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
+  '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
+  '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/auth': typeof AuthRouteWithChildren
@@ -280,16 +319,22 @@ export interface FileRoutesByTo {
   '/tattoo-studio-software': typeof TattooStudioSoftwareRoute
   '/tattoo-studio-visibility-scorecard': typeof TattooStudioVisibilityScorecardRoute
   '/terms': typeof TermsRoute
-  '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
-  '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
-  '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
-  '/auth/callback': typeof AuthCallbackRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/.lovable/oauth/consent': typeof DotLovableOauthConsentRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
+  '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
+  '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/auth': typeof AuthRouteWithChildren
@@ -316,18 +361,22 @@ export interface FileRoutesById {
   '/tattoo-studio-software': typeof TattooStudioSoftwareRoute
   '/tattoo-studio-visibility-scorecard': typeof TattooStudioVisibilityScorecardRoute
   '/terms': typeof TermsRoute
-  '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
-  '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
-  '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
-  '/auth/callback': typeof AuthCallbackRoute
-  '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/.lovable/oauth/consent': typeof DotLovableOauthConsentRoute
-  '/offers/$slug': typeof OffersSlugRoute
+  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
+  '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
+  '/offers/$slug': typeof OffersSlugRoute
+  '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
+  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/about'
     | '/accessibility'
     | '/auth'
@@ -354,15 +403,20 @@ export interface FileRouteTypes {
     | '/tattoo-studio-software'
     | '/tattoo-studio-visibility-scorecard'
     | '/terms'
-    | '/tools/tattoo-pain-chart-reality-check'
-    | '/guides/grey-line-healing-week-by-week'
-    | '/guides/full-sleeve-cost-uk'
-    | '/auth/callback'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/dashboard'
-    | '/.lovable/oauth/consent'
+    | '/auth/callback'
+    | '/guides/full-sleeve-cost-uk'
+    | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
+    | '/tools/tattoo-pain-chart-reality-check'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
+    | '/api/public/stripe-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/about'
     | '/accessibility'
     | '/auth'
@@ -389,15 +443,21 @@ export interface FileRouteTypes {
     | '/tattoo-studio-software'
     | '/tattoo-studio-visibility-scorecard'
     | '/terms'
-    | '/tools/tattoo-pain-chart-reality-check'
-    | '/guides/grey-line-healing-week-by-week'
-    | '/guides/full-sleeve-cost-uk'
-    | '/auth/callback'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/dashboard'
-    | '/.lovable/oauth/consent'
+    | '/auth/callback'
+    | '/guides/full-sleeve-cost-uk'
+    | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
+    | '/tools/tattoo-pain-chart-reality-check'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
+    | '/api/public/stripe-webhook'
   id:
     | '__root__'
+    | '/'
+    | '/_authenticated'
     | '/about'
     | '/accessibility'
     | '/auth'
@@ -424,17 +484,22 @@ export interface FileRouteTypes {
     | '/tattoo-studio-software'
     | '/tattoo-studio-visibility-scorecard'
     | '/terms'
-    | '/tools/tattoo-pain-chart-reality-check'
-    | '/guides/grey-line-healing-week-by-week'
-    | '/guides/full-sleeve-cost-uk'
-    | '/auth/callback'
-    | '/_authenticated'
-    | '/.lovable/oauth/consent'
-    | '/offers/$slug'
+    | '/.mcp/list-tools'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/dashboard'
+    | '/auth/callback'
+    | '/guides/full-sleeve-cost-uk'
+    | '/guides/grey-line-healing-week-by-week'
+    | '/offers/$slug'
+    | '/tools/tattoo-pain-chart-reality-check'
+    | '/.lovable/oauth/consent'
+    | '/.mcp/invoke-tool/$tool'
+    | '/api/public/stripe-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AccessibilityRoute: typeof AccessibilityRoute
   AuthRoute: typeof AuthRouteWithChildren
@@ -461,181 +526,23 @@ export interface RootRouteChildren {
   TattooStudioSoftwareRoute: typeof TattooStudioSoftwareRoute
   TattooStudioVisibilityScorecardRoute: typeof TattooStudioVisibilityScorecardRoute
   TermsRoute: typeof TermsRoute
-  ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
-  GuidesGreyLineHealingWeekByWeekRoute: typeof GuidesGreyLineHealingWeekByWeekRoute
+  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   GuidesFullSleeveCostUkRoute: typeof GuidesFullSleeveCostUkRoute
-  DotLovableOauthConsentRoute: typeof DotLovableOauthConsentRoute
-  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  GuidesGreyLineHealingWeekByWeekRoute: typeof GuidesGreyLineHealingWeekByWeekRoute
+  ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
+  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/accessibility': {
-      id: '/accessibility'
-      path: '/accessibility'
-      fullPath: '/accessibility'
-      preLoaderRoute: typeof AccessibilityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/case-studies': {
-      id: '/case-studies'
-      path: '/case-studies'
-      fullPath: '/case-studies'
-      preLoaderRoute: typeof CaseStudiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cookies': {
-      id: '/cookies'
-      path: '/cookies'
-      fullPath: '/cookies'
-      preLoaderRoute: typeof CookiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/growth-model': {
-      id: '/growth-model'
-      path: '/growth-model'
-      fullPath: '/growth-model'
-      preLoaderRoute: typeof GrowthModelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/offers': {
-      id: '/offers'
-      path: '/offers'
-      fullPath: '/offers'
-      preLoaderRoute: typeof OffersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing-benchmark': {
-      id: '/pricing-benchmark'
-      path: '/pricing-benchmark'
-      fullPath: '/pricing-benchmark'
-      preLoaderRoute: typeof PricingBenchmarkRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/resources': {
-      id: '/resources'
-      path: '/resources'
-      fullPath: '/resources'
-      preLoaderRoute: typeof ResourcesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/solutions': {
-      id: '/solutions'
-      path: '/solutions'
-      fullPath: '/solutions'
-      preLoaderRoute: typeof SolutionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/studio-growth-check': {
-      id: '/studio-growth-check'
-      path: '/studio-growth-check'
-      fullPath: '/studio-growth-check'
-      preLoaderRoute: typeof StudioGrowthCheckRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/studio-visibility-report': {
-      id: '/studio-visibility-report'
-      path: '/studio-visibility-report'
-      fullPath: '/studio-visibility-report'
-      preLoaderRoute: typeof StudioVisibilityReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tattoo-studio-booking': {
-      id: '/tattoo-studio-booking'
-      path: '/tattoo-studio-booking'
-      fullPath: '/tattoo-studio-booking'
-      preLoaderRoute: typeof TattooStudioBookingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tattoo-studio-client-retention': {
-      id: '/tattoo-studio-client-retention'
-      path: '/tattoo-studio-client-retention'
-      fullPath: '/tattoo-studio-client-retention'
-      preLoaderRoute: typeof TattooStudioClientRetentionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tattoo-studio-growth': {
-      id: '/tattoo-studio-growth'
-      path: '/tattoo-studio-growth'
-      fullPath: '/tattoo-studio-growth'
-      preLoaderRoute: typeof TattooStudioGrowthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tattoo-studio-management': {
-      id: '/tattoo-studio-management'
-      path: '/tattoo-studio-management'
-      fullPath: '/tattoo-studio-management'
-      preLoaderRoute: typeof TattooStudioManagementRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tattoo-studio-marketing': {
-      id: '/tattoo-studio-marketing'
-      path: '/tattoo-studio-marketing'
-      fullPath: '/tattoo-studio-marketing'
-      preLoaderRoute: typeof TattooStudioMarketingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tattoo-studio-revenue': {
-      id: '/tattoo-studio-revenue'
-      path: '/tattoo-studio-revenue'
-      fullPath: '/tattoo-studio-revenue'
-      preLoaderRoute: typeof TattooStudioRevenueRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tattoo-studio-seo': {
-      id: '/tattoo-studio-seo'
-      path: '/tattoo-studio-seo'
-      fullPath: '/tattoo-studio-seo'
-      preLoaderRoute: typeof TattooStudioSeoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tattoo-studio-software': {
-      id: '/tattoo-studio-software'
-      path: '/tattoo-studio-software'
-      fullPath: '/tattoo-studio-software'
-      preLoaderRoute: typeof TattooStudioSoftwareRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tattoo-studio-visibility-scorecard': {
@@ -645,11 +552,186 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TattooStudioVisibilityScorecardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
+    '/tattoo-studio-software': {
+      id: '/tattoo-studio-software'
+      path: '/tattoo-studio-software'
+      fullPath: '/tattoo-studio-software'
+      preLoaderRoute: typeof TattooStudioSoftwareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tattoo-studio-seo': {
+      id: '/tattoo-studio-seo'
+      path: '/tattoo-studio-seo'
+      fullPath: '/tattoo-studio-seo'
+      preLoaderRoute: typeof TattooStudioSeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tattoo-studio-revenue': {
+      id: '/tattoo-studio-revenue'
+      path: '/tattoo-studio-revenue'
+      fullPath: '/tattoo-studio-revenue'
+      preLoaderRoute: typeof TattooStudioRevenueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tattoo-studio-marketing': {
+      id: '/tattoo-studio-marketing'
+      path: '/tattoo-studio-marketing'
+      fullPath: '/tattoo-studio-marketing'
+      preLoaderRoute: typeof TattooStudioMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tattoo-studio-management': {
+      id: '/tattoo-studio-management'
+      path: '/tattoo-studio-management'
+      fullPath: '/tattoo-studio-management'
+      preLoaderRoute: typeof TattooStudioManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tattoo-studio-growth': {
+      id: '/tattoo-studio-growth'
+      path: '/tattoo-studio-growth'
+      fullPath: '/tattoo-studio-growth'
+      preLoaderRoute: typeof TattooStudioGrowthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tattoo-studio-client-retention': {
+      id: '/tattoo-studio-client-retention'
+      path: '/tattoo-studio-client-retention'
+      fullPath: '/tattoo-studio-client-retention'
+      preLoaderRoute: typeof TattooStudioClientRetentionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tattoo-studio-booking': {
+      id: '/tattoo-studio-booking'
+      path: '/tattoo-studio-booking'
+      fullPath: '/tattoo-studio-booking'
+      preLoaderRoute: typeof TattooStudioBookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio-visibility-report': {
+      id: '/studio-visibility-report'
+      path: '/studio-visibility-report'
+      fullPath: '/studio-visibility-report'
+      preLoaderRoute: typeof StudioVisibilityReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio-growth-check': {
+      id: '/studio-growth-check'
+      path: '/studio-growth-check'
+      fullPath: '/studio-growth-check'
+      preLoaderRoute: typeof StudioGrowthCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/solutions': {
+      id: '/solutions'
+      path: '/solutions'
+      fullPath: '/solutions'
+      preLoaderRoute: typeof SolutionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing-benchmark': {
+      id: '/pricing-benchmark'
+      path: '/pricing-benchmark'
+      fullPath: '/pricing-benchmark'
+      preLoaderRoute: typeof PricingBenchmarkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/offers': {
+      id: '/offers'
+      path: '/offers'
+      fullPath: '/offers'
+      preLoaderRoute: typeof OffersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/growth-model': {
+      id: '/growth-model'
+      path: '/growth-model'
+      fullPath: '/growth-model'
+      preLoaderRoute: typeof GrowthModelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/case-studies': {
+      id: '/case-studies'
+      path: '/case-studies'
+      fullPath: '/case-studies'
+      preLoaderRoute: typeof CaseStudiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accessibility': {
+      id: '/accessibility'
+      path: '/accessibility'
+      fullPath: '/accessibility'
+      preLoaderRoute: typeof AccessibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tools/tattoo-pain-chart-reality-check': {
@@ -687,29 +769,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AuthenticatedRouteImport
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/list-tools': {
+      id: '/.mcp/list-tools'
+      path: '/.mcp/list-tools'
+      fullPath: '/.mcp/list-tools'
+      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/stripe-webhook': {
+      id: '/api/public/stripe-webhook'
+      path: '/api/public/stripe-webhook'
+      fullPath: '/api/public/stripe-webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.lovable/oauth/consent': {
       id: '/.lovable/oauth/consent'
       path: '/.lovable/oauth/consent'
       fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotLovableOauthConsentRouteImport
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface AuthRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -721,18 +835,6 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface AuthenticatedRouteChildren {
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-}
-
-const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-}
-
-const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
-  AuthenticatedRouteChildren,
-)
-
 interface OffersRouteChildren {
   OffersSlugRoute: typeof OffersSlugRoute
 }
@@ -741,9 +843,12 @@ const OffersRouteChildren: OffersRouteChildren = {
   OffersSlugRoute: OffersSlugRoute,
 }
 
-const OffersRouteWithChildren = OffersRoute._addFileChildren(OffersRouteChildren)
+const OffersRouteWithChildren =
+  OffersRoute._addFileChildren(OffersRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AccessibilityRoute: AccessibilityRoute,
   AuthRoute: AuthRouteWithChildren,
@@ -770,12 +875,26 @@ const rootRouteChildren: RootRouteChildren = {
   TattooStudioSoftwareRoute: TattooStudioSoftwareRoute,
   TattooStudioVisibilityScorecardRoute: TattooStudioVisibilityScorecardRoute,
   TermsRoute: TermsRoute,
-  ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
-  GuidesGreyLineHealingWeekByWeekRoute: GuidesGreyLineHealingWeekByWeekRoute,
+  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   GuidesFullSleeveCostUkRoute: GuidesFullSleeveCostUkRoute,
-  DotLovableOauthConsentRoute: DotLovableOauthConsentRoute,
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  GuidesGreyLineHealingWeekByWeekRoute: GuidesGreyLineHealingWeekByWeekRoute,
+  ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
+  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
