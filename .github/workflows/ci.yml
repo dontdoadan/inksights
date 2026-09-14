@@ -100,6 +100,9 @@ jobs:
           cat typecheck.log
           exit 1
 
+      - name: Test Supabase client config fallback
+        run: node --test tests/supabase-config.test.mjs
+
       - name: Test Calculation Engine V2
         run: npm run test:calc-v2
 
