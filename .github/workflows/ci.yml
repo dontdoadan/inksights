@@ -34,6 +34,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test intelligence engine
+        run: npm run test:intelligence
+
       - name: Build and generate route types
         run: npm run build
 
