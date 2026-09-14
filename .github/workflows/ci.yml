@@ -100,6 +100,9 @@ jobs:
           cat typecheck.log
           exit 1
 
+      - name: Test Supabase preview config fallback
+        run: node --test tests/supabase-config.test.mjs
+
       - name: Test social migration package
         run: python -m unittest discover -s automation/social/tests -p "test_*.py"
 
