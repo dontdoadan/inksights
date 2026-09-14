@@ -45,6 +45,12 @@ function requireFinitePositive(value: number, name: string) {
   if (!Number.isFinite(value) || value <= 0) throw new Error(`${name} must be > 0`);
 }
 
+function requirePositiveInteger(value: number, name: string) {
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`${name} must be a positive integer`);
+  }
+}
+
 function requireRate(value: number, name: string) {
   if (!Number.isFinite(value) || value < 0 || value > 1) throw new Error(`${name} must be between 0 and 1`);
 }
@@ -117,9 +123,9 @@ function calculateBand<T>(fn: (key: BandKey) => T): { low: T; base: T; high: T }
 
 export function runCalculationEngineV2(input: CalculationEngineV2Input) {
   const { baseline, scenario } = input;
-  requireFinitePositive(baseline.revenuePence, "baseline.revenuePence");
-  requireFinitePositive(baseline.uniqueCustomers, "baseline.uniqueCustomers");
-  requireFinitePositive(baseline.transactions, "baseline.transactions");
+  requirePositiveInteger(baseline.revenuePence, "baseline.revenuePence");
+  requirePositiveInteger(baseline.uniqueCustomers, "baseline.uniqueCustomers");
+  requirePositiveInteger(baseline.transactions, "baseline.transactions");
   if (baseline.contributionMarginRate !== undefined) {
     requireRate(baseline.contributionMarginRate, "baseline.contributionMarginRate");
   }
