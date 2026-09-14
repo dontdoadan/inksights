@@ -38,7 +38,7 @@ test("isolated customer growth reports only the customer lever uplift", () => {
 
   assert.equal(result.leverRevenueUplift.customers, 10_000);
   assert.equal(result.leverRevenueUplift.frequency, 0);
-  assert.equal(result.leverRevenueUplift.averageTransactionValue, 0);
+  assert.equal(result.leverRevenueUplift.average_transaction_value, 0);
   assert.equal(result.primaryLever, "customers");
 });
 
@@ -55,7 +55,7 @@ test("combined growth compounds across frequency and ATV", () => {
   assert.equal(result.modelled.revenue, 132_000);
   assert.equal(result.combinedRevenueUplift, 32_000);
   assert.equal(result.leverRevenueUplift.frequency, 20_000);
-  assert.equal(result.leverRevenueUplift.averageTransactionValue, 10_000);
+  assert.equal(result.leverRevenueUplift.average_transaction_value, 10_000);
 });
 
 test("capacity suppresses customer and frequency upside while preserving ATV upside", () => {
@@ -73,7 +73,7 @@ test("capacity suppresses customer and frequency upside while preserving ATV ups
   assert.equal(result.baseline.revenue, 90_000);
   assert.equal(result.leverRevenueUplift.customers, 0);
   assert.equal(result.leverRevenueUplift.frequency, 0);
-  assert.equal(result.leverRevenueUplift.averageTransactionValue, 9_000);
+  assert.equal(result.leverRevenueUplift.average_transaction_value, 9_000);
   assert.equal(result.primaryLever, "average_transaction_value");
   assert.ok(result.constraints.includes("capacity"));
 });
@@ -104,7 +104,13 @@ test("gross margin is applied to realised revenue", () => {
 
 test("rejects invalid rates and missing customer acquisition inputs", () => {
   assert.throws(
-    () => calculateGrowthScenario({ customers: 100, purchaseFrequency: 2, averageTransactionValue: 500, cancellationRate: 1.1 }),
+    () =>
+      calculateGrowthScenario({
+        customers: 100,
+        purchaseFrequency: 2,
+        averageTransactionValue: 500,
+        cancellationRate: 1.1,
+      }),
     /cancellationRate/,
   );
   assert.throws(
