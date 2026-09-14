@@ -59,6 +59,15 @@ jobs:
       - name: Build and generate route types
         run: npm run build
 
+      - name: Upload generated route tree
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-route-tree
+          path: src/routeTree.gen.ts
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Enforce generated route tree is committed
         run: git diff --exit-code -- src/routeTree.gen.ts
 
