@@ -72,3 +72,26 @@ drop trigger if exists trg_golden_audit_diagnosis_lineage on public.audit_diagno
 create trigger trg_golden_audit_diagnosis_lineage
 before insert or update of constraint_type on public.audit_diagnoses
 for each row execute function public.populate_golden_audit_diagnosis_lineage();
+
+-- A corrected report must invalidate any older public token for the same audit.
+create or replace function public.supersede_prior_golden_audit_reports()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if new.status = 'published' and old.status is distinct from 'published' then
+    update public.report_versions
+    set status = 'superseded', secure_token_hash = null
+    where audit_id = new.audit_id
+      and id <> new.id
+      and status = 'published';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_supersede_prior_golden_audit_reports on public.report_versions;
+create trigger trg_supersede_prior_golden_audit_reports
+before update of status on public.report_versions
+for each row execute function public.supersede_prior_golden_audit_reports();
