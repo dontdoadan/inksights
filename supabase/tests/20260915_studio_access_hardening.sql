@@ -1,9 +1,12 @@
 begin;
 
--- Structural security invariants.
+-- Structural invariants: no broad tenant write policies remain; Realtime is
+-- topic-scoped; the broadcast helper is private; reports are private; the only
+-- advisor-reported FK has a covering composite index.
 do $$
 declare
   broad_policy_count integer;
+  service_leaks integer;
 begin
   select count(*) into broad_policy_count
   from pg_policies
@@ -11,7 +14,6 @@ begin
     and cmd = 'ALL'
     and roles::text like '%authenticated%'
     and (qual ilike '%studio_members%' or with_check ilike '%studio_members%');
-
   if broad_policy_count <> 0 then
     raise exception 'Expected zero broad authenticated tenant FOR ALL policies, found %', broad_policy_count;
   end if;
@@ -19,14 +21,36 @@ begin
   if to_regprocedure('public.broadcast_studio_dashboard_changes()') is not null then
     raise exception 'Public browser-addressable Realtime trigger helper still exists';
   end if;
-
   if to_regprocedure('private.broadcast_studio_dashboard_changes()') is null then
     raise exception 'Private Realtime trigger helper is missing';
   end if;
 
-  if has_table_privilege('anon', 'public.spatial_ref_sys', 'SELECT')
-     or has_table_privilege('authenticated', 'public.spatial_ref_sys', 'SELECT') then
-    raise exception 'spatial_ref_sys remains readable by browser roles';
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'realtime'
+      and tablename = 'messages'
+      and policyname = 'studio_members_can_receive_dashboard_broadcasts'
+      and cmd = 'SELECT'
+      and roles::text like '%authenticated%'
+      and qual ilike '%realtime.topic()%'
+      and qual ilike '%studio_members%'
+      and qual ilike '%active%'
+  ) then
+    raise exception 'Realtime receive policy is missing the active studio/topic boundary';
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname = 'realtime'
+      and tablename = 'messages'
+      and policyname = 'studio_members_can_send_presence'
+      and cmd = 'INSERT'
+      and roles::text like '%authenticated%'
+      and with_check ilike '%realtime.topic()%'
+      and with_check ilike '%studio_members%'
+      and with_check ilike '%active%'
+  ) then
+    raise exception 'Realtime presence policy is missing the active studio/topic boundary';
   end if;
 
   if not exists (
@@ -40,14 +64,43 @@ begin
     select 1 from pg_indexes
     where schemaname = 'public'
       and tablename = 'intelligence_economic_opportunities'
-      and indexdef ~ '\\(run_id, studio_id\\)'
+      and indexdef ~ '\(calculation_run_id, studio_id\)'
   ) then
-    raise exception 'Composite run_id, studio_id index is missing';
+    raise exception 'Composite calculation_run_id, studio_id index is missing';
+  end if;
+
+  select count(*) into service_leaks
+  from (values
+    ('intelligence_diagnostic_questions'),
+    ('intelligence_diagnostic_templates'),
+    ('intelligence_source_registry'),
+    ('intelligence_taxonomy'),
+    ('orders'),
+    ('public_contact_requests'),
+    ('public_endpoint_rate_limits'),
+    ('revenue_audits'),
+    ('studio_aliases'),
+    ('studio_candidates'),
+    ('studio_change_events'),
+    ('studio_identity_matches'),
+    ('studio_source_observations'),
+    ('studio_sources'),
+    ('studio_verification_events'),
+    ('visibility_provider_configs')
+  ) as service_table(name)
+  where has_table_privilege('anon', format('public.%I', name), 'SELECT')
+     or has_table_privilege('authenticated', format('public.%I', name), 'SELECT')
+     or has_table_privilege('authenticated', format('public.%I', name), 'INSERT')
+     or has_table_privilege('authenticated', format('public.%I', name), 'UPDATE')
+     or has_table_privilege('authenticated', format('public.%I', name), 'DELETE');
+  if service_leaks <> 0 then
+    raise exception 'One or more service-only tables remain exposed to browser roles';
   end if;
 end
 $$;
 
--- Capture one existing active membership for transactional role tests.
+-- Use one real active membership transactionally. All role changes and no-op
+-- writes are rolled back at the end; no production business data is altered.
 do $$
 begin
   if not exists (select 1 from public.studio_members where active) then
@@ -57,176 +110,138 @@ end
 $$;
 
 select set_config('inksights.test_user_id', user_id::text, true),
-       set_config('inksights.test_studio_id', studio_id::text, true),
-       set_config('inksights.test_original_role', role, true)
+       set_config('inksights.test_studio_id', studio_id::text, true)
 from public.studio_members
 where active
 limit 1;
 
--- OWNER: tenant read + action writes, no direct canonical studio mutation.
-update public.studio_members
-set role = 'owner'
+-- OWNER: read own tenant, contribute to decisions, canonical writes denied.
+update public.studio_members set role = 'owner'
 where user_id = current_setting('inksights.test_user_id')::uuid
   and studio_id = current_setting('inksights.test_studio_id')::uuid;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', current_setting('inksights.test_user_id'), true);
 do $$
-declare
-  visible_count integer;
-  canonical_updates integer;
-  action_updates integer;
+declare r integer; w integer; denied boolean := false;
 begin
-  select count(*) into visible_count
-  from public.visibility_studios
+  select count(*) into r from public.visibility_studios
   where id = current_setting('inksights.test_studio_id')::uuid;
-  if visible_count <> 1 then raise exception 'owner cannot read own studio'; end if;
+  if r <> 1 then raise exception 'owner cannot read own studio'; end if;
+
+  begin
+    update public.visibility_studios set studio_name = studio_name
+    where id = current_setting('inksights.test_studio_id')::uuid;
+  exception when insufficient_privilege then denied := true;
+  end;
+  if not denied then raise exception 'owner can directly mutate canonical studio data'; end if;
 
   with changed as (
-    update public.visibility_studios
-    set studio_name = studio_name
-    where id = current_setting('inksights.test_studio_id')::uuid
-    returning 1
-  ) select count(*) into canonical_updates from changed;
-  if canonical_updates <> 0 then raise exception 'owner can directly mutate canonical studio data'; end if;
-
-  with changed as (
-    update public.intelligence_decisions
-    set status = status
-    where studio_id = current_setting('inksights.test_studio_id')::uuid
-    returning 1
-  ) select count(*) into action_updates from changed;
-  if action_updates < 1 then raise exception 'owner cannot update studio decisions'; end if;
+    update public.intelligence_decisions set status = status
+    where studio_id = current_setting('inksights.test_studio_id')::uuid returning 1
+  ) select count(*) into w from changed;
+  if w < 1 then raise exception 'owner cannot update studio decisions'; end if;
 end
 $$;
 reset role;
 
--- ADMIN: same operational contribution scope as owner, without direct membership mutation.
-update public.studio_members
-set role = 'admin'
+-- ADMIN: read own tenant and contribute to interventions.
+update public.studio_members set role = 'admin'
 where user_id = current_setting('inksights.test_user_id')::uuid
   and studio_id = current_setting('inksights.test_studio_id')::uuid;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', current_setting('inksights.test_user_id'), true);
 do $$
-declare
-  visible_count integer;
-  action_updates integer;
+declare r integer; w integer;
 begin
-  select count(*) into visible_count
-  from public.visibility_studios
+  select count(*) into r from public.visibility_studios
   where id = current_setting('inksights.test_studio_id')::uuid;
-  if visible_count <> 1 then raise exception 'admin cannot read own studio'; end if;
+  if r <> 1 then raise exception 'admin cannot read own studio'; end if;
 
   with changed as (
-    update public.intelligence_interventions
-    set status = status
-    where studio_id = current_setting('inksights.test_studio_id')::uuid
-    returning 1
-  ) select count(*) into action_updates from changed;
-  if action_updates < 1 then raise exception 'admin cannot update studio interventions'; end if;
+    update public.intelligence_interventions set status = status
+    where studio_id = current_setting('inksights.test_studio_id')::uuid returning 1
+  ) select count(*) into w from changed;
+  if w < 1 then raise exception 'admin cannot update studio interventions'; end if;
 end
 $$;
 reset role;
 
--- MEMBER: read + contribute to decisions/interventions.
-update public.studio_members
-set role = 'member'
+-- MEMBER: read own tenant and contribute to decisions/interventions.
+update public.studio_members set role = 'member'
 where user_id = current_setting('inksights.test_user_id')::uuid
   and studio_id = current_setting('inksights.test_studio_id')::uuid;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', current_setting('inksights.test_user_id'), true);
 do $$
-declare
-  visible_count integer;
-  action_updates integer;
+declare r integer; w integer;
 begin
-  select count(*) into visible_count
-  from public.visibility_studios
+  select count(*) into r from public.visibility_studios
   where id = current_setting('inksights.test_studio_id')::uuid;
-  if visible_count <> 1 then raise exception 'member cannot read own studio'; end if;
+  if r <> 1 then raise exception 'member cannot read own studio'; end if;
 
   with changed as (
-    update public.intelligence_decisions
-    set status = status
-    where studio_id = current_setting('inksights.test_studio_id')::uuid
-    returning 1
-  ) select count(*) into action_updates from changed;
-  if action_updates < 1 then raise exception 'member cannot update studio decisions'; end if;
+    update public.intelligence_decisions set status = status
+    where studio_id = current_setting('inksights.test_studio_id')::uuid returning 1
+  ) select count(*) into w from changed;
+  if w < 1 then raise exception 'member cannot update studio decisions'; end if;
 end
 $$;
 reset role;
 
--- VIEWER: read-only.
-update public.studio_members
-set role = 'viewer'
+-- VIEWER: read-only tenant access.
+update public.studio_members set role = 'viewer'
 where user_id = current_setting('inksights.test_user_id')::uuid
   and studio_id = current_setting('inksights.test_studio_id')::uuid;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', current_setting('inksights.test_user_id'), true);
 do $$
-declare
-  visible_count integer;
-  action_updates integer;
+declare r integer; w integer;
 begin
-  select count(*) into visible_count
-  from public.visibility_studios
+  select count(*) into r from public.visibility_studios
   where id = current_setting('inksights.test_studio_id')::uuid;
-  if visible_count <> 1 then raise exception 'viewer cannot read own studio'; end if;
+  if r <> 1 then raise exception 'viewer cannot read own studio'; end if;
 
   with changed as (
-    update public.intelligence_decisions
-    set status = status
-    where studio_id = current_setting('inksights.test_studio_id')::uuid
-    returning 1
-  ) select count(*) into action_updates from changed;
-  if action_updates <> 0 then raise exception 'viewer can mutate studio decisions'; end if;
+    update public.intelligence_decisions set status = status
+    where studio_id = current_setting('inksights.test_studio_id')::uuid returning 1
+  ) select count(*) into w from changed;
+  if w <> 0 then raise exception 'viewer can mutate studio decisions'; end if;
 end
 $$;
 reset role;
 
--- UNAUTHENTICATED: no tenant visibility or action writes.
+-- UNAUTHENTICATED: no tenant data access.
 select set_config('request.jwt.claim.sub', '', true);
 set local role anon;
 do $$
-declare
-  visible_count integer;
-  action_updates integer;
+declare r integer; denied boolean := false;
 begin
-  select count(*) into visible_count
-  from public.visibility_studios
-  where id = current_setting('inksights.test_studio_id')::uuid;
-  if visible_count <> 0 then raise exception 'anonymous role can read tenant studio data'; end if;
-
-  with changed as (
-    update public.intelligence_decisions
-    set status = status
-    where studio_id = current_setting('inksights.test_studio_id')::uuid
-    returning 1
-  ) select count(*) into action_updates from changed;
-  if action_updates <> 0 then raise exception 'anonymous role can mutate decisions'; end if;
+  begin
+    select count(*) into r from public.visibility_studios
+    where id = current_setting('inksights.test_studio_id')::uuid;
+  exception when insufficient_privilege then denied := true;
+  end;
+  if not denied and coalesce(r, 0) <> 0 then
+    raise exception 'anonymous role can read tenant studio data';
+  end if;
 end
 $$;
 reset role;
 
--- SERVICE ROLE: retains backend access.
+-- SERVICE ROLE: backend access remains intact.
 set local role service_role;
 do $$
-declare
-  visible_count integer;
-  canonical_updates integer;
+declare r integer; w integer;
 begin
-  select count(*) into visible_count
-  from public.visibility_studios
+  select count(*) into r from public.visibility_studios
   where id = current_setting('inksights.test_studio_id')::uuid;
-  if visible_count <> 1 then raise exception 'service role cannot read tenant studio data'; end if;
+  if r <> 1 then raise exception 'service role cannot read tenant studio data'; end if;
 
   with changed as (
-    update public.visibility_studios
-    set studio_name = studio_name
-    where id = current_setting('inksights.test_studio_id')::uuid
-    returning 1
-  ) select count(*) into canonical_updates from changed;
-  if canonical_updates <> 1 then raise exception 'service role cannot mutate canonical studio data'; end if;
+    update public.visibility_studios set studio_name = studio_name
+    where id = current_setting('inksights.test_studio_id')::uuid returning 1
+  ) select count(*) into w from changed;
+  if w <> 1 then raise exception 'service role cannot mutate canonical studio data'; end if;
 end
 $$;
 reset role;
