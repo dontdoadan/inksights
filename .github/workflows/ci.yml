@@ -91,11 +91,14 @@ jobs:
       - name: Test Golden Audit schema contract
         run: node --test tests/golden-audit-schema.test.mjs
 
-      - name: Test Golden Audit transaction and identity logic
+      - name: Test Golden Audit transaction, quality, evidence and diagnosis logic
         run: deno test --allow-net=false supabase/functions/_shared/audit/*_test.ts
 
       - name: Test Golden Audit ingestion security
         run: deno test --allow-net=false supabase/functions/golden-audit-ingest/security_test.ts
+
+      - name: Test Golden Audit orchestration state machine
+        run: deno test --allow-net=false supabase/functions/golden-audit-run/orchestrator_test.ts
 
       - name: Test search intelligence authorization policy
         run: node --test supabase/functions/search-intelligence-v1/auth_policy_test.mjs
