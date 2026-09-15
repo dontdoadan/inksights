@@ -16,9 +16,11 @@ const auditVersion = '1.1';
 const mode = 'B';
 
 async function rest(table, { method = 'GET', query = '', body } = {}) {
+  const requestHeaders = { ...headers };
+  if (method === 'POST') requestHeaders.Prefer = 'return=representation';
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}${query ? `?${query}` : ''}`, {
     method,
-    headers: { ...headers, Prefer: method === 'POST' ? 'return=representation' : undefined },
+    headers: requestHeaders,
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const text = await response.text();
@@ -40,7 +42,7 @@ async function ensureStudio() {
   const found = await rest('studios', { query: `select=*&slug=eq.${encodeURIComponent(slug)}&limit=1` });
   if (found?.[0]) return found[0];
   const created = await rest('studios', { method: 'POST', body: {
-    name: 'Daniel Hughes Tattoos', slug, website_url: WEBSITE_URL, primary_location: 'Croydon, England, United Kingdom', internal_validation: true,
+    name: 'Daniel Hughes Tattoos', slug, website_url: WEBSITE_URL, primary_location: null, internal_validation: true,
   }});
   return created[0];
 }
