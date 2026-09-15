@@ -44,6 +44,11 @@ test('browser roles receive read-only tenant access while service role owns writ
   assert.match(sql, /create or replace function public\.can_read_studio/i);
 });
 
+test('Golden Audit studio identity extends canonical visibility studio identity', () => {
+  assert.match(hardening, /alter table public\.studios alter column id drop default/i);
+  assert.match(hardening, /foreign key \(id\) references public\.visibility_studios\(id\) on delete cascade/i);
+});
+
 test('runtime hardening provides orchestration cache, lock and 90-day phases', () => {
   assert.match(hardening, /add column if not exists input_hash text/i);
   assert.match(hardening, /create or replace function public\.lock_golden_audit_run/i);
