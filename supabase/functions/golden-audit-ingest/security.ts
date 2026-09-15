@@ -17,11 +17,16 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
 }
 
 function configuredServiceSecrets(): string[] {
-  const values = [
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
-    Deno.env.get("SUPABASE_SECRET_KEY"),
-  ].filter((value): value is string => Boolean(value));
-  return [...new Set(values)];
+  try {
+    const values = [
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+      Deno.env.get("SUPABASE_SECRET_KEY"),
+    ].filter((value): value is string => Boolean(value));
+    return [...new Set(values)];
+  } catch {
+    // Unit tests intentionally run without --allow-env; JWT-role validation remains testable.
+    return [];
+  }
 }
 
 export function isServiceRoleAuthorization(value: string | null): boolean {
