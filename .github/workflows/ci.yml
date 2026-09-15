@@ -103,6 +103,9 @@ jobs:
       - name: Test Supabase client config fallback
         run: node --test tests/supabase-config.test.mjs
 
+      - name: Test stack coherence contracts
+        run: node --test tests/stack-coherence.test.mjs
+
       - name: Test social migration package
         run: python -m unittest discover -s automation/social/tests -p "test_*.py"
 
