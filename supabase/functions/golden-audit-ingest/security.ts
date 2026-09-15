@@ -16,11 +16,21 @@ function decodeJwtPayload(token: string): Record<string, unknown> | null {
   }
 }
 
+function configuredServiceSecrets(): string[] {
+  const values = [
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+    Deno.env.get("SUPABASE_SECRET_KEY"),
+  ].filter((value): value is string => Boolean(value));
+  return [...new Set(values)];
+}
+
 export function isServiceRoleAuthorization(value: string | null): boolean {
   if (!value) return false;
   const match = value.match(/^Bearer\s+(.+)$/i);
   if (!match) return false;
-  return decodeJwtPayload(match[1].trim())?.role === "service_role";
+  const token = match[1].trim();
+  if (configuredServiceSecrets().includes(token)) return true;
+  return decodeJwtPayload(token)?.role === "service_role";
 }
 
 export function validateUuid(value: unknown, field: string): string {
