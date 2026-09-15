@@ -1,0 +1,2 @@
+create index if not exists idx_intelligence_economic_opportunities_calculation_run_studio
+  on public.intelligence_economic_opportunities (calculation_run_id, studio_id);
