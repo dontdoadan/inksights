@@ -91,6 +91,9 @@ jobs:
       - name: Test Golden Audit schema contract
         run: node --test tests/golden-audit-schema.test.mjs
 
+      - name: Test Daniel Golden Audit seed contract
+        run: node --test tests/golden-audit-daniel-contract.test.mjs
+
       - name: Test Golden Audit transaction, quality, evidence and diagnosis logic
         run: deno test --allow-net=false supabase/functions/_shared/audit/*_test.ts
 
