@@ -11,6 +11,14 @@ test('Daniel seed is explicitly internal Mode B Audit v1.1', () => {
   assert.match(source, /material_owner_availability_constraint:\s*true/);
 });
 
+test('Daniel seed extends canonical visibility studio identity', () => {
+  assert.match(source, /visibility_studios/);
+  assert.match(source, /ensureCanonicalStudio/);
+  assert.match(source, /ensureGoldenStudio\(canonicalStudio\)/);
+  assert.match(source, /id:\s*canonicalStudio\.id/);
+  assert.match(source, /golden_studio_identity_mismatch/);
+});
+
 test('Daniel seed requires the private ledger at runtime', () => {
   assert.match(source, /DANIEL_LEDGER_PATH/);
   assert.match(source, /audit-sources/);
