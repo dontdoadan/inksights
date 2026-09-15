@@ -24,6 +24,7 @@ export type FindingInput = {
   materiality: "low" | "medium" | "high" | "critical";
   evidenceIds: string[];
   metricKeys: string[];
+  contextKeys: string[];
 };
 
 export type DiagnosisInput = {
@@ -57,6 +58,7 @@ export function generateFindings(input: {
       materiality: dormant.valueNumeric >= 20 ? "high" : "medium",
       evidenceIds: [],
       metricKeys: [dormant.metricKey],
+      contextKeys: [],
     });
   }
 
@@ -78,6 +80,7 @@ export function generateFindings(input: {
       materiality: "high",
       evidenceIds: [noindex.id, proof.id, enquiry.id],
       metricKeys: [],
+      contextKeys: [],
     });
   }
 
@@ -99,6 +102,7 @@ export function generateFindings(input: {
         materiality: "critical",
         evidenceIds: [],
         metricKeys: [first.metricKey, latest.metricKey],
+        contextKeys: ["material_owner_availability_constraint"],
       });
     }
   }
