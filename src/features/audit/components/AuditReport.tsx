@@ -1,21 +1,28 @@
+import type { ReactNode } from "react";
 import { EvidenceBadge } from "./EvidenceBadge";
-import type { AuditBundle, PublishedReportBundle } from "../types";
+import type { AuditBundle, Finding, Metric, PublishedReportBundle } from "../types";
 
 type ReportData = AuditBundle | PublishedReportBundle;
 const money=(value:number|null|undefined)=>typeof value==="number"?new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP"}).format(value/100):"—";
 const number=(value:number|null|undefined)=>typeof value==="number"?new Intl.NumberFormat("en-GB",{maximumFractionDigits:1}).format(value):"—";
-const valueFor=(m:any)=>m.measurement_status==="not_measurable"?"Not measurable":m.unit==="GBP_pence"?money(m.value_numeric):m.unit==="percent"?`${number(m.value_numeric)}%`:m.value_numeric!=null?number(m.value_numeric):m.value_text||"—";
+const valueFor=(m:Metric)=>m.measurement_status==="not_measurable"?"Not measurable":m.unit==="GBP_pence"?money(m.value_numeric):m.unit==="percent"?`${number(m.value_numeric)}%`:m.value_numeric!=null?number(m.value_numeric):m.value_text||"—";
+
+function coverageWarnings(data:ReportData):string[]{
+  if(!("report" in data)) return [];
+  const raw=data.report.manifest["coverage_warnings"];
+  return Array.isArray(raw)?raw.filter((item):item is string=>typeof item==="string"):[];
+}
 
 export function AuditReport({data,clientView=false}:{data:ReportData;clientView?:boolean}){
   const primary=data.diagnoses[0];
-  const warnings=("report" in data && Array.isArray((data.report.manifest as any)?.coverage_warnings))?(data.report.manifest as any).coverage_warnings:[];
+  const warnings=coverageWarnings(data);
   return <article className="audit-report mx-auto max-w-6xl space-y-8 text-foreground">
     <header className="rounded-[2rem] border border-border/60 bg-ink p-7 md:p-10">
       <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-xs font-black uppercase tracking-[0.22em] text-mint">INKSIGHTS · Studio Intelligence Audit</p><h1 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">{data.studio.name}</h1><p className="mt-3 text-sm text-muted-foreground">Audit v{data.audit.audit_version} · Mode {data.audit.mode} · {data.audit.period_start||"period pending"} → {data.audit.period_end||"ongoing"}</p></div><div className="rounded-2xl border border-border bg-ink-deep px-4 py-3 text-right"><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">QA status</p><p className="mt-1 text-sm font-black text-mint">{data.audit.qa_status.toUpperCase()}</p></div></div>
       {primary?<div className="mt-8 rounded-2xl border border-mint/20 bg-mint/[0.04] p-5"><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-mint">Executive diagnosis</p><h2 className="mt-2 text-xl font-black text-ice">{primary.title}</h2><p className="mt-3 max-w-4xl text-sm leading-7 text-muted-foreground">{primary.statement}</p><div className="mt-4"><EvidenceBadge classification={primary.classification} confidence={primary.confidence}/></div></div>:null}
     </header>
 
-    {warnings.length?<section className="rounded-3xl border border-amber-400/20 bg-amber-400/[0.04] p-6"><h2 className="font-display text-xl font-black text-ice">Coverage warnings</h2><ul className="mt-3 space-y-2 text-sm text-amber-100">{warnings.map((w:string)=><li key={w}>• {w}</li>)}</ul></section>:null}
+    {warnings.length?<section className="rounded-3xl border border-amber-400/20 bg-amber-400/[0.04] p-6"><h2 className="font-display text-xl font-black text-ice">Coverage warnings</h2><ul className="mt-3 space-y-2 text-sm text-amber-100">{warnings.map(w=><li key={w}>• {w}</li>)}</ul></section>:null}
 
     <Section title="Data confidence & commercial baseline" eyebrow="01 · Baseline"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{data.metrics.slice(0,18).map(m=><div key={m.id} className="rounded-2xl border border-border/60 bg-ink-deep p-4"><p className="text-[10px] font-bold uppercase tracking-[0.13em] text-muted-foreground">{m.metric_key.replaceAll("_"," ")}</p><p className="mt-2 font-display text-2xl font-black text-ice">{valueFor(m)}</p>{m.measurement_status==="not_measurable"?<p className="mt-2 text-xs leading-5 text-muted-foreground">{m.not_measurable_reason}<br/>Required: {m.required_source}</p>:null}<div className="mt-3"><EvidenceBadge classification={m.evidence_classification} confidence={m.confidence}/></div></div>)}</div></Section>
 
@@ -34,5 +41,5 @@ export function AuditReport({data,clientView=false}:{data:ReportData;clientView?
   </article>;
 }
 
-function Section({eyebrow,title,children}:{eyebrow:string;title:string;children:React.ReactNode}){return <section className="rounded-3xl border border-border/60 bg-ink p-6 md:p-8"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-mint">{eyebrow}</p><h2 className="mt-2 mb-6 font-display text-2xl font-black text-ice md:text-3xl">{title}</h2>{children}</section>}
-function FindingCard({f}:{f:any}){return <div className="rounded-2xl border border-border/60 bg-ink-deep p-5"><h3 className="font-black text-ice">{f.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{f.statement}</p><div className="mt-4"><EvidenceBadge classification={f.classification} confidence={f.confidence}/></div></div>}
+function Section({eyebrow,title,children}:{eyebrow:string;title:string;children:ReactNode}){return <section className="rounded-3xl border border-border/60 bg-ink p-6 md:p-8"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-mint">{eyebrow}</p><h2 className="mt-2 mb-6 font-display text-2xl font-black text-ice md:text-3xl">{title}</h2>{children}</section>}
+function FindingCard({f}:{f:Finding}){return <div className="rounded-2xl border border-border/60 bg-ink-deep p-5"><h3 className="font-black text-ice">{f.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{f.statement}</p><div className="mt-4"><EvidenceBadge classification={f.classification} confidence={f.confidence}/></div></div>}
