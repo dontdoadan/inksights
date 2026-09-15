@@ -6,7 +6,8 @@ import { isServiceRoleAuthorization, validateUuid } from "../golden-audit-ingest
 
 const SB_URL=Deno.env.get("SUPABASE_URL")??"";
 const KEY=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")??Deno.env.get("SUPABASE_SECRET_KEY")??"";
-const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","access-control-allow-origin":"https://getinksights.co.uk"}});
+const PUBLIC_CORS={"access-control-allow-origin":"*","access-control-allow-methods":"POST, OPTIONS","access-control-allow-headers":"content-type, authorization"};
+const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store",...PUBLIC_CORS}});
 
 async function sha256(value:string){ const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)); return Array.from(new Uint8Array(digest)).map((b)=>b.toString(16).padStart(2,"0")).join(""); }
 function token(){ const bytes=crypto.getRandomValues(new Uint8Array(32)); return Array.from(bytes).map((b)=>b.toString(16).padStart(2,"0")).join(""); }
@@ -21,14 +22,14 @@ async function loadModel(sb:ReturnType<typeof createClient>,auditId:string){
     sb.from("audit_diagnoses").select("*").eq("audit_id",auditId).order("rank"),
     sb.from("audit_opportunities").select("*").eq("audit_id",auditId).order("overall_score",{ascending:false}),
     sb.from("audit_recommendations").select("*").eq("audit_id",auditId).order("sequence"),
-    sb.from("audit_runs").select("id,engine_key,status,started_at,completed_at,input_summary,output_summary,error_code,error_message,retry_count").eq("audit_id",auditId).order("started_at"),
+    sb.from("audit_runs").select("id,engine_key,status,started_at,completed_at,input_hash,input_summary,output_summary,error_code,error_message,retry_count").eq("audit_id",auditId).order("started_at"),
   ]);
   for(const result of [metrics,evidence,findings,diagnoses,opportunities,recommendations,runs]) if(result.error) throw new Error(`report_data:${result.error.message}`);
   return {audit:audit.data,studio:studio.data,metrics:metrics.data??[],evidence:evidence.data??[],findings:findings.data??[],diagnoses:diagnoses.data??[],opportunities:opportunities.data??[],recommendations:recommendations.data??[],runs:runs.data??[]};
 }
 
 Deno.serve(async(req)=>{
-  if(req.method==="OPTIONS") return new Response("ok",{headers:{"access-control-allow-origin":"https://getinksights.co.uk","access-control-allow-methods":"POST, OPTIONS","access-control-allow-headers":"content-type, authorization"}});
+  if(req.method==="OPTIONS") return new Response("ok",{headers:PUBLIC_CORS});
   if(req.method!=="POST") return json({ok:false,error:"method_not_allowed"},405);
   const sb=createClient(SB_URL,KEY);
   try{
@@ -39,7 +40,7 @@ Deno.serve(async(req)=>{
       const report=await sb.from("report_versions").select("id,audit_id,version,status,generated_at,qa_status,manifest,pdf_storage_path").eq("secure_token_hash",hash).eq("status","published").maybeSingle();
       if(report.error||!report.data) return json({ok:false,error:"report_not_found"},404);
       const model=await loadModel(sb,report.data.audit_id);
-      return json({ok:true,report:{id:report.data.id,version:report.data.version,status:report.data.status,generated_at:report.data.generated_at,qa_status:report.data.qa_status,pdf_available:Boolean(report.data.pdf_storage_path),manifest:report.data.manifest},...model});
+      return json({ok:true,report:{id:report.data.id,audit_id:report.data.audit_id,version:report.data.version,status:report.data.status,generated_at:report.data.generated_at,qa_status:report.data.qa_status,pdf_storage_path:report.data.pdf_storage_path,pdf_available:Boolean(report.data.pdf_storage_path),manifest:report.data.manifest},...model});
     }
 
     if(!isServiceRoleAuthorization(req.headers.get("authorization"))) return json({ok:false,error:"service_role_required"},403);
