@@ -94,6 +94,9 @@ jobs:
       - name: Test Golden Audit transaction and identity logic
         run: deno test --allow-net=false supabase/functions/_shared/audit/*_test.ts
 
+      - name: Test Golden Audit ingestion security
+        run: deno test --allow-net=false supabase/functions/golden-audit-ingest/security_test.ts
+
       - name: Test search intelligence authorization policy
         run: node --test supabase/functions/search-intelligence-v1/auth_policy_test.mjs
 
