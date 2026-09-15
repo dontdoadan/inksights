@@ -23,10 +23,8 @@ const routes = [
   ["/resources", "weekly", "0.9"],
   ["/tattoo-studio-visibility-scorecard", "monthly", "0.9"],
   ["/tattoo-studio-software", "monthly", "0.8"],
-  ["/tools/tattoo-pain-chart-reality-check", "monthly", "0.7"],
-  ["/guides/full-sleeve-cost-uk", "monthly", "0.7"],
-  ["/guides/grey-line-healing-week-by-week", "monthly", "0.7"],
   ["/growth-model", "monthly", "0.8"],
+  ["/pricing-benchmark", "monthly", "0.8"],
   ["/case-studies", "monthly", "0.7"],
   ["/about", "monthly", "0.6"],
   ["/support", "monthly", "0.5"],
@@ -37,9 +35,12 @@ const routes = [
   ["/accessibility", "yearly", "0.3"],
 ];
 
-const body = routes.map(([path, changefreq, priority]) =>
-  `  <url><loc>${domain}${path}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`,
-).join("\n");
+const body = routes
+  .map(
+    ([path, changefreq, priority]) =>
+      `  <url><loc>${domain}${path}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`,
+  )
+  .join("\n");
 
 writeFileSync(
   "public/sitemap.xml",

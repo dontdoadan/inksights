@@ -7,7 +7,7 @@
     "esbuild@0.27.7": true
   },
   "scripts": {
-    "generate:public-assets": "node scripts/generate-og-images.mjs && node scripts/generate-sitemap.mjs",
+    "generate:public-assets": "node scripts/generate-sitemap.mjs",
     "dev": "npm run generate:public-assets && vite dev",
     "build": "npm run generate:public-assets && vite build",
     "build:dev": "npm run generate:public-assets && vite build --mode development",

@@ -16,6 +16,9 @@ dist-ssr
 .nitro
 *.local
 
+# Generated public assets
+public/sitemap.xml
+
 # Environment / secrets
 .env
 .env.*
