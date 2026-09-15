@@ -8,6 +8,16 @@ function isNewSupabaseApiKey(value: string): boolean {
   return value.startsWith('sb_publishable_') || value.startsWith('sb_secret_');
 }
 
+function safeJsonParse(value: BodyInit | null | undefined): Record<string, unknown> | null {
+  if (typeof value !== 'string') return null;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === 'object' ? parsed as Record<string, unknown> : null;
+  } catch {
+    return null;
+  }
+}
+
 function createSupabaseFetch(supabaseKey: string): typeof fetch {
   return (input, init) => {
     const headers = new Headers(
@@ -25,19 +35,37 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 
     headers.set('apikey', supabaseKey);
 
-    // The public report RPC must never leave the UI in an indefinite
-    // "Preparing your report" state if the database call stalls.
     const requestUrl =
       typeof input === 'string'
         ? input
         : input instanceof URL
           ? input.href
           : input.url;
-    if (requestUrl.includes('/rest/v1/rpc/publish_visibility_report')) {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
-      const signal = init?.signal ?? controller.signal;
-      return fetch(input, { ...init, headers, signal }).finally(() => clearTimeout(timeout));
+
+    // Security boundary: keep the public report token in the same-origin app route.
+    // The browser-facing Supabase RPC call is transparently proxied so the database
+    // function can be restricted to service_role after this route is deployed.
+    if (
+      typeof window !== 'undefined' &&
+      requestUrl.includes('/rest/v1/rpc/publish_visibility_report')
+    ) {
+      const payload = safeJsonParse(init?.body);
+      const reportId = payload?.['p_report_id'];
+      const publicToken = payload?.['p_public_token'];
+
+      if (typeof reportId === 'string' && typeof publicToken === 'string') {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 15000);
+        const signal = init?.signal ?? controller.signal;
+        const target = `/api/public/visibility-report?reportId=${encodeURIComponent(reportId)}&token=${encodeURIComponent(publicToken)}`;
+
+        return fetch(target, {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+          signal,
+          credentials: 'same-origin',
+        }).finally(() => clearTimeout(timeout));
+      }
     }
 
     return fetch(input, { ...init, headers });
@@ -45,9 +73,10 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 function createSupabaseClient() {
-  // Prefer deployment-scoped environment values. If the public Vite variables are
-  // absent, fall back to the canonical INKSIGHTS public project configuration.
-  // The publishable key is browser-safe; privileged credentials remain server-only.
+  // Prefer deployment-scoped environment values. If a Vercel Preview is missing
+  // them, fall back to the canonical INKSIGHTS public project configuration.
+  // The publishable key is intentionally browser-safe; service-role credentials
+  // remain server-only and are never included here.
   const processEnv = typeof process !== 'undefined' ? process.env : undefined;
   const { url: SUPABASE_URL, publishableKey: SUPABASE_PUBLISHABLE_KEY } = resolveSupabaseConfig(
     import.meta.env,

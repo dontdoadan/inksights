@@ -42,9 +42,11 @@ import { Route as OffersSlugRouteImport } from './routes/offers.$slug'
 import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/guides.grey-line-healing-week-by-week'
 import { Route as GuidesFullSleeveCostUkRouteImport } from './routes/guides.full-sleeve-cost-uk'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
@@ -217,6 +219,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/callback',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
+  id: '/workspace',
+  path: '/workspace',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -232,6 +239,12 @@ const Char91DotmcpChar93ListToolsRoute =
   Char91DotmcpChar93ListToolsRouteImport.update({
     id: '/.mcp/list-tools',
     path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicVisibilityReportRoute =
+  ApiPublicVisibilityReportRouteImport.update({
+    id: '/api/public/visibility-report',
+    path: '/api/public/visibility-report',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
@@ -282,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -290,6 +304,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -322,6 +337,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -330,6 +346,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -364,6 +381,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -372,6 +390,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -406,6 +425,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
+    | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -414,6 +434,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/stripe-webhook'
+    | '/api/public/visibility-report'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -446,6 +467,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/dashboard'
+    | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -454,6 +476,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/stripe-webhook'
+    | '/api/public/visibility-report'
   id:
     | '__root__'
     | '/'
@@ -487,6 +510,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/dashboard'
+    | '/_authenticated/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -495,6 +519,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/stripe-webhook'
+    | '/api/public/visibility-report'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -534,6 +559,7 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
+  ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -769,6 +795,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_authenticated/workspace': {
+      id: '/_authenticated/workspace'
+      path: '/workspace'
+      fullPath: '/workspace'
+      preLoaderRoute: typeof AuthenticatedWorkspaceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -788,6 +821,13 @@ declare module '@tanstack/react-router' {
       path: '/.mcp/list-tools'
       fullPath: '/.mcp/list-tools'
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/visibility-report': {
+      id: '/api/public/visibility-report'
+      path: '/api/public/visibility-report'
+      fullPath: '/api/public/visibility-report'
+      preLoaderRoute: typeof ApiPublicVisibilityReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/stripe-webhook': {
@@ -816,10 +856,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedWorkspaceRoute: typeof AuthenticatedWorkspaceRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedWorkspaceRoute: AuthenticatedWorkspaceRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -884,6 +926,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
+  ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
