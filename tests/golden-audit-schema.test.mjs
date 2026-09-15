@@ -4,8 +4,10 @@ import fs from 'node:fs';
 
 const modelPath = 'supabase/migrations/20260915180000_create_golden_audit_model.sql';
 const hardeningPath = 'supabase/migrations/20260915181200_harden_golden_audit_contracts.sql';
+const lineagePath = 'supabase/migrations/20260915222300_add_golden_audit_lineage.sql';
 const sql = fs.readFileSync(modelPath, 'utf8');
 const hardening = fs.readFileSync(hardeningPath, 'utf8');
+const lineage = fs.readFileSync(lineagePath, 'utf8');
 
 const tables = [
   'studios','audits','audit_sources','audit_raw_records','clients','client_aliases','transactions',
@@ -62,4 +64,19 @@ test('security-definer Golden Audit RPC uses empty search path and explicit exte
   assert.doesNotMatch(hardening, /auth\.role\s*\(/i);
   assert.match(hardening, /revoke all on function public\.persist_golden_audit_ledger[^;]+from public, anon, authenticated/i);
   assert.match(hardening, /grant execute on function public\.persist_golden_audit_ledger[^;]+to service_role/i);
+});
+
+test('finding and diagnosis lineage is persisted at the database boundary', () => {
+  assert.match(lineage, /add column if not exists metric_keys text\[\]/i);
+  assert.match(lineage, /add column if not exists context_keys text\[\]/i);
+  assert.match(lineage, /add column if not exists finding_keys text\[\]/i);
+  assert.match(lineage, /trg_golden_audit_finding_lineage/i);
+  assert.match(lineage, /trg_golden_audit_diagnosis_lineage/i);
+  assert.match(lineage, /dormant_historical_clients/i);
+  assert.match(lineage, /material_owner_availability_constraint/i);
+});
+
+test('publishing a corrected report supersedes older public report tokens', () => {
+  assert.match(lineage, /trg_supersede_prior_golden_audit_reports/i);
+  assert.match(lineage, /set status = 'superseded', secure_token_hash = null/i);
 });
