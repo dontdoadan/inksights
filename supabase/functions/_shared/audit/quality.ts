@@ -40,10 +40,25 @@ export function assessTransactionQuality(
   const observedMonthsByYear = Object.fromEntries(
     [...monthSets.entries()].map(([year, months]) => [String(year), months.size]),
   );
-  const partialYears = [...monthSets.entries()]
-    .filter(([, months]) => months.size < 12)
-    .map(([year]) => year)
-    .sort();
+
+  // Missing transaction months are not evidence of missing source coverage: a studio can
+  // legitimately have zero payments in a month. Only the dataset boundary years are
+  // conservatively marked partial when the observable source range starts after January
+  // or ends before December. Interior years remain full-period coverage even when sparse.
+  const minDate = rows.length ? dates[0] : null;
+  const maxDate = rows.length ? dates[dates.length - 1] : null;
+  const partialYears = new Set<number>();
+  if (minDate) {
+    const firstYear = Number(minDate.slice(0, 4));
+    const firstMonth = Number(minDate.slice(5, 7));
+    if (firstMonth > 1) partialYears.add(firstYear);
+  }
+  if (maxDate) {
+    const lastYear = Number(maxDate.slice(0, 4));
+    const lastMonth = Number(maxDate.slice(5, 7));
+    if (lastMonth < 12) partialYears.add(lastYear);
+  }
+  const partialYearList = [...partialYears].sort();
 
   const checks: QualityCheck[] = [
     {
@@ -55,7 +70,7 @@ export function assessTransactionQuality(
     {
       key: "date_range",
       status: rows.length ? "pass" : "fail",
-      value: rows.length ? `${dates[0]}..${dates[dates.length - 1]}` : "none",
+      value: rows.length ? `${minDate}..${maxDate}` : "none",
       note: "Observed transaction date range",
     },
     {
@@ -72,20 +87,20 @@ export function assessTransactionQuality(
     },
     {
       key: "partial_years",
-      status: partialYears.length ? "warning" : "pass",
-      value: partialYears.map(String),
-      note: "Years with fewer than 12 observed transaction months; trend comparisons must label them partial",
+      status: partialYearList.length ? "warning" : "pass",
+      value: partialYearList.map(String),
+      note: "Dataset boundary years whose observable source range does not cover January through December; zero-payment months inside the source range are not treated as missing data",
     },
   ];
 
   return {
     checks,
     parseSuccessRate,
-    minDate: rows.length ? dates[0] : null,
-    maxDate: rows.length ? dates[dates.length - 1] : null,
+    minDate,
+    maxDate,
     potentialDuplicateRows: duplicateRows,
     nearZeroRows,
     observedMonthsByYear,
-    partialYears,
+    partialYears: partialYearList,
   };
 }
