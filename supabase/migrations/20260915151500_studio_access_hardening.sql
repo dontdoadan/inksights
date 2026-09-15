@@ -190,7 +190,8 @@ end
 $$;
 
 -- 3) Realtime: move the SECURITY DEFINER trigger helper out of the exposed
--- public schema and keep topic authorization bound to active studio membership.
+-- public schema. The managed realtime.messages policies are preserved because
+-- they are already correct and owned by Supabase's Realtime service role.
 create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
 
@@ -238,39 +239,6 @@ for each row execute function private.broadcast_studio_dashboard_changes();
 create trigger studio_dashboard_report_runs_broadcast
 after insert or update or delete on public.visibility_report_runs
 for each row execute function private.broadcast_studio_dashboard_changes();
-
-alter table realtime.messages enable row level security;
-drop policy if exists studio_members_can_receive_dashboard_broadcasts on realtime.messages;
-create policy studio_members_can_receive_dashboard_broadcasts
-on realtime.messages
-for select
-to authenticated
-using (
-  extension in ('broadcast', 'presence')
-  and exists (
-    select 1
-    from public.studio_members sm
-    where sm.user_id = (select auth.uid())
-      and sm.active = true
-      and realtime.topic() = ('studio:' || sm.studio_id::text)
-  )
-);
-
-drop policy if exists studio_members_can_send_presence on realtime.messages;
-create policy studio_members_can_send_presence
-on realtime.messages
-for insert
-to authenticated
-with check (
-  extension = 'presence'
-  and exists (
-    select 1
-    from public.studio_members sm
-    where sm.user_id = (select auth.uid())
-      and sm.active = true
-      and realtime.topic() = ('studio:' || sm.studio_id::text)
-  )
-);
 
 -- 4) Private report storage. Reports are written by the backend/service role;
 -- authenticated studio members can only read objects under their own studio id.
