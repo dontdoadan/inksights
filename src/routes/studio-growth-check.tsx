@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { FormEvent, useState } from "react";
 
-const AUDIT_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/revenue-audit-v1";
+const CANONICAL_URL = "https://getinksights.co.uk/studio-growth-check";
 
 export const Route = createFileRoute("/studio-growth-check")({
   head: () => ({
@@ -14,16 +14,86 @@ export const Route = createFileRoute("/studio-growth-check")({
           "Get a first-pass estimate of the revenue your tattoo studio may be leaving on the table across capacity, enquiries, cancellations and repeat clients.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://getinksights.co.uk/studio-growth-check" }],
+    links: [{ rel: "canonical", href: CANONICAL_URL }],
   }),
   component: RevenueAuditPage,
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const requestOrigin = new URL(request.url).origin;
+        const suppliedOrigin = request.headers.get("origin");
+        if (suppliedOrigin && suppliedOrigin !== requestOrigin) {
+          return json({ ok: false, error: "Origin not allowed." }, 403);
+        }
+
+        const contentType = request.headers.get("content-type") || "";
+        if (!contentType.toLowerCase().includes("application/json")) {
+          return json({ ok: false, error: "Content-Type must be application/json." }, 415);
+        }
+
+        const contentLength = Number(request.headers.get("content-length") || 0);
+        if (contentLength > 20000) {
+          return json({ ok: false, error: "Request too large." }, 413);
+        }
+
+        let payload: unknown;
+        try {
+          payload = await request.json();
+        } catch {
+          return json({ ok: false, error: "Invalid request." }, 400);
+        }
+
+        if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+          return json({ ok: false, error: "Invalid request." }, 400);
+        }
+
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data, error } = await supabaseAdmin.functions.invoke("revenue-audit-v1", {
+            body: payload,
+          });
+
+          if (error || !data || typeof data !== "object") {
+            console.error("Revenue Audit invocation failed", {
+              message: error?.message,
+            });
+            return json({ ok: false, error: "We could not generate the audit right now. Please try again." }, 503);
+          }
+
+          return json(data);
+        } catch (proxyError) {
+          console.error(
+            "Revenue Audit proxy failed",
+            proxyError instanceof Error ? proxyError.message : String(proxyError),
+          );
+          return json({ ok: false, error: "We could not generate the audit right now. Please try again." }, 503);
+        }
+      },
+    },
+  },
 });
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
 
 type Result = {
   estimate: { annual_low: number; annual_high: number; primary_opportunity: string; score: number };
   findings: Array<{ label: string; annual_low: number; annual_high: number }>;
   recommendations: string[];
   disclaimer: string;
+};
+
+type AuditResponse = Result & {
+  ok?: boolean;
+  error?: string;
 };
 
 const currency = (value: number) =>
@@ -64,24 +134,17 @@ function RevenueAuditPage() {
     };
 
     try {
-      // Use a CORS-simple content type. The Edge Function already parses the body
-      // with req.json(), so this avoids a browser OPTIONS preflight entirely.
-      const response = await fetch(AUDIT_URL, {
+      const response = await fetch("/studio-growth-check", {
         method: "POST",
-        mode: "cors",
-        headers: { "content-type": "text/plain;charset=UTF-8" },
+        headers: { "content-type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      const raw = await response.text();
-      let data: any = null;
-      try {
-        data = JSON.parse(raw);
-      } catch {
-        throw new Error(`The audit service returned an invalid response (${response.status}).`);
+      const data = (await response.json()) as AuditResponse;
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "The audit could not be generated.");
       }
-      if (!response.ok || !data.ok) throw new Error(data.error || "The audit could not be generated.");
-      setResult(data as Result);
+      setResult(data);
       window.setTimeout(() => document.getElementById("audit-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     } catch (err) {
       setError(err instanceof Error ? err.message : "The audit could not be generated. Please try again.");
