@@ -2,8 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-const path = 'supabase/migrations/20260915180000_create_golden_audit_model.sql';
-const sql = fs.readFileSync(path, 'utf8');
+const modelPath = 'supabase/migrations/20260915180000_create_golden_audit_model.sql';
+const hardeningPath = 'supabase/migrations/20260915181200_harden_golden_audit_contracts.sql';
+const sql = fs.readFileSync(modelPath, 'utf8');
+const hardening = fs.readFileSync(hardeningPath, 'utf8');
 
 const tables = [
   'studios','audits','audit_sources','audit_raw_records','clients','client_aliases','transactions',
@@ -40,4 +42,19 @@ test('browser roles receive read-only tenant access while service role owns writ
   assert.match(sql, /grant select on table public\.%I to authenticated/i);
   assert.match(sql, /grant select, insert, update, delete on table public\.%I to service_role/i);
   assert.match(sql, /create or replace function public\.can_read_studio/i);
+});
+
+test('runtime hardening provides orchestration cache, lock and 90-day phases', () => {
+  assert.match(hardening, /add column if not exists input_hash text/i);
+  assert.match(hardening, /create or replace function public\.lock_golden_audit_run/i);
+  assert.match(hardening, /add column if not exists phase text generated always/i);
+  for (const phase of ['0-30','31-60','61-90']) assert.ok(hardening.includes(phase));
+});
+
+test('security-definer Golden Audit RPC uses empty search path and explicit extension qualification', () => {
+  assert.match(hardening, /security definer\s+set search_path = ''/i);
+  assert.match(hardening, /extensions\.digest/i);
+  assert.doesNotMatch(hardening, /auth\.role\s*\(/i);
+  assert.match(hardening, /revoke all on function public\.persist_golden_audit_ledger[^;]+from public, anon, authenticated/i);
+  assert.match(hardening, /grant execute on function public\.persist_golden_audit_ledger[^;]+to service_role/i);
 });
