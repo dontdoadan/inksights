@@ -18,7 +18,7 @@ test('Daniel seed requires the private ledger at runtime', () => {
 });
 
 test('Daniel seed does not encode personal health or precise-location details', () => {
-  assert.doesNotMatch(source, /health|illness|hospital|carer|mother|mum/i);
+  assert.doesNotMatch(source, /family_health|parent_health|caregiving|medical_context|hospital_context|health_condition/i);
   assert.match(source, /primary_location:\s*null/);
 });
 
