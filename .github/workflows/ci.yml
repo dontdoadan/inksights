@@ -88,5 +88,8 @@ jobs:
       - name: Test server routing source of truth
         run: node --test tests/server-routing-source-of-truth.test.mjs
 
+      - name: Test search intelligence authorization policy
+        run: node --test supabase/functions/search-intelligence-v1/auth_policy_test.mjs
+
       - name: Test Edge Function security boundaries
         run: deno test --allow-net=false supabase/functions/studio-visibility-report-v2/security_test.ts

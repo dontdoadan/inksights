@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { isServiceRoleAuthorization } from "./auth-policy.mjs";
 
 type Json = Record<string, unknown>;
 type SearchRow = {
@@ -124,6 +125,9 @@ function normalizeExternal(value: unknown): ExternalObservation[] {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ ok: false, error: "Method not allowed" }, 405);
+  if (!isServiceRoleAuthorization(req.headers.get("authorization"))) {
+    return json({ ok: false, error: "Forbidden" }, 403);
+  }
   let pipelineId: string | null = null;
   try {
     const body = await req.json() as Json;
