@@ -1,17 +1,25 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { allowedCorsOrigin, isAllowedOrigin } from "./cors-policy.mjs";
 
 const SB = Deno.env.get("SUPABASE_URL") || "";
 const KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || Deno.env.get("SUPABASE_SECRET_KEY") || "";
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://getinksights.co.uk",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-retry-count",
-  "Content-Type": "application/json; charset=utf-8",
-  "Cache-Control": "no-store",
-  "X-Content-Type-Options": "nosniff",
-};
-function json(body: unknown, status = 200) { return new Response(JSON.stringify(body), { status, headers: corsHeaders }); }
+
+function corsHeaders(origin: string | null) {
+  return {
+    "Access-Control-Allow-Origin": allowedCorsOrigin(origin),
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-retry-count",
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
+    Vary: "Origin",
+  };
+}
+
+function json(body: unknown, status = 200, origin: string | null = null) {
+  return new Response(JSON.stringify(body), { status, headers: corsHeaders(origin) });
+}
 function num(v: unknown, fallback = 0) { const n = Number(v); return Number.isFinite(n) ? n : fallback; }
 function clamp(n: number, min: number, max: number) { return Math.max(min, Math.min(max, n)); }
 function money(n: number) { return Math.max(0, Math.round(n)); }
@@ -41,26 +49,30 @@ async function consumeRateLimit(req: Request) {
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") return new Response("ok", { status: 204, headers: corsHeaders });
-  if (req.method !== "POST") return json({ ok: false, error: "Method not allowed" }, 405);
+  const origin = req.headers.get("origin");
+  const respond = (body: unknown, status = 200) => json(body, status, origin);
+
+  if (req.method === "OPTIONS") return new Response("ok", { status: 204, headers: corsHeaders(origin) });
+  if (!isAllowedOrigin(origin)) return respond({ ok: false, error: "Origin not allowed" }, 403);
+  if (req.method !== "POST") return respond({ ok: false, error: "Method not allowed" }, 405);
 
   let body: Record<string, unknown>;
   try {
-    if (Number(req.headers.get("content-length") || 0) > 20000) return json({ ok: false, error: "Request too large" }, 413);
-    if (!(await consumeRateLimit(req))) return json({ ok: false, error: "Too many requests. Please try again later." }, 429);
+    if (Number(req.headers.get("content-length") || 0) > 20000) return respond({ ok: false, error: "Request too large" }, 413);
+    if (!(await consumeRateLimit(req))) return respond({ ok: false, error: "Too many requests. Please try again later." }, 429);
     body = await req.json();
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
-    return json({ ok: false, error: "Invalid request" }, 400);
+    return respond({ ok: false, error: "Invalid request" }, 400);
   }
 
-  if (String(body.website_honeypot || "").trim()) return json({ ok: true, suppressed: true }, 200);
+  if (String(body.website_honeypot || "").trim()) return respond({ ok: true, suppressed: true }, 200);
   const name = String(body.name || "").trim();
   const email = String(body.email || "").trim().toLowerCase();
   const studioName = String(body.studio_name || "").trim();
   const teamSize = Math.round(num(body.team_size));
   const consent = body.consent === true;
-  if (!name || name.length > 120 || !email || !/^\S+@\S+\.\S+$/.test(email) || !studioName || studioName.length > 180 || teamSize < 3 || teamSize > 100 || !consent) return json({ ok: false, error: "Please complete the required fields. Revenue Audit V1 is currently designed for studios with 3+ artists." }, 400);
+  if (!name || name.length > 120 || !email || !/^\S+@\S+\.\S+$/.test(email) || !studioName || studioName.length > 180 || teamSize < 3 || teamSize > 100 || !consent) return respond({ ok: false, error: "Please complete the required fields. Revenue Audit V1 is currently designed for studios with 3+ artists." }, 400);
 
   const revenue = Math.max(0, num(body.monthly_revenue));
   const enquiries = Math.max(0, Math.round(num(body.monthly_enquiries)));
@@ -71,7 +83,7 @@ Deno.serve(async (req: Request) => {
   const repeatRate = clamp(num(body.repeat_client_rate), 0, 100);
   const cancellationRate = clamp(num(body.cancellation_rate), 0, 100);
   const noShowRate = clamp(num(body.no_show_rate), 0, 100);
-  if (revenue <= 0 || enquiries <= 0 || bookings <= 0 || aov <= 0 || availableHours <= 0 || bookedHours <= 0 || bookedHours > availableHours) return json({ ok: false, error: "Please provide valid monthly figures so we can calculate a useful estimate." }, 400);
+  if (revenue <= 0 || enquiries <= 0 || bookings <= 0 || aov <= 0 || availableHours <= 0 || bookedHours <= 0 || bookedHours > availableHours) return respond({ ok: false, error: "Please provide valid monthly figures so we can calculate a useful estimate." }, 400);
 
   const conversionRate = bookings / enquiries;
   const revenuePerBookedHour = revenue / bookedHours;
@@ -111,9 +123,9 @@ Deno.serve(async (req: Request) => {
     const auditRes = await fetch(`${SB}/rest/v1/revenue_audits`, { method: "POST", headers: dbHeaders, body: JSON.stringify({ lead_id: leadId, opportunity_low: totalLow, opportunity_high: totalHigh, capacity_opportunity: money(capacityHigh * 12), conversion_opportunity: money(conversionHigh * 12), retention_opportunity: money(retentionHigh * 12), cancellation_opportunity: money(cancellationHigh * 12), primary_opportunity: primary.key, score, findings, recommendations }) });
     if (!auditRes.ok) throw new Error("Audit persistence failed");
     const auditRows = await auditRes.json();
-    return json({ ok: true, lead_id: leadId, audit_id: auditRows?.[0]?.id || null, audit_version: "v1", estimate: { annual_low: totalLow, annual_high: totalHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass estimate based on the figures you supplied. It is not a verified financial audit. A full INKSIGHTS audit uses connected or exported studio data to replace estimates with observed results." }, 200);
+    return respond({ ok: true, lead_id: leadId, audit_id: auditRows?.[0]?.id || null, audit_version: "v1", estimate: { annual_low: totalLow, annual_high: totalHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass estimate based on the figures you supplied. It is not a verified financial audit. A full INKSIGHTS audit uses connected or exported studio data to replace estimates with observed results." }, 200);
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
-    return json({ ok: false, error: "We could not save the audit right now. Please try again." }, 503);
+    return respond({ ok: false, error: "We could not save the audit right now. Please try again." }, 503);
   }
 });
