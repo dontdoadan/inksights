@@ -1,5 +1,5 @@
 -- Harden Golden Audit runtime contracts before first deployment.
--- Adds orchestration cache/locking fields, persists 90-day phases, and hardens service RPCs.
+-- Adds orchestration cache/locking fields, persists 90-day phases, aligns studio identity, and hardens service RPCs.
 
 alter table public.audit_runs
   add column if not exists input_hash text;
@@ -15,6 +15,16 @@ alter table public.audit_recommendations
       else '0-30'
     end
   ) stored;
+
+-- Golden Audit extends the canonical studio identity rather than creating a parallel tenant key.
+alter table public.studios alter column id drop default;
+
+alter table public.studios
+  drop constraint if exists studios_visibility_identity_fkey;
+
+alter table public.studios
+  add constraint studios_visibility_identity_fkey
+  foreign key (id) references public.visibility_studios(id) on delete cascade;
 
 -- The tenant-read helper already fully qualifies application objects, so use an empty search path.
 alter function public.can_read_studio(uuid) set search_path = '';
