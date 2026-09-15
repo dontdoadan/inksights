@@ -43,8 +43,8 @@ $$;
 revoke all on function public.lock_golden_audit_run(uuid) from public, anon, authenticated;
 grant execute on function public.lock_golden_audit_run(uuid) to service_role;
 
--- Recreate ledger persistence with an empty search path and no role introspection.
--- EXECUTE privilege, not auth.role(), is the service-only boundary.
+-- Recreate ledger persistence with an empty search path and no JWT-role introspection.
+-- EXECUTE privilege is the service-only boundary.
 create or replace function public.persist_golden_audit_ledger(
   p_audit_id uuid,
   p_source_type text,
