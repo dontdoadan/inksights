@@ -7,14 +7,12 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
-const CANONICAL_ORIGIN = "https://getinksights.co.uk";
 const CANONICAL_HOST = "getinksights.co.uk";
-const PUBLIC_SITEMAP_PATHS = [
-  "/",
-  "/growth-model",
-  "/tattoo-studio-software",
-  "/tattoo-studio-visibility-scorecard",
-] as const;
+const LEGACY_REDIRECTS = new Map<string, string>([
+  ["/guides/full-sleeve-cost-uk", "/resources"],
+  ["/guides/grey-line-healing-week-by-week", "/resources"],
+  ["/tools/tattoo-pain-chart-reality-check", "/resources"],
+]);
 const NOINDEX_PATH_PREFIXES = [
   "/auth",
   "/dashboard",
@@ -78,50 +76,6 @@ function shouldRedirectToCanonical(requestUrl: URL, canonicalUrl: URL): boolean 
   );
 }
 
-function robotsResponse(): Response {
-  const body = [
-    "User-agent: *",
-    "Allow: /",
-    "Disallow: /auth",
-    "Disallow: /dashboard",
-    "Disallow: /mcp",
-    "Disallow: /.mcp/",
-    "Disallow: /.lovable/",
-    "Disallow: /.well-known/",
-    `Sitemap: ${CANONICAL_ORIGIN}/sitemap.xml`,
-    "",
-  ].join("\n");
-
-  return new Response(body, {
-    status: 200,
-    headers: {
-      "cache-control": "public, max-age=3600",
-      "content-type": "text/plain; charset=utf-8",
-    },
-  });
-}
-
-function sitemapResponse(): Response {
-  const urls = PUBLIC_SITEMAP_PATHS.map(
-    (path) => `  <url><loc>${CANONICAL_ORIGIN}${path}</loc></url>`,
-  ).join("\n");
-  const body = [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    urls,
-    "</urlset>",
-    "",
-  ].join("\n");
-
-  return new Response(body, {
-    status: 200,
-    headers: {
-      "cache-control": "public, max-age=3600",
-      "content-type": "application/xml; charset=utf-8",
-    },
-  });
-}
-
 function isNoindexPath(pathname: string): boolean {
   return NOINDEX_PATH_PREFIXES.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
@@ -177,8 +131,11 @@ export default {
       return Response.redirect(canonicalUrl, 301);
     }
 
-    if (canonicalUrl.pathname === "/robots.txt") return robotsResponse();
-    if (canonicalUrl.pathname === "/sitemap.xml") return sitemapResponse();
+    const legacyRedirectPath = LEGACY_REDIRECTS.get(canonicalUrl.pathname);
+    if (legacyRedirectPath) {
+      const redirectUrl = new URL(legacyRedirectPath, canonicalUrl);
+      return Response.redirect(redirectUrl, 301);
+    }
 
     try {
       const handler = await getServerEntry();
