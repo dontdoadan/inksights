@@ -2,9 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Mail, MessageSquareText, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
-import { supabase } from "@/integrations/supabase/client";
 
 const CANONICAL_URL = "https://getinksights.co.uk/contact";
+const CANONICAL_ORIGIN = "https://getinksights.co.uk";
+const CONTACT_INTAKE_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/public-contact-intake";
 
 export const Route = createFileRoute("/contact")({
   component: ContactPage,
@@ -17,7 +18,81 @@ export const Route = createFileRoute("/contact")({
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
   }),
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const requestOrigin = new URL(request.url).origin;
+        const suppliedOrigin = request.headers.get("origin");
+        if (suppliedOrigin && suppliedOrigin !== requestOrigin) {
+          return json({ ok: false, error: "Origin not allowed." }, 403);
+        }
+
+        const contentType = request.headers.get("content-type") || "";
+        if (!contentType.toLowerCase().includes("application/json")) {
+          return json({ ok: false, error: "Content-Type must be application/json." }, 415);
+        }
+
+        const contentLength = Number(request.headers.get("content-length") || 0);
+        if (contentLength > 32768) {
+          return json({ ok: false, error: "Request too large." }, 413);
+        }
+
+        let payload: unknown;
+        try {
+          payload = await request.json();
+        } catch {
+          return json({ ok: false, error: "Invalid request." }, 400);
+        }
+
+        if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+          return json({ ok: false, error: "Invalid request." }, 400);
+        }
+
+        try {
+          const forwardedFor = request.headers.get("x-forwarded-for");
+          const userAgent = request.headers.get("user-agent");
+          const headers: Record<string, string> = {
+            "Content-Type": "application/json",
+            Origin: CANONICAL_ORIGIN,
+          };
+          if (forwardedFor) headers["X-Forwarded-For"] = forwardedFor;
+          if (userAgent) headers["User-Agent"] = userAgent;
+
+          const response = await fetch(CONTACT_INTAKE_URL, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(payload),
+          });
+          const data = await response.json().catch(() => null);
+
+          if (!response.ok || !data || typeof data !== "object") {
+            console.error("Contact intake proxy failed", { status: response.status });
+            return json({ ok: false, error: "The message could not be recorded right now. Please try again." }, 503);
+          }
+
+          return json(data, response.status);
+        } catch (proxyError) {
+          console.error(
+            "Contact intake proxy failed",
+            proxyError instanceof Error ? proxyError.message : String(proxyError),
+          );
+          return json({ ok: false, error: "The message could not be recorded right now. Please try again." }, 503);
+        }
+      },
+    },
+  },
 });
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
 
 function ContactPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
@@ -28,25 +103,34 @@ function ContactPage() {
     setStatus("sending");
     setError(null);
     const form = new FormData(event.currentTarget);
-    const { data, error: functionError } = await supabase.functions.invoke("public-contact-intake", {
-      body: {
-        name: String(form.get("name") || ""),
-        email: String(form.get("email") || ""),
-        studio_name: String(form.get("studio_name") || ""),
-        topic: String(form.get("topic") || ""),
-        message: String(form.get("message") || ""),
-        consent: form.get("consent") === "on",
-        company_url: String(form.get("company_url") || ""),
-        page_path: window.location.pathname,
-        referrer: document.referrer || null,
-      },
-    });
 
-    if (functionError || !data?.ok) {
+    let data: { ok?: boolean; error?: string } | null = null;
+    try {
+      const response = await fetch("/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: String(form.get("name") || ""),
+          email: String(form.get("email") || ""),
+          studio_name: String(form.get("studio_name") || ""),
+          topic: String(form.get("topic") || ""),
+          message: String(form.get("message") || ""),
+          consent: form.get("consent") === "on",
+          company_url: String(form.get("company_url") || ""),
+          page_path: window.location.pathname,
+          referrer: document.referrer || null,
+        }),
+      });
+      data = await response.json().catch(() => null);
+      if (!response.ok || !data?.ok) {
+        throw new Error(data?.error || `Contact service returned ${response.status}.`);
+      }
+    } catch (submitError) {
       setStatus("error");
-      setError(functionError?.message || data?.error || "The message could not be recorded. Email dontdoadan@icloud.com instead.");
+      setError(submitError instanceof Error ? submitError.message : "The message could not be recorded. Email dontdoadan@icloud.com instead.");
       return;
     }
+
     setStatus("done");
   }
 

@@ -1,5 +1,7 @@
 # INKCARE Replication and Implementation Manual
 
+> **Legacy provenance notice — 13 September 2026:** INKCARE was rebranded/evolved into **INKSIGHTS**. This folder preserves the technical state and evidence of the former INKCARE-named implementation as migration/recovery history. It does **not** describe the current product name or canonical production architecture. Current work targets the dedicated INKSIGHTS Supabase project; historical INKCARE names below are intentionally retained where they describe the system as it existed at the time.
+
 Last verified: 26 July 2026
 
 ## Purpose
