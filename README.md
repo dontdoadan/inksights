@@ -17,6 +17,33 @@ The core proposition is simple: identify hidden revenue opportunities inside a s
 
 GitHub `main` is the canonical production application source. Vercel deploys production from this repository. Lovable projects are design/prototyping references only and are not production hosts.
 
+## Repository map
+
+| Path | Responsibility |
+| --- | --- |
+| `src/routes/` | TanStack Start public, authenticated and API routes. |
+| `src/components/` | Reusable React/UI components. |
+| `src/hooks/` | Shared React hooks. |
+| `src/lib/` | Cross-cutting application utilities and domain helpers. |
+| `src/integrations/` | External-system adapters, including Supabase and Lovable integration code. |
+| `supabase/functions/` | Server-side Edge Functions and intelligence workloads. |
+| `supabase/migrations/` | Versioned database history. Applied migrations are historical evidence and must not be deleted casually. |
+| `scripts/` | Build-time and repository maintenance scripts. |
+| `tests/` | Repository-level regression tests. |
+| `docs/` | Current documentation, evidence, implementation plans and archive notes. Start with `docs/README.md`. |
+| `.github/workflows/` | CI/CD and repository automation. |
+| `.lovable/` | Lovable-managed project/integration metadata. Treat as integration-managed infrastructure. |
+| `public/` | Static public assets. |
+
+### Repository hygiene
+
+- Keep INKSIGHTS application code, operating systems and content separate from INKCARE, personal tattoo-business and other brand material.
+- Retired implementations should be removed from the active tree or explicitly archived; do not silently relabel legacy code as current INKSIGHTS functionality.
+- Dated audits and release documents are evidence snapshots, not automatic statements of current production state.
+- Preserve applied database migrations even after a feature is retired.
+- Avoid duplicate sources of truth. Link to the canonical document instead of copying architecture or business rules into multiple files.
+- npm is the canonical local-development and CI workflow. `bun.lock` and `bunfig.toml` are retained for compatibility with the connected Lovable tooling and are not the CI dependency source of truth.
+
 ## Product architecture
 
 ### 1. Public website
