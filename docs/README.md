@@ -5,10 +5,14 @@ This directory contains current product documentation, operating evidence and hi
 ## Current sources of truth
 
 - `../README.md` — canonical application architecture, development workflow and repository boundaries.
-- `commercial-source-of-truth.md` — current commercial positioning and offer assumptions.
+- `commercial-source-of-truth.md` — current INKSIGHTS commercial pathway, offer governance and evidence-controlled commercial rules.
+- `intelligence/constraint-diagnostic-library-v1.md` — canonical constraint families, diagnostic resolution and insufficient-data behaviour.
+- `intelligence/commercial-value-classification-v1.md` — canonical distinction between recoverable leakage, modelled opportunity and captured upside.
+- `intelligence/benchmark-cohort-specification-v1.md` — benchmark construction, calibration and cohort-governance rules.
 - `search-intelligence.md` — search-intelligence design and operating notes.
+- `SPEC-001-INKSIGHTS-Product-v1-Operating-Specification.md` in the INKSIGHTS Google Drive product directory — locked Product v1 operating target.
 
-When documents conflict, prefer the repository `README.md`, current production code and the newest explicitly canonical document.
+When documents conflict, prefer the locked Product v1 specification for product behaviour, this directory's explicitly canonical governance documents for their defined domain, and current production code/database state for executable reality.
 
 ## Evidence and operating records
 
@@ -26,7 +30,7 @@ Dated audits and release notes are snapshots. Do not treat them as current archi
 ## Archive
 
 - `archive/` — retired systems or material intentionally removed from the active product surface but retained for traceability.
-- `archive/inkcare/` — historical INKCARE replication manuals and Client Zero records. These are learning/audit records only and are **not** INKSIGHTS architecture, product scope, operating instructions or current evidence.
+- `archive/inkcare/` — historical INKCARE replication manuals, commercial controls and Client Zero records. These are learning/audit records only and are **not** INKSIGHTS architecture, product scope, commercial authority, operating instructions or current evidence.
 
 ## Documentation hygiene rules
 
@@ -37,3 +41,6 @@ Dated audits and release notes are snapshots. Do not treat them as current archi
 5. Applied database migrations are historical evidence and should not be deleted simply because the feature that created them is retired.
 6. Prefer links to canonical documents over duplicating the same architecture or business rules in multiple files.
 7. Treat anything under `archive/` as historical context only unless it is explicitly promoted back into a current source-of-truth document.
+8. Do not present uncalibrated operating thresholds as tattoo-industry benchmarks.
+9. Missing or insufficient evidence must remain explicit; do not silently coerce unknown values to zero.
+10. Commercial value claims must distinguish `RECOVERABLE_LEAKAGE`, `MODELLED_OPPORTUNITY` and `CAPTURED_UPSIDE`.
