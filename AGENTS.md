@@ -48,3 +48,56 @@ Do not create additional top-level folders casually. Extend the appropriate func
 12. **Clean as you go.** Any workflow that creates or imports an INKSIGHTS asset is responsible for placing and naming it correctly before the task is considered complete.
 
 This structure is a standing operating constraint. Future agents, scripts, automations, and manual workflows should follow it by default rather than inventing a new filing system.
+
+## AI operating governance
+
+The canonical business AI-governance authority is Google Drive asset `A-021`, `INKSIGHTS - AI Governance & Operating Standard - CANONICAL - v1.0`, stored in `01 INKSIGHTS/00 - Control Centre`. This section is a repository-level technical binding to that standard, not a competing business authority.
+
+### Control-plane responsibilities
+
+- **ChatGPT is the business command centre.** It coordinates business operations, cross-system research and analysis, commercial/CRM/communication workflows, governance, prioritisation and documentation.
+- **Codex is the engineering command centre.** It owns repository inspection and technical execution: plans, code, tests, migrations, technical documentation, pull requests, deployment diagnostics and engineering verification.
+- **Neither ChatGPT nor Codex is independently authoritative.** Conversations, model memory, scratchpads and generated summaries are working context only. Resolve facts and state to the system that owns them.
+
+The existing Repository vs Drive boundary above remains controlling: GitHub owns version-controlled technical assets; Drive owns business assets unless an asset must be version-controlled for the product to function.
+
+### Required execution protocol
+
+For every material task, follow this sequence:
+
+`INTAKE → CLASSIFY → GROUND → DECIDE → EXECUTE → VERIFY → RECORD → NEXT`
+
+1. **INTAKE** — define the outcome, constraints, target system and exclusions.
+2. **CLASSIFY** — identify domain, canonical owner, read/write class and risk.
+3. **GROUND** — read the canonical source and current live state before deciding or writing.
+4. **DECIDE** — choose the smallest authoritative path and identify approval gates.
+5. **EXECUTE** — make the minimum coherent change in the correct system; avoid unrelated refactoring or cleanup.
+6. **VERIFY** — read back the result and run applicable tests/status/evidence checks. A write without verification is incomplete.
+7. **RECORD** — record material business/authority changes in the Master Asset Registry/Changes and technical changes in Git history/PRs or the owning operational system.
+8. **NEXT** — state configured, pending, blocked, residual risk and the next approval gate/action.
+
+### Read/write and approval boundaries
+
+Routine reversible writes may proceed when the user has clearly requested the outcome, the target authority is unambiguous, the action is within granted permissions and verification is available.
+
+Obtain explicit human approval immediately before any of these gated actions:
+
+- merge to `main`;
+- production deployment or production-impacting runtime change;
+- destructive deletion or broad bulk mutation;
+- source-of-truth/ownership change;
+- database schema, RLS, auth or security-control change;
+- permission/access-control change;
+- secret/key handling or exposure-sensitive action;
+- material financial commitment;
+- irreversible customer-impacting action.
+
+Never weaken security to make a workflow pass. Do not bypass deployment protection. Do not promote REVIEW, LEGACY or REFERENCE material into canonical truth without validation. The Lovable history rules at the top of this file remain absolute for already-published commits: never force-push or otherwise rewrite that history.
+
+### Verification and escalation
+
+Before calling work complete, verify the exact changed system, relevant tests/checks, security/access side effects where applicable, and the required audit/record surface. For cross-system changes, verify both sides of the interface.
+
+Stop before a risky write and escalate to the human approver when authorities conflict without an existing rule, a required approval gate is reached, security impact is uncertain, production/live state cannot be verified, authority would move, or verification repeatedly fails. Read-only investigation may continue when it does not increase risk.
+
+Do not create another active AI-governance authority in this repository. If `A-021` changes materially, update this binding only as needed to keep repository instructions aligned with the canonical Drive standard.
