@@ -59,15 +59,15 @@
 - Consumes: Drive asset `A-021` and the existing root `AGENTS.md` constraints.
 - Produces: a thin repository-level instruction binding; no duplicate business authority.
 
-- [ ] **Step 1: Verify the isolated branch and current `AGENTS.md`.**
+- [x] **Step 1: Verify the isolated branch and current `AGENTS.md`.**
 
   Confirm branch `chore/ai-governance-phase-1` is based on `main`; fetch `AGENTS.md`; preserve the entire Lovable warning and existing Drive/GitHub boundary.
 
-- [ ] **Step 2: Append the minimal AI operating governance section.**
+- [x] **Step 2: Append the minimal AI operating governance section.**
 
   Add only repository-relevant operating instructions: control-plane split, canonical Drive reference by asset ID/name, execution protocol, write gates, verification and record rules.
 
-- [ ] **Step 3: Read back and compare the branch.**
+- [x] **Step 3: Read back and compare the branch.**
 
   Fetch `AGENTS.md` from the branch and compare `main...chore/ai-governance-phase-1`. Confirm no existing constraint was removed or rewritten and only intended documentation/process files changed.
 
@@ -81,11 +81,11 @@
 - Consumes: verified Drive state and verified repository diff.
 - Produces: a reviewable pull request and configured/pending report.
 
-- [ ] **Step 1: Verify live systems were not modified.**
+- [x] **Step 1: Verify live systems were not modified.**
 
   Confirm Phase 1 made no Supabase schema/security, Vercel deployment/config, HubSpot CRM-data, Gmail or Calendar writes.
 
-- [ ] **Step 2: Open a pull request to `main`.**
+- [x] **Step 2: Open a pull request to `main`.**
 
   The PR must state that Drive `A-021` is canonical, list verification evidence, and explicitly leave merge to the human approval gate.
 
