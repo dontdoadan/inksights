@@ -30,9 +30,15 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
           return new Response(`Webhook Error: ${message}`, { status: 400 });
         }
 
-        if (event.type === "checkout.session.completed") {
-          const session = event.data.object as Stripe.Checkout.Session;
-          await recordCompletedCheckout(session);
+        try {
+          if (event.type === "checkout.session.completed") {
+            const session = event.data.object as Stripe.Checkout.Session;
+            await recordCompletedCheckout(event.id, session);
+          }
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "Webhook processing failed";
+          console.error(message);
+          return new Response("Webhook processing failed.", { status: 500 });
         }
 
         return new Response(JSON.stringify({ received: true }), {
@@ -44,10 +50,13 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
   },
 });
 
-async function recordCompletedCheckout(session: Stripe.Checkout.Session) {
+async function recordCompletedCheckout(stripeEventId: string, session: Stripe.Checkout.Session) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { recordIntegrationEvent, stripeEventKey } = await import("@/lib/integration-events.server");
 
-  const offerSlug = session.metadata?.offer_slug ?? "";
+  const metadata = session.metadata ?? {};
+  const offerSlug = metadata.offer_slug ?? "";
+  const correlationId = metadata.correlation_id ?? null;
 
   const upsert = {
     stripe_customer_id: session.customer as string | undefined,
@@ -59,9 +68,9 @@ async function recordCompletedCheckout(session: Stripe.Checkout.Session) {
     offer_slug: offerSlug,
     amount_total: session.amount_total ?? null,
     currency: session.currency ?? null,
-    status: "paid",
+    status: session.payment_status === "paid" ? "paid" : session.payment_status,
     customer_email: session.customer_details?.email ?? null,
-    metadata: session.metadata ?? {},
+    metadata,
   };
 
   const { error } = await supabaseAdmin.from("orders").upsert(upsert, {
@@ -71,5 +80,29 @@ async function recordCompletedCheckout(session: Stripe.Checkout.Session) {
   if (error) {
     console.error("Failed to record order:", error);
     throw new Error("Failed to record order");
+  }
+
+  // Only correlated intervention journeys enter the Phase 1 event stream.
+  // Existing unrelated checkout traffic remains an order projection only.
+  if (correlationId && session.payment_status === "paid") {
+    await recordIntegrationEvent({
+      eventType: "deposit.paid",
+      sourceSystem: "stripe",
+      sourceEventId: stripeEventId,
+      idempotencyKey: stripeEventKey(stripeEventId, "deposit.paid"),
+      correlationId,
+      studioId: metadata.studio_id || null,
+      contactRef: metadata.hubspot_contact_id || null,
+      opportunityRef: metadata.hubspot_deal_id || null,
+      interventionId: metadata.intervention_id || null,
+      payload: {
+        stripe_session_id: session.id,
+        stripe_payment_intent_id: session.payment_intent,
+        amount_total: session.amount_total,
+        currency: session.currency,
+        offer_slug: offerSlug,
+        module_key: metadata.module_key ?? null,
+      },
+    });
   }
 }
