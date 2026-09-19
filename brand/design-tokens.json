@@ -1,0 +1,135 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "meta": {
+    "name": "INKSIGHTS Brand System",
+    "version": "1.0.0",
+    "status": "approved-direction",
+    "principle": "Culture earns attention. Structure earns trust. Mint identifies the signal."
+  },
+  "color": {
+    "primitive": {
+      "navy950": { "$type": "color", "$value": "#0A1A27" },
+      "navy900": { "$type": "color", "$value": "#102536" },
+      "teal900": { "$type": "color", "$value": "#0F2F3A" },
+      "graphite900": { "$type": "color", "$value": "#1E293B" },
+      "graphite700": { "$type": "color", "$value": "#334155" },
+      "slate500": { "$type": "color", "$value": "#64748B" },
+      "slate300": { "$type": "color", "$value": "#CBD5E1" },
+      "mist100": { "$type": "color", "$value": "#F1F5F9" },
+      "offWhite": { "$type": "color", "$value": "#F7FAFC" },
+      "white": { "$type": "color", "$value": "#FFFFFF" },
+      "mint500": { "$type": "color", "$value": "#32E0A1" },
+      "mint400": { "$type": "color", "$value": "#5BE8B6" },
+      "mint600": { "$type": "color", "$value": "#1CCB8C" },
+      "mint100": { "$type": "color", "$value": "#D9FBEF" },
+      "amber500": { "$type": "color", "$value": "#F59E0B" },
+      "red500": { "$type": "color", "$value": "#EF4444" },
+      "blue500": { "$type": "color", "$value": "#38BDF8" }
+    },
+    "semantic": {
+      "bgCanvasDark": { "$type": "color", "$value": "{color.primitive.navy950}" },
+      "bgSurfaceDark": { "$type": "color", "$value": "{color.primitive.navy900}" },
+      "bgElevatedDark": { "$type": "color", "$value": "{color.primitive.teal900}" },
+      "bgCanvasLight": { "$type": "color", "$value": "{color.primitive.offWhite}" },
+      "bgSurfaceLight": { "$type": "color", "$value": "{color.primitive.white}" },
+      "textPrimaryDark": { "$type": "color", "$value": "{color.primitive.offWhite}" },
+      "textSecondaryDark": { "$type": "color", "$value": "{color.primitive.slate300}" },
+      "textPrimaryLight": { "$type": "color", "$value": "{color.primitive.navy950}" },
+      "textSecondaryLight": { "$type": "color", "$value": "{color.primitive.graphite700}" },
+      "signal": { "$type": "color", "$value": "{color.primitive.mint500}" },
+      "signalHover": { "$type": "color", "$value": "{color.primitive.mint400}" },
+      "signalPressed": { "$type": "color", "$value": "{color.primitive.mint600}" },
+      "signalSubtle": { "$type": "color", "$value": "{color.primitive.mint100}" },
+      "borderDark": { "$type": "color", "$value": "{color.primitive.graphite700}" },
+      "borderLight": { "$type": "color", "$value": "{color.primitive.slate300}" },
+      "dataNeutral": { "$type": "color", "$value": "{color.primitive.slate500}" },
+      "dataPositive": { "$type": "color", "$value": "{color.primitive.mint500}" },
+      "dataWarning": { "$type": "color", "$value": "{color.primitive.amber500}" },
+      "dataNegative": { "$type": "color", "$value": "{color.primitive.red500}" },
+      "dataInfo": { "$type": "color", "$value": "{color.primitive.blue500}" }
+    }
+  },
+  "typography": {
+    "family": {
+      "display": { "$type": "fontFamily", "$value": "Space Grotesk" },
+      "body": { "$type": "fontFamily", "$value": "Inter" },
+      "accent": { "$type": "string", "$value": "Custom brush lettering artwork only; never for body/UI text" }
+    },
+    "weight": {
+      "regular": { "$type": "fontWeight", "$value": 400 },
+      "medium": { "$type": "fontWeight", "$value": 500 },
+      "semibold": { "$type": "fontWeight", "$value": 600 },
+      "bold": { "$type": "fontWeight", "$value": 700 }
+    },
+    "size": {
+      "xs": { "$type": "dimension", "$value": "12px" },
+      "sm": { "$type": "dimension", "$value": "14px" },
+      "md": { "$type": "dimension", "$value": "16px" },
+      "lg": { "$type": "dimension", "$value": "18px" },
+      "xl": { "$type": "dimension", "$value": "20px" },
+      "2xl": { "$type": "dimension", "$value": "24px" },
+      "3xl": { "$type": "dimension", "$value": "30px" },
+      "4xl": { "$type": "dimension", "$value": "36px" },
+      "5xl": { "$type": "dimension", "$value": "48px" },
+      "6xl": { "$type": "dimension", "$value": "64px" },
+      "7xl": { "$type": "dimension", "$value": "80px" }
+    },
+    "lineHeight": {
+      "tight": { "$type": "number", "$value": 1.0 },
+      "display": { "$type": "number", "$value": 1.05 },
+      "heading": { "$type": "number", "$value": 1.15 },
+      "body": { "$type": "number", "$value": 1.5 },
+      "relaxed": { "$type": "number", "$value": 1.7 }
+    },
+    "tracking": {
+      "display": { "$type": "dimension", "$value": "-0.03em" },
+      "heading": { "$type": "dimension", "$value": "-0.02em" },
+      "body": { "$type": "dimension", "$value": "0em" },
+      "eyebrow": { "$type": "dimension", "$value": "0.16em" }
+    }
+  },
+  "space": {
+    "0": { "$type": "dimension", "$value": "0px" },
+    "0_5": { "$type": "dimension", "$value": "4px" },
+    "1": { "$type": "dimension", "$value": "8px" },
+    "1_5": { "$type": "dimension", "$value": "12px" },
+    "2": { "$type": "dimension", "$value": "16px" },
+    "3": { "$type": "dimension", "$value": "24px" },
+    "4": { "$type": "dimension", "$value": "32px" },
+    "5": { "$type": "dimension", "$value": "40px" },
+    "6": { "$type": "dimension", "$value": "48px" },
+    "8": { "$type": "dimension", "$value": "64px" },
+    "10": { "$type": "dimension", "$value": "80px" },
+    "12": { "$type": "dimension", "$value": "96px" },
+    "16": { "$type": "dimension", "$value": "128px" }
+  },
+  "radius": {
+    "none": { "$type": "dimension", "$value": "0px" },
+    "sm": { "$type": "dimension", "$value": "8px" },
+    "md": { "$type": "dimension", "$value": "12px" },
+    "lg": { "$type": "dimension", "$value": "16px" },
+    "xl": { "$type": "dimension", "$value": "24px" },
+    "pill": { "$type": "dimension", "$value": "999px" }
+  },
+  "border": {
+    "default": { "$type": "dimension", "$value": "1px" },
+    "emphasis": { "$type": "dimension", "$value": "2px" },
+    "focus": { "$type": "dimension", "$value": "3px" }
+  },
+  "icon": {
+    "size": {
+      "sm": { "$type": "dimension", "$value": "16px" },
+      "md": { "$type": "dimension", "$value": "20px" },
+      "lg": { "$type": "dimension", "$value": "24px" },
+      "xl": { "$type": "dimension", "$value": "32px" }
+    },
+    "stroke": { "$type": "dimension", "$value": "2px" },
+    "corner": { "$type": "string", "$value": "round" }
+  },
+  "motion": {
+    "fast": { "$type": "duration", "$value": "120ms" },
+    "base": { "$type": "duration", "$value": "180ms" },
+    "slow": { "$type": "duration", "$value": "280ms" },
+    "ease": { "$type": "cubicBezier", "$value": [0.2, 0.7, 0.2, 1] }
+  }
+}

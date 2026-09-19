@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "name": "INKSIGHTS Platform Tokens",
+    "version": "1.0.0",
+    "extends": "./design-tokens.json"
+  },
+  "breakpoint": {
+    "sm": "640px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1536px"
+  },
+  "container": {
+    "reading": "720px",
+    "content": "1120px",
+    "wide": "1280px",
+    "max": "1440px"
+  },
+  "grid": {
+    "desktopColumns": 12,
+    "tabletColumns": 8,
+    "mobileColumns": 4,
+    "desktopGutter": "24px",
+    "tabletGutter": "20px",
+    "mobileGutter": "16px",
+    "desktopMargin": "32px",
+    "tabletMargin": "24px",
+    "mobileMargin": "16px"
+  },
+  "opacity": {
+    "disabled": 0.42,
+    "muted": 0.64,
+    "overlay": 0.76,
+    "scrim": 0.84
+  },
+  "elevation": {
+    "none": "none",
+    "sm": "0 8px 24px -16px rgba(0,0,0,0.45)",
+    "md": "0 18px 48px -28px rgba(0,0,0,0.62)",
+    "lg": "0 32px 84px -42px rgba(0,0,0,0.78)",
+    "insetHighlight": "inset 0 1px 0 rgba(255,255,255,0.06)"
+  },
+  "zIndex": {
+    "base": 0,
+    "raised": 10,
+    "sticky": 30,
+    "header": 50,
+    "overlay": 70,
+    "modal": 80,
+    "toast": 90
+  },
+  "control": {
+    "heightCompact": "36px",
+    "heightDefault": "44px",
+    "heightLarge": "48px",
+    "minTouchTarget": "44px"
+  },
+  "chart": {
+    "lineWeight": "2px",
+    "gridWeight": "1px",
+    "barRadius": "4px",
+    "pointSize": "8px",
+    "axisLabelSize": "12px",
+    "legendGap": "16px"
+  },
+  "report": {
+    "page": "A4 portrait",
+    "margin": "18mm",
+    "sectionGap": "12mm",
+    "cardGap": "6mm"
+  },
+  "presentation": {
+    "aspectRatio": "16:9",
+    "safeMargin": "64px",
+    "gridColumns": 12,
+    "gutter": "24px"
+  },
+  "social": {
+    "editorial": "1080x1350",
+    "square": "1080x1080",
+    "story": "1080x1920",
+    "carousel": "1080x1350"
+  }
+}

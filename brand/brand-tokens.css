@@ -1,0 +1,114 @@
+:root {
+  /* INKSIGHTS Brand System v1 — canonical CSS tokens */
+  --primitive-navy-950: #0a1a27;
+  --primitive-navy-900: #102536;
+  --primitive-teal-900: #0f2f3a;
+  --primitive-graphite-900: #1e293b;
+  --primitive-graphite-700: #334155;
+  --primitive-slate-500: #64748b;
+  --primitive-slate-300: #cbd5e1;
+  --primitive-mist-100: #f1f5f9;
+  --primitive-off-white: #f7fafc;
+  --primitive-white: #ffffff;
+  --primitive-mint-500: #32e0a1;
+  --primitive-mint-400: #5be8b6;
+  --primitive-mint-600: #1ccb8c;
+  --primitive-mint-100: #d9fbef;
+  --primitive-amber-500: #f59e0b;
+  --primitive-red-500: #ef4444;
+  --primitive-blue-500: #38bdf8;
+
+  --color-bg-canvas-dark: var(--primitive-navy-950);
+  --color-bg-surface-dark: var(--primitive-navy-900);
+  --color-bg-elevated-dark: var(--primitive-teal-900);
+  --color-bg-canvas-light: var(--primitive-off-white);
+  --color-bg-surface-light: var(--primitive-white);
+  --color-text-primary-dark: var(--primitive-off-white);
+  --color-text-secondary-dark: var(--primitive-slate-300);
+  --color-text-primary-light: var(--primitive-navy-950);
+  --color-text-secondary-light: var(--primitive-graphite-700);
+  --color-signal: var(--primitive-mint-500);
+  --color-signal-hover: var(--primitive-mint-400);
+  --color-signal-pressed: var(--primitive-mint-600);
+  --color-signal-subtle: var(--primitive-mint-100);
+  --color-border-dark: var(--primitive-graphite-700);
+  --color-border-light: var(--primitive-slate-300);
+  --color-data-neutral: var(--primitive-slate-500);
+  --color-data-positive: var(--primitive-mint-500);
+  --color-data-warning: var(--primitive-amber-500);
+  --color-data-negative: var(--primitive-red-500);
+  --color-data-info: var(--primitive-blue-500);
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --type-xs: 0.75rem;
+  --type-sm: 0.875rem;
+  --type-md: 1rem;
+  --type-lg: 1.125rem;
+  --type-xl: 1.25rem;
+  --type-2xl: 1.5rem;
+  --type-3xl: 1.875rem;
+  --type-4xl: 2.25rem;
+  --type-5xl: 3rem;
+  --type-6xl: 4rem;
+  --type-7xl: 5rem;
+
+  --space-0: 0;
+  --space-0-5: 0.25rem;
+  --space-1: 0.5rem;
+  --space-1-5: 0.75rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 2.5rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+  --space-10: 5rem;
+  --space-12: 6rem;
+  --space-16: 8rem;
+
+  --radius-none: 0;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-pill: 999px;
+
+  --border-default: 1px;
+  --border-emphasis: 2px;
+  --border-focus: 3px;
+
+  --icon-sm: 1rem;
+  --icon-md: 1.25rem;
+  --icon-lg: 1.5rem;
+  --icon-xl: 2rem;
+  --icon-stroke: 2px;
+
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-slow: 280ms;
+  --motion-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Semantic component helpers. These are intentionally small: components own layout, tokens own visual logic. */
+.inksights-surface-dark {
+  background: var(--color-bg-surface-dark);
+  color: var(--color-text-primary-dark);
+  border: var(--border-default) solid var(--color-border-dark);
+}
+
+.inksights-surface-light {
+  background: var(--color-bg-surface-light);
+  color: var(--color-text-primary-light);
+  border: var(--border-default) solid var(--color-border-light);
+}
+
+.inksights-signal {
+  color: var(--color-signal);
+}
+
+.inksights-focus:focus-visible {
+  outline: var(--border-focus) solid color-mix(in oklab, var(--color-signal) 78%, white);
+  outline-offset: 3px;
+}
