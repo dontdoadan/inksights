@@ -162,6 +162,60 @@ Primary cross-module intervention authority: `intelligence_interventions`.
 
 `audit_interventions` remains audit-scoped and must not become a competing global intervention authority. Its exact projection/relationship must be verified before implementation.
 
+## 4.7 Phase 0 canonical entity and ID contract
+
+This section freezes the business meaning, canonical owner, and identifier rules for the ten V1 entities. Provider IDs are never treated as interchangeable with INKSIGHTS UUIDs.
+
+| Entity | Canonical meaning | Canonical owner | Canonical ID | Provider / projection IDs | V1 persistence rule |
+|---|---|---|---|---|---|
+| Studio | A tattoo-studio business identity against which INKSIGHTS measures commercial performance and interventions. | Supabase | `studio_id` UUID | `hubspot_company_id` | Reuse `public.studios.id`; it is identity-linked to `visibility_studios.id`. Do not create a second studio master. |
+| Contact | A natural person interacting with INKSIGHTS or a studio in a CRM journey. | HubSpot | `hubspot_contact_id` | email/phone are attributes, not durable IDs | HubSpot remains person authority. Supabase stores the HubSpot ID only where operationally required; no new contact master in V1. |
+| Lead | A contact/company that has entered an INKSIGHTS acquisition or qualification process but has not yet become a qualified commercial opportunity. | HubSpot | Contact/company IDs + lifecycle/status | `source_record_id`, `correlation_id` | Lead is a CRM state, not a new Supabase entity/table. Raw intake may remain in `enquiries` as source evidence/projection. |
+| Opportunity | A qualified commercial pursuit with a defined next commercial action and potentially monetary value. | HubSpot | `hubspot_deal_id` | `studio_id`, `hubspot_contact_id`, `correlation_id` | HubSpot DEAL is authoritative. Existing tattoo-oriented pipeline is not approved for INKSIGHTS use; pipeline design remains gated. |
+| Event | An immutable fact that something relevant happened at a point in time and can drive workflow/measurement. | Supabase | `event_id` UUID | `source_system`, `source_event_id`, deterministic idempotency key, `correlation_id` | A generic durable event store is required by the V1 contract unless an existing structure is proven to meet the envelope/idempotency/replay requirements. No table is approved by this spec alone. |
+| Consultation | A scheduled/completed qualification or commercial conversation linked to a contact/opportunity. | Scheduling provider / Calendar for schedule; HubSpot for CRM consequence | provider meeting/event ID | `hubspot_contact_id`, `hubspot_deal_id`, `studio_id`, `correlation_id` | Supabase stores only the event/projection needed for workflow and measurement. It must not become a competing calendar. |
+| Payment | A provider-confirmed monetary transaction/attempt associated with an INKSIGHTS commercial journey. | Stripe | Stripe Checkout Session / PaymentIntent IDs | Supabase `orders.id`, `hubspot_deal_id`, `studio_id`, `intervention_id`, `correlation_id` | Stripe is monetary truth. Reuse `orders` as the V1 operational projection where its semantics fit; `transactions` remains audit/source-normalisation data and is not the live Stripe authority. |
+| Intervention | An approved, measurable action deployed to address a diagnosed commercial constraint. | Supabase | `intelligence_interventions.id` UUID | `studio_id`, `decision_id`, `correlation_id` where journey-specific | `intelligence_interventions` is cross-module authority. `audit_interventions` is audit-scoped only. |
+| Outcome | A measured post-intervention result for a defined metric and measurement period. | Supabase | `intelligence_outcomes.id` UUID | `studio_id`, `intervention_id`, `metric_definition_id`, source reference | Reuse `intelligence_outcomes`; preserve baseline, observed value, delta, period, source, classification and confidence. |
+| Attribution | The explicit claim about how much of an outcome can reasonably be credited to an intervention, with method, evidence, confidence and confounders. | Supabase | `intelligence_attributions.id` UUID | `studio_id`, `intervention_id`, `outcome_id` | Reuse `intelligence_attributions`; never equate modelled opportunity with captured revenue. |
+
+### 4.8 Identity and relationship rules
+
+1. `studio_id` is the stable INKSIGHTS business key. HubSpot Company IDs are external references to that studio, not replacements for it.
+2. `hubspot_contact_id` is the stable CRM person key. Email and phone may be used for initial matching but must not remain the join key once a HubSpot identity exists.
+3. A Lead is a lifecycle state; an Opportunity is a HubSpot DEAL. Do not create parallel lead/opportunity masters in Supabase.
+4. Every V1 journey receives a `correlation_id` at intake. It persists across intake, HubSpot, events, consultation, Stripe, intervention, outcome and attribution wherever the provider supports metadata/reference fields.
+5. `source_system + source_event_id` is the preferred provider-event identity. When unavailable, derive a deterministic idempotency key from provider + provider object ID + transition + provider timestamp/version.
+6. Stripe payment identity is provider-native: Checkout Session and/or PaymentIntent. Supabase `orders.id` is a projection ID only.
+7. Consultation identity remains provider-native. Supabase records its operational event/projection, not an independent scheduling master.
+8. Intervention → Outcome is one-to-many. Outcome → Attribution may be one-to-many if different defensible attribution methods are recorded, but each attribution must identify one outcome and one intervention.
+9. Provider IDs must be stored explicitly. Fuzzy joins by studio name, contact name or email are prohibited after canonical identities exist.
+10. Cross-system conflicts resolve by domain ownership: HubSpot wins CRM lifecycle; Stripe wins payment state; Calendar/scheduling provider wins schedule state; Supabase wins intelligence/intervention/outcome/attribution state.
+
+### 4.9 Minimum V1 field dictionary
+
+| Entity | Required V1 fields |
+|---|---|
+| Studio | `studio_id`, `name`, `slug`, `website_url?`, `primary_location?`, `internal_validation`, `created_at`, `updated_at`, `hubspot_company_id?` as mapped external reference |
+| Contact | `hubspot_contact_id`, `email`, `first_name?`, `last_name?`, `phone?`, `lifecycle_stage`, `lead_status?`, `owner_id?`, `consent_state`, `suppression_state`, timestamps |
+| Lead | `hubspot_contact_id`, `hubspot_company_id?`, `lead_source`, `lifecycle_stage`, `lead_status`, `source_record_id`, `correlation_id`, timestamps |
+| Opportunity | `hubspot_deal_id`, `hubspot_contact_id`, `hubspot_company_id?`, `pipeline`, `deal_stage`, `amount?`, `owner_id?`, `correlation_id`, timestamps |
+| Event | `event_id`, `event_type`, `occurred_at`, `received_at`, `source_system`, `source_event_id`, `correlation_id`, `studio_id?`, `contact_ref?`, `opportunity_ref?`, `intervention_id?`, `processing_status`, `attempt_count`, `payload`, error fields |
+| Consultation | provider ID, `studio_id`, `hubspot_contact_id`, `hubspot_deal_id?`, `correlation_id`, start/end, status, source, timestamps, cancellation/reschedule reason? |
+| Payment | Stripe Session ID, PaymentIntent ID?, Customer ID?, `orders.id` projection ID, `studio_id`, `hubspot_contact_id`, `hubspot_deal_id`, `intervention_id`, `correlation_id`, offer/module key, amount, currency, status, timestamps |
+| Intervention | `intervention_id`, `studio_id`, `decision_id`, type, description, target?, baseline period?, start/end?, owner?, status, implementation evidence, timestamps |
+| Outcome | `outcome_id`, `studio_id`, `intervention_id`, metric definition?, baseline value?, observed value?, delta?, measurement period, source type/ref?, classification, confidence?, value classification?, observed/created timestamps |
+| Attribution | `attribution_id`, `studio_id`, `intervention_id`, `outcome_id`, method, confidence?, attributed value/pence?, confounders, evidence IDs, rationale?, created timestamp |
+
+### 4.10 Verified current-system mapping and gaps
+
+- **Supabase:** `public.studios` already provides the stable UUID studio identity and is identity-linked to `visibility_studios`. `enquiries` already captures source intake and a HubSpot contact reference. `orders` already contains the Stripe IDs and metadata needed for a payment projection. `intelligence_interventions`, `intelligence_outcomes`, and `intelligence_attributions` already cover the downstream measurement chain. Existing `clients`/`transactions` are audit-normalisation structures and must not be repurposed as the live CRM/payment masters.
+- **HubSpot:** CONTACT, COMPANY and DEAL are readable/writable. Standard lifecycle/lead-status fields exist. The only observed DEAL pipeline is `Sales Pipeline` and its stages are tattoo-booking oriented; therefore the INKSIGHTS opportunity-stage model is still a controlled design gap, not something to mutate implicitly.
+- **Stripe sandbox:** at verification time it contains zero PaymentIntents and zero Checkout Sessions. This is a clean baseline for the synthetic V1 fixture, but no sandbox payment route should be created until the metadata contract and test fixture are approved.
+- **Contact compliance gap:** consent/suppression semantics are required by the V1 contract but are not yet frozen as HubSpot property mappings. They must be mapped to existing suitable HubSpot properties or introduced through an approved CRM change before live messaging.
+- **Studio ↔ HubSpot gap:** `public.studios` does not currently expose a dedicated HubSpot Company ID in the verified columns. The mapping location must be approved before implementation; do not use studio name/domain as the permanent join.
+- **Event-store gap:** no existing structure has yet been verified to satisfy the generic event envelope, provider idempotency, replay and processing-status requirements. This remains a schema-design gate.
+
 ## 5. Event contract
 
 V1 needs a consistent event envelope regardless of provider.
