@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import Stripe from "stripe";
 import { getPublicOffer } from "./offer-data";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { recordIntegrationEvent } from "@/lib/integration-events.server";
 
 type JourneyCheckoutInput = {
@@ -17,6 +16,18 @@ type JourneyCheckoutInput = {
     moduleKey: "enquiry_recovery";
     testMode?: boolean;
   };
+};
+
+type QueryError = { message: string } | null;
+type Row = Record<string, unknown>;
+type UntypedQuery = {
+  select: (columns: string) => UntypedQuery;
+  eq: (column: string, value: string) => UntypedQuery;
+  maybeSingle: () => Promise<{ data: Row | null; error: QueryError }>;
+  limit: (count: number) => Promise<{ data: Row[] | null; error: QueryError }>;
+};
+type UntypedAdminClient = {
+  from: (table: string) => UntypedQuery;
 };
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
@@ -97,14 +108,32 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
   });
 
 async function validateJourney(journey: NonNullable<JourneyCheckoutInput["journey"]>) {
+  // Dynamic import is required here: *.functions.ts can be included in a client bundle.
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const admin = supabaseAdmin as unknown as UntypedAdminClient;
+
   const [studio, intervention, leadEvent] = await Promise.all([
-    supabaseAdmin.from("studios").select("id").eq("id", journey.studioId).maybeSingle(),
-    supabaseAdmin.from("intelligence_interventions").select("id,studio_id").eq("id", journey.interventionId).maybeSingle(),
-    supabaseAdmin.from("integration_events").select("event_id").eq("correlation_id", journey.correlationId).eq("contact_ref", journey.hubspotContactId).eq("opportunity_ref", journey.hubspotDealId).limit(1),
+    admin.from("studios").select("id").eq("id", journey.studioId).maybeSingle(),
+    admin
+      .from("intelligence_interventions")
+      .select("id,studio_id")
+      .eq("id", journey.interventionId)
+      .maybeSingle(),
+    admin
+      .from("integration_events")
+      .select("event_id")
+      .eq("correlation_id", journey.correlationId)
+      .eq("contact_ref", journey.hubspotContactId)
+      .eq("opportunity_ref", journey.hubspotDealId)
+      .limit(1),
   ]);
 
   if (studio.error || !studio.data) throw new Error("Journey studio is not valid.");
-  if (intervention.error || !intervention.data || intervention.data.studio_id !== journey.studioId) {
+  if (
+    intervention.error ||
+    !intervention.data ||
+    intervention.data["studio_id"] !== journey.studioId
+  ) {
     throw new Error("Journey intervention is not valid for this studio.");
   }
   if (leadEvent.error || !leadEvent.data?.length) {
