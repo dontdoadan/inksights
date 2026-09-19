@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -90,6 +91,58 @@ jobs:
 
       - name: Test Enquiry Recovery contract
         run: node --test tests/enquiry-recovery-contract.test.mjs
+
+      - name: Mint GitHub OIDC token for protected preview
+        id: vercel_oidc
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken();
+            core.setSecret(token);
+            core.setOutput("token", token);
+
+      - name: Verify protected Phase 1 operator proof
+        env:
+          VERCEL_OIDC_TOKEN: ${{ steps.vercel_oidc.outputs.token }}
+          PROOF_URL: "https://inksight-main-git-phase1-enquiry-recovery-e2e-inksights.vercel.app/api/public/stripe-webhook?correlation_id=234ce5af-12af-4e3e-a450-c568d51dea8b"
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            status="$(curl -sS -o phase1-proof.json -w "%{http_code}"               -H "x-vercel-trusted-oidc-idp-token: $VERCEL_OIDC_TOKEN"               "$PROOF_URL" || true)"
+            if [ "$status" = "200" ]; then
+              break
+            fi
+            if [ "$attempt" = "10" ]; then
+              echo "Protected preview proof endpoint did not return HTTP 200; last status=$status"
+              cat phase1-proof.json || true
+              exit 1
+            fi
+            sleep 6
+          done
+          node - <<'NODE'
+          const fs = require("node:fs");
+          const proof = JSON.parse(fs.readFileSync("phase1-proof.json", "utf8"));
+          const fail = (message) => { throw new Error(message); };
+          if (proof.test_only !== true) fail("proof is not explicitly test_only");
+          if (proof.correlation_id !== "234ce5af-12af-4e3e-a450-c568d51dea8b") fail("correlation mismatch");
+          if (proof.current_state !== "CONVERTED") fail(`expected CONVERTED, got ${proof.current_state}`);
+          if (proof.order?.status !== "paid") fail("expected paid order");
+          if (proof.controls?.paid_event_count !== 1) fail("expected exactly one deposit.paid event");
+          if (proof.controls?.sandbox_commercial_value_excluded !== true) fail("sandbox commercial value was not excluded");
+          if ((proof.outcomes?.length ?? 0) < 1) fail("expected at least one outcome");
+          if ((proof.attributions?.length ?? 0) < 1) fail("expected at least one attribution");
+          console.log(JSON.stringify({
+            correlation_id: proof.correlation_id,
+            current_state: proof.current_state,
+            event_count: proof.event_count,
+            order_status: proof.order.status,
+            paid_event_count: proof.controls.paid_event_count,
+            sandbox_commercial_value_excluded: proof.controls.sandbox_commercial_value_excluded,
+            outcome_count: proof.outcomes.length,
+            attribution_count: proof.attributions.length
+          }, null, 2));
+          NODE
+          rm -f phase1-proof.json
 
       - name: Test search intelligence authorization policy
         run: node --test supabase/functions/search-intelligence-v1/auth_policy_test.mjs
