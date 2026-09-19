@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import Stripe from "stripe";
 import { getPublicOffer } from "./offer-data";
-import { recordIntegrationEvent } from "@/lib/integration-events.server";
 
 type JourneyCheckoutInput = {
   slug: string;
@@ -84,6 +83,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     if (!session.url) throw new Error("Checkout session could not be created.");
 
     if (data.journey) {
+      const { recordIntegrationEvent } = await import("@/lib/integration-events.server");
       await recordIntegrationEvent({
         eventType: "deposit.requested",
         sourceSystem: "stripe",
