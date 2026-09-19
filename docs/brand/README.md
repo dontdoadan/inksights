@@ -58,3 +58,14 @@ A repository implementation change may refine components while preserving the sy
 ## Verification expectation
 
 Brand changes should be made on a feature branch, built and visually checked in a protected preview, then merged through the normal PR workflow. Production security and deployment protections must not be weakened for branding work.
+
+
+## Pack assets
+
+The Brand Asset Pack v1 has been mirrored into the repository for product/web consumption where appropriate:
+
+- `public/brand/wordmark-primary.svg` — transparent Deep Navy + Signal Mint interim wordmark for light surfaces.
+- `public/brand/wordmark-reverse.svg` — transparent White + Signal Mint interim wordmark for dark surfaces.
+- `public/brand/signal-motif.svg` — supporting rising-signal motif only; it is not the approved final logo mark.
+
+The complete production pack (including Canva-importable social, report and presentation masters) remains governed in Google Drive under `06 Marketing & Brand / Brand System`. GitHub should only carry assets required by the product or technical workflows, not duplicate the whole Drive library.
