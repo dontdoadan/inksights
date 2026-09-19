@@ -33,7 +33,7 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         try {
           if (event.type === "checkout.session.completed") {
             const session = event.data.object as Stripe.Checkout.Session;
-            await recordCompletedCheckout(event.id, session);
+            await recordCompletedCheckout(event.id, event.created, session);
           }
         } catch (err) {
           const message = err instanceof Error ? err.message : "Webhook processing failed";
@@ -50,7 +50,11 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
   },
 });
 
-async function recordCompletedCheckout(stripeEventId: string, session: Stripe.Checkout.Session) {
+async function recordCompletedCheckout(
+  stripeEventId: string,
+  stripeEventCreated: number,
+  session: Stripe.Checkout.Session,
+) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { recordIntegrationEvent, stripeEventKey } = await import("@/lib/integration-events.server");
   const { materializeDepositOutcome } = await import("@/lib/deposit-outcome.server");
@@ -122,12 +126,9 @@ async function recordCompletedCheckout(stripeEventId: string, session: Stripe.Ch
         amountTotal: session.amount_total,
         currency: session.currency,
         testMode,
-        observedAt: new Date(eventTimestampSeconds(session) * 1000).toISOString(),
+        observedAt: new Date(stripeEventCreated * 1000).toISOString(),
       });
     }
   }
 }
 
-function eventTimestampSeconds(session: Stripe.Checkout.Session) {
-  return typeof session.created === "number" ? session.created : Math.floor(Date.now() / 1000);
-}
