@@ -88,6 +88,9 @@ jobs:
       - name: Test server routing source of truth
         run: node --test tests/server-routing-source-of-truth.test.mjs
 
+      - name: Test Enquiry Recovery contract
+        run: node --test tests/enquiry-recovery-contract.test.mjs
+
       - name: Test search intelligence authorization policy
         run: node --test supabase/functions/search-intelligence-v1/auth_policy_test.mjs
 
