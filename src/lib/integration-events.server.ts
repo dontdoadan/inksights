@@ -27,8 +27,19 @@ export type IntegrationEventInput = {
   payload?: Record<string, unknown>;
 };
 
+type RpcError = { message: string } | null;
+type IntegrationEventRpcClient = {
+  rpc: (
+    fn: string,
+    args: Record<string, unknown>,
+  ) => Promise<{ data: unknown; error: RpcError }>;
+};
+
 export async function recordIntegrationEvent(input: IntegrationEventInput) {
-  const { data, error } = await supabaseAdmin.rpc("record_integration_event", {
+  // The generated client types currently lag the wider intelligence schema.
+  // Keep this cast narrow to the reviewed service-only RPC instead of weakening the global client type.
+  const rpcClient = supabaseAdmin as unknown as IntegrationEventRpcClient;
+  const { data, error } = await rpcClient.rpc("record_integration_event", {
     p_event_type: input.eventType,
     p_occurred_at: input.occurredAt ?? new Date().toISOString(),
     p_source_system: input.sourceSystem,
@@ -40,7 +51,7 @@ export async function recordIntegrationEvent(input: IntegrationEventInput) {
     p_opportunity_ref: input.opportunityRef ?? null,
     p_intervention_id: input.interventionId ?? null,
     p_payload: input.payload ?? {},
-  } as never);
+  });
 
   if (error) throw new Error(`Failed to record integration event: ${error.message}`);
   return data;
