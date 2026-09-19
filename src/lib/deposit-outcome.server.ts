@@ -52,7 +52,7 @@ export async function materializeDepositOutcome(input: DepositOutcomeInput) {
     .from("intelligence_outcomes")
     .select("id")
     .eq("intervention_id", input.interventionId)
-    .eq("source_ref", input.stripeEventId)
+    .eq("source_ref", input.stripeSessionId)
     .limit(1)
     .maybeSingle();
 
@@ -67,7 +67,7 @@ export async function materializeDepositOutcome(input: DepositOutcomeInput) {
     .select("id")
     .eq("studio_id", input.studioId)
     .eq("source_type", "stripe")
-    .eq("source_ref", input.stripeEventId)
+    .eq("source_ref", input.stripeSessionId)
     .limit(1)
     .maybeSingle();
 
@@ -85,13 +85,14 @@ export async function materializeDepositOutcome(input: DepositOutcomeInput) {
         evidence_type: "deposit_payment",
         classification: "observed",
         source_type: "stripe",
-        source_ref: input.stripeEventId,
+        source_ref: input.stripeSessionId,
         claim: input.testMode
           ? "TEST ONLY — Stripe sandbox confirmed the correlated deposit payment path."
           : "Stripe confirmed the correlated deposit payment.",
         payload: {
           correlation_id: input.correlationId,
           stripe_session_id: input.stripeSessionId,
+          stripe_delivery_event_id: input.stripeEventId,
           stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
           amount_total: input.amountTotal ?? null,
           currency: input.currency ?? null,
@@ -122,13 +123,14 @@ export async function materializeDepositOutcome(input: DepositOutcomeInput) {
         measurement_period_start: period,
         measurement_period_end: period,
         source_type: "stripe",
-        source_ref: input.stripeEventId,
+        source_ref: input.stripeSessionId,
         classification: "observed",
         confidence: 1,
         observed_at: observedAt,
         payload: {
           correlation_id: input.correlationId,
           stripe_session_id: input.stripeSessionId,
+          stripe_delivery_event_id: input.stripeEventId,
           stripe_payment_intent_id: input.stripePaymentIntentId ?? null,
           amount_total: input.amountTotal ?? null,
           currency: input.currency ?? null,
@@ -193,8 +195,8 @@ export async function materializeDepositOutcome(input: DepositOutcomeInput) {
   await recordIntegrationEvent({
     eventType: "outcome.recorded",
     sourceSystem: "inksights",
-    sourceEventId: input.stripeEventId,
-    idempotencyKey: stripeEventKey(input.stripeEventId, "outcome.recorded"),
+    sourceEventId: input.stripeSessionId,
+    idempotencyKey: stripeEventKey(input.stripeSessionId, "outcome.recorded"),
     correlationId: input.correlationId,
     studioId: input.studioId,
     contactRef: input.contactRef ?? null,
@@ -206,8 +208,8 @@ export async function materializeDepositOutcome(input: DepositOutcomeInput) {
   await recordIntegrationEvent({
     eventType: "attribution.calculated",
     sourceSystem: "inksights",
-    sourceEventId: input.stripeEventId,
-    idempotencyKey: stripeEventKey(input.stripeEventId, "attribution.calculated"),
+    sourceEventId: input.stripeSessionId,
+    idempotencyKey: stripeEventKey(input.stripeSessionId, "attribution.calculated"),
     correlationId: input.correlationId,
     studioId: input.studioId,
     contactRef: input.contactRef ?? null,
