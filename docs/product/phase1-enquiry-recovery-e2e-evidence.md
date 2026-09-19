@@ -44,7 +44,7 @@ The sandbox payment email differed from the HubSpot contact email. The journey r
 | 10 | sandbox deposit route | VERIFIED | £1 Stripe sandbox Payment Link |
 | 11 | sandbox payment succeeds | VERIFIED | Stripe Session/PaymentIntent/Charge |
 | 12 | payment correlated to Deal/intervention | VERIFIED | Stripe metadata + correlation ID |
-| 13 | HubSpot updated after payment | PENDING | synthetic Deal consequence requires approved HubSpot mutation |
+| 13 | HubSpot updated after payment | VERIFIED | TEST Deal moved to current closed/completed stage and annotated with provider-verified sandbox payment IDs |
 | 14 | Supabase updated | VERIFIED | Order + `deposit.paid` |
 | 15 | conversion | VERIFIED | synthetic `booking.created` + intervention completion |
 | 16 | outcome | VERIFIED | `ac07fc14-6f3b-4a76-8071-ef190c27c451` |
@@ -71,6 +71,19 @@ No sandbox value may be reported as captured commercial revenue.
 The Stripe sandbox account did not have a webhook endpoint configured when the payment was made. Provider payment state was therefore reconciled from Stripe's canonical Checkout Session / PaymentIntent / Charge records into the same session-idempotent data path.
 
 This proves provider payment, identity correlation, order projection, event idempotency, outcome and attribution. It does **not** prove network webhook delivery for this payment. A future sandbox webhook delivery test remains required before claiming the webhook transport itself verified.
+
+## HubSpot CRM consequence
+
+The user approved repurposing the existing default HubSpot deal pipeline as the canonical INKSIGHTS sales pipeline. The current connector cannot edit pipeline/stage definitions, so the administrative rename/restructure remains pending.
+
+For the Phase 1 TEST Deal, the payment consequence itself is verified:
+- Deal `521994014909` remains in pipeline `default`
+- stage moved from `5869458630` (Appointment Set) to `5869543641` (current Closed-Completed)
+- HubSpot automatically set `closedate` at the stage transition
+- description now records the verified Stripe Checkout Session, PaymentIntent and Charge IDs
+- this is temporary stage labelling until the pipeline is refactored to INKSIGHTS terminology
+
+The pipeline is approved to become **INKSIGHTS — Sales Pipeline**. Delivery/intervention state remains canonical in Supabase rather than being duplicated in HubSpot.
 
 ## Release gates still closed
 
