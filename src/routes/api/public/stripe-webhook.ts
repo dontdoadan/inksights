@@ -53,10 +53,12 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
 async function recordCompletedCheckout(stripeEventId: string, session: Stripe.Checkout.Session) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { recordIntegrationEvent, stripeEventKey } = await import("@/lib/integration-events.server");
+  const { materializeDepositOutcome } = await import("@/lib/deposit-outcome.server");
 
   const metadata = session.metadata ?? {};
   const offerSlug = metadata.offer_slug ?? "";
   const correlationId = metadata.correlation_id ?? null;
+  const testMode = metadata.test_mode === "true";
 
   const upsert = {
     stripe_customer_id: session.customer as string | undefined,
@@ -101,8 +103,31 @@ async function recordCompletedCheckout(stripeEventId: string, session: Stripe.Ch
         amount_total: session.amount_total,
         currency: session.currency,
         offer_slug: offerSlug,
+        offer_key: metadata.offer_key ?? null,
         module_key: metadata.module_key ?? null,
+        test_mode: testMode,
       },
     });
+
+    if (metadata.studio_id && metadata.intervention_id) {
+      await materializeDepositOutcome({
+        stripeEventId,
+        stripeSessionId: session.id,
+        stripePaymentIntentId: (session.payment_intent as string | null) ?? null,
+        correlationId,
+        studioId: metadata.studio_id,
+        interventionId: metadata.intervention_id,
+        contactRef: metadata.hubspot_contact_id || null,
+        opportunityRef: metadata.hubspot_deal_id || null,
+        amountTotal: session.amount_total,
+        currency: session.currency,
+        testMode,
+        observedAt: new Date(eventTimestampSeconds(session) * 1000).toISOString(),
+      });
+    }
   }
+}
+
+function eventTimestampSeconds(session: Stripe.Checkout.Session) {
+  return typeof session.created === "number" ? session.created : Math.floor(Date.now() / 1000);
 }
