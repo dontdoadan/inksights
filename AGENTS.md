@@ -107,3 +107,22 @@ Never weaken security to make a workflow pass. Do not bypass deployment protecti
 Before calling work complete, verify the exact changed system, relevant tests/checks, security/access side effects where applicable, and the required audit/record surface. For cross-system changes, verify both sides of the interface.
 
 Stop before a risky write and escalate when authorities conflict without an existing rule, an approval gate is reached, security impact is uncertain, production/live state cannot be verified, authority would move, or verification repeatedly fails. Read-only investigation may continue when it does not increase risk.
+
+
+## INKSIGHTS brand authority
+
+For any INKSIGHTS public-facing, customer-facing, product-UI, reporting or marketing implementation, treat the current Google Drive authority at `06 Marketing & Brand / Brand System / 01 Canonical / INKSIGHTS — Brand System — ACTIVE` as the business source of truth.
+
+Repository implementation rules:
+
+- `src/styles.css` owns the active CSS design tokens and compatibility aliases used by the application.
+- `src/lib/brand-tokens.ts` exposes machine-readable identity, palette, typography, spacing, radius and evidence-state constants for application/automation use.
+- `docs/brand/README.md` documents the technical handoff and authority boundary.
+- Core identity: Deep Navy `#0B1F3B`, Signal Mint `#2ED3A6`, Clean White `#F8FAFC`, Cool Grey `#CBD5E1`, Ink Black `#0F172A`.
+- Display typography: Poppins Bold/ExtraBold. Body/UI typography: Inter.
+- Evidence labels retain fixed meanings: VERIFIED, OBSERVED, CALCULATED, MODELLED, HYPOTHESIS.
+- Preserve the INKSIGHTS-only brand boundary. Do not introduce INKCARE or Daniel Hughes Tattoos identity into INKSIGHTS assets.
+- The final logo symbol is not yet canonical. Use the approved text-only INKSIGHTS wordmark treatment or existing neutral text treatment; do not revive legacy feather/pen/tattoo-machine/ink-drop marks or invent a public logo mark.
+- Signal Mint must not be used for small text on white; use accessible dark text on mint/light surfaces.
+
+Material changes to positioning, core palette, typography families, evidence taxonomy or logo status require deliberate founder approval. Implementation details may evolve when they preserve the canonical system.
