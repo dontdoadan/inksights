@@ -94,8 +94,8 @@ async function recordCompletedCheckout(
     await recordIntegrationEvent({
       eventType: "deposit.paid",
       sourceSystem: "stripe",
-      sourceEventId: stripeEventId,
-      idempotencyKey: stripeEventKey(stripeEventId, "deposit.paid"),
+      sourceEventId: session.id,
+      idempotencyKey: stripeEventKey(session.id, "deposit.paid"),
       correlationId,
       studioId: metadata.studio_id || null,
       contactRef: metadata.hubspot_contact_id || null,
@@ -103,6 +103,7 @@ async function recordCompletedCheckout(
       interventionId: metadata.intervention_id || null,
       payload: {
         stripe_session_id: session.id,
+        stripe_delivery_event_id: stripeEventId,
         stripe_payment_intent_id: session.payment_intent,
         amount_total: session.amount_total,
         currency: session.currency,
