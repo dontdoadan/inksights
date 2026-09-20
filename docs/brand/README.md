@@ -8,7 +8,11 @@ The human-readable business authority lives in Google Drive:
 
 `INKSIGHTS / 06 Marketing & Brand / Brand System / 01 Canonical / INKSIGHTS — Brand System — ACTIVE`
 
-Google Drive owns positioning, verbal identity, visual identity, application rules, brand governance and approved business assets. GitHub owns the technical implementation of those rules.
+Detailed visual specification:
+
+`INKSIGHTS / 06 Marketing & Brand / Brand System / 01 Canonical / INKSIGHTS — Visual Identity Master — ACTIVE — v1.0`
+
+Google Drive owns positioning, verbal identity, visual identity, application rules, brand governance and approved business assets. The Brand System is the written authority; the Visual Identity Master is its subordinate detailed visual specification. GitHub owns the technical implementation of those rules.
 
 Do not create a competing brand authority in the repository. This document is an implementation handoff, not a second brand manual.
 
@@ -47,7 +51,7 @@ Do not rename or reinterpret them locally.
 
 ## Logo status
 
-The final INKSIGHTS logo symbol is **not yet canonical**. The current approved fallback is a text-only uppercase INKSIGHTS wordmark in the bold rounded typography system. The rising-signal/three-bar motif may be used as a supporting graphic but is not the approved final logo mark.
+The final INKSIGHTS logo symbol is **not yet canonical**. The current approved identity is a text-only uppercase INKSIGHTS wordmark in the bold rounded typography system. The rising-signal/three-bar motif may be used as supporting graphic language and as an interim favicon/icon treatment, but is not the approved final logo mark.
 
 Do not restore legacy feather, pen, tattoo-machine or ink-drop marks and do not invent a public-facing mark without explicit approval.
 
