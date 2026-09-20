@@ -111,7 +111,7 @@ Stop before a risky write and escalate when authorities conflict without an exis
 
 ## INKSIGHTS brand authority
 
-For any INKSIGHTS public-facing, customer-facing, product-UI, reporting or marketing implementation, treat the current Google Drive authority at `06 Marketing & Brand / Brand System / 01 Canonical / INKSIGHTS — Brand System — ACTIVE` as the business source of truth.
+For any INKSIGHTS public-facing, customer-facing, product-UI, reporting or marketing implementation, treat `06 Marketing & Brand / Brand System / 01 Canonical / INKSIGHTS — Brand System — ACTIVE` as the written business authority. Use `INKSIGHTS — Visual Identity Master — ACTIVE — v1.0` in the same canonical folder as the governed detailed visual specification.
 
 Repository implementation rules:
 
@@ -122,7 +122,7 @@ Repository implementation rules:
 - Display typography: Poppins Bold/ExtraBold. Body/UI typography: Inter.
 - Evidence labels retain fixed meanings: VERIFIED, OBSERVED, CALCULATED, MODELLED, HYPOTHESIS.
 - Preserve the INKSIGHTS-only brand boundary. Do not introduce INKCARE or Daniel Hughes Tattoos identity into INKSIGHTS assets.
-- The final logo symbol is not yet canonical. Use the approved text-only INKSIGHTS wordmark treatment or existing neutral text treatment; do not revive legacy feather/pen/tattoo-machine/ink-drop marks or invent a public logo mark.
+- The final logo symbol is not yet canonical. Use the approved text-only INKSIGHTS wordmark treatment for identity. The three-rising-bars signal device may be used as a supporting motif or interim favicon/icon, but must not be represented as the final approved logo mark. Do not revive legacy feather/pen/tattoo-machine/ink-drop marks or invent a public logo mark.
 - Signal Mint must not be used for small text on white; use accessible dark text on mint/light surfaces.
 
 Material changes to positioning, core palette, typography families, evidence taxonomy or logo status require deliberate founder approval. Implementation details may evolve when they preserve the canonical system.
