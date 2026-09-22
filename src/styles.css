@@ -2,6 +2,40 @@
 @source "../src";
 @import "tw-animate-css";
 
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/poppins-400.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(/fonts/poppins-500.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(/fonts/poppins-600.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/fonts/poppins-700.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -16,22 +50,24 @@
   --color-border: var(--border);
   --color-primary: var(--mint);
   --color-primary-foreground: var(--ink-deep);
-  --font-display: "Archivo Black", system-ui, sans-serif;
-  --font-sans: "Hind", system-ui, sans-serif;
+  --font-display: "Poppins", system-ui, sans-serif;
+  --font-sans: "Poppins", system-ui, sans-serif;
 }
 
 :root {
-  --ink-deep: oklch(0.18 0.06 250);
-  --ink: oklch(0.235 0.07 252);
-  --ink-elev: oklch(0.295 0.075 252);
-  --background: oklch(0.18 0.06 250);
-  --foreground: oklch(0.97 0.02 180);
-  --mint: oklch(0.88 0.13 175);
-  --mint-soft: oklch(0.78 0.10 180);
-  --ice: oklch(0.97 0.02 200);
-  --muted: oklch(0.295 0.05 252);
-  --muted-foreground: oklch(0.78 0.04 200);
-  --border: oklch(0.35 0.05 252);
+  color-scheme: dark;
+  --ink-deep: #0A0F14;
+  --ink: #101B23;
+  --ink-elev: #1F2937;
+  --background: #0A0F14;
+  --foreground: #F8FAFC;
+  --mint: #00E5D1;
+  --mint-soft: #70F4E6;
+  --deep-teal: #00B3A6;
+  --ice: #F8FAFC;
+  --muted: #1F2937;
+  --muted-foreground: #94A3B8;
+  --border: #344957;
 }
 
 @layer base {
@@ -47,12 +83,12 @@
     min-width: 320px;
     background-image:
       radial-gradient(circle at 8% 8%, color-mix(in oklab, var(--mint) 7%, transparent), transparent 28rem),
-      radial-gradient(circle at 92% 22%, color-mix(in oklab, #38bdf8 7%, transparent), transparent 30rem);
+      radial-gradient(circle at 92% 22%, color-mix(in oklab, var(--deep-teal) 7%, transparent), transparent 30rem);
     background-attachment: fixed;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 700;
     letter-spacing: -0.02em;
   }
   ::selection { background: var(--mint); color: var(--ink-deep); }
@@ -108,7 +144,7 @@
 .article-prose h4 {
   color: var(--ice);
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.025em;
   scroll-margin-top: 7rem;
@@ -158,7 +194,7 @@
   width: 100%;
   height: 100%;
   transform-origin: left center;
-  background: linear-gradient(90deg, var(--mint-soft), var(--mint), #a7f3d0);
+  background: linear-gradient(90deg, var(--mint-soft), var(--mint), var(--mint-soft));
   box-shadow: 0 0 18px color-mix(in oklab, var(--mint) 68%, transparent);
   transition: transform 90ms linear;
 }
@@ -269,7 +305,7 @@
   height: 28rem;
   left: -12rem;
   bottom: -9rem;
-  background: radial-gradient(circle, color-mix(in oklab, #38bdf8 13%, transparent), transparent 70%);
+  background: radial-gradient(circle, color-mix(in oklab, var(--deep-teal) 13%, transparent), transparent 70%);
   animation: orb-drift-two 16s ease-in-out infinite alternate;
 }
 
@@ -507,7 +543,7 @@
 .journey-orb-two {
   bottom: -18rem;
   left: -12rem;
-  background: radial-gradient(circle, color-mix(in oklab, #38bdf8 8%, transparent), transparent 68%);
+  background: radial-gradient(circle, color-mix(in oklab, var(--deep-teal) 8%, transparent), transparent 68%);
 }
 .journey-map {
   position: relative;
@@ -593,7 +629,7 @@
   padding: 0.9rem 1rem;
   color: var(--mint);
 }
-.journey-score span { font-family: var(--font-display); font-size: 2.2rem; font-weight: 400; line-height: 1; }
+.journey-score span { font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; line-height: 1; }
 .journey-score small { font-size: 0.7rem; font-weight: 800; color: var(--muted-foreground); }
 .journey-focus-card {
   overflow: hidden;
@@ -660,3 +696,23 @@
   .hero-signal-panel { transform: none; }
   .shine-button::before { display: none; }
 }
+
+/* INKSIGHTS Brand System v2.0: shared public and product surfaces. */
+.brand-wordmark { display: block; width: 210px; height: 46px; object-fit: contain; }
+.brand-mark { width: 52px; height: 56px; object-fit: contain; }
+.brand-signal { position: relative; overflow: hidden; background: linear-gradient(145deg, #10313a, #0a0f14 65%); }
+.brand-signal::before { content: ''; position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(#00e5d12b 1px, transparent 1px); background-size: 18px 18px; mask-image: linear-gradient(135deg, black, transparent 70%); }
+.brand-signal > * { position: relative; }
+.brand-signature { display: flex; align-items: center; gap: 1.5rem; padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+.brand-signature img { width: 94px; height: 100px; object-fit: contain; }
+.brand-signature p { font-weight: 600; font-size: 1rem; line-height: 1.8; letter-spacing: .08em; }
+.evidence-badge { display: inline-flex; align-items: center; gap: .5rem; border: 1px solid #00e5d14d; border-radius: 999px; padding: .4rem .75rem; color: var(--mint); background: #00e5d10d; font-size: .7rem; font-weight: 600; letter-spacing: .08em; }
+.evidence-badge::before { content: ''; width: .45rem; height: .45rem; background: currentColor; border-radius: 50%; }
+.font-black, .font-extrabold { font-weight: 700; }
+h1 { line-height: 1.12 !important; }
+h2 { line-height: 1.17; }
+h3 { line-height: 1.25; }
+.form-control::placeholder { color: var(--muted-foreground); }
+.reveal { opacity: 1; transform: none; filter: none; }
+@media (max-width: 380px) { .brand-wordmark { width: 184px; } }
+@media (prefers-reduced-motion: reduce) { .reveal, .tilt-card { transform: none !important; filter: none; } }

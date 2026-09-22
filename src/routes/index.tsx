@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BarChart3, Database, Eye, Gauge, Search, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
+import { BarChart3, Database, Gauge, Search, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
 import { Reveal, TiltCard } from "@/components/interactive-home";
 import { Card, JsonLd, PrimaryButton, PublicShell, RevenueLeakageMap, SecondaryButton } from "@/components/public-site";
 import { StudioIntelligenceMap } from "@/components/studio-intelligence-map";
@@ -54,7 +54,7 @@ function Index() {
                 <div className="inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-mint backdrop-blur-xl">
                   <Sparkles className="h-4 w-4" /> FOR UK TATTOO STUDIO OWNERS
                 </div>
-                <h1 className="mt-7 max-w-5xl text-balance font-display text-5xl font-black leading-[.92] tracking-tight text-ice sm:text-6xl md:text-7xl xl:text-8xl">
+                <h1 className="mt-7 max-w-5xl text-balance font-display text-4xl font-bold leading-tight tracking-tight text-ice sm:text-5xl md:text-6xl xl:text-7xl">
                   Growth intelligence for <span className="text-mint">UK tattoo studios.</span>
                 </h1>
                 <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
@@ -71,10 +71,11 @@ function Index() {
             </Reveal>
 
             <Reveal delay={120}>
-              <div className="relative rounded-3xl border border-mint/25 bg-ink/80 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
+              <div className="brand-signal relative rounded-3xl border border-mint/25 bg-ink/80 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
+                <div className="brand-signature"><img src="/brand/mark.webp" width="94" height="100" alt="" /><p>Clearer data.<br />Smarter decisions.<br />Stronger studios.</p></div>
                 <div className="flex items-center justify-between border-b border-border pb-5">
                   <div><p className="text-xs font-bold uppercase tracking-[.15em] text-mint">Studio intelligence</p><h2 className="mt-2 font-display text-2xl font-black text-ice">From signal to decision</h2></div>
-                  <Eye className="h-8 w-8 text-mint" />
+                  <span className="evidence-badge">OUR APPROACH</span>
                 </div>
                 <div className="mt-6 space-y-3">
                   {["VISIBILITY", "ENQUIRIES", "BOOKINGS", "CAPACITY", "REVENUE"].map((step, i) => (
@@ -83,7 +84,7 @@ function Index() {
                     </div>
                   ))}
                 </div>
-                <p className="mt-5 text-sm leading-relaxed text-muted-foreground">The public website is the interface. The proprietary studio dataset, diagnostics and monitoring models are the long-term asset.</p>
+                <p className="mt-5 text-sm leading-relaxed text-muted-foreground">Start with what your studio can measure. Turn the evidence into a clear next step, then track what changes.</p>
               </div>
             </Reveal>
           </div>

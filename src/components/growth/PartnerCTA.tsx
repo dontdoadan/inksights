@@ -13,7 +13,7 @@ export function PartnerCTA() {
               Partnership & Investment
             </div>
             <h2 className="mt-4 font-display font-black text-4xl md:text-6xl leading-[1.02] text-balance max-w-3xl">
-              Partner with <span className="text-mint">INKSIGHT.</span>
+              Partner with <span className="text-mint">INKSIGHTS.</span>
             </h2>
             <p className="mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed">
               We're building a studio growth platform powered by aftercare. If

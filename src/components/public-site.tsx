@@ -11,18 +11,7 @@ const navItems = [
 ] as const;
 
 export function Logo() {
-  return (
-    <span className="flex items-center gap-2.5">
-      <span className="logo-mark flex h-8 w-8 items-center justify-center rounded-lg bg-mint">
-        <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-ink-deep">
-          <span className="h-1.5 w-1.5 rounded-full bg-mint-soft" />
-        </span>
-      </span>
-      <span className="text-xl font-extrabold tracking-tight text-ice">
-        INK<span className="text-mint">SIGHTS</span>
-      </span>
-    </span>
-  );
+  return <img src="/brand/wordmark.webp" width="210" height="46" alt="INKSIGHTS" className="brand-wordmark" decoding="async" />;
 }
 
 export function SiteHeader() {
@@ -69,7 +58,7 @@ export function Card({ children, className = "" }: { children: ReactNode; classN
 export function CtaSection({ eyebrow = "Start with the diagnosis", title = "Find the constraint before buying another tool.", description = "The free Revenue Audit identifies the strongest commercial pressure and routes the studio to the most useful next step." }: { eyebrow?: string; title?: string; description?: string }) { return <section className="relative overflow-hidden border-y border-border bg-ink"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><div className="relative mx-auto max-w-5xl px-6 py-16 text-center md:py-24"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">{title}</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p><div className="mt-8 flex justify-center"><PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton></div></div></section>; }
 export function RevenueLeakageMap() {
   const steps = [["01", "Search", "Can the right clients find you?"], ["02", "Enquiry", "Do they submit a useful request?"], ["03", "Booking", "Does demand become protected time?"], ["04", "Session", "Does capacity become revenue?"], ["05", "Return", "Does one client become repeat value?"]];
-  return <div className="rounded-3xl border border-mint/25 bg-ink-deep p-5 shadow-2xl shadow-black/20 md:p-7"><div className="flex items-center justify-between gap-4 border-b border-border pb-5"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-mint">Revenue leakage map</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Where does momentum disappear?</h3></div><div className="hidden h-10 w-10 items-center justify-center rounded-xl border border-mint/30 bg-mint/10 font-mono text-xs text-mint sm:flex">LIVE</div></div><div className="mt-7 grid gap-3 md:grid-cols-5">{steps.map(([number, label, text], index) => <div key={number} className="relative rounded-2xl border border-border bg-ink p-5"><div className="font-mono text-xs text-mint">{number}</div><h4 className="mt-3 font-display text-xl font-black text-ice">{label}</h4><p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text}</p>{index < steps.length - 1 ? <span className="pointer-events-none absolute -right-2.5 top-1/2 hidden h-px w-5 bg-mint/50 md:block" aria-hidden="true" /> : null}</div>)}</div><div className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-300/5 p-4 text-sm leading-relaxed text-muted-foreground"><strong className="text-ice">INKSIGHTS principle:</strong> more traffic is not automatically the answer. Find the first material point where demand, time or value is being lost.</div></div>;
+  return <div className="rounded-3xl border border-mint/25 bg-ink-deep p-5 shadow-2xl shadow-black/20 md:p-7"><div className="flex items-center justify-between gap-4 border-b border-border pb-5"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-mint">Revenue leakage map</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Where does momentum disappear?</h3></div><div className="hidden h-10 w-10 items-center justify-center rounded-xl border border-mint/30 bg-mint/10 font-mono text-xs text-mint sm:flex">MODEL</div></div><div className="mt-7 grid gap-3 md:grid-cols-5">{steps.map(([number, label, text], index) => <div key={number} className="relative rounded-2xl border border-border bg-ink p-5"><div className="font-mono text-xs text-mint">{number}</div><h4 className="mt-3 font-display text-xl font-black text-ice">{label}</h4><p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text}</p>{index < steps.length - 1 ? <span className="pointer-events-none absolute -right-2.5 top-1/2 hidden h-px w-5 bg-mint/50 md:block" aria-hidden="true" /> : null}</div>)}</div><div className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-300/5 p-4 text-sm leading-relaxed text-muted-foreground"><strong className="text-ice">INKSIGHTS principle:</strong> more traffic is not automatically the answer. Find the first material point where demand, time or value is being lost.</div></div>;
 }
 export function JsonLd({ data }: { data: Record<string, unknown> | Array<Record<string, unknown>> }) { return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />; }
 export function ArticleLayout({ children, aside }: { children: ReactNode; aside?: ReactNode }) { return <section className="bg-ink-deep"><div className={`mx-auto grid max-w-7xl gap-10 px-6 py-14 md:py-20 ${aside ? "lg:grid-cols-[minmax(0,1fr)_320px]" : "max-w-4xl"}`}><article className="article-prose min-w-0">{children}</article>{aside ? <aside className="lg:sticky lg:top-24 lg:self-start">{aside}</aside> : null}</div></section>; }

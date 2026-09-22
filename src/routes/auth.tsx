@@ -1,3 +1,4 @@
+import { Logo } from "@/components/public-site";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -108,12 +109,7 @@ function AuthPage() {
     <div className="min-h-screen bg-ink-deep text-foreground font-sans flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md">
         <Link to="/" className="flex items-center gap-2.5 mb-8 justify-center">
-          <div className="h-8 w-8 rounded-md bg-mint flex items-center justify-center">
-            <div className="h-3.5 w-3.5 rounded-full bg-ink-deep" />
-          </div>
-          <span className="text-2xl font-extrabold tracking-tight">
-            INK<span className="text-mint">SIGHT</span>
-          </span>
+          <Logo />
         </Link>
 
         <div className="rounded-3xl border border-border/60 bg-ink-elev/50 p-8">
