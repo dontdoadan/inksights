@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/legal-page";
 
-const CANONICAL_URL = "https://getinksight.co.uk/cookies";
+const CANONICAL_URL = "https://getinksights.co.uk/cookies";
 
 export const Route = createFileRoute("/cookies")({
   component: CookiesPage,
   head: () => ({
     meta: [
-      { title: "Cookie Notice | INKSIGHT" },
-      { name: "description", content: "How INKSIGHT uses essential browser storage and optional marketing tracking." },
+      { title: "Cookie Notice | INKSIGHTS" },
+      { name: "description", content: "How INKSIGHTS uses essential browser storage and optional marketing tracking." },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
@@ -42,7 +42,7 @@ function CookiesPage() {
 
       <h2>Meta Pixel</h2>
       <p>Meta Pixel is not inserted into the page source until marketing consent is selected. Once enabled, it may process browser and event information to measure the journey from a Meta advertisement or social interaction to a website action.</p>
-      <p>Rejecting marketing cookies prevents the pixel from loading through the INKSIGHT consent system. Previously transmitted information cannot be recalled from Meta by changing the local preference.</p>
+      <p>Rejecting marketing cookies prevents the pixel from loading through the INKSIGHTS consent system. Previously transmitted information cannot be recalled from Meta by changing the local preference.</p>
 
       <h2>Changing or withdrawing consent</h2>
       <p>Select “Change cookie preferences” in the website footer. You can reject optional technologies or save a different preference at any time.</p>

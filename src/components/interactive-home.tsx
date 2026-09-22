@@ -263,7 +263,7 @@ export function SignalTicker() {
   const repeated = [...signals, ...signals];
 
   return (
-    <div className="signal-ticker" aria-label="INKSIGHT system coverage">
+    <div className="signal-ticker" aria-label="INKSIGHTS system coverage">
       <div className="signal-ticker-track">
         {repeated.map((signal, index) => (
           <span key={`${signal}-${index}`} className="signal-ticker-item" aria-hidden={index >= signals.length}>
@@ -368,7 +368,7 @@ export function InteractiveJourney() {
                 <p className="mt-8 text-xs font-bold uppercase tracking-[0.18em] text-mint">Active system signal</p>
                 <h3 className="mt-3 font-display text-4xl font-black text-ice">{step.eyebrow}</h3>
                 <p className="mt-5 leading-relaxed text-muted-foreground">
-                  INKSIGHT separates observed information, assumptions and results so the next action is tied to evidence rather than generic marketing advice.
+                  INKSIGHTS separates observed information, assumptions and results so the next action is tied to evidence rather than generic marketing advice.
                 </p>
                 <div className="mt-8 space-y-3">
                   {["One visible constraint", "One responsible owner", "One recheck metric"].map((item) => (

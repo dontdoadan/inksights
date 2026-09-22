@@ -725,8 +725,8 @@ h3 { line-height: 1.25; }
   --ink-elev: #EAF0F2;
   --background: #FFFFFF;
   --foreground: #0A0F14;
-  --mint: #007D75;
-  --mint-soft: #00665F;
+  --mint: #00665F;
+  --mint-soft: #00554F;
   --ice: #0A0F14;
   --muted: #EAF0F2;
   --muted-foreground: #475569;
@@ -763,3 +763,6 @@ h3 { line-height: 1.25; }
 .text-amber-300 { color: var(--status-amber, #FCD34D); }
 .text-green-300, .text-emerald-300 { color: var(--status-green, #86EFAC); }
 .text-red-300 { color: var(--status-red, #FCA5A5); }
+
+.brand-light :is(input:not([type="checkbox"]):not([type="range"]), select, textarea) { border-color: #82909E; }
+.brand-light :is(input, select, textarea):focus { border-color: var(--mint); }
