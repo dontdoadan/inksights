@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, Database, Gauge, Search, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
 import { Reveal, TiltCard } from "@/components/interactive-home";
 import { Card, JsonLd, PrimaryButton, PublicShell, RevenueLeakageMap, SecondaryButton } from "@/components/public-site";
-import { StudioIntelligenceMap } from "@/components/studio-intelligence-map";
 
 const CANONICAL_URL = "https://getinksights.co.uk/";
 
@@ -106,7 +105,6 @@ function Index() {
         </div>
       </section>
 
-      <StudioIntelligenceMap />
 
       <section className="border-b border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">

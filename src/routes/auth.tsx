@@ -12,8 +12,8 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
   head: () => ({
     meta: [
-      { title: "Sign in — INKSIGHT" },
-      { name: "description", content: "Sign in to your INKSIGHT studio dashboard." },
+      { title: "Sign in — INKSIGHTS" },
+      { name: "description", content: "Sign in to your INKSIGHTS studio dashboard." },
     ],
   }),
 });
@@ -191,7 +191,7 @@ function AuthPage() {
           </form>
 
           <p className="mt-6 text-sm text-muted-foreground text-center">
-            {mode === "signin" ? "New to INKSIGHT?" : "Already have an account?"}{" "}
+            {mode === "signin" ? "New to INKSIGHTS?" : "Already have an account?"}{" "}
             <button
               className="text-mint hover:underline font-semibold"
               onClick={() => {

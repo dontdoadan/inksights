@@ -9,7 +9,7 @@ Authority: Daniel's supplied brand-board.png, logo-wordmark.png and logo-3-bars.
 - Use the supplied horizontal wordmark through the shared Logo component. Its whitespace is trimmed and it is encoded as WebP; artwork is otherwise unchanged. Use the supplied three-bar mark as the decorative signature. The favicon is a simplified three-bar derivative for tiny sizes.
 - Dark surfaces, restrained teal gradients, fine borders and dot-grid accents. Lucide icons remain in use.
 - Visible keyboard focus, reduced-motion support and text contrast take precedence over decorative treatments. Content must be readable before animation scripts run.
-- Status badges always include text. Never imply an example is a real measurement. The homepage's static revenue diagram is labelled MODEL.
+- Status badges always include text. Never imply an example is a real measurement. The homepage's static revenue diagram is labelled MODEL. At Daniel's request, the map section is withheld until its design is polished; its component is retained for future work.
 - Board examples (78/100, +32%, confidence scores) are illustrative and must not become customer claims. No new studio photos have been introduced; the board is a photography reference, not evidence of a customer relationship.
 
 ## Scope and preserved systems
