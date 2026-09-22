@@ -36,7 +36,7 @@ function PrivacyPage() {
       </ul>
 
       <h2>Why we use it</h2>
-      <div className="table-wrap">
+      <div className="table-wrap" tabIndex={0} role="region" aria-label="Data processing services">
         <table>
           <thead><tr><th>Purpose</th><th>Typical lawful basis</th></tr></thead>
           <tbody>

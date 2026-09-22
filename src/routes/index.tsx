@@ -42,7 +42,7 @@ function Index() {
         url: CANONICAL_URL,
       }]} />
 
-      <section className="hero-ambient relative overflow-hidden grid-bg">
+      <section className="brand-dark hero-ambient relative overflow-hidden grid-bg">
         <div className="ambient-orb ambient-orb-one" aria-hidden="true" />
         <div className="ambient-orb ambient-orb-two" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-ink-deep/30 to-ink-deep" />
@@ -128,7 +128,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden">
+      <section className="brand-dark relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="rounded-3xl border border-mint/30 bg-ink-deep p-8 md:p-12">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
