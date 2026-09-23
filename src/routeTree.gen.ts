@@ -280,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/offers': typeof OffersRouteWithChildren
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
@@ -322,7 +323,6 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
-  '/offers': typeof OffersRouteWithChildren
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
