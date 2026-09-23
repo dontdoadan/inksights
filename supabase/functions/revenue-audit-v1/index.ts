@@ -72,6 +72,13 @@ Deno.serve(async (req: Request) => {
   const studioName = String(body.studio_name || "").trim();
   const teamSize = Math.round(num(body.team_size));
   const consent = body.consent === true;
+  const rawContext = body.source_context && typeof body.source_context === "object" ? body.source_context as Record<string, unknown> : {};
+  const sourceContext = {
+    source: String(rawContext.source || "direct").slice(0, 80),
+    visibility_score: rawContext.visibility_score == null ? null : String(rawContext.visibility_score).slice(0, 8),
+    weakest_area: rawContext.weakest_area == null ? null : String(rawContext.weakest_area).slice(0, 120),
+    visibility_gaps: rawContext.visibility_gaps == null ? null : String(rawContext.visibility_gaps).slice(0, 1500),
+  };
   if (!name || name.length > 120 || !email || !/^\S+@\S+\.\S+$/.test(email) || !studioName || studioName.length > 180 || teamSize < 3 || teamSize > 100 || !consent) return respond({ ok: false, error: "Please complete the required fields. Revenue Audit V1 is currently designed for studios with 3+ artists." }, 400);
 
   const revenue = Math.max(0, num(body.monthly_revenue));
@@ -117,13 +124,34 @@ Deno.serve(async (req: Request) => {
 
   try {
     const dbHeaders = { apikey: KEY, Authorization: `Bearer ${KEY}`, "Content-Type": "application/json", Prefer: "return=representation" };
-    const leadRes = await fetch(`${SB}/rest/v1/revenue_audit_leads`, { method: "POST", headers: dbHeaders, body: JSON.stringify({ name, email, studio_name: studioName, website: String(body.website || "").trim() || null, area: String(body.area || "").trim() || null, team_size: teamSize, monthly_revenue_band: String(body.monthly_revenue_band || "").trim() || null, monthly_enquiries: enquiries, monthly_bookings: bookings, average_booking_value: aov, monthly_available_hours: availableHours, monthly_booked_hours: bookedHours, repeat_client_rate: repeatRate, cancellation_rate: cancellationRate, no_show_rate: noShowRate, primary_problem: String(body.primary_problem || "").trim() || null, consent_at: new Date().toISOString(), marketing_consent: body.marketing_consent === true }) });
+    const leadRes = await fetch(`${SB}/rest/v1/revenue_audit_leads`, { method: "POST", headers: dbHeaders, body: JSON.stringify({ name, email, studio_name: studioName, website: String(body.website || "").trim() || null, area: String(body.area || "").trim() || null, team_size: teamSize, monthly_revenue_band: String(body.monthly_revenue_band || "").trim() || null, monthly_enquiries: enquiries, monthly_bookings: bookings, average_booking_value: aov, monthly_available_hours: availableHours, monthly_booked_hours: bookedHours, repeat_client_rate: repeatRate, cancellation_rate: cancellationRate, no_show_rate: noShowRate, primary_problem: String(body.primary_problem || "").trim() || null, source_context: sourceContext, consent_at: new Date().toISOString(), marketing_consent: body.marketing_consent === true }) });
     if (!leadRes.ok) throw new Error("Lead persistence failed");
     const leadRows = await leadRes.json(); const leadId = leadRows?.[0]?.id; if (!leadId) throw new Error("Lead persistence returned no id");
     const auditRes = await fetch(`${SB}/rest/v1/revenue_audits`, { method: "POST", headers: dbHeaders, body: JSON.stringify({ lead_id: leadId, opportunity_low: totalLow, opportunity_high: totalHigh, capacity_opportunity: money(capacityHigh * 12), conversion_opportunity: money(conversionHigh * 12), retention_opportunity: money(retentionHigh * 12), cancellation_opportunity: money(cancellationHigh * 12), primary_opportunity: primary.key, score, findings, recommendations }) });
     if (!auditRes.ok) throw new Error("Audit persistence failed");
     const auditRows = await auditRes.json();
-    return respond({ ok: true, lead_id: leadId, audit_id: auditRows?.[0]?.id || null, audit_version: "v1", estimate: { annual_low: totalLow, annual_high: totalHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass estimate based on the figures you supplied. It is not a verified financial audit. A full INKSIGHTS audit uses connected or exported studio data to replace estimates with observed results." }, 200);
+    const auditId = auditRows?.[0]?.id || null;
+    const eventRes = await fetch(`${SB}/rest/v1/integration_events`, {
+      method: "POST",
+      headers: { ...dbHeaders, Prefer: "return=minimal" },
+      body: JSON.stringify({
+        event_type: "diagnostic_completed",
+        occurred_at: new Date().toISOString(),
+        source_system: "website",
+        source_event_id: auditId || leadId,
+        idempotency_key: `revenue_audit:${auditId || leadId}`,
+        correlation_id: leadId,
+        contact_ref: leadId,
+        processing_status: "received",
+        payload: {
+          audit_version: "v1",
+          primary_opportunity: primary.key,
+          source_context: sourceContext,
+        },
+      }),
+    });
+    if (!eventRes.ok) console.error("Operational event persistence failed", eventRes.status);
+    return respond({ ok: true, lead_id: leadId, audit_id: auditId, audit_version: "v1", estimate: { annual_low: totalLow, annual_high: totalHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass estimate based on the figures you supplied. It is not a verified financial audit. A full INKSIGHTS audit uses connected or exported studio data to replace estimates with observed results." }, 200);
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     return respond({ ok: false, error: "We could not save the audit right now. Please try again." }, 503);
