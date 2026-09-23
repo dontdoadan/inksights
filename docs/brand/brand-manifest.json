@@ -7,7 +7,7 @@
     "url": "https://getinksights.co.uk",
     "repository": "dontdoadan/inksights",
     "branch": "main",
-    "baselineCommit": "068f9b1e3b1a4d277102cbc63050d4934270d507",
+    "baselineCommit": "d0f1461d814c95a13dba2220aab6bd98475ab67b",
     "precedence": [
       "production website",
       "production implementation source",
@@ -19,11 +19,18 @@
   },
   "sourceFiles": {
     "styles": "src/styles.css",
-    "wordmark": "public/brand/wordmark.webp",
-    "mark": "public/brand/mark.webp",
+    "wordmark": "public/brand/logo-v3/primary-dark.svg",
+    "mark": "public/brand/logo-v3/icon-flat.svg",
     "favicon": "public/favicon.svg",
     "components": "src/components",
-    "routes": "src/routes"
+    "routes": "src/routes",
+    "logoVariants": {
+      "primaryDark": "public/brand/logo-v3/primary-dark.svg",
+      "primaryLight": "public/brand/logo-v3/primary-light.svg",
+      "monochromeWhite": "public/brand/logo-v3/mono-white.svg",
+      "icon": "public/brand/logo-v3/icon-flat.svg",
+      "microIcon": "public/brand/logo-v3/icon-micro.svg"
+    }
   },
   "typography": {
     "family": "Poppins",
@@ -80,9 +87,17 @@
       "progression",
       "growth"
     ],
-    "wordmarkPath": "/brand/wordmark.webp",
-    "markPath": "/brand/mark.webp",
-    "faviconPath": "/favicon.svg"
+    "wordmarkPath": "/brand/logo-v3/primary-dark.svg",
+    "markPath": "/brand/logo-v3/icon-flat.svg",
+    "faviconPath": "/favicon.svg",
+    "officialLogoKit": "INKSIGHTS_Full_Logo_Kit_v3.zip",
+    "variants": [
+      "primary-dark",
+      "primary-light",
+      "monochrome-white",
+      "three-bar-icon",
+      "micro-icon"
+    ]
   },
   "visualLanguage": [
     "dark intelligence canvas",
