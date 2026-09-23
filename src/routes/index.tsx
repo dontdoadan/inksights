@@ -90,7 +90,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-ink">
+      <section className="brand-dark border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
           <Reveal><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">What INKSIGHTS measures</p><h2 className="mt-4 max-w-4xl text-balance font-display text-4xl font-black text-ice md:text-6xl">Your revenue is an output. We look at the system creating it.</h2></Reveal>
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -99,7 +99,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="border-b border-border bg-ink-deep">
+      <section className="brand-dark border-b border-border bg-ink-deep">
         <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
           <RevenueLeakageMap />
         </div>
@@ -139,7 +139,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="border-t border-border bg-ink">
+      <section className="brand-dark border-t border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-12"><div className="flex flex-col gap-4 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between"><span>INKSIGHTS · Tattoo studio intelligence / diagnostics / revenue optimisation</span><span>Built specifically for UK tattoo studio operators.</span></div></div>
       </section>
     </PublicShell>
