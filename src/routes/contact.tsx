@@ -41,6 +41,7 @@ function ContactPage() {
         studio_name: String(form.get("studio_name") || ""),
         location: String(form.get("location") || ""),
         phone: String(form.get("phone") || ""),
+        website: String(form.get("website") || ""),
         topic: String(form.get("topic") || ""),
         message: String(form.get("message") || ""),
         consent: form.get("consent") === "on",
@@ -126,6 +127,7 @@ function ContactPage() {
                   <Field label="Studio name"><input name="studio_name" autoComplete="organization" className="form-control" /></Field>
                   <Field label="Town / city"><input name="location" autoComplete="address-level2" className="form-control" /></Field>
                   <Field label="Phone (optional)"><input name="phone" type="tel" autoComplete="tel" className="form-control" /></Field>
+                  <Field label="Studio website (optional)"><input name="website" type="url" autoComplete="url" placeholder="https://" className="form-control" /></Field>
                   <Field label="Topic" required>
                     <select name="topic" required defaultValue={search.topic || ""} className="form-control">
                       <option value="">Select a topic</option>
