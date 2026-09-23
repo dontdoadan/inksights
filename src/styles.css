@@ -697,6 +697,71 @@
   .shine-button::before { display: none; }
 }
 
+/* Official INKSIGHTS logo system v3. */
+.brand-logo {
+  display: block;
+  height: auto;
+  object-fit: contain;
+}
+.brand-logo-primary-dark,
+.brand-logo-primary-light,
+.brand-logo-mono-white { width: 210px; }
+.brand-logo-icon { width: 52px; aspect-ratio: 1; }
+.brand-wordmark { display: none; }
+.page-hero-logo-mark {
+  position: absolute;
+  right: clamp(1.5rem, 5vw, 5rem);
+  top: clamp(1.5rem, 5vw, 4rem);
+  z-index: 0;
+  width: clamp(5rem, 10vw, 9rem);
+  opacity: 0.1;
+  filter: drop-shadow(0 0 28px color-mix(in oklab, #35E6D4 24%, transparent));
+  pointer-events: none;
+}
+.cta-logo-mark {
+  position: absolute;
+  left: clamp(1rem, 4vw, 4rem);
+  bottom: clamp(-1.5rem, -1vw, -0.5rem);
+  width: clamp(6rem, 12vw, 11rem);
+  opacity: 0.08;
+  pointer-events: none;
+}
+.brand-light-logo-watermark {
+  position: absolute;
+  right: clamp(1rem, 4vw, 4rem);
+  top: clamp(1rem, 3vw, 2.5rem);
+  width: clamp(11rem, 24vw, 22rem);
+  opacity: 0.055;
+  pointer-events: none;
+}
+.brand-light-icon-watermark {
+  position: absolute;
+  right: clamp(1rem, 4vw, 4rem);
+  bottom: clamp(-1rem, -1vw, -0.25rem);
+  width: clamp(5rem, 10vw, 8rem);
+  opacity: 0.08;
+  pointer-events: none;
+}
+.brand-signature .brand-signature-mark {
+  width: 78px;
+  height: 78px;
+  flex: 0 0 auto;
+}
+@media (max-width: 380px) {
+  .brand-logo-primary-dark,
+  .brand-logo-primary-light,
+  .brand-logo-mono-white { width: 184px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .page-hero-logo-mark {
+    animation: official-logo-float 8s ease-in-out infinite alternate;
+  }
+}
+@keyframes official-logo-float {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-8px, 8px, 0); }
+}
+
 /* INKSIGHTS Brand System v2.0: shared public and product surfaces. */
 .brand-wordmark { display: block; width: 210px; height: 46px; object-fit: contain; }
 .brand-mark { width: 52px; height: 56px; object-fit: contain; }
