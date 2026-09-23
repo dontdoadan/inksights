@@ -20,13 +20,12 @@ import {
 } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/support";
-const SUPPORT_EMAIL = "dontdoadan@icloud.com";
 
 const faq = [
   {
     question: "How do I contact INKSIGHTS support?",
     answer:
-      "Use the secure contact form at getinksights.co.uk/contact or email dontdoadan@icloud.com. Include your studio name, the service involved and enough detail for INKSIGHTS to identify the issue. Do not send passwords, full card details, private API keys or verification codes.",
+      "Use the secure contact form at getinksights.co.uk/contact. Include your studio name, the service involved and enough detail for INKSIGHTS to identify the issue. Do not send passwords, full card details, private API keys or verification codes.",
   },
   {
     question: "When does the 72-Hour Studio Visibility Fix delivery period begin?",
@@ -46,7 +45,7 @@ const faq = [
   {
     question: "Where do I send a privacy or data-rights request?",
     answer:
-      "Send the request to dontdoadan@icloud.com. The Privacy Notice explains how INKSIGHTS handles access, correction, deletion, restriction, objection, portability and consent-withdrawal requests where applicable.",
+      "Use the secure contact form and select the privacy or data-request topic. The Privacy Notice explains how INKSIGHTS handles access, correction, deletion, restriction, objection, portability and consent-withdrawal requests where applicable.",
   },
   {
     question: "Can INKSIGHTS support diagnose a medical or tattoo-healing problem?",
@@ -97,7 +96,7 @@ function SupportPage() {
         }
       >
         <PrimaryButton href="/contact">Contact support</PrimaryButton>
-        <SecondaryButton href={`mailto:${SUPPORT_EMAIL}`}>Email {SUPPORT_EMAIL}</SecondaryButton>
+        <SecondaryButton href="/contact?topic=existing-client-support">Open the secure form</SecondaryButton>
       </PageHero>
 
       <section className="border-b border-border bg-ink-deep">
@@ -140,7 +139,7 @@ function SupportPage() {
               <ShieldCheck className="h-7 w-7 text-mint" />
               <h2 className="mt-5 font-display text-xl font-black text-ice">Privacy or data request</h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Use the contact email for access, correction, deletion, restriction, objection, portability or consent questions where those rights apply.
+                Use the secure contact form for access, correction, deletion, restriction, objection, portability or consent questions where those rights apply.
               </p>
               <a href="/privacy" className="mt-5 inline-block text-sm font-bold text-mint hover:text-mint-soft">Read the Privacy Notice</a>
             </Card>
@@ -252,11 +251,11 @@ function SupportPage() {
           <Mail className="mx-auto h-8 w-8 text-mint" />
           <h2 className="mt-5 font-display text-4xl font-black text-ice md:text-5xl">Still need help?</h2>
           <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-muted-foreground">
-            Send a clear description of the issue through the secure contact form or email {SUPPORT_EMAIL}. If your signed scope contains a specific support or escalation process, use that process first.
+            Send a clear description of the issue through the secure contact form. If your signed scope contains a specific support or escalation process, use that process first.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <PrimaryButton href="/contact">Contact support</PrimaryButton>
-            <SecondaryButton href={`mailto:${SUPPORT_EMAIL}`}>Email support</SecondaryButton>
+            <SecondaryButton href="/contact?topic=existing-client-support">Open support form</SecondaryButton>
           </div>
         </div>
       </section>
