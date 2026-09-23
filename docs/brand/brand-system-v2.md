@@ -1,3 +1,6 @@
+> [!WARNING]
+> **SUPERSEDED AS AN AUTHORITY.** This file is retained for lineage. The current brand authority is [CURRENT.md](./CURRENT.md), and the production website/implementation wins if this document conflicts with production.
+
 # INKSIGHTS Brand System v2.0 — website implementation
 
 Authority: Daniel's supplied brand-board.png, logo-wordmark.png and logo-3-bars.png, recovered from the “Update Website Branding” conversation on 22 September 2026.
