@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Mail, MessageSquareText, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 import { supabase } from "@/integrations/supabase/client";
+import { trackWebsiteEvent } from "@/lib/website-events";
 
 const CANONICAL_URL = "https://getinksights.co.uk/contact";
 
@@ -26,6 +27,7 @@ function ContactPage() {
   const search = Route.useSearch();
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const started = useRef(false);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,8 +53,10 @@ function ContactPage() {
     if (functionError || !data?.ok) {
       setStatus("error");
       setError(functionError?.message || data?.error || "The message could not be recorded. Email dontdoadan@icloud.com instead.");
+      trackWebsiteEvent("form_error", { form: "contact", reason: "submission_failed" });
       return;
     }
+    trackWebsiteEvent("contact_submitted", { topic: String(form.get("topic") || "unknown") });
     setStatus("done");
   }
 
@@ -102,7 +106,16 @@ function ContactPage() {
                 <div className="mt-7"><a href="/resources" className="inline-flex rounded-full border border-mint px-5 py-3 font-bold text-mint">Browse resources</a></div>
               </div>
             ) : (
-              <form onSubmit={submit} className="space-y-5">
+              <form
+                onSubmit={submit}
+                onFocusCapture={() => {
+                  if (!started.current) {
+                    started.current = true;
+                    trackWebsiteEvent("contact_started", { form: "contact" });
+                  }
+                }}
+                className="space-y-5"
+              >
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Secure contact form</p>
                   <h2 className="mt-2 font-display text-3xl font-black text-ice">What do you need help with?</h2>
