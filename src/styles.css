@@ -766,3 +766,129 @@ h3 { line-height: 1.25; }
 
 .brand-light :is(input:not([type="checkbox"]):not([type="range"]), select, textarea) { border-color: #82909E; }
 .brand-light :is(input, select, textarea):focus { border-color: var(--mint); }
+
+
+/* Sitewide 70/30 theme balance and interaction layer. */
+.brand-balanced > section:nth-of-type(3n):not(.brand-dark):not(.brand-light) {
+  color-scheme: light;
+  --ink-deep: #FFFFFF;
+  --ink: #F8FAFC;
+  --ink-elev: #EAF0F2;
+  --background: #FFFFFF;
+  --foreground: #0A0F14;
+  --mint: #00665F;
+  --mint-soft: #00554F;
+  --ice: #0A0F14;
+  --muted: #EAF0F2;
+  --muted-foreground: #475569;
+  --border: #D4DEE3;
+  background: var(--background);
+  color: var(--foreground);
+}
+.brand-balanced > section:nth-of-type(3n):not(.brand-dark):not(.brand-light) .shine-button {
+  background-color: #00E5D1;
+  color: #0A0F14;
+}
+.brand-balanced > section:nth-of-type(3n):not(.brand-dark):not(.brand-light) .shine-button:hover {
+  background-color: #70F4E6;
+}
+.brand-balanced > section:nth-of-type(3n):not(.brand-dark):not(.brand-light) :is(input:not([type="checkbox"]):not([type="range"]), select, textarea) {
+  border-color: #82909E;
+}
+.brand-balanced > section:nth-of-type(3n):not(.brand-dark):not(.brand-light) :is(input, select, textarea):focus {
+  border-color: var(--mint);
+}
+
+/* Ambient pointer glow follows the real pointer without replacing the cursor. */
+.site-pointer-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(
+      420px circle at var(--site-pointer-x, 50vw) var(--site-pointer-y, 50vh),
+      color-mix(in oklab, #00E5D1 12%, transparent) 0%,
+      color-mix(in oklab, #00B3A6 5%, transparent) 34%,
+      transparent 70%
+    );
+  mix-blend-mode: screen;
+  transition: opacity 180ms ease;
+}
+.has-site-pointer .site-pointer-glow { opacity: 0.72; }
+
+.site-click-pulse {
+  position: fixed;
+  z-index: 70;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 1px solid color-mix(in oklab, var(--mint) 72%, white);
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.35);
+}
+.site-click-pulse.is-active {
+  animation: site-click-pulse 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* General interaction polish, excluding components that already own stronger motion. */
+@media (hover: hover) and (pointer: fine) {
+  .site-motion :is(a, button, [role="button"]):not(.shine-button):not(.outline-button):not(.nav-link):not(.journey-node):not(.signal-metric) {
+    transition:
+      transform 180ms ease,
+      filter 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      color 180ms ease,
+      background-color 180ms ease;
+  }
+  .site-motion :is(a, button, [role="button"]):not(.shine-button):not(.outline-button):not(.nav-link):not(.journey-node):not(.signal-metric):hover {
+    transform: translateY(-2px);
+    filter: brightness(1.045);
+  }
+  .site-motion .interactive-card:hover {
+    transform: translateY(-4px);
+  }
+}
+.site-motion .is-site-pressed {
+  transform: translateY(0) scale(0.985) !important;
+}
+
+/* Sitewide scroll reveal. It changes opacity/transform only, never document flow. */
+.motion-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 620ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: opacity, transform;
+}
+.motion-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes site-click-pulse {
+  0% { opacity: 0.9; transform: scale(0.35); box-shadow: 0 0 0 0 color-mix(in oklab, #00E5D1 28%, transparent); }
+  55% { opacity: 0.48; }
+  100% { opacity: 0; transform: scale(3.4); box-shadow: 0 0 0 18px transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-pointer-glow,
+  .site-click-pulse { display: none !important; }
+  .motion-reveal,
+  .motion-reveal.is-visible {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .site-motion .is-site-pressed { transform: none !important; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .site-pointer-glow { display: none; }
+}
