@@ -388,3 +388,122 @@ export function InteractiveJourney() {
     </section>
   );
 }
+
+
+export function SiteEffects() {
+  const pulseRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const root = document.documentElement;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    let frame = 0;
+    let pressedTarget: HTMLElement | null = null;
+
+    root.classList.add("site-motion");
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!finePointer.matches || reduceMotion.matches) return;
+      cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        root.style.setProperty("--site-pointer-x", `${event.clientX}px`);
+        root.style.setProperty("--site-pointer-y", `${event.clientY}px`);
+        root.classList.add("has-site-pointer");
+      });
+    };
+
+    const clearPointer = () => root.classList.remove("has-site-pointer");
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target instanceof Element
+        ? event.target.closest<HTMLElement>("a, button, [role='button'], input, select, textarea")
+        : null;
+      if (!target) return;
+
+      pressedTarget = target;
+      target.classList.add("is-site-pressed");
+
+      if (!finePointer.matches || reduceMotion.matches) return;
+      const pulse = pulseRef.current;
+      if (!pulse) return;
+      pulse.style.left = `${event.clientX}px`;
+      pulse.style.top = `${event.clientY}px`;
+      pulse.classList.remove("is-active");
+      void pulse.offsetWidth;
+      pulse.classList.add("is-active");
+    };
+
+    const releasePressed = () => {
+      pressedTarget?.classList.remove("is-site-pressed");
+      pressedTarget = null;
+    };
+
+    const observer = reduceMotion.matches
+      ? null
+      : new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("is-visible");
+              observer?.unobserve(entry.target);
+            });
+          },
+          { rootMargin: "0px 0px -8%", threshold: 0.08 },
+        );
+
+    const registered = new WeakSet<Element>();
+    const registerRevealTargets = () => {
+      const targets = document.querySelectorAll(
+        "main > section:not(:first-of-type), main article > h2, main article > h3, main article > p, main article > ul, main article > ol, main article > blockquote, main article > .table-wrap, main form",
+      );
+
+      targets.forEach((target) => {
+        if (registered.has(target) || target.closest("[data-motion='off']")) return;
+        registered.add(target);
+        target.classList.add("motion-reveal");
+
+        if (reduceMotion.matches || target.getBoundingClientRect().top < window.innerHeight * 0.92) {
+          target.classList.add("is-visible");
+          return;
+        }
+        observer?.observe(target);
+      });
+    };
+
+    registerRevealTargets();
+    const mutationObserver = new MutationObserver(registerRevealTargets);
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("blur", clearPointer);
+    document.addEventListener("pointerleave", clearPointer);
+    document.addEventListener("pointerdown", handlePointerDown, { passive: true });
+    document.addEventListener("pointerup", releasePressed, { passive: true });
+    document.addEventListener("pointercancel", releasePressed, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      root.classList.remove("site-motion", "has-site-pointer");
+      root.style.removeProperty("--site-pointer-x");
+      root.style.removeProperty("--site-pointer-y");
+      releasePressed();
+      observer?.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("blur", clearPointer);
+      document.removeEventListener("pointerleave", clearPointer);
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("pointerup", releasePressed);
+      document.removeEventListener("pointercancel", releasePressed);
+    };
+  }, []);
+
+  return (
+    <>
+      <div className="site-pointer-glow" aria-hidden="true" />
+      <div ref={pulseRef} className="site-click-pulse" aria-hidden="true" />
+    </>
+  );
+}
