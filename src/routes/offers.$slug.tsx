@@ -1,7 +1,7 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, CheckCircle2, Clock3, Loader2, XCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
 import {
@@ -13,13 +13,17 @@ import {
   SecondaryButton,
   SectionHeading,
 } from "@/components/public-site";
-import { createCheckoutSession } from "@/lib/payments.functions";
+import { createCheckoutSession, verifyCheckoutSession } from "@/lib/payments.functions";
+import { trackWebsiteEvent } from "@/lib/website-events";
 import { getPublicOffer, growthLeverLabels } from "@/lib/offer-data";
 
 export const Route = createFileRoute("/offers/$slug")({
   component: OfferPage,
   validateSearch: (search: Record<string, unknown>) => ({
     checkout: typeof search.checkout === "string" ? search.checkout : undefined,
+    session_id: typeof search.session_id === "string" ? search.session_id : undefined,
+    lead_id: typeof search.lead_id === "string" ? search.lead_id : undefined,
+    audit_id: typeof search.audit_id === "string" ? search.audit_id : undefined,
   }),
   head: ({ params }) => {
     const offer = getPublicOffer(params.slug);
@@ -41,6 +45,23 @@ function OfferPage() {
   const { slug } = Route.useParams();
   const search = useSearch({ from: "/offers/$slug" });
   const offer = getPublicOffer(slug);
+  const verifyCheckout = useServerFn(verifyCheckoutSession);
+
+  useEffect(() => {
+    if (!offer || search.checkout !== "success" || !search.session_id) return;
+    void verifyCheckout({ data: { sessionId: search.session_id } })
+      .then((verified) => {
+        if (!verified.paid) return;
+        trackWebsiteEvent("payment_completed", {
+          offer: verified.offerSlug || offer.slug,
+          amount_minor: verified.amountTotal || 0,
+          currency: verified.currency || "gbp",
+        });
+      })
+      .catch(() => {
+        trackWebsiteEvent("checkout_error", { offer: offer.slug, reason: "verification_failed" });
+      });
+  }, [offer, search.checkout, search.session_id, verifyCheckout]);
 
   if (!offer) {
     return (
@@ -74,7 +95,7 @@ function OfferPage() {
           : undefined,
       }} />
       <PageHero eyebrow={offer.eyebrow} title={offer.name} description={offer.summary}>
-        {offer.stripePriceId ? <CheckoutButton offer={offer} /> : <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>}
+        {offer.stripePriceId ? <CheckoutButton offer={offer} leadId={search.lead_id} auditId={search.audit_id} /> : <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>}
         <SecondaryButton href="/contact">Ask a scope question</SecondaryButton>
       </PageHero>
 
@@ -180,7 +201,7 @@ function OfferPage() {
   );
 }
 
-function CheckoutButton({ offer }: { offer: { slug: string; name: string } }) {
+function CheckoutButton({ offer, leadId, auditId }: { offer: { slug: string; name: string }; leadId?: string; auditId?: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const startCheckout = useServerFn(createCheckoutSession);
 
@@ -190,11 +211,13 @@ function CheckoutButton({ offer }: { offer: { slug: string; name: string } }) {
       disabled={isLoading}
       onClick={async () => {
         setIsLoading(true);
+        trackWebsiteEvent("checkout_started", { offer: offer.slug });
         try {
-          const { url } = await startCheckout({ data: { slug: offer.slug } });
+          const { url } = await startCheckout({ data: { slug: offer.slug, leadId, auditId } });
           if (url) window.location.href = url;
         } catch (err) {
           const message = err instanceof Error ? err.message : "Checkout could not be started.";
+          trackWebsiteEvent("checkout_error", { offer: offer.slug, reason: "checkout_initialization_failed" });
           toast.error(message);
         } finally {
           setIsLoading(false);

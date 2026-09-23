@@ -74,7 +74,9 @@ export const Route = createFileRoute("/studio-visibility-report")({
     meta: [
       { title: "Studio Visibility Report | INKSIGHTS" },
       { name: "description", content: "An evidence-led studio visibility report built from website and search observations." },
+      { property: "og:url", content: "https://getinksights.co.uk/studio-visibility-report" },
     ],
+    links: [{ rel: "canonical", href: "https://getinksights.co.uk/studio-visibility-report" }],
   }),
 });
 

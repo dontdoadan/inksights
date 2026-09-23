@@ -37,6 +37,7 @@ import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OffersIndexRouteImport } from './routes/offers.index'
 import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/tools.tattoo-pain-chart-reality-check'
 import { Route as OffersSlugRouteImport } from './routes/offers.$slug'
 import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/guides.grey-line-healing-week-by-week'
@@ -192,6 +193,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OffersIndexRoute = OffersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OffersRoute,
+} as any)
 const ToolsTattooPainChartRealityCheckRoute =
   ToolsTattooPainChartRealityCheckRouteImport.update({
     id: '/tools/tattoo-pain-chart-reality-check',
@@ -301,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
+  '/offers/': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
@@ -316,7 +323,6 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
-  '/offers': typeof OffersRouteWithChildren
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
@@ -343,6 +349,7 @@ export interface FileRoutesByTo {
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
+  '/offers': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
@@ -387,6 +394,7 @@ export interface FileRoutesById {
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
+  '/offers/': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
@@ -431,6 +439,7 @@ export interface FileRouteTypes {
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/tools/tattoo-pain-chart-reality-check'
+    | '/offers/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/stripe-webhook'
@@ -446,7 +455,6 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
-    | '/offers'
     | '/pricing-benchmark'
     | '/privacy'
     | '/resources'
@@ -473,6 +481,7 @@ export interface FileRouteTypes {
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/tools/tattoo-pain-chart-reality-check'
+    | '/offers'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/stripe-webhook'
@@ -516,6 +525,7 @@ export interface FileRouteTypes {
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/tools/tattoo-pain-chart-reality-check'
+    | '/offers/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/stripe-webhook'
@@ -760,6 +770,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/offers/': {
+      id: '/offers/'
+      path: '/'
+      fullPath: '/offers/'
+      preLoaderRoute: typeof OffersIndexRouteImport
+      parentRoute: typeof OffersRoute
+    }
     '/tools/tattoo-pain-chart-reality-check': {
       id: '/tools/tattoo-pain-chart-reality-check'
       path: '/tools/tattoo-pain-chart-reality-check'
@@ -879,10 +896,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface OffersRouteChildren {
   OffersSlugRoute: typeof OffersSlugRoute
+  OffersIndexRoute: typeof OffersIndexRoute
 }
 
 const OffersRouteChildren: OffersRouteChildren = {
   OffersSlugRoute: OffersSlugRoute,
+  OffersIndexRoute: OffersIndexRoute,
 }
 
 const OffersRouteWithChildren =

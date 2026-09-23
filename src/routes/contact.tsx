@@ -1,12 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Mail, MessageSquareText, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 import { supabase } from "@/integrations/supabase/client";
+import { trackWebsiteEvent } from "@/lib/website-events";
 
 const CANONICAL_URL = "https://getinksights.co.uk/contact";
 
 export const Route = createFileRoute("/contact")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    topic: typeof search.topic === "string" ? search.topic : undefined,
+  }),
   component: ContactPage,
   head: () => ({
     meta: [
@@ -20,8 +24,10 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const search = Route.useSearch();
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
+  const started = useRef(false);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,6 +39,8 @@ function ContactPage() {
         name: String(form.get("name") || ""),
         email: String(form.get("email") || ""),
         studio_name: String(form.get("studio_name") || ""),
+        location: String(form.get("location") || ""),
+        phone: String(form.get("phone") || ""),
         topic: String(form.get("topic") || ""),
         message: String(form.get("message") || ""),
         consent: form.get("consent") === "on",
@@ -45,8 +53,10 @@ function ContactPage() {
     if (functionError || !data?.ok) {
       setStatus("error");
       setError(functionError?.message || data?.error || "The message could not be recorded. Email dontdoadan@icloud.com instead.");
+      trackWebsiteEvent("form_error", { form: "contact", reason: "submission_failed" });
       return;
     }
+    trackWebsiteEvent("contact_submitted", { topic: String(form.get("topic") || "unknown") });
     setStatus("done");
   }
 
@@ -63,8 +73,9 @@ function ContactPage() {
           <div className="space-y-5">
             <div className="rounded-2xl border border-border bg-ink p-6">
               <Mail className="h-7 w-7 text-mint" />
-              <h2 className="mt-5 font-display text-2xl font-black text-ice">Direct email</h2>
-              <a href="mailto:dontdoadan@icloud.com" className="mt-3 inline-block font-bold text-mint hover:text-mint-soft">dontdoadan@icloud.com</a>
+              <h2 className="mt-5 font-display text-2xl font-black text-ice">Form-first contact</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Use the secure form so the enquiry is recorded with its studio, topic and source rather than depending on a public mailbox.</p>
+              <p className="mt-4 text-xs leading-relaxed text-muted-foreground">If the form is unavailable, the page will show a fallback contact route.</p>
             </div>
             <div className="rounded-2xl border border-border bg-ink p-6">
               <MessageSquareText className="h-7 w-7 text-mint" />
@@ -95,7 +106,16 @@ function ContactPage() {
                 <div className="mt-7"><a href="/resources" className="inline-flex rounded-full border border-mint px-5 py-3 font-bold text-mint">Browse resources</a></div>
               </div>
             ) : (
-              <form onSubmit={submit} className="space-y-5">
+              <form
+                onSubmit={submit}
+                onFocusCapture={() => {
+                  if (!started.current) {
+                    started.current = true;
+                    trackWebsiteEvent("contact_started", { form: "contact" });
+                  }
+                }}
+                className="space-y-5"
+              >
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Secure contact form</p>
                   <h2 className="mt-2 font-display text-3xl font-black text-ice">What do you need help with?</h2>
@@ -104,13 +124,16 @@ function ContactPage() {
                   <Field label="Name" required><input name="name" required autoComplete="name" className="form-control" /></Field>
                   <Field label="Email" required><input name="email" type="email" required autoComplete="email" className="form-control" /></Field>
                   <Field label="Studio name"><input name="studio_name" autoComplete="organization" className="form-control" /></Field>
+                  <Field label="Town / city"><input name="location" autoComplete="address-level2" className="form-control" /></Field>
+                  <Field label="Phone (optional)"><input name="phone" type="tel" autoComplete="tel" className="form-control" /></Field>
                   <Field label="Topic" required>
-                    <select name="topic" required className="form-control">
+                    <select name="topic" required defaultValue={search.topic || ""} className="form-control">
                       <option value="">Select a topic</option>
                       <option value="existing-client-support">Existing client support</option>
                       <option value="billing-cancellation">Billing, subscription or cancellation</option>
                       <option value="72-hour-visibility-fix">72-Hour Visibility Fix</option>
                       <option value="growth-check">Revenue Audit or recommendation</option>
+                      <option value="studio-intelligence-audit">£395 Studio Intelligence Audit</option>
                       <option value="partnership">Partnership or case study</option>
                       <option value="website-support">Website or technical issue</option>
                       <option value="privacy-data-request">Privacy or data request</option>

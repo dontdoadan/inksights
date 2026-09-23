@@ -1,10 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
+
+import { trackWebsiteEvent } from "@/lib/website-events";
 
 const AUDIT_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/revenue-audit-v1";
 
 export const Route = createFileRoute("/studio-growth-check")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    source: typeof search.source === "string" ? search.source : undefined,
+    score: typeof search.score === "string" ? search.score : undefined,
+    weakest: typeof search.weakest === "string" ? search.weakest : undefined,
+    gaps: typeof search.gaps === "string" ? search.gaps : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Free Revenue Audit V1 — INKSIGHTS" },
@@ -20,6 +28,8 @@ export const Route = createFileRoute("/studio-growth-check")({
 });
 
 type Result = {
+  lead_id?: string;
+  audit_id?: string;
   estimate: { annual_low: number; annual_high: number; primary_opportunity: string; score: number };
   findings: Array<{ label: string; annual_low: number; annual_high: number }>;
   recommendations: string[];
@@ -30,9 +40,11 @@ const currency = (value: number) =>
   new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 }).format(value);
 
 function RevenueAuditPage() {
+  const search = Route.useSearch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<Result | null>(null);
+  const started = useRef(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -61,6 +73,12 @@ function RevenueAuditPage() {
       marketing_consent: form.get("marketing_consent") === "on",
       consent: form.get("consent") === "on",
       website_honeypot: String(form.get("website_honeypot") || ""),
+      source_context: {
+        source: search.source || "direct",
+        visibility_score: search.score || null,
+        weakest_area: search.weakest || null,
+        visibility_gaps: search.gaps || null,
+      },
     };
 
     try {
@@ -82,8 +100,14 @@ function RevenueAuditPage() {
       }
       if (!response.ok || !data.ok) throw new Error(data.error || "The audit could not be generated.");
       setResult(data as Result);
+      trackWebsiteEvent("diagnostic_completed", {
+        diagnostic: "revenue_audit_v1",
+        primary_opportunity: String(data?.estimate?.primary_opportunity || "unknown"),
+        score: Number(data?.estimate?.score || 0),
+      });
       window.setTimeout(() => document.getElementById("audit-result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     } catch (err) {
+      trackWebsiteEvent("form_error", { form: "revenue_audit_v1", reason: "submission_failed" });
       setError(err instanceof Error ? err.message : "The audit could not be generated. Please try again.");
     } finally {
       setLoading(false);
@@ -105,6 +129,14 @@ function RevenueAuditPage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-mint/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-mint"><ShieldCheck className="h-4 w-4" /> Free Revenue Audit V1</div>
             <h1 className="mt-6 text-balance font-display text-4xl font-black leading-[.95] tracking-tight text-ice md:text-6xl">Estimate how much revenue your studio may be leaving on the table.</h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">Give us a few operating numbers and INKSIGHTS will calculate a first-pass opportunity estimate across unused capacity, unconverted enquiries, cancellations and repeat clients.</p>
+            {search.source === "visibility-scorecard" ? (
+              <div className="mt-6 rounded-2xl border border-mint/25 bg-mint/5 p-5 text-sm leading-relaxed text-muted-foreground">
+                <b className="text-ice">Visibility Scorecard context carried forward.</b>{" "}
+                {search.score ? `Score: ${search.score}/100.` : ""}{" "}
+                {search.weakest ? `Weakest area: ${search.weakest.replace(/-/g, " ")}.` : ""}
+                <span className="block mt-2 text-xs">You will not need to re-enter that diagnostic result; it is attached to this Growth Check submission.</span>
+              </div>
+            ) : null}
             <div className="mt-6 flex flex-wrap gap-3 text-sm text-muted-foreground">
               {["Built for studios with 3+ artists", "Takes about 3 minutes", "Result shown immediately", "No payment required"].map((item) => <span key={item} className="rounded-full border border-border px-3 py-2">✓ {item}</span>)}
             </div>
@@ -113,7 +145,16 @@ function RevenueAuditPage() {
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-8 px-6 py-12 lg:grid-cols-[1fr_320px] lg:py-16">
-        <form onSubmit={submit} className="rounded-3xl border border-border bg-ink p-6 md:p-9">
+        <form
+          onSubmit={submit}
+          onFocusCapture={() => {
+            if (!started.current) {
+              started.current = true;
+              trackWebsiteEvent("diagnostic_started", { diagnostic: "revenue_audit_v1" });
+            }
+          }}
+          className="rounded-3xl border border-border bg-ink p-6 md:p-9"
+        >
           <div className="space-y-10">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">01 · Studio</p>
@@ -172,7 +213,7 @@ function RevenueAuditPage() {
       {result && <section id="audit-result" className="border-t border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-14 md:py-20">
         <div className="max-w-4xl"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Your Revenue Audit V1</p><h2 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">Estimated opportunity: <span className="text-mint">{currency(result.estimate.annual_low)}–{currency(result.estimate.annual_high)}</span> / year</h2><p className="mt-4 text-lg leading-relaxed text-muted-foreground">The largest estimated opportunity in your inputs is <b className="text-ice">{result.estimate.primary_opportunity}</b>.</p></div>
         <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{result.findings.map((finding) => <div key={finding.label} className="rounded-2xl border border-border bg-ink-deep p-5"><p className="text-sm font-bold text-ice">{finding.label}</p><p className="mt-3 font-display text-2xl font-black text-mint">{currency(finding.annual_low)}–{currency(finding.annual_high)}</p><p className="mt-1 text-xs text-muted-foreground">estimated annual opportunity</p></div>)}</div>
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]"><div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What to do next</p><ol className="mt-5 space-y-4">{result.recommendations.map((item, i) => <li key={item} className="flex gap-4 text-sm leading-relaxed text-muted-foreground"><span className="font-mono text-mint">0{i + 1}</span><span>{item}</span></li>)}</ol></div><div className="rounded-2xl border border-mint/20 bg-mint/5 p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Next step</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Want the estimate replaced with real data?</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">The next version connects or imports your studio data and identifies actual revenue leakage rather than relying on assumptions.</p><a href="mailto:hello@getinksights.co.uk?subject=Revenue%20Audit%20V1%20follow-up" className="mt-5 inline-flex items-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Discuss the full audit <ArrowRight className="h-4 w-4" /></a></div></div>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]"><div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What to do next</p><ol className="mt-5 space-y-4">{result.recommendations.map((item, i) => <li key={item} className="flex gap-4 text-sm leading-relaxed text-muted-foreground"><span className="font-mono text-mint">0{i + 1}</span><span>{item}</span></li>)}</ol></div><div className="rounded-2xl border border-mint/20 bg-mint/5 p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Replace estimates with a structured audit</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Studio Intelligence Audit — £395</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">A paid commercial diagnosis covering visibility, competitors, the customer journey, the top three commercial opportunities, prioritised recommendations and a 90-day action plan.</p><div className="mt-5 flex flex-col gap-3"><a onClick={() => trackWebsiteEvent("cta_clicked", { cta: "growth_check_to_paid_audit", offer: "studio_intelligence_audit" })} href={`/offers/studio-intelligence-audit?lead_id=${encodeURIComponent(result.lead_id || "")}&audit_id=${encodeURIComponent(result.audit_id || "")}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">View / buy the £395 audit <ArrowRight className="h-4 w-4" /></a><a href="/contact?topic=studio-intelligence-audit" className="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">Ask a question first</a></div><p className="mt-4 text-xs leading-relaxed text-muted-foreground">Your Growth Check reference is carried into the next step where available.</p></div></div>
         <p className="mt-8 max-w-3xl text-xs leading-relaxed text-muted-foreground">{result.disclaimer}</p>
       </div></section>}
     </main>
