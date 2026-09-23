@@ -107,3 +107,7 @@ Never weaken security to make a workflow pass. Do not bypass deployment protecti
 Before calling work complete, verify the exact changed system, relevant tests/checks, security/access side effects where applicable, and the required audit/record surface. For cross-system changes, verify both sides of the interface.
 
 Stop before a risky write and escalate when authorities conflict without an existing rule, an approval gate is reached, security impact is uncertain, production/live state cannot be verified, authority would move, or verification repeatedly fails. Read-only investigation may continue when it does not increase risk.
+
+## INKSIGHTS visual-brand authority
+
+For visual-brand work, the production website at `https://getinksights.co.uk` and its production implementation are the canonical source of truth. Read `docs/brand/CURRENT.md` and `docs/brand/brand-manifest.json` before creating or modifying brand collateral. Brand guides, Figma files, PDFs, decks, templates and historical boards are derived/reference materials and must not override production when they conflict. If production appears wrong, record the suspected defect and obtain approval before changing production merely to reconcile a document.
