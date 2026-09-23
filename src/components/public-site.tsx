@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Menu, X } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ScrollProgress } from "@/components/interactive-home";
 
 const navItems = [
@@ -28,6 +28,31 @@ export function Logo({
   className?: string;
   decorative?: boolean;
 }) {
+  if (variant === "icon") {
+    return (
+      <svg
+        viewBox="0 0 300 300"
+        width="52"
+        height="52"
+        role={decorative ? undefined : "img"}
+        aria-label={decorative ? undefined : "INKSIGHTS"}
+        aria-hidden={decorative ? true : undefined}
+        className={`brand-logo brand-logo-icon brand-logo-motion-mark ${className}`}
+      >
+        <defs>
+          <linearGradient id="inksights-logo-gradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7CFFF1" />
+            <stop offset="55%" stopColor="#35E6D4" />
+            <stop offset="100%" stopColor="#0A7076" />
+          </linearGradient>
+        </defs>
+        <rect className="brand-logo-bar brand-logo-bar-one" x="32" y="170" width="58" height="94" rx="29" fill="url(#inksights-logo-gradient)" />
+        <rect className="brand-logo-bar brand-logo-bar-two" x="121" y="132" width="58" height="132" rx="29" fill="url(#inksights-logo-gradient)" />
+        <rect className="brand-logo-bar brand-logo-bar-three" x="210" y="72" width="58" height="192" rx="29" fill="url(#inksights-logo-gradient)" />
+      </svg>
+    );
+  }
+
   const asset = logoAssets[variant];
   return (
     <img
@@ -85,8 +110,84 @@ export function SectionHeading({ eyebrow, title, description }: { eyebrow?: stri
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) { return <div className={`interactive-card rounded-2xl border border-border bg-ink p-6 ${className}`}>{children}</div>; }
 export function CtaSection({ eyebrow = "Start with the diagnosis", title = "Find the constraint before buying another tool.", description = "The free Revenue Audit identifies the strongest commercial pressure and routes the studio to the most useful next step." }: { eyebrow?: string; title?: string; description?: string }) { return <section className="brand-dark relative overflow-hidden border-y border-border bg-ink"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><Logo variant="icon" decorative className="cta-logo-mark" /><div className="relative mx-auto max-w-5xl px-6 py-16 text-center md:py-24"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">{title}</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p><div className="mt-8 flex justify-center"><PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton></div></div></section>; }
 export function RevenueLeakageMap() {
-  const steps = [["01", "Search", "Can the right clients find you?"], ["02", "Enquiry", "Do they submit a useful request?"], ["03", "Booking", "Does demand become protected time?"], ["04", "Session", "Does capacity become revenue?"], ["05", "Return", "Does one client become repeat value?"]];
-  return <div className="brand-dark rounded-3xl border border-mint/25 bg-ink-deep p-5 shadow-2xl shadow-black/20 md:p-7"><div className="flex items-center justify-between gap-4 border-b border-border pb-5"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-mint">Revenue leakage map</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Where does momentum disappear?</h3></div><div className="hidden h-10 w-10 items-center justify-center rounded-xl border border-mint/30 bg-mint/10 font-mono text-xs text-mint sm:flex">MODEL</div></div><div className="mt-7 grid gap-3 md:grid-cols-5">{steps.map(([number, label, text], index) => <div key={number} className="relative rounded-2xl border border-border bg-ink p-5"><div className="font-mono text-xs text-mint">{number}</div><h4 className="mt-3 font-display text-xl font-black text-ice">{label}</h4><p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text}</p>{index < steps.length - 1 ? <span className="pointer-events-none absolute -right-2.5 top-1/2 hidden h-px w-5 bg-mint/50 md:block" aria-hidden="true" /> : null}</div>)}</div><div className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-300/5 p-4 text-sm leading-relaxed text-muted-foreground"><strong className="text-ice">INKSIGHTS principle:</strong> more traffic is not automatically the answer. Find the first material point where demand, time or value is being lost.</div></div>;
+  const steps = [
+    ["01", "Search", "Can the right clients find you?"],
+    ["02", "Enquiry", "Do they submit a useful request?"],
+    ["03", "Booking", "Does demand become protected time?"],
+    ["04", "Session", "Does capacity become revenue?"],
+    ["05", "Return", "Does one client become repeat value?"],
+  ] as const;
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    const element = mapRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setVisible(true);
+        observer.disconnect();
+      },
+      { threshold: 0.28 },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!visible || paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      setActiveStep((current) => (current + 1) % steps.length);
+    }, 1800);
+    return () => window.clearInterval(timer);
+  }, [paused, visible, steps.length]);
+
+  return (
+    <div
+      ref={mapRef}
+      className={`revenue-leakage-map brand-dark rounded-3xl border border-mint/25 bg-ink-deep p-5 shadow-2xl shadow-black/20 md:p-7 ${visible ? "is-visible" : ""}`}
+      onPointerEnter={() => setPaused(true)}
+      onPointerLeave={() => setPaused(false)}
+    >
+      <div className="flex items-center justify-between gap-4 border-b border-border pb-5">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[.16em] text-mint">Revenue leakage map</p>
+          <h3 className="mt-2 font-display text-2xl font-black text-ice">Where does momentum disappear?</h3>
+        </div>
+        <div className="hidden h-10 w-10 items-center justify-center rounded-xl border border-mint/30 bg-mint/10 font-mono text-xs text-mint sm:flex">MODEL</div>
+      </div>
+      <div className="mt-7 grid gap-3 md:grid-cols-5">
+        {steps.map(([number, label, text], index) => {
+          const active = index === activeStep;
+          const complete = index < activeStep;
+          return (
+            <button
+              key={number}
+              type="button"
+              onClick={() => setActiveStep(index)}
+              onFocus={() => setActiveStep(index)}
+              onPointerEnter={() => setActiveStep(index)}
+              className={`revenue-leakage-step relative rounded-2xl border border-border bg-ink p-5 text-left ${active ? "is-active" : ""} ${complete ? "is-complete" : ""}`}
+              aria-pressed={active}
+            >
+              <div className="font-mono text-xs text-mint">{number}</div>
+              <h4 className="mt-3 font-display text-xl font-black text-ice">{label}</h4>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text}</p>
+              {index < steps.length - 1 ? <span className="revenue-leakage-connector pointer-events-none absolute -right-2.5 top-1/2 hidden h-px w-5 bg-mint/50 md:block" aria-hidden="true" /> : null}
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-300/5 p-4 text-sm leading-relaxed text-muted-foreground">
+        <strong className="text-ice">INKSIGHTS principle:</strong> more traffic is not automatically the answer. Find the first material point where demand, time or value is being lost.
+      </div>
+    </div>
+  );
 }
 export function JsonLd({ data }: { data: Record<string, unknown> | Array<Record<string, unknown>> }) { return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />; }
 export function ArticleLayout({ children, aside }: { children: ReactNode; aside?: ReactNode }) { return <section className="bg-ink-deep"><div className={`mx-auto grid max-w-7xl gap-10 px-6 py-14 md:py-20 ${aside ? "lg:grid-cols-[minmax(0,1fr)_320px]" : "max-w-4xl"}`}><article className="article-prose min-w-0">{children}</article>{aside ? <aside className="lg:sticky lg:top-24 lg:self-start">{aside}</aside> : null}</div></section>; }
