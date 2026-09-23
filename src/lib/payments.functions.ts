@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { getPublicOffer } from "./offer-data";
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
-  .validator((data: { slug: string; email?: string }) => data)
+  .validator((data: { slug: string; email?: string; leadId?: string; auditId?: string }) => data)
   .handler(async ({ data }) => {
     const offer = getPublicOffer(data.slug);
     if (!offer || !offer.stripePriceId || !offer.stripeMode) {
@@ -38,6 +38,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       metadata: {
         offer_slug: offer.slug,
         offer_name: offer.name,
+        ...(data.leadId ? { lead_id: data.leadId } : {}),
+        ...(data.auditId ? { audit_id: data.auditId } : {}),
       },
       ...(data.email ? { customer_email: data.email } : {}),
     });
@@ -47,4 +49,30 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     }
 
     return { url: session.url };
+  });
+
+export const verifyCheckoutSession = createServerFn({ method: "POST" })
+  .validator((data: { sessionId: string }) => data)
+  .handler(async ({ data }) => {
+    const secretKey = process.env["STRIPE_SECRET_KEY"];
+    if (!secretKey) throw new Error("Stripe is not configured.");
+    if (!data.sessionId || !data.sessionId.startsWith("cs_")) throw new Error("Invalid checkout session.");
+
+    const stripe = new Stripe(secretKey, {
+      apiVersion: "2026-08-26.dahlia",
+      typescript: true,
+    });
+    const session = await stripe.checkout.sessions.retrieve(data.sessionId);
+    const paid = session.payment_status === "paid" || (session.mode === "subscription" && session.status === "complete");
+
+    return {
+      paid,
+      status: session.status,
+      paymentStatus: session.payment_status,
+      offerSlug: session.metadata?.offer_slug || null,
+      leadId: session.metadata?.lead_id || null,
+      auditId: session.metadata?.audit_id || null,
+      amountTotal: session.amount_total ?? null,
+      currency: session.currency ?? null,
+    };
   });
