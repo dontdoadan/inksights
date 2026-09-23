@@ -34,7 +34,8 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       ],
       success_url: successUrl,
       cancel_url: cancelUrl,
-      automatic_tax: { enabled: true },
+      automatic_tax: { enabled: false },
+      managed_payments: { enabled: false },
       metadata: {
         offer_slug: offer.slug,
         offer_name: offer.name,
