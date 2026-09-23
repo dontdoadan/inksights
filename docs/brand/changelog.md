@@ -10,3 +10,13 @@ Status: ACTIVE
 - Defined brand guides, Figma files, PDFs, templates and collateral as derived outputs.
 - Defined conflict rule: production wins unless production is explicitly recorded as defective.
 - Historical brand systems remain available for lineage but must not silently override CURRENT.
+
+## 2026-09-24 — Official Logo Kit v3 applied to production
+
+Status: ACTIVE
+
+- Promoted `INKSIGHTS_Full_Logo_Kit_v3.zip` as the official logo source for production use.
+- Added dedicated dark-surface, light-surface, monochrome, standard-icon and micro-icon variants under `public/brand/logo-v3/`.
+- Updated header, footer, shared page heroes, CTA brand accents, homepage light/dark applications and favicon to use the new system.
+- Recorded production baseline commit `d0f1461d814c95a13dba2220aab6bd98475ab67b`.
+- Preserved the existing colour, typography, 70/30 surface balance, interaction system and commercial functionality.

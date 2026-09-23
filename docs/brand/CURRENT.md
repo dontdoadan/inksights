@@ -5,7 +5,7 @@ Authority: production implementation
 Canonical website: https://getinksights.co.uk  
 Repository: `dontdoadan/inksights`  
 Canonical branch: `main`  
-Baseline commit when this authority was established: `068f9b1e3b1a4d277102cbc63050d4934270d507`
+Current brand baseline commit: `d0f1461d814c95a13dba2220aab6bd98475ab67b`
 
 ## Authority rule
 
@@ -20,8 +20,11 @@ This rule prevents historic brand boards, superseded PDFs or isolated design fil
 The primary machine-readable sources are:
 
 - `src/styles.css` — colour tokens, typography, dark/light surfaces, motion, gradients, interaction states and shared visual primitives.
-- `public/brand/wordmark.webp` — current production wordmark artwork.
-- `public/brand/mark.webp` — current production three-bar mark artwork.
+- `public/brand/logo-v3/primary-dark.svg` — primary horizontal lockup for dark surfaces.
+- `public/brand/logo-v3/primary-light.svg` — primary horizontal lockup for light surfaces.
+- `public/brand/logo-v3/mono-white.svg` — monochrome lockup for restricted/dark contexts.
+- `public/brand/logo-v3/icon-flat.svg` — standard three-bar icon.
+- `public/brand/logo-v3/icon-micro.svg` — micro three-bar icon for small-format use.
 - `public/favicon.svg` — current small-format mark.
 - shared components under `src/components` — applied UI patterns.
 - production routes under `src/routes` — real use of the system across public/product surfaces.
@@ -61,11 +64,14 @@ Display/headings are bold, geometric and tightly tracked. Labels use tracked upp
 
 ### Identity assets
 
-- Corporate wordmark: `/brand/wordmark.webp`
-- Canonical symbol: `/brand/mark.webp`
+- Primary dark-surface lockup: `/brand/logo-v3/primary-dark.svg`
+- Primary light-surface lockup: `/brand/logo-v3/primary-light.svg`
+- Monochrome white lockup: `/brand/logo-v3/mono-white.svg`
+- Canonical three-bar symbol: `/brand/logo-v3/icon-flat.svg`
+- Micro symbol: `/brand/logo-v3/icon-micro.svg`
 - Favicon: `/favicon.svg`
 
-The three ascending bars remain the canonical small-format symbol and should read as data / progression / growth.
+The official website logo system is derived from `INKSIGHTS_Full_Logo_Kit_v3.zip`. The three ascending bars remain the canonical small-format symbol and should read as data / progression / growth. Use the appropriate dark, light, monochrome or icon variant rather than recolouring the artwork ad hoc.
 
 ### Visual language
 
