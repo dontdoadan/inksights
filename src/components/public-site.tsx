@@ -44,7 +44,7 @@ export function SiteFooter() {
 }
 
 export function PublicShell({ children }: { children: ReactNode }) {
-  return <div className="min-h-screen overflow-x-hidden bg-ink-deep text-foreground"><ScrollProgress /><SiteHeader /><main id="main-content" className="brand-light">{children}</main><SiteFooter /></div>;
+  return <div className="min-h-screen overflow-x-hidden bg-ink-deep text-foreground"><ScrollProgress /><SiteHeader /><main id="main-content" className="brand-dark brand-balanced">{children}</main><SiteFooter /></div>;
 }
 
 export function PageHero({ eyebrow, title, description, children, compact = false }: { eyebrow: string; title: ReactNode; description: ReactNode; children?: ReactNode; compact?: boolean }) {
