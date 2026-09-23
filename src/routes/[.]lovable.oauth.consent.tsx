@@ -85,7 +85,7 @@ function Consent() {
           Connect <span className="text-mint">{clientName}</span> to your account
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          This lets {clientName} use INKSIGHT tools as you — reading your saved
+          This lets {clientName} use INKSIGHTS tools as you — reading your saved
           scenarios, running the growth-model calculators, and submitting audit
           requests on your behalf.
         </p>
@@ -98,7 +98,7 @@ function Consent() {
         </ul>
 
         <p className="mt-6 text-xs text-muted-foreground">
-          This does not bypass INKSIGHT's permissions or backend policies.
+          This does not bypass INKSIGHTS's permissions or backend policies.
         </p>
 
         {error ? <p className="mt-4 text-sm text-red-400" role="alert">{error}</p> : null}

@@ -153,7 +153,7 @@ function RevenueAuditPage() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">04 · Get the result</p>
               <div className="mt-5 rounded-2xl border border-mint/20 bg-mint/5 p-5"><div className="flex gap-3"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-mint" /><p className="text-sm leading-relaxed text-muted-foreground">Your result is generated from the figures you provide. We will clearly distinguish an estimate from verified studio data.</p></div></div>
-              <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden"><input name="website_honeypot" tabIndex={-1} autoComplete="off" /></div>
+              <div aria-hidden="true" className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden"><input name="website_honeypot" tabIndex={-1} autoComplete="off" /></div>
               <label className="mt-5 flex gap-3 text-sm text-muted-foreground"><input className="mt-1" type="checkbox" name="consent" required /><span>I agree to INKSIGHTS using these details to generate and follow up this Revenue Audit. <b className="text-mint">Required.</b></span></label>
               <label className="mt-3 flex gap-3 text-sm text-muted-foreground"><input className="mt-1" type="checkbox" name="marketing_consent" /><span>Send me occasional INKSIGHTS growth insights.</span></label>
               <button disabled={loading} className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep transition hover:bg-mint-soft disabled:cursor-wait disabled:opacity-60" type="submit">{loading ? "Calculating…" : "Generate My Revenue Audit"} <ArrowRight className="h-4 w-4" /></button>

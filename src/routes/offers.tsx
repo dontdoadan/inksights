@@ -1,22 +1,27 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { CtaSection, JsonLd, PageHero, PrimaryButton, PublicShell, SectionHeading } from "@/components/public-site";
 import { publicOffers } from "@/lib/offer-data";
 
-const CANONICAL_URL = "https://getinksight.co.uk/offers";
+const CANONICAL_URL = "https://getinksights.co.uk/offers";
 
 export const Route = createFileRoute("/offers")({
-  component: OffersPage,
+  component: OffersRoute,
   head: () => ({
     meta: [
-      { title: "Tattoo Studio Growth Services | INKSIGHT" },
-      { name: "description", content: "Compare INKSIGHT visibility, revenue, booking and retention solutions for UK tattoo studios." },
-      { property: "og:title", content: "Tattoo Studio Growth Services | INKSIGHT" },
+      { title: "Tattoo Studio Growth Services | INKSIGHTS" },
+      { name: "description", content: "Compare INKSIGHTS visibility, revenue, booking and retention solutions for UK tattoo studios." },
+      { property: "og:title", content: "Tattoo Studio Growth Services | INKSIGHTS" },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
   }),
 });
+
+function OffersRoute() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  return pathname.replace(/\/$/, "") === "/offers" ? <OffersPage /> : <Outlet />;
+}
 
 function OffersPage() {
   return (
@@ -24,14 +29,14 @@ function OffersPage() {
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "CollectionPage",
-        name: "INKSIGHT tattoo studio growth solutions",
+        name: "INKSIGHTS tattoo studio growth solutions",
         url: CANONICAL_URL,
         hasPart: publicOffers.map((offer) => ({ "@type": "Service", name: offer.name, url: `${CANONICAL_URL}/${offer.slug}` })),
       }} />
       <PageHero
         eyebrow="Solutions by constraint"
         title={<>Do not buy a larger service than the studio needs.</>}
-        description={<>INKSIGHT begins with diagnosis, then uses the smallest practical intervention that can remove the current visibility, booking, retention or control problem.</>}
+        description={<>INKSIGHTS begins with diagnosis, then uses the smallest practical intervention that can remove the current visibility, booking, retention or control problem.</>}
       >
         <PrimaryButton href="/studio-growth-check">Diagnose the studio first</PrimaryButton>
       </PageHero>

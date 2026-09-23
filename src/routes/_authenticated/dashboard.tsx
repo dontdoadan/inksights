@@ -1,3 +1,4 @@
+import { Logo } from "@/components/public-site";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,7 +30,7 @@ type Profile = {
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
-  head: () => ({ meta: [{ title: "Studio Dashboard — INKSIGHT" }] }),
+  head: () => ({ meta: [{ title: "Studio Dashboard — INKSIGHTS" }] }),
 });
 
 const gbp = (n: number) =>
@@ -88,14 +89,7 @@ function Dashboard() {
     <div className="min-h-screen bg-ink-deep text-foreground font-sans">
       <header className="sticky top-0 z-40 backdrop-blur-md bg-ink-deep/70 border-b border-border/40">
         <div className="mx-auto max-w-6xl px-6 py-5 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-md bg-mint flex items-center justify-center">
-              <div className="h-3 w-3 rounded-full bg-ink-deep" />
-            </div>
-            <span className="text-xl font-extrabold tracking-tight">
-              INK<span className="text-mint">SIGHT</span>
-            </span>
-          </Link>
+          <Link to="/" className="flex items-center gap-2.5"><Logo /></Link>
           <div className="flex items-center gap-4 text-sm">
             <Link to="/growth-model" className="text-muted-foreground hover:text-mint">Growth Model</Link>
             <span className="text-muted-foreground hidden md:inline">{email}</span>

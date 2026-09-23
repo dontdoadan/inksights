@@ -19,14 +19,14 @@ import {
   SectionHeading,
 } from "@/components/public-site";
 
-const CANONICAL_URL = "https://getinksight.co.uk/support";
+const CANONICAL_URL = "https://getinksights.co.uk/support";
 const SUPPORT_EMAIL = "dontdoadan@icloud.com";
 
 const faq = [
   {
-    question: "How do I contact INKSIGHT support?",
+    question: "How do I contact INKSIGHTS support?",
     answer:
-      "Use the secure contact form at getinksight.co.uk/contact or email dontdoadan@icloud.com. Include your studio name, the service involved and enough detail for INKSIGHT to identify the issue. Do not send passwords, full card details, private API keys or verification codes.",
+      "Use the secure contact form at getinksights.co.uk/contact or email dontdoadan@icloud.com. Include your studio name, the service involved and enough detail for INKSIGHTS to identify the issue. Do not send passwords, full card details, private API keys or verification codes.",
   },
   {
     question: "When does the 72-Hour Studio Visibility Fix delivery period begin?",
@@ -41,17 +41,17 @@ const faq = [
   {
     question: "Can I request a refund?",
     answer:
-      "If INKSIGHT cannot accept or commence a fixed-scope engagement, payment should be returned. Once client-specific work has begun, any refund is limited to undelivered work unless the written scope states otherwise or a legal right applies. Monthly subscriptions do not promise a partial-period refund except where a legal right applies or INKSIGHT agrees otherwise in writing.",
+      "If INKSIGHTS cannot accept or commence a fixed-scope engagement, payment should be returned. Once client-specific work has begun, any refund is limited to undelivered work unless the written scope states otherwise or a legal right applies. Monthly subscriptions do not promise a partial-period refund except where a legal right applies or INKSIGHTS agrees otherwise in writing.",
   },
   {
     question: "Where do I send a privacy or data-rights request?",
     answer:
-      "Send the request to dontdoadan@icloud.com. The Privacy Notice explains how INKSIGHT handles access, correction, deletion, restriction, objection, portability and consent-withdrawal requests where applicable.",
+      "Send the request to dontdoadan@icloud.com. The Privacy Notice explains how INKSIGHTS handles access, correction, deletion, restriction, objection, portability and consent-withdrawal requests where applicable.",
   },
   {
-    question: "Can INKSIGHT support diagnose a medical or tattoo-healing problem?",
+    question: "Can INKSIGHTS support diagnose a medical or tattoo-healing problem?",
     answer:
-      "No. INKSIGHT website and aftercare material is educational and does not replace advice from the tattoo artist or an appropriate healthcare professional. Medical warning signs require appropriate healthcare assessment.",
+      "No. INKSIGHTS website and aftercare material is educational and does not replace advice from the tattoo artist or an appropriate healthcare professional. Medical warning signs require appropriate healthcare assessment.",
   },
 ];
 
@@ -59,13 +59,13 @@ export const Route = createFileRoute("/support")({
   component: SupportPage,
   head: () => ({
     meta: [
-      { title: "Customer Support | INKSIGHT" },
+      { title: "Customer Support | INKSIGHTS" },
       {
         name: "description",
         content:
-          "Customer support for INKSIGHT services, billing, cancellations, technical issues, privacy requests and current tattoo studio offers.",
+          "Customer support for INKSIGHTS services, billing, cancellations, technical issues, privacy requests and current tattoo studio offers.",
       },
-      { property: "og:title", content: "Customer Support | INKSIGHT" },
+      { property: "og:title", content: "Customer Support | INKSIGHTS" },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
@@ -92,7 +92,7 @@ function SupportPage() {
         title={<>Get the right issue to the right place.</>}
         description={
           <>
-            Support for existing INKSIGHT clients, billing and cancellations, website problems, privacy requests and questions about current service delivery. For a new studio recommendation, use the free Growth Check instead.
+            Support for existing INKSIGHTS clients, billing and cancellations, website problems, privacy requests and questions about current service delivery. For a new studio recommendation, use the free Growth Check instead.
           </>
         }
       >
@@ -152,7 +152,7 @@ function SupportPage() {
         <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
           <SectionHeading
             eyebrow="Current service terms"
-            title="Support rules for active INKSIGHT offers."
+            title="Support rules for active INKSIGHTS offers."
             description="These summaries mirror the current website and service terms. A later signed service order or written scope takes priority where it contains client-specific terms."
           />
 
@@ -209,10 +209,10 @@ function SupportPage() {
             <SectionHeading eyebrow="Cancellations and refunds" title="What the current policy says." />
             <div className="mt-7 space-y-4 text-sm leading-relaxed text-muted-foreground">
               <p>
-                If INKSIGHT cannot accept or commence a fixed-scope engagement, payment should be returned. Once client-specific work has begun, any refund is limited to undelivered work unless the written scope states otherwise or a legal right applies.
+                If INKSIGHTS cannot accept or commence a fixed-scope engagement, payment should be returned. Once client-specific work has begun, any refund is limited to undelivered work unless the written scope states otherwise or a legal right applies.
               </p>
               <p>
-                Monthly subscriptions do not promise a partial-period refund except where a legal right applies or INKSIGHT agrees otherwise in writing. Minimum-term implementation or management packages follow the signed service order for early termination, completed work and any remaining commitment.
+                Monthly subscriptions do not promise a partial-period refund except where a legal right applies or INKSIGHTS agrees otherwise in writing. Minimum-term implementation or management packages follow the signed service order for early termination, completed work and any remaining commitment.
               </p>
               <p>
                 Nothing in the service terms limits a right that cannot lawfully be excluded.
@@ -224,8 +224,8 @@ function SupportPage() {
           <div className="rounded-3xl border border-amber-300/30 bg-amber-300/10 p-7 md:p-9">
             <AlertTriangle className="h-8 w-8 text-amber-200" />
             <h2 className="mt-5 font-display text-2xl font-black text-ice">Keep sensitive information out of support messages.</h2>
-            <p className="mt-4 text-sm leading-relaxed text-amber-100/85">
-              Never send your password, a full payment-card number, card security code, private API key, one-time verification code or another person&apos;s confidential information. INKSIGHT can investigate normal billing and technical issues using references, screenshots and account-identifying information without those secrets.
+            <p className="mt-4 text-sm leading-relaxed text-amber-300">
+              Never send your password, a full payment-card number, card security code, private API key, one-time verification code or another person&apos;s confidential information. INKSIGHTS can investigate normal billing and technical issues using references, screenshots and account-identifying information without those secrets.
             </p>
           </div>
         </div>

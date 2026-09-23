@@ -121,7 +121,7 @@ function SolutionsPage() {
               ["04", "Verify", "Measure the change before recommending a larger system."],
             ].map(([number, title, text]) => (
               <div key={number} className="rounded-2xl border border-border bg-ink-deep p-6">
-                <div className="font-display text-4xl font-black text-mint/35">{number}</div>
+                <div className="font-display text-4xl font-black text-mint">{number}</div>
                 <h2 className="mt-5 font-display text-xl font-black text-ice">{title}</h2>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p>
               </div>

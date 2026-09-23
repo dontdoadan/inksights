@@ -1,3 +1,4 @@
+import { Logo } from "@/components/public-site";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
   Activity,
@@ -303,14 +304,7 @@ function Workspace() {
       <header className="sticky top-0 z-50 border-b border-border/50 bg-ink-deep/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-6 px-5 py-4 md:px-8">
           <div className="flex min-w-0 items-center gap-4">
-            <Link to="/" className="flex shrink-0 items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-mint">
-                <CircleDot className="h-4 w-4 text-ink-deep" />
-              </div>
-              <span className="font-display text-lg font-black tracking-tight text-ice">
-                INK<span className="text-mint">SIGHTS</span>
-              </span>
-            </Link>
+            <Link to="/" className="flex shrink-0 items-center gap-2.5"><Logo /></Link>
             <div className="hidden h-6 w-px bg-border md:block" />
             <span className="hidden truncate text-sm font-semibold text-muted-foreground md:block">
               Workspace / {workspaceCase.studio.studio_name}
