@@ -148,9 +148,13 @@ The legacy `rls_auto_enable()` database helper remains restricted to `postgres` 
 
 ## Current backend state
 
-The canonical Supabase project is healthy. The current public application schema is intentionally small and currently contains `public.enquiries`; this is not yet the final INKSIGHTS studio-intelligence schema.
+The canonical Supabase project is healthy and now contains the studio-intelligence, audit, integration, website-conversion and operating-system registries required by the current product architecture. The live database migration ledger is production evidence; the checked-in `supabase/migrations/` history must remain reconciled with it.
 
-Do not hard-code production studio records into frontend components. The Studio Map and future intelligence platform should consume canonical data from Supabase.
+Founder operating state uses the service-role-only `ops_*` layer. Studio/customer intelligence remains in its domain-specific schemas and tables; the founder interface must project canonical state rather than duplicate it.
+
+See `docs/founder-operating-system.md` for the operating model, source-of-truth boundaries, command workflows and governance rules.
+
+Do not hard-code production studio records into frontend components. Application surfaces should consume canonical data from Supabase.
 
 ## Architecture decisions
 
