@@ -106,25 +106,34 @@ Deno.serve(async (req: Request) => {
     if (!contact?.id) return response({ error: "The request could not be stored." }, 500, origin);
 
     // Operational event: no message body, name, email or phone is copied into telemetry.
-    await rest("integration_events", {
-      method: "POST",
-      headers: { Prefer: "return=minimal" },
-      body: JSON.stringify({
-        event_type: "contact_submitted",
-        occurred_at: new Date().toISOString(),
-        source_system: "website",
-        source_event_id: contact.id,
-        idempotency_key: `website_contact:${contact.id}`,
-        correlation_id: contact.id,
-        contact_ref: contact.id,
-        processing_status: "received",
-        payload: {
-          topic,
-          page_path: metadata.page_path,
-          source: "website_contact",
-        },
-      }),
-    });
+    // This event must never make a successfully persisted enquiry look failed to the visitor.
+    try {
+      await rest("integration_events", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          event_type: "lead.created",
+          occurred_at: new Date().toISOString(),
+          source_system: "website",
+          source_event_id: contact.id,
+          idempotency_key: `website_contact:${contact.id}`,
+          correlation_id: contact.id,
+          contact_ref: contact.id,
+          processing_status: "received",
+          payload: {
+            event_kind: "contact_submitted",
+            topic,
+            page_path: metadata.page_path,
+            source: "website_contact",
+          },
+        }),
+      });
+    } catch (eventError) {
+      console.error(
+        "Operational event persistence failed",
+        eventError instanceof Error ? eventError.message : String(eventError),
+      );
+    }
 
     return response({
       ok: true,
