@@ -957,3 +957,241 @@ h3 { line-height: 1.25; }
 @media (hover: none), (pointer: coarse) {
   .site-pointer-glow { display: none; }
 }
+
+
+/* UI motion preview — 2026-09-24.
+   Preview branch only. No production merge without explicit approval. */
+
+.site-header,
+.site-header > div:first-child,
+.site-header .brand-logo-primary-dark {
+  transition:
+    padding 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 260ms ease,
+    box-shadow 260ms ease;
+}
+.site-header.is-compact {
+  background-color: color-mix(in oklab, var(--ink-deep) 94%, transparent);
+  box-shadow: 0 18px 55px -34px rgba(0, 0, 0, 0.98);
+}
+.site-header.is-compact > div:first-child {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+.site-header.is-compact .brand-logo-primary-dark {
+  width: 188px;
+}
+
+/* Official three-bar activation. */
+.brand-logo-motion-mark {
+  overflow: visible;
+  filter: drop-shadow(0 0 16px color-mix(in oklab, #35E6D4 16%, transparent));
+}
+.brand-logo-motion-mark .brand-logo-bar {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: brand-logo-bar-activate 780ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.brand-logo-motion-mark .brand-logo-bar-one { animation-delay: 80ms; }
+.brand-logo-motion-mark .brand-logo-bar-two { animation-delay: 170ms; }
+.brand-logo-motion-mark .brand-logo-bar-three { animation-delay: 260ms; }
+
+@keyframes brand-logo-bar-activate {
+  0% { opacity: 0; transform: scaleY(0.18) translateY(14px); filter: brightness(1.45); }
+  62% { opacity: 1; transform: scaleY(1.045) translateY(-2px); filter: brightness(1.18); }
+  100% { opacity: 1; transform: scaleY(1) translateY(0); filter: brightness(1); }
+}
+
+/* Contextual cursor illumination. */
+.pointer-over-interactive .site-pointer-glow {
+  opacity: 0.94;
+  filter: saturate(1.18) brightness(1.05);
+}
+
+/* Magnetic call-to-action motion composes with existing hover transforms. */
+.shine-button,
+.outline-button {
+  --magnet-x: 0px;
+  --magnet-y: 0px;
+  translate: var(--magnet-x) var(--magnet-y);
+  transition:
+    translate 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    background-color 220ms ease;
+}
+
+/* Pointer-position spotlight for analytical surfaces. */
+.interactive-card.is-spotlight-active::before {
+  opacity: 1;
+  background:
+    radial-gradient(
+      280px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+      color-mix(in oklab, var(--mint) 16%, transparent),
+      transparent 64%
+    ),
+    linear-gradient(135deg, color-mix(in oklab, var(--mint) 7%, transparent), transparent 44%);
+}
+.journey-focus-card {
+  position: relative;
+}
+.journey-focus-card::after,
+.revenue-leakage-step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    300px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    color-mix(in oklab, var(--mint) 14%, transparent),
+    transparent 65%
+  );
+  transition: opacity 180ms ease;
+}
+.journey-focus-card.is-spotlight-active::after,
+.revenue-leakage-step.is-spotlight-active::before {
+  opacity: 1;
+}
+
+/* Revenue leakage model becomes an interactive diagnostic sequence. */
+.revenue-leakage-map {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.revenue-leakage-map::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -15%;
+  right: -15%;
+  top: 0;
+  height: 34%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--mint) 5%, transparent),
+    transparent
+  );
+}
+.revenue-leakage-map.is-visible::after {
+  animation: leakage-scan 5.8s ease-in-out 700ms infinite;
+}
+.revenue-leakage-step {
+  appearance: none;
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(12px) scale(0.985);
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 260ms ease,
+    background-color 260ms ease,
+    box-shadow 260ms ease,
+    opacity 260ms ease;
+}
+.revenue-leakage-map.is-visible .revenue-leakage-step {
+  animation: leakage-step-enter 580ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.revenue-leakage-map.is-visible .revenue-leakage-step:nth-child(2) { animation-delay: 90ms; }
+.revenue-leakage-map.is-visible .revenue-leakage-step:nth-child(3) { animation-delay: 180ms; }
+.revenue-leakage-map.is-visible .revenue-leakage-step:nth-child(4) { animation-delay: 270ms; }
+.revenue-leakage-map.is-visible .revenue-leakage-step:nth-child(5) { animation-delay: 360ms; }
+.revenue-leakage-step:hover,
+.revenue-leakage-step:focus-visible,
+.revenue-leakage-step.is-active {
+  transform: translateY(-4px);
+  border-color: color-mix(in oklab, var(--mint) 58%, var(--border));
+  background: color-mix(in oklab, var(--mint) 5%, var(--ink));
+  box-shadow: 0 22px 55px -36px color-mix(in oklab, var(--mint) 58%, black);
+}
+.revenue-leakage-step.is-complete:not(.is-active) {
+  border-color: color-mix(in oklab, var(--mint) 28%, var(--border));
+}
+.revenue-leakage-step.is-active .revenue-leakage-connector {
+  transform-origin: left;
+  animation: leakage-connector-pulse 900ms ease-in-out infinite alternate;
+}
+
+@keyframes leakage-step-enter {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes leakage-connector-pulse {
+  from { opacity: 0.35; transform: scaleX(0.55); box-shadow: 0 0 0 transparent; }
+  to { opacity: 1; transform: scaleX(1); box-shadow: 0 0 10px color-mix(in oklab, var(--mint) 55%, transparent); }
+}
+@keyframes leakage-scan {
+  0%, 18% { opacity: 0; transform: translateY(-130%); }
+  34% { opacity: 0.42; }
+  72% { opacity: 0.18; }
+  100% { opacity: 0; transform: translateY(390%); }
+}
+
+/* Progressive depth on brand marks as the page moves. */
+.page-hero-logo-mark,
+.brand-light-logo-watermark,
+.brand-light-icon-watermark,
+.cta-logo-mark {
+  translate: 0 var(--site-scroll-shift, 0px);
+  transition: translate 90ms linear;
+}
+
+/* Slightly richer section reveal; document flow remains unchanged. */
+.motion-reveal {
+  filter: blur(5px);
+  transform: translateY(22px) scale(0.994);
+  transition:
+    opacity 640ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 640ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 640ms ease;
+}
+.motion-reveal.is-visible {
+  filter: blur(0);
+  transform: translateY(0) scale(1);
+}
+.brand-light.motion-reveal {
+  box-shadow: inset 0 48px 80px -86px color-mix(in oklab, #0A0F14 28%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo-motion-mark .brand-logo-bar,
+  .revenue-leakage-map.is-visible .revenue-leakage-step,
+  .revenue-leakage-map.is-visible::after,
+  .revenue-leakage-step.is-active .revenue-leakage-connector {
+    animation: none !important;
+  }
+  .brand-logo-motion-mark .brand-logo-bar,
+  .revenue-leakage-step {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .shine-button,
+  .outline-button,
+  .page-hero-logo-mark,
+  .brand-light-logo-watermark,
+  .brand-light-icon-watermark,
+  .cta-logo-mark {
+    translate: none !important;
+  }
+  .site-header > div:first-child,
+  .site-header .brand-logo-primary-dark {
+    transition: none !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .shine-button,
+  .outline-button {
+    translate: none !important;
+  }
+  .revenue-leakage-step:hover {
+    transform: none;
+  }
+}
