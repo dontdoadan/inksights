@@ -135,7 +135,7 @@ Deno.serve(async (req: Request) => {
       method: "POST",
       headers: { ...dbHeaders, Prefer: "return=minimal" },
       body: JSON.stringify({
-        event_type: "diagnostic_completed",
+        event_type: "lead.updated",
         occurred_at: new Date().toISOString(),
         source_system: "website",
         source_event_id: auditId || leadId,
@@ -144,6 +144,7 @@ Deno.serve(async (req: Request) => {
         contact_ref: leadId,
         processing_status: "received",
         payload: {
+          event_kind: "diagnostic_completed",
           audit_version: "v1",
           primary_opportunity: primary.key,
           source_context: sourceContext,
