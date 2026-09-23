@@ -10,8 +10,36 @@ const navItems = [
   ["/about", "About"]
 ] as const;
 
-export function Logo() {
-  return <img src="/brand/wordmark.webp" width="210" height="46" alt="INKSIGHTS" className="brand-wordmark" decoding="async" />;
+type LogoVariant = "primary-dark" | "primary-light" | "mono-white" | "icon";
+
+const logoAssets: Record<LogoVariant, { src: string; width: number; height: number }> = {
+  "primary-dark": { src: "/brand/logo-v3/primary-dark.svg", width: 210, height: 40 },
+  "primary-light": { src: "/brand/logo-v3/primary-light.svg", width: 210, height: 40 },
+  "mono-white": { src: "/brand/logo-v3/mono-white.svg", width: 210, height: 40 },
+  icon: { src: "/brand/logo-v3/icon-flat.svg", width: 52, height: 52 },
+};
+
+export function Logo({
+  variant = "primary-dark",
+  className = "",
+  decorative = false,
+}: {
+  variant?: LogoVariant;
+  className?: string;
+  decorative?: boolean;
+}) {
+  const asset = logoAssets[variant];
+  return (
+    <img
+      src={asset.src}
+      width={asset.width}
+      height={asset.height}
+      alt={decorative ? "" : "INKSIGHTS"}
+      aria-hidden={decorative ? "true" : undefined}
+      className={`brand-logo brand-logo-${variant} ${className}`}
+      decoding="async"
+    />
+  );
 }
 
 export function SiteHeader() {
@@ -21,7 +49,7 @@ export function SiteHeader() {
       <a href="#main-content" className="sr-only z-[100] rounded-md bg-mint px-4 py-2 font-bold text-ink-deep focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
       <header className="site-header sticky top-0 z-50 border-b border-border/50 bg-ink-deep/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-6">
-          <Link to="/" aria-label="INKSIGHTS home"><Logo /></Link>
+          <Link to="/" aria-label="INKSIGHTS home"><Logo variant="primary-dark" /></Link>
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground lg:flex" aria-label="Primary navigation">
             {navItems.map(([href, label]) => <a key={href} href={href} className="nav-link transition hover:text-mint">{label}</a>)}
             <a href="/studio-growth-check" className="shine-button rounded-full bg-mint px-5 py-2.5 font-bold text-ink-deep transition hover:bg-mint-soft">Free Revenue Audit</a>
@@ -40,7 +68,7 @@ export function SiteFooter() {
     { title: "Studio tools", links: [["/studio-growth-check", "Free Revenue Audit"], ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard"], ["/tattoo-studio-software", "Software comparison"], ["/growth-model", "Revenue Growth Model"]] },
     { title: "Company", links: [["/about", "About INKSIGHTS"], ["/case-studies", "Proof library"], ["/support", "Customer support"], ["/contact", "Contact"], ["/privacy", "Privacy"], ["/cookies", "Cookies"], ["/terms", "Terms"], ["/accessibility", "Accessibility"]] }
   ];
-  return <footer className="border-t border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-14"><div className="grid gap-10 lg:grid-cols-[1.25fr_2fr]"><div><Logo /><p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">Growth intelligence, diagnostics and commercial systems designed specifically for UK tattoo studios.</p><a href="/contact" className="mt-5 inline-block text-sm font-semibold text-mint hover:text-mint-soft">Contact INKSIGHTS →</a></div><div className="grid gap-8 sm:grid-cols-3">{groups.map((group) => <div key={group.title}><h2 className="text-xs font-bold uppercase tracking-[0.16em] text-ice">{group.title}</h2><ul className="mt-4 space-y-3 text-sm text-muted-foreground">{group.links.map(([href, label]) => <li key={href}><a href={href} className="transition hover:text-mint">{label}</a></li>)}</ul></div>)}</div></div><div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} INKSIGHTS. All rights reserved.</p><button type="button" onClick={() => window.dispatchEvent(new Event("inksight:open-consent"))} className="text-left transition hover:text-mint">Change cookie preferences</button></div></div></footer>;
+  return <footer className="border-t border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-14"><div className="grid gap-10 lg:grid-cols-[1.25fr_2fr]"><div><Logo variant="mono-white" /><p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">Growth intelligence, diagnostics and commercial systems designed specifically for UK tattoo studios.</p><a href="/contact" className="mt-5 inline-block text-sm font-semibold text-mint hover:text-mint-soft">Contact INKSIGHTS →</a></div><div className="grid gap-8 sm:grid-cols-3">{groups.map((group) => <div key={group.title}><h2 className="text-xs font-bold uppercase tracking-[0.16em] text-ice">{group.title}</h2><ul className="mt-4 space-y-3 text-sm text-muted-foreground">{group.links.map(([href, label]) => <li key={href}><a href={href} className="transition hover:text-mint">{label}</a></li>)}</ul></div>)}</div></div><div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} INKSIGHTS. All rights reserved.</p><button type="button" onClick={() => window.dispatchEvent(new Event("inksight:open-consent"))} className="text-left transition hover:text-mint">Change cookie preferences</button></div></div></footer>;
 }
 
 export function PublicShell({ children }: { children: ReactNode }) {
@@ -48,14 +76,14 @@ export function PublicShell({ children }: { children: ReactNode }) {
 }
 
 export function PageHero({ eyebrow, title, description, children, compact = false }: { eyebrow: string; title: ReactNode; description: ReactNode; children?: ReactNode; compact?: boolean }) {
-  return <section className="brand-editorial-hero hero-ambient relative overflow-hidden border-b border-border grid-bg"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><div className="ambient-orb ambient-orb-two" aria-hidden="true" /><div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-ink-deep/55 to-ink-deep" /><div className={`relative mx-auto max-w-7xl px-6 ${compact ? "py-16 md:py-20" : "py-20 md:py-28"}`}><p className="text-xs font-bold uppercase tracking-[0.2em] text-mint">{eyebrow}</p><h1 className="mt-5 max-w-5xl text-balance font-display text-4xl font-black leading-[1.02] tracking-tight text-ice sm:text-5xl md:text-7xl">{title}</h1><div className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground md:text-xl">{description}</div>{children ? <div className="mt-9 flex flex-wrap gap-3">{children}</div> : null}</div></section>;
+  return <section className="brand-editorial-hero hero-ambient relative overflow-hidden border-b border-border grid-bg"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><div className="ambient-orb ambient-orb-two" aria-hidden="true" /><Logo variant="icon" decorative className="page-hero-logo-mark" /><div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-ink-deep/55 to-ink-deep" /><div className={`relative mx-auto max-w-7xl px-6 ${compact ? "py-16 md:py-20" : "py-20 md:py-28"}`}><p className="text-xs font-bold uppercase tracking-[0.2em] text-mint">{eyebrow}</p><h1 className="mt-5 max-w-5xl text-balance font-display text-4xl font-black leading-[1.02] tracking-tight text-ice sm:text-5xl md:text-7xl">{title}</h1><div className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground md:text-xl">{description}</div>{children ? <div className="mt-9 flex flex-wrap gap-3">{children}</div> : null}</div></section>;
 }
 
 export function PrimaryButton({ href, children }: { href: string; children: ReactNode }) { return <a href={href} className="shine-button group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep transition hover:bg-mint-soft">{children}<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></a>; }
 export function SecondaryButton({ href, children }: { href: string; children: ReactNode }) { return <a href={href} className="outline-button inline-flex min-h-12 items-center justify-center rounded-full border border-border px-6 py-3 font-bold text-ice transition hover:border-mint hover:text-mint">{children}</a>; }
 export function SectionHeading({ eyebrow, title, description }: { eyebrow?: string; title: ReactNode; description?: ReactNode }) { return <div className="max-w-3xl">{eyebrow ? <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p> : null}<h2 className="mt-3 text-balance font-display text-3xl font-black tracking-tight text-ice md:text-5xl">{title}</h2>{description ? <div className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">{description}</div> : null}</div>; }
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) { return <div className={`interactive-card rounded-2xl border border-border bg-ink p-6 ${className}`}>{children}</div>; }
-export function CtaSection({ eyebrow = "Start with the diagnosis", title = "Find the constraint before buying another tool.", description = "The free Revenue Audit identifies the strongest commercial pressure and routes the studio to the most useful next step." }: { eyebrow?: string; title?: string; description?: string }) { return <section className="brand-dark relative overflow-hidden border-y border-border bg-ink"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><div className="relative mx-auto max-w-5xl px-6 py-16 text-center md:py-24"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">{title}</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p><div className="mt-8 flex justify-center"><PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton></div></div></section>; }
+export function CtaSection({ eyebrow = "Start with the diagnosis", title = "Find the constraint before buying another tool.", description = "The free Revenue Audit identifies the strongest commercial pressure and routes the studio to the most useful next step." }: { eyebrow?: string; title?: string; description?: string }) { return <section className="brand-dark relative overflow-hidden border-y border-border bg-ink"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><Logo variant="icon" decorative className="cta-logo-mark" /><div className="relative mx-auto max-w-5xl px-6 py-16 text-center md:py-24"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">{title}</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p><div className="mt-8 flex justify-center"><PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton></div></div></section>; }
 export function RevenueLeakageMap() {
   const steps = [["01", "Search", "Can the right clients find you?"], ["02", "Enquiry", "Do they submit a useful request?"], ["03", "Booking", "Does demand become protected time?"], ["04", "Session", "Does capacity become revenue?"], ["05", "Return", "Does one client become repeat value?"]];
   return <div className="brand-dark rounded-3xl border border-mint/25 bg-ink-deep p-5 shadow-2xl shadow-black/20 md:p-7"><div className="flex items-center justify-between gap-4 border-b border-border pb-5"><div><p className="text-xs font-bold uppercase tracking-[.16em] text-mint">Revenue leakage map</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Where does momentum disappear?</h3></div><div className="hidden h-10 w-10 items-center justify-center rounded-xl border border-mint/30 bg-mint/10 font-mono text-xs text-mint sm:flex">MODEL</div></div><div className="mt-7 grid gap-3 md:grid-cols-5">{steps.map(([number, label, text], index) => <div key={number} className="relative rounded-2xl border border-border bg-ink p-5"><div className="font-mono text-xs text-mint">{number}</div><h4 className="mt-3 font-display text-xl font-black text-ice">{label}</h4><p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text}</p>{index < steps.length - 1 ? <span className="pointer-events-none absolute -right-2.5 top-1/2 hidden h-px w-5 bg-mint/50 md:block" aria-hidden="true" /> : null}</div>)}</div><div className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-300/5 p-4 text-sm leading-relaxed text-muted-foreground"><strong className="text-ice">INKSIGHTS principle:</strong> more traffic is not automatically the answer. Find the first material point where demand, time or value is being lost.</div></div>;
