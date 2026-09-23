@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, Database, Gauge, Search, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
 import { Reveal, TiltCard } from "@/components/interactive-home";
-import { Card, JsonLd, PrimaryButton, PublicShell, RevenueLeakageMap, SecondaryButton } from "@/components/public-site";
+import { Card, JsonLd, Logo, PrimaryButton, PublicShell, RevenueLeakageMap, SecondaryButton } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/";
 
@@ -71,7 +71,7 @@ function Index() {
 
             <Reveal delay={120}>
               <div className="brand-signal relative rounded-3xl border border-mint/25 bg-ink/80 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
-                <div className="brand-signature"><img src="/brand/mark.webp" width="94" height="100" alt="" /><p>Clearer data.<br />Smarter decisions.<br />Stronger studios.</p></div>
+                <div className="brand-signature"><Logo variant="icon" decorative className="brand-signature-mark" /><p>Clearer data.<br />Smarter decisions.<br />Stronger studios.</p></div>
                 <div className="flex items-center justify-between border-b border-border pb-5">
                   <div><p className="text-xs font-bold uppercase tracking-[.15em] text-mint">Studio intelligence</p><h2 className="mt-2 font-display text-2xl font-black text-ice">From signal to decision</h2></div>
                   <span className="evidence-badge">OUR APPROACH</span>
@@ -106,8 +106,9 @@ function Index() {
       </section>
 
 
-      <section className="brand-light border-b border-border bg-ink">
-        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+      <section className="brand-light brand-light-logo-surface relative overflow-hidden border-b border-border bg-ink">
+        <Logo variant="primary-light" decorative className="brand-light-logo-watermark" />
+        <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
             <Reveal><div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">The dataset</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-5xl">Built around the economics of real tattoo studios.</h2><p className="mt-5 text-lg leading-relaxed text-muted-foreground">INKSIGHTS is building a proprietary dataset covering the conditions that influence studio performance: local search visibility, enquiries, booking conversion, artist capacity, cancellations, no-shows, average booking value, repeat clients and competitive signals.</p></div></Reveal>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -117,8 +118,9 @@ function Index() {
         </div>
       </section>
 
-      <section className="brand-light border-b border-border bg-ink-deep">
-        <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
+      <section className="brand-light relative overflow-hidden border-b border-border bg-ink-deep">
+        <Logo variant="icon" decorative className="brand-light-icon-watermark" />
+        <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-20">
           <div className="rounded-3xl border border-mint/20 bg-ink p-8 md:p-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
               <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Free studio tool</p><h2 className="mt-3 max-w-3xl font-display text-3xl font-black text-ice md:text-4xl">Benchmark your pricing — without sending your data to a third party.</h2><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">Use the native INKSIGHTS Pricing Benchmark to compare current rates with reference bands and interpret them alongside booking lead time.</p></div>
