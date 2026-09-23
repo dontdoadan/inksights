@@ -38,6 +38,7 @@ function TermsPage() {
       <p>Clients must provide accurate information, lawful access and timely approvals. Delays, withheld access, changed requirements or incomplete information may pause delivery, change delivery dates or require a revised scope and price.</p>
 
       <h2>Current fixed-price and subscription terms</h2>
+      <p><strong>INKSIGHTS Studio Intelligence Audit:</strong> £395 one-off, paid before the audit begins. Onboarding starts after successful payment and the audit timetable is confirmed once the required studio information is complete.</p>
       <p><strong>INKSIGHTS 72-Hour Studio Visibility Fix:</strong> £249 one-off, paid before work begins. The three-working-day delivery period begins only after payment, complete intake, required access and a named approver are in place.</p>
       <p><strong>Tattoo Studio Visibility Watch:</strong> £99 per month, billed monthly in advance until cancelled. Cancellation must be completed before the next renewal to avoid the next charge. Service continues until the end of the paid billing period.</p>
       <p><strong>INKSIGHTS Founding Studio Pilot:</strong> application-only. The standard minimum package is £1,500 installation plus £750 per month for a minimum three-month management term, totalling £3,750. The signed service order governs scope, access, delivery, early termination and any remaining commitment.</p>
@@ -83,7 +84,7 @@ function TermsPage() {
       <p>These website terms are governed by the laws of England and Wales, subject to any mandatory consumer or local rights that apply.</p>
 
       <h2>Contact</h2>
-      <p>Questions can be sent to <a href="mailto:contact@getinksight.co.uk">contact@getinksight.co.uk</a>.</p>
+      <p>Questions can be submitted through the <a href="/contact">secure INKSIGHTS contact form</a>.</p>
     </LegalPage>
   );
 }
