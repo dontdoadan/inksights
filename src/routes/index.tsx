@@ -106,7 +106,7 @@ function Index() {
       </section>
 
 
-      <section className="border-b border-border bg-ink">
+      <section className="brand-light border-b border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
             <Reveal><div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">The dataset</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-5xl">Built around the economics of real tattoo studios.</h2><p className="mt-5 text-lg leading-relaxed text-muted-foreground">INKSIGHTS is building a proprietary dataset covering the conditions that influence studio performance: local search visibility, enquiries, booking conversion, artist capacity, cancellations, no-shows, average booking value, repeat clients and competitive signals.</p></div></Reveal>
@@ -117,7 +117,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="border-b border-border bg-ink-deep">
+      <section className="brand-light border-b border-border bg-ink-deep">
         <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
           <div className="rounded-3xl border border-mint/20 bg-ink p-8 md:p-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
