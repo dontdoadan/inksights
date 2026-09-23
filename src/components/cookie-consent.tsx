@@ -51,7 +51,7 @@ export function CookieConsent() {
         {customising ? (
           <div className="mt-5 space-y-3 border-y border-border py-5">
             <ConsentRow title="Essential" description="Required for security, saved form progress and consent preferences." checked disabled onChange={() => undefined} />
-            <ConsentRow title="Analytics" description="Reserved for privacy-conscious site measurement. No analytics provider is currently active." checked={analytics} onChange={setAnalytics} />
+            <ConsentRow title="Analytics" description="Allows privacy-conscious first-party measurement of page views and key conversion events. Form contents and personal contact details are not copied into analytics." checked={analytics} onChange={setAnalytics} />
             <ConsentRow title="Marketing" description="Allows Meta Pixel to load after consent and record page and conversion events." checked={marketing} onChange={setMarketing} />
           </div>
         ) : null}
