@@ -2,14 +2,25 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const SB = Deno.env.get("SUPABASE_URL") || "";
 
-function serviceKey() {
+function serviceKeys() {
+  const values: string[] = [];
   const raw = Deno.env.get("SUPABASE_SECRET_KEYS");
   if (raw) {
-    const keys = JSON.parse(raw) as Record<string, string>;
-    const key = keys.default ?? Object.values(keys)[0];
-    if (key) return key;
+    try {
+      const keys = JSON.parse(raw) as Record<string, string>;
+      values.push(...Object.values(keys).filter(Boolean));
+    } catch {
+      console.error("SUPABASE_SECRET_KEYS could not be parsed.");
+    }
   }
-  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || Deno.env.get("SUPABASE_SECRET_KEY") || "";
+  for (const key of [Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"), Deno.env.get("SUPABASE_SECRET_KEY")]) {
+    if (key) values.push(key);
+  }
+  return [...new Set(values)];
+}
+
+function serviceKey() {
+  return serviceKeys()[0] || "";
 }
 
 function headers(key: string, prefer = "return=representation") {
@@ -89,7 +100,10 @@ Deno.serve(async (req: Request) => {
   const key = serviceKey();
   if (!key) return new Response(JSON.stringify({ error: "Server credential unavailable" }), { status: 503, headers: { "Content-Type": "application/json" } });
   const auth = req.headers.get("authorization") || "";
-  if (auth !== `Bearer ${key}`) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+  const presented = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (!presented || !serviceKeys().includes(presented)) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { "Content-Type": "application/json" } });
+  }
 
   let body: Record<string, unknown>;
   try { body = await req.json(); } catch { return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } }); }
