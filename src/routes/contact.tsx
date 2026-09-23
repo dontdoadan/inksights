@@ -53,7 +53,7 @@ function ContactPage() {
 
     if (functionError || !data?.ok) {
       setStatus("error");
-      setError(functionError?.message || data?.error || "The message could not be recorded. Email dontdoadan@icloud.com instead.");
+      setError(functionError?.message || data?.error || "The message could not be recorded. Please try again in a moment.");
       trackWebsiteEvent("form_error", { form: "contact", reason: "submission_failed" });
       return;
     }
