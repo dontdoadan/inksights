@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1.0",
+  "brand": "INKSIGHTS",
+  "status": "ACTIVE",
+  "authority": {
+    "type": "production-website",
+    "url": "https://getinksights.co.uk",
+    "repository": "dontdoadan/inksights",
+    "branch": "main",
+    "baselineCommit": "068f9b1e3b1a4d277102cbc63050d4934270d507",
+    "precedence": [
+      "production website",
+      "production implementation source",
+      "current brand manifest",
+      "derived brand kit",
+      "reference material",
+      "superseded material"
+    ]
+  },
+  "sourceFiles": {
+    "styles": "src/styles.css",
+    "wordmark": "public/brand/wordmark.webp",
+    "mark": "public/brand/mark.webp",
+    "favicon": "public/favicon.svg",
+    "components": "src/components",
+    "routes": "src/routes"
+  },
+  "typography": {
+    "family": "Poppins",
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
+    "fallback": [
+      "system-ui",
+      "sans-serif"
+    ],
+    "usage": {
+      "display": "Poppins",
+      "body": "Poppins",
+      "labels": "Poppins tracked uppercase"
+    }
+  },
+  "color": {
+    "dark": {
+      "inkDeep": "#0A0F14",
+      "ink": "#101B23",
+      "inkElevated": "#1F2937",
+      "signalTeal": "#00E5D1",
+      "signalTealSoft": "#70F4E6",
+      "deepTeal": "#00B3A6",
+      "coolGrey": "#94A3B8",
+      "border": "#344957",
+      "light": "#F8FAFC"
+    },
+    "light": {
+      "background": "#FFFFFF",
+      "surface": "#F8FAFC",
+      "raisedNeutral": "#EAF0F2",
+      "foreground": "#0A0F14",
+      "accessibleTeal": "#00665F",
+      "accessibleTealDark": "#00554F",
+      "mutedText": "#475569",
+      "border": "#D4DEE3"
+    }
+  },
+  "surfaces": {
+    "recommendedBalance": {
+      "darkNeutral": 70,
+      "lightSpace": 20,
+      "signalColor": 10
+    },
+    "productionPattern": "dark-first with periodic editorial light sections"
+  },
+  "identity": {
+    "canonicalSymbolMeaning": [
+      "data",
+      "progression",
+      "growth"
+    ],
+    "wordmarkPath": "/brand/wordmark.webp",
+    "markPath": "/brand/mark.webp",
+    "faviconPath": "/favicon.svg"
+  },
+  "visualLanguage": [
+    "dark intelligence canvas",
+    "rounded high-radius panels",
+    "dot-grid and fine-grid accents",
+    "ambient radial teal fields",
+    "signal and radar visualisations",
+    "metric cards",
+    "journey rails and diagnostic maps",
+    "restrained glow",
+    "pointer ambient glow",
+    "hover and click feedback",
+    "scroll reveal",
+    "editorial white surfaces",
+    "reduced-motion accessibility fallback"
+  ],
+  "governance": {
+    "conflictRule": "Production wins unless production is explicitly recorded as defective.",
+    "historicalMaterial": [
+      "REFERENCE",
+      "SUPERSEDED"
+    ],
+    "derivedMaterial": [
+      "DERIVED"
+    ],
+    "currentMaterial": [
+      "CURRENT"
+    ],
+    "changeTriggers": [
+      "logo or symbol",
+      "core colours",
+      "primary typography",
+      "surface model",
+      "major reusable component language",
+      "core interaction or motion grammar"
+    ]
+  }
+}
