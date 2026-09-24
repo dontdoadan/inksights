@@ -4,8 +4,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ScrollProgress } from "@/components/interactive-home";
 
 const primaryNav = [
-  ["/solutions", "What we fix"],
-  ["/offers", "Solutions"],
+  ["/solutions", "What we diagnose"],
+  ["/offers", "Services"],
   ["/resources", "Resources"],
   ["/about", "About"],
 ] as const;
@@ -278,7 +278,7 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   const groups = [
-    { title: "Solutions", links: [["/solutions", "What we fix"], ["/offers", "All solutions"], ["/offers/72-hour-visibility-fix", "72-Hour Visibility Fix"], ["/offers/visibility-watch", "Visibility Watch"], ["/offers/booking-retention-engine", "Booking & Retention"]] },
+    { title: "Services", links: [["/solutions", "What we diagnose"], ["/offers", "All services"], ["/offers/72-hour-visibility-fix", "72-Hour Visibility Fix"], ["/offers/visibility-watch", "Visibility Watch"], ["/offers/booking-retention-engine", "Booking & Retention"]] },
     { title: "Studio tools", links: [["/studio-growth-check", "Free Revenue Audit"], ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard"], ["/tattoo-studio-software", "Software comparison"], ["/growth-model", "Revenue Growth Model"]] },
     { title: "Company", links: [["/about", "About INKSIGHTS"], ["/case-studies", "Proof library"], ["/support", "Customer support"], ["/contact", "Contact"], ["/privacy", "Privacy"], ["/cookies", "Cookies"], ["/terms", "Terms"], ["/accessibility", "Accessibility"]] }
   ];

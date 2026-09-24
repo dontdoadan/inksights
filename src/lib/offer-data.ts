@@ -96,7 +96,7 @@ export const publicOffers: PublicOffer[] = [
   },
   {
     slug: "72-hour-visibility-fix",
-    name: "INKSIGHT 72-Hour Studio Visibility Fix",
+    name: "INKSIGHTS 72-Hour Studio Visibility Fix",
     eyebrow: "Founding studio offer",
     price: "£249 one-off",
     structuredPrice: "249",
@@ -126,7 +126,7 @@ export const publicOffers: PublicOffer[] = [
     ],
     requirements: [
       "Payment in full before delivery begins",
-      "Acceptance of the INKSIGHT Terms of Service at checkout",
+      "Acceptance of the INKSIGHTS Terms of Service at checkout",
       "Current website, profile and booking links",
       "Permission to recommend or apply the agreed public changes",
       "A named decision-maker and accurate studio information",
@@ -145,7 +145,7 @@ export const publicOffers: PublicOffer[] = [
     ],
     faqs: [
       ["When does the three-day period begin?", "Only after payment, complete intake, required access and a named approver are in place."],
-      ["Does checkout require terms acceptance?", "Yes. The live Stripe checkout requires the buyer to actively accept INKSIGHT's Terms of Service before completing payment."],
+      ["Does checkout require terms acceptance?", "Yes. The live Stripe checkout requires the buyer to actively accept INKSIGHTS's Terms of Service before completing payment."],
       ["Does £249 include ad spend?", "No. The offer fixes the public conversion foundation before paid traffic is considered."],
       ["What happens afterwards?", "The studio receives a follow-up review and a recommendation to stop, maintain, or consider a larger system only where the evidence supports it."],
     ],
@@ -305,14 +305,14 @@ export const publicOffers: PublicOffer[] = [
       { title: "Measure", description: "Track clients, transaction value, frequency, response time, cancellations and return activity." },
     ],
     faqs: [
-      ["Does INKSIGHT replace the studio's booking platform?", "Not automatically. The first preference is to improve the existing stack where it can support the required workflow."],
+      ["Does INKSIGHTS replace the studio's booking platform?", "Not automatically. The first preference is to improve the existing stack where it can support the required workflow."],
       ["Can every message be automated?", "No. High-risk, emotional, unusual or clinically relevant situations need human escalation."],
       ["What will it cost?", "The price is quoted after diagnosis confirms locations, workflows, integrations, users and exception routes. Where appropriate, the Founding Studio Pilot package is used."],
     ],
   },
   {
     slug: "founding-studio-pilot",
-    name: "INKSIGHT Founding Studio Pilot",
+    name: "INKSIGHTS Founding Studio Pilot",
     eyebrow: "Application-only implementation package",
     price: "£1,500 setup + £750/month for 3 months",
     billing: "£1,500 before implementation; £750 monthly in advance; minimum three-month management term",
