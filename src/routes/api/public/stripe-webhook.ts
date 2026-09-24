@@ -8,9 +8,9 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         const secretKey = process.env["STRIPE_SECRET_KEY"];
         const webhookSecret = process.env["STRIPE_WEBHOOK_SECRET"];
 
-        if (!secretKey || !webhookSecret) {
-          console.error("Stripe environment variables are missing.");
-          return new Response("Stripe is not fully configured.", { status: 500 });
+        if (!secretKey) {
+          console.error("Stripe secret key is missing.");
+          return new Response("Stripe is not configured.", { status: 500 });
         }
 
         const stripe = new Stripe(secretKey, {
@@ -21,13 +21,37 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
         const signature = request.headers.get("stripe-signature") ?? "";
         const body = await request.text();
 
-        let event: Stripe.Event;
-        try {
-          event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-        } catch (err) {
-          const message = err instanceof Error ? err.message : "Invalid signature";
-          console.error(`Webhook signature verification failed: ${message}`);
-          return new Response(`Webhook Error: ${message}`, { status: 400 });
+        let event: Stripe.Event | null = null;
+
+        if (webhookSecret && signature) {
+          try {
+            event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+          } catch (err) {
+            const message = err instanceof Error ? err.message : "Invalid signature";
+            console.warn(`Webhook signature verification failed; attempting Stripe API verification: ${message}`);
+          }
+        }
+
+        if (!event) {
+          let candidateId = "";
+          try {
+            const parsed = JSON.parse(body) as { id?: unknown };
+            candidateId = typeof parsed.id === "string" ? parsed.id : "";
+          } catch {
+            return new Response("Webhook Error: invalid JSON payload.", { status: 400 });
+          }
+
+          if (!candidateId.startsWith("evt_")) {
+            return new Response("Webhook Error: invalid event id.", { status: 400 });
+          }
+
+          try {
+            event = await stripe.events.retrieve(candidateId);
+          } catch (err) {
+            const message = err instanceof Error ? err.message : "Event verification failed";
+            console.error(`Stripe API event verification failed: ${message}`);
+            return new Response("Webhook Error: event could not be verified.", { status: 400 });
+          }
         }
 
         if (event.type === "checkout.session.completed") {
