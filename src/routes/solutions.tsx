@@ -80,6 +80,24 @@ function SolutionsPage() {
         <a href="/tattoo-studio-visibility-scorecard" className="inline-flex min-h-12 items-center rounded-full border border-border px-6 py-3 font-bold text-ice">Check studio visibility</a>
       </PageHero>
 
+      <section className="border-b border-border bg-ink">
+        <div className="mx-auto max-w-7xl px-6 py-12">
+          <div className="grid gap-5 md:grid-cols-3">
+            {[
+              ["01", "Start with the symptom", "Choose the problem the owner can actually observe: weak discovery, poor conversion, unused capacity, low return or unclear revenue."],
+              ["02", "Check the signal", "Use the relevant diagnostic or operating data to determine whether that symptom is commercially material."],
+              ["03", "Choose the smallest next step", "Only move into a paid intervention when the evidence justifies it; otherwise keep measuring or fix the basic operating issue first."],
+            ].map(([number, title, text]) => (
+              <div key={number} className="rounded-2xl border border-border bg-ink-deep p-6">
+                <div className="font-mono text-xs text-mint">{number}</div>
+                <h2 className="mt-4 font-display text-xl font-black text-ice">{title}</h2>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section>
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <SectionHeading
@@ -123,6 +141,30 @@ function SolutionsPage() {
               <div key={number} className="rounded-2xl border border-border bg-ink-deep p-6">
                 <div className="font-display text-4xl font-black text-mint">{number}</div>
                 <h2 className="mt-5 font-display text-xl font-black text-ice">{title}</h2>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+          <SectionHeading
+            eyebrow="What the diagnosis looks for"
+            title="Different symptoms require different evidence."
+            description="The purpose of the diagnosis is not to label every weakness as a marketing problem. Each area has a different signal that should be checked before action is recommended."
+          />
+          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
+            {[
+              ["Visibility", "Search position, local discovery, profile-to-site movement and relevance of the traffic arriving."],
+              ["Conversion", "Enquiry volume, response path, qualification, deposit movement and enquiry-to-booking rate."],
+              ["Capacity", "Available versus booked artist time, diary gaps, project mix and unused sellable hours."],
+              ["Retention", "Repeat booking, reactivation, review/referral behaviour and whether the client relationship continues."],
+              ["Revenue control", "Client volume, average transaction value, frequency, source attribution and the assumptions behind the total."],
+            ].map(([title, text]) => (
+              <div key={title} className="rounded-2xl border border-border bg-ink p-5">
+                <h3 className="font-display text-lg font-black text-ice">{title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p>
               </div>
             ))}
