@@ -1,13 +1,64 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ScrollProgress } from "@/components/interactive-home";
 
-const navItems = [
+const primaryNav = [
   ["/solutions", "What we fix"],
   ["/offers", "Solutions"],
   ["/resources", "Resources"],
-  ["/about", "About"]
+  ["/about", "About"],
+] as const;
+
+const menuGroups = [
+  {
+    title: "Solutions",
+    description: "Choose the smallest useful intervention for the studio's current constraint.",
+    links: [
+      ["/solutions", "What we fix", "Start with the commercial constraint"],
+      ["/offers", "All solutions", "Compare the full INKSIGHTS offer stack"],
+      ["/offers/72-hour-visibility-fix", "72-Hour Visibility Fix", "Repair urgent local visibility issues"],
+      ["/offers/revenue-audit", "Revenue Audit", "Diagnose conversion, capacity and revenue leakage"],
+      ["/offers/booking-retention-engine", "Booking & Retention", "Improve booking control and repeat value"],
+      ["/offers/visibility-watch", "Visibility Watch", "Ongoing visibility monitoring"],
+    ],
+  },
+  {
+    title: "Studio tools",
+    description: "Free diagnostics, benchmarks and commercial decision tools.",
+    links: [
+      ["/resources", "Resource library", "Browse all free studio tools"],
+      ["/studio-growth-check", "Free Revenue Audit", "Find the strongest commercial pressure"],
+      ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard", "Check local search and booking visibility"],
+      ["/pricing-benchmark", "Pricing Benchmark", "Compare rates with UK reference bands"],
+      ["/growth-model", "Revenue Growth Model", "Model volume, value and frequency"],
+      ["/tattoo-studio-software", "Software Comparison", "Compare studio workflow platforms"],
+    ],
+  },
+  {
+    title: "Growth guides",
+    description: "Practical guidance across acquisition, booking, revenue and retention.",
+    links: [
+      ["/tattoo-studio-growth", "Studio growth", "Commercial growth systems for tattoo studios"],
+      ["/tattoo-studio-marketing", "Marketing", "Demand generation and positioning"],
+      ["/tattoo-studio-seo", "SEO & local search", "Improve discovery and search visibility"],
+      ["/tattoo-studio-booking", "Booking systems", "Turn enquiries into protected diary time"],
+      ["/tattoo-studio-client-retention", "Client retention", "Increase repeat projects and rebooking"],
+      ["/tattoo-studio-revenue", "Revenue", "Understand the commercial drivers behind revenue"],
+      ["/tattoo-studio-management", "Studio management", "Operational systems for studio owners"],
+    ],
+  },
+  {
+    title: "Company",
+    description: "About INKSIGHTS, proof, support and contact routes.",
+    links: [
+      ["/about", "About INKSIGHTS", "Why the platform exists and how it works"],
+      ["/case-studies", "Proof library", "Evidence, outcomes and studio examples"],
+      ["/contact", "Contact", "Speak to INKSIGHTS"],
+      ["/support", "Customer support", "Get help with an existing service"],
+      ["/auth", "Sign in", "Access your INKSIGHTS account"],
+    ],
+  },
 ] as const;
 
 type LogoVariant = "primary-dark" | "primary-light" | "mono-white" | "icon";
@@ -69,20 +120,158 @@ export function Logo({
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(["Solutions", "Studio tools"]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
+  const toggleGroup = (title: string) => {
+    setExpandedGroups((current) =>
+      current.includes(title)
+        ? current.filter((item) => item !== title)
+        : [...current, title],
+    );
+  };
+
+  const closeMenu = () => setOpen(false);
+
   return (
     <>
-      <a href="#main-content" className="sr-only z-[100] rounded-md bg-mint px-4 py-2 font-bold text-ink-deep focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
+      <a href="#main-content" className="sr-only z-[100] rounded-md bg-mint px-4 py-2 font-bold text-ink-deep focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+        Skip to content
+      </a>
+
       <header className="site-header sticky top-0 z-50 border-b border-border/50 bg-ink-deep/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-6">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-6">
           <Link to="/" aria-label="INKSIGHTS home"><Logo variant="primary-dark" /></Link>
+
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground lg:flex" aria-label="Primary navigation">
-            {navItems.map(([href, label]) => <a key={href} href={href} className="nav-link transition hover:text-mint">{label}</a>)}
-            <a href="/studio-growth-check" className="shine-button rounded-full bg-mint px-5 py-2.5 font-bold text-ink-deep transition hover:bg-mint-soft">Free Revenue Audit</a>
+            {primaryNav.map(([href, label]) => (
+              <a key={href} href={href} className="nav-link transition hover:text-mint">{label}</a>
+            ))}
           </nav>
-          <button type="button" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex h-11 w-11 items-center justify-center rounded-xl border border-border text-ice transition hover:border-mint hover:text-mint lg:hidden">{open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <a
+              href="/studio-growth-check"
+              className="shine-button hidden rounded-full bg-mint px-5 py-2.5 text-sm font-bold text-ink-deep transition hover:bg-mint-soft sm:inline-flex"
+            >
+              Free Revenue Audit
+            </a>
+            <button
+              type="button"
+              aria-label={open ? "Close site menu" : "Open site menu"}
+              aria-expanded={open}
+              aria-controls="site-menu-drawer"
+              onClick={() => setOpen((value) => !value)}
+              className={`burger-menu-trigger ${open ? "is-open" : ""}`}
+            >
+              <Menu className="h-5 w-5" aria-hidden="true" />
+              <span className="hidden text-sm font-bold sm:inline">Menu</span>
+            </button>
+          </div>
         </div>
-        {open ? <nav className="border-t border-border bg-ink px-5 py-5 lg:hidden" aria-label="Mobile navigation"><div className="mx-auto grid max-w-7xl gap-2">{navItems.map(([href, label]) => <a key={href} href={href} onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 font-semibold text-ice transition hover:bg-ink-elev hover:text-mint">{label}</a>)}<a href="/studio-growth-check" onClick={() => setOpen(false)} className="shine-button mt-2 rounded-xl bg-mint px-4 py-3 text-center font-bold text-ink-deep">Run the free Revenue Audit</a></div></nav> : null}
       </header>
+
+      {open ? (
+        <div className="site-menu-layer" role="presentation">
+          <button
+            type="button"
+            className="site-menu-backdrop"
+            aria-label="Close site menu"
+            onClick={closeMenu}
+          />
+          <aside
+            id="site-menu-drawer"
+            className="site-menu-drawer"
+            aria-label="Site navigation"
+            aria-modal="true"
+            role="dialog"
+          >
+            <div className="site-menu-drawer-header">
+              <Link to="/" onClick={closeMenu} aria-label="INKSIGHTS home">
+                <Logo variant="mono-white" />
+              </Link>
+              <button type="button" onClick={closeMenu} className="site-menu-close" aria-label="Close site menu">
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="site-menu-intro">
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-mint">Navigate INKSIGHTS</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Explore studio growth solutions, diagnostics, tools, guides and account routes.
+              </p>
+            </div>
+
+            <nav className="site-menu-groups" aria-label="Expanded site navigation">
+              {menuGroups.map((group) => {
+                const expanded = expandedGroups.includes(group.title);
+                return (
+                  <section key={group.title} className={`site-menu-group ${expanded ? "is-expanded" : ""}`}>
+                    <button
+                      type="button"
+                      className="site-menu-group-toggle"
+                      aria-expanded={expanded}
+                      onClick={() => toggleGroup(group.title)}
+                    >
+                      <span>
+                        <strong>{group.title}</strong>
+                        <small>{group.description}</small>
+                      </span>
+                      <ChevronDown className="site-menu-chevron h-5 w-5" aria-hidden="true" />
+                    </button>
+
+                    {expanded ? (
+                      <div className="site-menu-subpages">
+                        {group.links.map(([href, label, description]) => (
+                          <a key={href} href={href} onClick={closeMenu} className="site-menu-subpage">
+                            <span>
+                              <strong>{label}</strong>
+                              <small>{description}</small>
+                            </span>
+                            <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                          </a>
+                        ))}
+                      </div>
+                    ) : null}
+                  </section>
+                );
+              })}
+            </nav>
+
+            <div className="site-menu-actions">
+              <a href="/studio-growth-check" onClick={closeMenu} className="shine-button inline-flex min-h-12 items-center justify-center rounded-full bg-mint px-5 py-3 font-bold text-ink-deep">
+                Run the free Revenue Audit
+              </a>
+              <a href="/contact" onClick={closeMenu} className="outline-button inline-flex min-h-12 items-center justify-center rounded-full border border-border px-5 py-3 font-bold text-ice">
+                Contact INKSIGHTS
+              </a>
+            </div>
+
+            <div className="site-menu-legal">
+              <a href="/privacy" onClick={closeMenu}>Privacy</a>
+              <a href="/cookies" onClick={closeMenu}>Cookies</a>
+              <a href="/terms" onClick={closeMenu}>Terms</a>
+              <a href="/accessibility" onClick={closeMenu}>Accessibility</a>
+            </div>
+          </aside>
+        </div>
+      ) : null}
     </>
   );
 }
