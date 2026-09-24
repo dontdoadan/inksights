@@ -390,6 +390,147 @@ export function InteractiveJourney() {
 }
 
 
+
+const observatorySignals = [
+  { label: "Visibility", value: 78, delta: "+12%", tone: "Search signal", x: 70, y: 28 },
+  { label: "Enquiries", value: 42, delta: "-18%", tone: "Constraint", x: 38, y: 63 },
+  { label: "Bookings", value: 71, delta: "+7%", tone: "Conversion", x: 61, y: 72 },
+  { label: "Retention", value: 55, delta: "+21%", tone: "Opportunity", x: 29, y: 33 },
+] as const;
+
+export function SignalObservatory() {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const activeSignal = observatorySignals[active];
+
+  useEffect(() => {
+    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      setActive((current) => (current + 1) % observatorySignals.length);
+    }, 2800);
+    return () => window.clearInterval(timer);
+  }, [paused]);
+
+  return (
+    <section className="signal-observatory-shell brand-dark relative overflow-hidden border-y border-border">
+      <div className="signal-observatory-grid" aria-hidden="true" />
+      <div className="signal-observatory-beam" aria-hidden="true" />
+      <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <div className="grid gap-10 lg:grid-cols-[.78fr_1.22fr] lg:items-center">
+          <Reveal>
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.18em] text-mint">
+                <span className="observatory-live-dot" /> Live system scan
+              </div>
+              <h2 className="mt-5 text-balance font-display text-4xl font-black tracking-tight text-ice md:text-6xl">
+                Watch the studio system <span className="text-mint">come alive.</span>
+              </h2>
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
+                A cinematic signal layer turns the commercial model into something you can inspect — visibility, enquiries, bookings and retention constantly moving through one diagnostic field.
+              </p>
+
+              <div className="mt-8 grid grid-cols-2 gap-3">
+                {observatorySignals.map((signal, index) => {
+                  const selected = index === active;
+                  return (
+                    <button
+                      key={signal.label}
+                      type="button"
+                      onClick={() => setActive(index)}
+                      onPointerEnter={() => {
+                        setPaused(true);
+                        setActive(index);
+                      }}
+                      onPointerLeave={() => setPaused(false)}
+                      className={`observatory-signal-button ${selected ? "is-active" : ""}`}
+                      aria-pressed={selected}
+                    >
+                      <span>{signal.label}</span>
+                      <strong>{signal.value}</strong>
+                      <small>{signal.tone}</small>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <div
+              className="observatory-console"
+              onPointerEnter={() => setPaused(true)}
+              onPointerLeave={() => setPaused(false)}
+            >
+              <div className="observatory-console-chrome">
+                <div className="flex items-center gap-2">
+                  <span className="observatory-status-dot" />
+                  <span>SIGNAL OBSERVATORY / UK STUDIO MODEL</span>
+                </div>
+                <span className="font-mono text-[10px] text-mint">LIVE · 00:42:17</span>
+              </div>
+
+              <div className="observatory-stage">
+                <div className="observatory-radar" aria-hidden="true">
+                  <span className="observatory-ring observatory-ring-1" />
+                  <span className="observatory-ring observatory-ring-2" />
+                  <span className="observatory-ring observatory-ring-3" />
+                  <span className="observatory-ring observatory-ring-4" />
+                  <span className="observatory-axis observatory-axis-x" />
+                  <span className="observatory-axis observatory-axis-y" />
+                  <span className="observatory-sweep" />
+                  <span className="observatory-sweep-tail" />
+                  {observatorySignals.map((signal, index) => (
+                    <span
+                      key={signal.label}
+                      className={`observatory-node observatory-node-${index} ${index === active ? "is-active" : ""}`}
+                      style={{ left: `${signal.x}%`, top: `${signal.y}%` }}
+                    >
+                      <i />
+                      <b>{signal.label}</b>
+                    </span>
+                  ))}
+                  <div className="observatory-core">
+                    <span>INK</span>
+                    <strong>{activeSignal.value}</strong>
+                    <small>{activeSignal.label}</small>
+                  </div>
+                </div>
+
+                <div className="observatory-side-readout">
+                  <div className="observatory-readout-card is-primary">
+                    <span>ACTIVE SIGNAL</span>
+                    <strong>{activeSignal.label}</strong>
+                    <b>{activeSignal.value}/100</b>
+                    <small>{activeSignal.delta} change</small>
+                  </div>
+                  <div className="observatory-wave" aria-hidden="true">
+                    {Array.from({ length: 24 }).map((_, index) => (
+                      <span key={index} style={{ height: `${18 + ((index * 17) % 52)}%` }} />
+                    ))}
+                  </div>
+                  <div className="observatory-stream" aria-hidden="true">
+                    <span>VISIBILITY_SIGNAL / STABLE</span>
+                    <span>ENQUIRY_ROUTE / CHECK</span>
+                    <span>BOOKING_CONTROL / PASS</span>
+                    <span>RETENTION_LAYER / WATCH</span>
+                    <span>REVENUE_MODEL / SYNC</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="observatory-console-footer">
+                <span>Evidence layer active</span>
+                <span>Constraint detection enabled</span>
+                <span className="text-mint">Next scan 00:03</span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function SiteEffects() {
   const pulseRef = useRef<HTMLDivElement>(null);
 
@@ -401,8 +542,25 @@ export function SiteEffects() {
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
     let frame = 0;
     let pressedTarget: HTMLElement | null = null;
+    let spotlightTarget: HTMLElement | null = null;
+    let magneticTarget: HTMLElement | null = null;
 
     root.classList.add("site-motion");
+
+    const resetSpotlight = () => {
+      if (!spotlightTarget) return;
+      spotlightTarget.classList.remove("is-spotlight-active");
+      spotlightTarget.style.removeProperty("--spotlight-x");
+      spotlightTarget.style.removeProperty("--spotlight-y");
+      spotlightTarget = null;
+    };
+
+    const resetMagnet = () => {
+      if (!magneticTarget) return;
+      magneticTarget.style.removeProperty("--magnet-x");
+      magneticTarget.style.removeProperty("--magnet-y");
+      magneticTarget = null;
+    };
 
     const handlePointerMove = (event: PointerEvent) => {
       if (!finePointer.matches || reduceMotion.matches) return;
@@ -411,10 +569,49 @@ export function SiteEffects() {
         root.style.setProperty("--site-pointer-x", `${event.clientX}px`);
         root.style.setProperty("--site-pointer-y", `${event.clientY}px`);
         root.classList.add("has-site-pointer");
+
+        const element = event.target instanceof Element ? event.target : null;
+        const interactive = element?.closest(
+          ".interactive-card, .revenue-leakage-step, .shine-button, .outline-button, .signal-metric, .journey-node",
+        );
+        root.classList.toggle("pointer-over-interactive", Boolean(interactive));
+
+        const nextSpotlight = element?.closest<HTMLElement>(
+          ".interactive-card, .revenue-leakage-step, .journey-focus-card",
+        ) ?? null;
+        if (nextSpotlight !== spotlightTarget) {
+          resetSpotlight();
+          spotlightTarget = nextSpotlight;
+        }
+        if (spotlightTarget) {
+          const bounds = spotlightTarget.getBoundingClientRect();
+          const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+          const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+          spotlightTarget.style.setProperty("--spotlight-x", `${x}%`);
+          spotlightTarget.style.setProperty("--spotlight-y", `${y}%`);
+          spotlightTarget.classList.add("is-spotlight-active");
+        }
+
+        const nextMagnetic = element?.closest<HTMLElement>(".shine-button, .outline-button") ?? null;
+        if (nextMagnetic !== magneticTarget) {
+          resetMagnet();
+          magneticTarget = nextMagnetic;
+        }
+        if (magneticTarget) {
+          const bounds = magneticTarget.getBoundingClientRect();
+          const dx = Math.max(-6, Math.min(6, ((event.clientX - (bounds.left + bounds.width / 2)) / bounds.width) * 12));
+          const dy = Math.max(-5, Math.min(5, ((event.clientY - (bounds.top + bounds.height / 2)) / bounds.height) * 10));
+          magneticTarget.style.setProperty("--magnet-x", `${dx.toFixed(2)}px`);
+          magneticTarget.style.setProperty("--magnet-y", `${dy.toFixed(2)}px`);
+        }
       });
     };
 
-    const clearPointer = () => root.classList.remove("has-site-pointer");
+    const clearPointer = () => {
+      root.classList.remove("has-site-pointer", "pointer-over-interactive");
+      resetSpotlight();
+      resetMagnet();
+    };
 
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target instanceof Element
@@ -438,6 +635,15 @@ export function SiteEffects() {
     const releasePressed = () => {
       pressedTarget?.classList.remove("is-site-pressed");
       pressedTarget = null;
+    };
+
+    const handleScroll = () => {
+      const compact = window.scrollY > 96;
+      document.querySelector<HTMLElement>(".site-header")?.classList.toggle("is-compact", compact);
+      if (!reduceMotion.matches) {
+        const shift = Math.min(18, window.scrollY * 0.018);
+        root.style.setProperty("--site-scroll-shift", `${shift.toFixed(2)}px`);
+      }
     };
 
     const observer = reduceMotion.matches
@@ -473,10 +679,13 @@ export function SiteEffects() {
     };
 
     registerRevealTargets();
+    handleScroll();
+
     const mutationObserver = new MutationObserver(registerRevealTargets);
     mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("blur", clearPointer);
     document.addEventListener("pointerleave", clearPointer);
     document.addEventListener("pointerdown", handlePointerDown, { passive: true });
@@ -485,13 +694,18 @@ export function SiteEffects() {
 
     return () => {
       cancelAnimationFrame(frame);
-      root.classList.remove("site-motion", "has-site-pointer");
+      root.classList.remove("site-motion", "has-site-pointer", "pointer-over-interactive");
       root.style.removeProperty("--site-pointer-x");
       root.style.removeProperty("--site-pointer-y");
+      root.style.removeProperty("--site-scroll-shift");
+      document.querySelector<HTMLElement>(".site-header")?.classList.remove("is-compact");
       releasePressed();
+      resetSpotlight();
+      resetMagnet();
       observer?.disconnect();
       mutationObserver.disconnect();
       window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("blur", clearPointer);
       document.removeEventListener("pointerleave", clearPointer);
       document.removeEventListener("pointerdown", handlePointerDown);

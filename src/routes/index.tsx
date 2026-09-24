@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, Database, Gauge, Search, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
-import { Reveal, TiltCard } from "@/components/interactive-home";
+import { HeroSignalPanel, Reveal, SignalObservatory, SignalTicker, TiltCard } from "@/components/interactive-home";
 import { Card, JsonLd, Logo, PrimaryButton, PublicShell, RevenueLeakageMap, SecondaryButton } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/";
@@ -42,7 +42,7 @@ function Index() {
         url: CANONICAL_URL,
       }]} />
 
-      <section className="brand-dark hero-ambient relative overflow-hidden grid-bg">
+      <section className="brand-dark cinematic-hero hero-ambient relative overflow-hidden grid-bg">
         <div className="ambient-orb ambient-orb-one" aria-hidden="true" />
         <div className="ambient-orb ambient-orb-two" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-ink-deep/30 to-ink-deep" />
@@ -70,25 +70,14 @@ function Index() {
             </Reveal>
 
             <Reveal delay={120}>
-              <div className="brand-signal relative rounded-3xl border border-mint/25 bg-ink/80 p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
-                <div className="brand-signature"><Logo variant="icon" decorative className="brand-signature-mark" /><p>Clearer data.<br />Smarter decisions.<br />Stronger studios.</p></div>
-                <div className="flex items-center justify-between border-b border-border pb-5">
-                  <div><p className="text-xs font-bold uppercase tracking-[.15em] text-mint">Studio intelligence</p><h2 className="mt-2 font-display text-2xl font-black text-ice">From signal to decision</h2></div>
-                  <span className="evidence-badge">OUR APPROACH</span>
-                </div>
-                <div className="mt-6 space-y-3">
-                  {["VISIBILITY", "ENQUIRIES", "BOOKINGS", "CAPACITY", "REVENUE"].map((step, i) => (
-                    <div key={step} className="flex items-center gap-4 rounded-xl border border-border bg-ink-deep px-4 py-4">
-                      <span className="font-mono text-xs text-mint">0{i + 1}</span><span className="text-sm font-black tracking-[.12em] text-ice">{step}</span><span className="ml-auto h-1.5 w-1.5 rounded-full bg-mint" />
-                    </div>
-                  ))}
-                </div>
-                <p className="mt-5 text-sm leading-relaxed text-muted-foreground">Start with what your studio can measure. Turn the evidence into a clear next step, then track what changes.</p>
-              </div>
+              <HeroSignalPanel />
             </Reveal>
           </div>
         </div>
       </section>
+
+      <SignalTicker />
+      <SignalObservatory />
 
       <section className="brand-dark border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">

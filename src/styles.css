@@ -957,3 +957,766 @@ h3 { line-height: 1.25; }
 @media (hover: none), (pointer: coarse) {
   .site-pointer-glow { display: none; }
 }
+
+
+/* UI motion preview — 2026-09-24.
+   Preview branch only. No production merge without explicit approval. */
+
+.site-header,
+.site-header > div:first-child,
+.site-header .brand-logo-primary-dark {
+  transition:
+    padding 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 260ms ease,
+    box-shadow 260ms ease;
+}
+.site-header.is-compact {
+  background-color: color-mix(in oklab, var(--ink-deep) 94%, transparent);
+  box-shadow: 0 18px 55px -34px rgba(0, 0, 0, 0.98);
+}
+.site-header.is-compact > div:first-child {
+  padding-top: 0.65rem;
+  padding-bottom: 0.65rem;
+}
+.site-header.is-compact .brand-logo-primary-dark {
+  width: 188px;
+}
+
+/* Official three-bar activation. */
+.brand-logo-motion-mark {
+  overflow: visible;
+  filter: drop-shadow(0 0 16px color-mix(in oklab, #35E6D4 16%, transparent));
+}
+.brand-logo-motion-mark .brand-logo-bar {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: brand-logo-bar-activate 780ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.brand-logo-motion-mark .brand-logo-bar-one { animation-delay: 80ms; }
+.brand-logo-motion-mark .brand-logo-bar-two { animation-delay: 170ms; }
+.brand-logo-motion-mark .brand-logo-bar-three { animation-delay: 260ms; }
+
+@keyframes brand-logo-bar-activate {
+  0% { opacity: 0; transform: scaleY(0.18) translateY(14px); filter: brightness(1.45); }
+  62% { opacity: 1; transform: scaleY(1.045) translateY(-2px); filter: brightness(1.18); }
+  100% { opacity: 1; transform: scaleY(1) translateY(0); filter: brightness(1); }
+}
+
+/* Contextual cursor illumination. */
+.pointer-over-interactive .site-pointer-glow {
+  opacity: 0.94;
+  filter: saturate(1.18) brightness(1.05);
+}
+
+/* Magnetic call-to-action motion composes with existing hover transforms. */
+.shine-button,
+.outline-button {
+  --magnet-x: 0px;
+  --magnet-y: 0px;
+  translate: var(--magnet-x) var(--magnet-y);
+  transition:
+    translate 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease,
+    background-color 220ms ease;
+}
+
+/* Pointer-position spotlight for analytical surfaces. */
+.interactive-card.is-spotlight-active::before {
+  opacity: 1;
+  background:
+    radial-gradient(
+      280px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+      color-mix(in oklab, var(--mint) 16%, transparent),
+      transparent 64%
+    ),
+    linear-gradient(135deg, color-mix(in oklab, var(--mint) 7%, transparent), transparent 44%);
+}
+.journey-focus-card {
+  position: relative;
+}
+.journey-focus-card::after,
+.revenue-leakage-step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    300px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    color-mix(in oklab, var(--mint) 14%, transparent),
+    transparent 65%
+  );
+  transition: opacity 180ms ease;
+}
+.journey-focus-card.is-spotlight-active::after,
+.revenue-leakage-step.is-spotlight-active::before {
+  opacity: 1;
+}
+
+/* Revenue leakage model becomes an interactive diagnostic sequence. */
+.revenue-leakage-map {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.revenue-leakage-map::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -15%;
+  right: -15%;
+  top: 0;
+  height: 34%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in oklab, var(--mint) 5%, transparent),
+    transparent
+  );
+}
+.revenue-leakage-map.is-visible::after {
+  animation: leakage-scan 5.8s ease-in-out 700ms infinite;
+}
+.revenue-leakage-step {
+  appearance: none;
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(12px) scale(0.985);
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 260ms ease,
+    background-color 260ms ease,
+    box-shadow 260ms ease,
+    opacity 260ms ease;
+}
+.revenue-leakage-map.is-visible .revenue-leakage-step {
+  animation: leakage-step-enter 580ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.revenue-leakage-map.is-visible .revenue-leakage-step:nth-child(2) { animation-delay: 90ms; }
+.revenue-leakage-map.is-visible .revenue-leakage-step:nth-child(3) { animation-delay: 180ms; }
+.revenue-leakage-map.is-visible .revenue-leakage-step:nth-child(4) { animation-delay: 270ms; }
+.revenue-leakage-map.is-visible .revenue-leakage-step:nth-child(5) { animation-delay: 360ms; }
+.revenue-leakage-step:hover,
+.revenue-leakage-step:focus-visible,
+.revenue-leakage-step.is-active {
+  transform: translateY(-4px);
+  border-color: color-mix(in oklab, var(--mint) 58%, var(--border));
+  background: color-mix(in oklab, var(--mint) 5%, var(--ink));
+  box-shadow: 0 22px 55px -36px color-mix(in oklab, var(--mint) 58%, black);
+}
+.revenue-leakage-step.is-complete:not(.is-active) {
+  border-color: color-mix(in oklab, var(--mint) 28%, var(--border));
+}
+.revenue-leakage-step.is-active .revenue-leakage-connector {
+  transform-origin: left;
+  animation: leakage-connector-pulse 900ms ease-in-out infinite alternate;
+}
+
+@keyframes leakage-step-enter {
+  from { opacity: 0; transform: translateY(12px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes leakage-connector-pulse {
+  from { opacity: 0.35; transform: scaleX(0.55); box-shadow: 0 0 0 transparent; }
+  to { opacity: 1; transform: scaleX(1); box-shadow: 0 0 10px color-mix(in oklab, var(--mint) 55%, transparent); }
+}
+@keyframes leakage-scan {
+  0%, 18% { opacity: 0; transform: translateY(-130%); }
+  34% { opacity: 0.42; }
+  72% { opacity: 0.18; }
+  100% { opacity: 0; transform: translateY(390%); }
+}
+
+/* Progressive depth on brand marks as the page moves. */
+.page-hero-logo-mark,
+.brand-light-logo-watermark,
+.brand-light-icon-watermark,
+.cta-logo-mark {
+  translate: 0 var(--site-scroll-shift, 0px);
+  transition: translate 90ms linear;
+}
+
+/* Slightly richer section reveal; document flow remains unchanged. */
+.motion-reveal {
+  filter: blur(5px);
+  transform: translateY(22px) scale(0.994);
+  transition:
+    opacity 640ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 640ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 640ms ease;
+}
+.motion-reveal.is-visible {
+  filter: blur(0);
+  transform: translateY(0) scale(1);
+}
+.brand-light.motion-reveal {
+  box-shadow: inset 0 48px 80px -86px color-mix(in oklab, #0A0F14 28%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo-motion-mark .brand-logo-bar,
+  .revenue-leakage-map.is-visible .revenue-leakage-step,
+  .revenue-leakage-map.is-visible::after,
+  .revenue-leakage-step.is-active .revenue-leakage-connector {
+    animation: none !important;
+  }
+  .brand-logo-motion-mark .brand-logo-bar,
+  .revenue-leakage-step {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .shine-button,
+  .outline-button,
+  .page-hero-logo-mark,
+  .brand-light-logo-watermark,
+  .brand-light-icon-watermark,
+  .cta-logo-mark {
+    translate: none !important;
+  }
+  .site-header > div:first-child,
+  .site-header .brand-logo-primary-dark {
+    transition: none !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .shine-button,
+  .outline-button {
+    translate: none !important;
+  }
+  .revenue-leakage-step:hover {
+    transform: none;
+  }
+}
+
+
+/* Cinematic motion pass — radar observatory. */
+.cinematic-hero {
+  position: relative;
+}
+.cinematic-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  background:
+    radial-gradient(circle at 72% 38%, color-mix(in oklab, var(--mint) 18%, transparent), transparent 18rem),
+    linear-gradient(110deg, transparent 22%, color-mix(in oklab, var(--mint) 5%, transparent) 48%, transparent 72%);
+  animation: cinematic-hero-breathe 8s ease-in-out infinite alternate;
+}
+.cinematic-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 7px,
+      color-mix(in oklab, var(--mint) 7%, transparent) 8px
+    );
+  mask-image: linear-gradient(to bottom, transparent, black 22%, black 74%, transparent);
+  animation: cinematic-scanlines 13s linear infinite;
+}
+
+.signal-observatory-shell {
+  min-height: 38rem;
+  background:
+    radial-gradient(circle at 72% 50%, color-mix(in oklab, var(--mint) 11%, transparent), transparent 28rem),
+    linear-gradient(180deg, #0A0F14 0%, #0C1720 52%, #0A0F14 100%);
+  isolation: isolate;
+}
+.signal-observatory-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--mint) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--mint) 8%, transparent) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(circle at 72% 50%, black, transparent 66%);
+  animation: observatory-grid-drift 24s linear infinite;
+}
+.signal-observatory-beam {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 42%,
+    color-mix(in oklab, var(--mint) 12%, transparent) 49%,
+    color-mix(in oklab, var(--mint) 28%, transparent) 50%,
+    color-mix(in oklab, var(--mint) 9%, transparent) 51%,
+    transparent 58%,
+    transparent 100%
+  );
+  animation: observatory-section-scan 6.8s ease-in-out infinite;
+}
+
+.observatory-live-dot,
+.observatory-status-dot {
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 999px;
+  background: var(--mint);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--mint) 42%, transparent);
+  animation: observatory-live-pulse 1.7s ease-out infinite;
+}
+
+.observatory-signal-button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.2rem 0.75rem;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--mint) 3%, transparent), transparent 60%),
+    var(--ink);
+  padding: 0.9rem 1rem;
+  color: var(--ice);
+  text-align: left;
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease;
+}
+.observatory-signal-button span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.observatory-signal-button strong {
+  color: var(--mint);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+.observatory-signal-button small {
+  grid-column: 1 / -1;
+  color: var(--muted-foreground);
+  font-size: 0.68rem;
+}
+.observatory-signal-button:hover,
+.observatory-signal-button.is-active {
+  transform: translateY(-3px);
+  border-color: color-mix(in oklab, var(--mint) 55%, var(--border));
+  background-color: color-mix(in oklab, var(--mint) 4%, var(--ink));
+  box-shadow: 0 18px 44px -30px color-mix(in oklab, var(--mint) 60%, black);
+}
+
+.observatory-console {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--mint) 36%, var(--border));
+  border-radius: 2rem;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.025), transparent 12%),
+    linear-gradient(145deg, #10222A, #081017 68%);
+  box-shadow:
+    0 44px 120px -52px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+.observatory-console::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.17;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 4px,
+      rgba(255,255,255,.05) 5px
+    );
+  animation: observatory-crt 10s linear infinite;
+}
+.observatory-console::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.22;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    transparent 0 20%,
+    color-mix(in oklab, var(--mint) 14%, transparent) 27%,
+    transparent 33% 100%
+  );
+  animation: observatory-console-glow 11s linear infinite;
+}
+.observatory-console-chrome,
+.observatory-console-footer {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  padding: 0.85rem 1rem;
+  color: var(--muted-foreground);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.observatory-console-footer {
+  border-top: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  border-bottom: 0;
+  flex-wrap: wrap;
+}
+.observatory-stage {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: 31rem;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+}
+.observatory-radar {
+  position: relative;
+  min-height: 31rem;
+  overflow: hidden;
+  border-right: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  background:
+    radial-gradient(circle at center, color-mix(in oklab, var(--mint) 7%, transparent), transparent 54%),
+    linear-gradient(180deg, rgba(255,255,255,.012), rgba(255,255,255,0));
+}
+.observatory-radar::before {
+  content: "";
+  position: absolute;
+  width: min(82%, 33rem);
+  aspect-ratio: 1;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--mint) 12%, transparent);
+  box-shadow:
+    inset 0 0 80px color-mix(in oklab, var(--mint) 5%, transparent),
+    0 0 70px color-mix(in oklab, var(--mint) 6%, transparent);
+}
+.observatory-ring,
+.observatory-axis,
+.observatory-sweep,
+.observatory-sweep-tail,
+.observatory-node {
+  position: absolute;
+}
+.observatory-ring {
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  border: 1px solid color-mix(in oklab, var(--mint) 18%, transparent);
+  border-radius: 999px;
+}
+.observatory-ring-1 { width: 20%; aspect-ratio: 1; }
+.observatory-ring-2 { width: 40%; aspect-ratio: 1; }
+.observatory-ring-3 { width: 60%; aspect-ratio: 1; }
+.observatory-ring-4 { width: 80%; aspect-ratio: 1; }
+.observatory-axis-x {
+  left: 10%;
+  right: 10%;
+  top: 50%;
+  height: 1px;
+  background: color-mix(in oklab, var(--mint) 12%, transparent);
+}
+.observatory-axis-y {
+  top: 10%;
+  bottom: 10%;
+  left: 50%;
+  width: 1px;
+  background: color-mix(in oklab, var(--mint) 12%, transparent);
+}
+.observatory-sweep,
+.observatory-sweep-tail {
+  width: 80%;
+  aspect-ratio: 1;
+  left: 10%;
+  top: 10%;
+  border-radius: 999px;
+  transform-origin: center;
+}
+.observatory-sweep {
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in oklab, var(--mint) 42%, transparent) 0deg,
+    color-mix(in oklab, var(--mint) 13%, transparent) 30deg,
+    transparent 74deg 360deg
+  );
+  filter: blur(.2px);
+  animation: observatory-radar-spin 4.6s linear infinite;
+}
+.observatory-sweep-tail {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 332deg,
+    color-mix(in oklab, var(--mint) 6%, transparent) 347deg,
+    transparent 360deg
+  );
+  animation: observatory-radar-spin 4.6s linear infinite;
+}
+.observatory-node {
+  z-index: 4;
+  translate: -50% -50%;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  color: var(--muted-foreground);
+  font-size: .61rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition:
+    color 260ms ease,
+    filter 260ms ease,
+    transform 260ms ease;
+}
+.observatory-node i {
+  display: block;
+  width: .65rem;
+  height: .65rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--mint) 54%, var(--ink));
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--mint) 8%, transparent);
+}
+.observatory-node.is-active {
+  color: var(--mint);
+  filter: drop-shadow(0 0 10px color-mix(in oklab, var(--mint) 55%, transparent));
+  transform: scale(1.08);
+}
+.observatory-node.is-active i {
+  background: var(--mint);
+  animation: observatory-target-pulse 1.5s ease-out infinite;
+}
+.observatory-core {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: grid;
+  min-width: 7rem;
+  min-height: 7rem;
+  place-items: center;
+  align-content: center;
+  border: 1px solid color-mix(in oklab, var(--mint) 34%, transparent);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, color-mix(in oklab, var(--mint) 13%, #0A0F14), #071014 72%);
+  box-shadow:
+    0 0 0 8px color-mix(in oklab, var(--mint) 4%, transparent),
+    0 0 54px color-mix(in oklab, var(--mint) 20%, transparent);
+  animation: observatory-core-breathe 2.8s ease-in-out infinite;
+}
+.observatory-core span {
+  color: var(--muted-foreground);
+  font-size: .58rem;
+  font-weight: 900;
+  letter-spacing: .22em;
+}
+.observatory-core strong {
+  color: var(--mint);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+}
+.observatory-core small {
+  color: var(--ice);
+  font-size: .61rem;
+  font-weight: 700;
+}
+
+.observatory-side-readout {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.018), transparent),
+    #09141B;
+}
+.observatory-readout-card {
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 66%, transparent);
+  padding: 1.1rem;
+}
+.observatory-readout-card span,
+.observatory-readout-card small {
+  display: block;
+  color: var(--muted-foreground);
+  font-size: .61rem;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.observatory-readout-card strong {
+  display: block;
+  margin-top: .5rem;
+  color: var(--ice);
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+.observatory-readout-card b {
+  display: block;
+  margin-top: .35rem;
+  color: var(--mint);
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+.observatory-wave {
+  display: flex;
+  height: 7rem;
+  align-items: end;
+  gap: 3px;
+  padding: 1.1rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 66%, transparent);
+}
+.observatory-wave span {
+  flex: 1;
+  min-width: 2px;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(to top, var(--deep-teal), var(--mint));
+  opacity: .66;
+  transform-origin: bottom;
+  animation: observatory-wave 1.9s ease-in-out infinite alternate;
+}
+.observatory-wave span:nth-child(3n) { animation-delay: .2s; }
+.observatory-wave span:nth-child(4n) { animation-delay: .4s; }
+.observatory-wave span:nth-child(5n) { animation-delay: .6s; }
+.observatory-stream {
+  overflow: hidden;
+  padding: 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .56rem;
+  line-height: 1.9;
+  color: color-mix(in oklab, var(--mint) 58%, var(--muted-foreground));
+}
+.observatory-stream span {
+  display: block;
+  animation: observatory-stream-flicker 3.8s steps(1) infinite;
+}
+.observatory-stream span:nth-child(2) { animation-delay: .6s; }
+.observatory-stream span:nth-child(3) { animation-delay: 1.2s; }
+.observatory-stream span:nth-child(4) { animation-delay: 1.8s; }
+.observatory-stream span:nth-child(5) { animation-delay: 2.4s; }
+
+@keyframes cinematic-hero-breathe {
+  from { opacity: .55; transform: scale(1); }
+  to { opacity: .9; transform: scale(1.045); }
+}
+@keyframes cinematic-scanlines {
+  from { background-position: 0 0; }
+  to { background-position: 0 220px; }
+}
+@keyframes observatory-grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 68px 0, 0 68px; }
+}
+@keyframes observatory-section-scan {
+  0%, 12% { opacity: 0; transform: translateY(-34%); }
+  24% { opacity: .65; }
+  68% { opacity: .18; }
+  100% { opacity: 0; transform: translateY(56%); }
+}
+@keyframes observatory-live-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--mint) 50%, transparent); }
+  100% { box-shadow: 0 0 0 9px transparent; }
+}
+@keyframes observatory-crt {
+  from { background-position: 0 0; }
+  to { background-position: 0 160px; }
+}
+@keyframes observatory-console-glow {
+  to { transform: rotate(360deg); }
+}
+@keyframes observatory-radar-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes observatory-target-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--mint) 50%, transparent), 0 0 12px var(--mint); }
+  100% { box-shadow: 0 0 0 12px transparent, 0 0 24px color-mix(in oklab, var(--mint) 30%, transparent); }
+}
+@keyframes observatory-core-breathe {
+  0%, 100% { transform: scale(.985); }
+  50% { transform: scale(1.035); }
+}
+@keyframes observatory-wave {
+  from { transform: scaleY(.45); opacity: .34; }
+  to { transform: scaleY(1); opacity: .82; }
+}
+@keyframes observatory-stream-flicker {
+  0%, 84%, 100% { opacity: .48; }
+  86%, 90% { opacity: 1; }
+}
+@media (max-width: 900px) {
+  .observatory-stage {
+    grid-template-columns: 1fr;
+  }
+  .observatory-radar {
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  }
+  .observatory-side-readout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .observatory-stream {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 640px) {
+  .signal-observatory-shell {
+    min-height: auto;
+  }
+  .observatory-stage,
+  .observatory-radar {
+    min-height: 24rem;
+  }
+  .observatory-side-readout {
+    grid-template-columns: 1fr;
+  }
+  .observatory-wave,
+  .observatory-stream {
+    display: none;
+  }
+  .observatory-node b {
+    display: none;
+  }
+  .observatory-console-chrome {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-hero::before,
+  .cinematic-hero::after,
+  .signal-observatory-grid,
+  .signal-observatory-beam,
+  .observatory-live-dot,
+  .observatory-status-dot,
+  .observatory-console::before,
+  .observatory-console::after,
+  .observatory-sweep,
+  .observatory-sweep-tail,
+  .observatory-node.is-active i,
+  .observatory-core,
+  .observatory-wave span,
+  .observatory-stream span {
+    animation: none !important;
+  }
+}
