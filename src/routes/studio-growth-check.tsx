@@ -144,6 +144,25 @@ function RevenueAuditPage() {
         </div>
       </section>
 
+      <section className="border-b border-border bg-ink-deep">
+        <div className="mx-auto max-w-7xl px-6 py-10">
+          <div className="grid gap-4 md:grid-cols-4">
+            {[
+              ["01", "Studio", "Establish the studio structure and operating context."],
+              ["02", "Economics", "Use an average month to understand capacity and commercial conditions."],
+              ["03", "Leakage", "Test where demand, time or value may be disappearing."],
+              ["04", "Result", "Return a first-pass estimate and the smallest useful next step."],
+            ].map(([number, title, text]) => (
+              <div key={number} className="rounded-2xl border border-border bg-ink p-5">
+                <div className="font-mono text-xs text-mint">{number}</div>
+                <h2 className="mt-3 font-display text-lg font-black text-ice">{title}</h2>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto grid max-w-7xl gap-8 px-6 py-12 lg:grid-cols-[1fr_320px] lg:py-16">
         <form
           onSubmit={submit}
