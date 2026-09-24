@@ -122,6 +122,37 @@ function OfferPage() {
         </div>
       </section>
 
+      {offer.slug === "studio-intelligence-audit" ? (
+        <section className="border-b border-border bg-ink-deep">
+          <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+            <SectionHeading
+              eyebrow="What you receive"
+              title="A visible deliverable before you commit."
+              description="The Studio Intelligence Audit is a defined commercial diagnosis. These representative sections show the shape of the output so the studio can understand what the £395 purchase produces before checkout."
+            />
+            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {[
+                ["01", "Executive Summary", "The primary commercial constraint, the evidence supporting it and the next decision the studio should make."],
+                ["02", "Studio Snapshot", "A concise view of visibility, enquiry conversion, capacity, booking conditions and retention signals."],
+                ["03", "Market & Competitor Review", "Local positioning, search visibility, competitor evidence and identifiable gaps in the public customer journey."],
+                ["04", "Top Three Opportunities", "Commercial opportunities ordered by evidence, dependency, effort and usefulness rather than a generic list of tactics."],
+                ["05", "Prioritised Recommendations", "Specific actions linked to the diagnosed constraint, with assumptions and unknowns kept visible."],
+                ["06", "90-Day Action Plan", "A practical sequence of actions, owners, checkpoints and one measurable starting intervention."],
+              ].map(([number, title, description]) => (
+                <div key={number} className="rounded-2xl border border-border bg-ink p-6">
+                  <div className="font-mono text-xs text-mint">{number}</div>
+                  <h3 className="mt-4 font-display text-xl font-black text-ice">{title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{description}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 rounded-2xl border border-mint/25 bg-mint/5 p-5 text-sm leading-relaxed text-muted-foreground">
+              <strong className="text-ice">Preview standard:</strong> representative sections explain the deliverable structure only. Any example studio data or outcomes used in future previews must remain explicitly labelled as demonstration data unless verified client evidence exists.
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       <section>
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="grid gap-12 lg:grid-cols-2">

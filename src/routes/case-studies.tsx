@@ -45,7 +45,34 @@ function ProofPage() {
       <section>
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <SectionHeading
-            eyebrow="Demonstration case"
+            eyebrow="Proof architecture"
+            title="Three proof classes. One evidence standard."
+            description="INKSIGHTS separates working infrastructure, labelled demonstrations and verified client outcomes so capability can be shown without confusing simulation with evidence."
+          />
+          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            {[
+              [Database, "System proof", "Show what is already built and working.", "Diagnostics, scoring, evidence handling, studio records, lead qualification and controlled routing can be demonstrated without presenting them as client outcomes."],
+              [Workflow, "Demonstration proof", "Show the method with labelled sample data.", "Simulated examples can demonstrate how INKSIGHTS interprets signals, identifies a constraint and turns that diagnosis into a recommendation."],
+              [ShieldCheck, "Client proof", "Publish outcomes only when they are verifiable.", "Real case studies should include baseline, intervention, measurement window, external factors, result and limitations."],
+            ].map(([Icon, eyebrow, title, description]) => {
+              const ProofIcon = Icon as typeof Database;
+              return (
+                <div key={String(eyebrow)} className="rounded-2xl border border-border bg-ink p-7">
+                  <ProofIcon className="h-7 w-7 text-mint" />
+                  <p className="mt-6 text-xs font-bold uppercase tracking-[0.16em] text-mint">{String(eyebrow)}</p>
+                  <h2 className="mt-3 font-display text-2xl font-black text-ice">{String(title)}</h2>
+                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{String(description)}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+          <SectionHeading
+            eyebrow="Demonstration proof"
             title="Visibility exists, but the booking path is unclear."
             description="A simulated studio profile is used to show the diagnostic output and proposed 72-hour correction without exposing or misrepresenting a real business."
           />
@@ -94,7 +121,7 @@ function ProofPage() {
 
       <section className="border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
-          <SectionHeading eyebrow="Working system proof" title="Infrastructure that can be inspected and validated." />
+          <SectionHeading eyebrow="System proof" title="Infrastructure that can be inspected and validated." />
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
               [Database, "Server-side lead qualification", "Studio answers are scored and stored in Supabase rather than trusted to a browser-only result."],
@@ -118,7 +145,7 @@ function ProofPage() {
       <section>
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <SectionHeading
-            eyebrow="Future case-study standard"
+            eyebrow="Client proof standard"
             title="What a real client result must include."
             description="A future case study will not be published from one good week or an unattributed screenshot."
           />
