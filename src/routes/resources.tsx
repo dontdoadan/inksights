@@ -25,7 +25,7 @@ export const Route = createFileRoute("/resources")({
   }),
 });
 
-const studioResources = [
+const diagnosticResources = [
   {
     icon: Search,
     title: "Free Tattoo Studio Revenue Audit",
@@ -42,14 +42,9 @@ const studioResources = [
       "Check Google and local discovery, website indexability, public proof, booking friction and measurement foundations.",
     href: "/tattoo-studio-visibility-scorecard",
   },
-  {
-    icon: Workflow,
-    title: "Tattoo Studio Software Comparison",
-    type: "Workflow guide",
-    description:
-      "Compare booking and studio platforms by enquiry intake, approvals, deposits, consent, communication, reporting and portability.",
-    href: "/tattoo-studio-software",
-  },
+] as const;
+
+const modelResources = [
   {
     icon: Calculator,
     title: "Tattoo Studio Revenue Growth Model",
@@ -65,6 +60,49 @@ const studioResources = [
     description:
       "Compare studio pricing with UK reference bands and interpret price position alongside booking lead time before changing rates.",
     href: "/pricing-benchmark",
+  },
+] as const;
+
+const operatingResources = [
+  {
+    icon: Workflow,
+    title: "Tattoo Studio Software Comparison",
+    type: "Workflow guide",
+    description:
+      "Compare booking and studio platforms by enquiry intake, approvals, deposits, consent, communication, reporting and portability.",
+    href: "/tattoo-studio-software",
+  },
+  {
+    icon: Search,
+    title: "Tattoo Studio SEO",
+    type: "Growth guide",
+    description:
+      "Understand local-search visibility, website relevance, proof and the conditions that affect whether nearby clients can discover the studio.",
+    href: "/tattoo-studio-seo",
+  },
+  {
+    icon: Workflow,
+    title: "Tattoo Studio Booking",
+    type: "Operations guide",
+    description:
+      "Review the path from enquiry through qualification, deposit, appointment and follow-up without reducing booking to a calendar tool.",
+    href: "/tattoo-studio-booking",
+  },
+  {
+    icon: BarChart3,
+    title: "Tattoo Studio Revenue",
+    type: "Commercial guide",
+    description:
+      "Break studio revenue into client volume, transaction value, frequency, capacity and leakage so the total becomes explainable.",
+    href: "/tattoo-studio-revenue",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Tattoo Studio Client Retention",
+    type: "Retention guide",
+    description:
+      "Examine repeat booking, reactivation, referrals and the systems that determine whether the client relationship continues after a session.",
+    href: "/tattoo-studio-client-retention",
   },
 ] as const;
 
@@ -90,11 +128,40 @@ function ResourcesPage() {
           </>
         }
       />
+      <section className="border-b border-border bg-ink">
+        <div className="mx-auto max-w-7xl px-6 py-10">
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              ["01", "Diagnose", "Start with a diagnostic when the studio is unsure which commercial problem matters most."],
+              ["02", "Model", "Use calculators and benchmarks when the question is about economics, pricing or the size of an opportunity."],
+              ["03", "Improve the system", "Use the operating guides when the constraint is already understood and the studio needs a better workflow."],
+            ].map(([number, title, text]) => (
+              <div key={number} className="rounded-2xl border border-border bg-ink-deep p-5">
+                <div className="font-mono text-xs text-mint">{number}</div>
+                <h2 className="mt-3 font-display text-lg font-black text-ice">{title}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       <ResourceSection
-        eyebrow="For studio owners"
-        title="Diagnose the commercial system."
-        description="Use these tools to identify what is restricting demand, bookings, capacity or revenue."
-        resources={studioResources}
+        eyebrow="Diagnose first"
+        title="Find the strongest commercial pressure."
+        description="Use these diagnostics when the studio is not yet certain whether the problem sits in visibility, conversion, capacity, retention or revenue."
+        resources={diagnosticResources}
+      />
+      <ResourceSection
+        eyebrow="Model and benchmark"
+        title="Put commercial questions into numbers."
+        description="Use these tools to test revenue assumptions, pricing position and the possible size of an opportunity before making a change."
+        resources={modelResources}
+      />
+      <ResourceSection
+        eyebrow="Guides and operating systems"
+        title="Improve a constraint that is already understood."
+        description="Use the operating guides when the studio needs deeper context on search visibility, booking, software, revenue or client retention."
+        resources={operatingResources}
       />
       <section className="border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
