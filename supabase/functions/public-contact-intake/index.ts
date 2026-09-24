@@ -83,7 +83,7 @@ Deno.serve(async (req: Request) => {
     });
     if (rateLimitAllowed !== true) return response({ error: "Too many messages. Try again later." }, 429, origin);
 
-    const { name, email, studio_name, location, phone, topic, message } = validated.value;
+    const { name, email, studio_name, location, phone, website, topic, message } = validated.value;
     const metadata = {
       page_path: clean(body.page_path, 500) || "/contact",
       referrer: clean(body.referrer, 1000) || null,
@@ -93,7 +93,7 @@ Deno.serve(async (req: Request) => {
       method: "POST",
       headers: { Prefer: "return=representation" },
       body: JSON.stringify({
-        name, email, studio_name, location, phone, topic, message,
+        name, email, studio_name, location, phone, website, topic, message,
         consent_at: new Date().toISOString(),
         source: "website_contact",
         data_classification: "external_unverified",
@@ -133,6 +133,20 @@ Deno.serve(async (req: Request) => {
         "Operational event persistence failed",
         eventError instanceof Error ? eventError.message : String(eventError),
       );
+    }
+
+    // CRM sync is server-to-server and non-blocking for the visitor: the enquiry remains
+    // successfully captured even if HubSpot is temporarily unavailable.
+    try {
+      const key = serviceKey();
+      const syncResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/hubspot-sync-v1`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ source_type: "public_contact_request", source_id: contact.id }),
+      });
+      if (!syncResponse.ok) console.error("HubSpot sync request failed", syncResponse.status, (await syncResponse.text()).slice(0, 300));
+    } catch (syncError) {
+      console.error("HubSpot sync dispatch failed", syncError instanceof Error ? syncError.message : String(syncError));
     }
 
     return response({
