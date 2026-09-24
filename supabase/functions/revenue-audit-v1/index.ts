@@ -152,6 +152,16 @@ Deno.serve(async (req: Request) => {
       }),
     });
     if (!eventRes.ok) console.error("Operational event persistence failed", eventRes.status);
+    try {
+      const syncResponse = await fetch(`${SB}/functions/v1/hubspot-sync-v1`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ source_type: "revenue_audit_lead", source_id: leadId, audit_id: auditId }),
+      });
+      if (!syncResponse.ok) console.error("HubSpot sync request failed", syncResponse.status, (await syncResponse.text()).slice(0, 300));
+    } catch (syncError) {
+      console.error("HubSpot sync dispatch failed", syncError instanceof Error ? syncError.message : String(syncError));
+    }
     return respond({ ok: true, lead_id: leadId, audit_id: auditId, audit_version: "v1", estimate: { annual_low: totalLow, annual_high: totalHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass estimate based on the figures you supplied. It is not a verified financial audit. A full INKSIGHTS audit uses connected or exported studio data to replace estimates with observed results." }, 200);
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
