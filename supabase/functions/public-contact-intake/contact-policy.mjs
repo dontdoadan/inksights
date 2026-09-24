@@ -24,6 +24,7 @@ export function validateContactPayload(body) {
   const studio_name = clean(body?.studio_name, 180) || null;
   const location = clean(body?.location, 180) || null;
   const phone = clean(body?.phone, 80) || null;
+  const website = clean(body?.website, 500) || null;
   const topic = clean(body?.topic, 80);
   const message = clean(body?.message, 3000);
   const consent = body?.consent === true;
@@ -31,5 +32,5 @@ export function validateContactPayload(body) {
   if (!name || !validEmail || !topic || message.length < 10 || !consent) {
     return { ok: false, error: "Name, valid email, topic, message and consent are required." };
   }
-  return { ok: true, value: { name, email, studio_name, location, phone, topic, message, consent } };
+  return { ok: true, value: { name, email, studio_name, location, phone, website, topic, message, consent } };
 }
