@@ -22,6 +22,58 @@ function AboutPage() {
     <JsonLd data={{ "@context": "https://schema.org", "@type": "AboutPage", name: "About INKSIGHTS", url: CANONICAL_URL, mainEntity: { "@type": "Organization", name: "INKSIGHTS", description: "Growth intelligence and commercial systems designed specifically for UK tattoo studios." } }} />
     <PageHero eyebrow="Built around tattoo studios" title={<>A tattoo studio is not a generic appointment business.</>} description={<>Custom projects have a different commercial journey: style and portfolio create trust, enquiries need qualification, deposits protect valuable artist time, multi-session work spans months and the relationship can continue long after the first appointment.</>} />
     <section><div className="mx-auto grid max-w-7xl gap-10 px-6 py-20 lg:grid-cols-2 lg:items-center md:py-28"><div><SectionHeading eyebrow="Why INKSIGHTS exists" title="The commercial system behind the artwork matters." description="INKSIGHTS was started from inside tattooing with a simple premise: studio owners need decisions based on the economics and workflow of tattooing, not generic advice copied from unrelated service businesses." /><div className="mt-7 space-y-4 text-base leading-relaxed text-muted-foreground"><p>That means looking at the full path from local discovery and portfolio trust through enquiry, booking, deposits, artist capacity, attendance, revenue and client return.</p><p>Industry experience provides useful context. It does not make a recommendation automatically correct. The aim is to combine that context with measurable data, transparent assumptions and evidence from real studio implementations.</p></div></div><div className="rounded-3xl border border-mint/35 bg-gradient-to-br from-ink-elev to-ink p-8 md:p-10"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What we are building</p><div className="mt-6 space-y-4"><div className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Studio visibility intelligence</strong><p className="mt-1 text-sm text-muted-foreground">Understand where the right local clients discover or fail to discover the studio.</p></div><div className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Revenue diagnostics</strong><p className="mt-1 text-sm text-muted-foreground">Separate client volume, transaction value, frequency, capacity and leakage instead of treating revenue as one number.</p></div><div className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Booking and retention systems</strong><p className="mt-1 text-sm text-muted-foreground">Improve qualification, deposits, reminders, rebooking, referrals and client reactivation with clear ownership.</p></div><div className="rounded-xl border border-border bg-ink-deep p-4"><strong className="text-ice">Proprietary studio dataset</strong><p className="mt-1 text-sm text-muted-foreground">Accumulate structured studio-level signals that make future benchmarks and intelligence more useful.</p></div></div></div></div></section>
+    <section className="border-y border-border bg-ink">
+      <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
+        <SectionHeading
+          eyebrow="What INKSIGHTS is"
+          title="Commercial intelligence for tattoo studios — not another generic marketing layer."
+          description="The role is to help a studio understand where demand, bookings, capacity, retention or revenue is being lost, then decide what deserves attention next."
+        />
+        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-3xl border border-mint/30 bg-mint/5 p-7 md:p-8">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">INKSIGHTS IS</p>
+            <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground">
+              {[
+                "A diagnostic and commercial-intelligence layer built around tattoo-studio economics.",
+                "A way to connect visibility, enquiry, booking, capacity, retention and revenue rather than treating them as separate problems.",
+                "A system for turning observations into measurable priorities and bounded interventions.",
+                "A growing studio dataset and evidence base designed to improve future benchmarks and decisions.",
+              ].map((item) => <div key={item} className="flex gap-3"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-mint" /><span>{item}</span></div>)}
+            </div>
+          </div>
+          <div className="rounded-3xl border border-border bg-ink-deep p-7 md:p-8">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">INKSIGHTS IS NOT</p>
+            <div className="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground">
+              {[
+                "A generic social-media or SEO agency selling activity before diagnosis.",
+                "A promise that more traffic is always the answer.",
+                "A replacement for the studio's own creative identity, artists or client relationships.",
+                "A source of guaranteed rankings, bookings or revenue outcomes.",
+              ].map((item) => <div key={item} className="flex gap-3"><span className="mt-1 text-mint">•</span><span>{item}</span></div>)}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">How a recommendation is produced</p>
+          <div className="mt-5 grid gap-4 md:grid-cols-4">
+            {[
+              ["01", "Observe", "Collect the public and operating evidence that is actually available."],
+              ["02", "Baseline", "Separate measured facts, estimates, assumptions and missing information."],
+              ["03", "Diagnose", "Identify the first commercially material constraint rather than listing every weakness."],
+              ["04", "Verify", "Measure the intervention before expanding the scope or claiming an outcome."],
+            ].map(([number, title, text]) => (
+              <div key={number} className="rounded-2xl border border-border bg-ink p-5">
+                <div className="font-mono text-xs text-mint">{number}</div>
+                <h3 className="mt-3 font-display text-lg font-black text-ice">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section className="border-y border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-20 md:py-28"><SectionHeading eyebrow="Operating principles" title="How trust is earned." /><div className="mt-10 grid gap-5 md:grid-cols-2">{principles.map(({ icon: Icon, title, description }) => <div key={title} className="rounded-2xl border border-border bg-ink-deep p-7"><Icon className="h-7 w-7 text-mint" /><h2 className="mt-5 font-display text-2xl font-black text-ice">{title}</h2><p className="mt-3 leading-relaxed text-muted-foreground">{description}</p></div>)}</div></div></section>
     <section><div className="mx-auto max-w-5xl px-6 py-20 text-center md:py-28"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Current stage</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">Founding systems, controlled pilots and verified proof.</h2><p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">INKSIGHTS is early-stage. The methodology and working infrastructure can be shown now; genuine client outcomes will only be published with permission and enough measurement context to make the claim credible.</p><a href="/case-studies" className="mt-8 inline-flex rounded-full border border-mint px-6 py-3 font-bold text-mint hover:bg-mint/10">Review the proof library</a></div></section>
     <CtaSection title="Start by finding the constraint." description="Run the free Revenue Audit and use the evidence to decide what the studio actually needs next." />
