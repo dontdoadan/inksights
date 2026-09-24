@@ -390,6 +390,147 @@ export function InteractiveJourney() {
 }
 
 
+
+const observatorySignals = [
+  { label: "Visibility", value: 78, delta: "+12%", tone: "Search signal", x: 70, y: 28 },
+  { label: "Enquiries", value: 42, delta: "-18%", tone: "Constraint", x: 38, y: 63 },
+  { label: "Bookings", value: 71, delta: "+7%", tone: "Conversion", x: 61, y: 72 },
+  { label: "Retention", value: 55, delta: "+21%", tone: "Opportunity", x: 29, y: 33 },
+] as const;
+
+export function SignalObservatory() {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const activeSignal = observatorySignals[active];
+
+  useEffect(() => {
+    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      setActive((current) => (current + 1) % observatorySignals.length);
+    }, 2800);
+    return () => window.clearInterval(timer);
+  }, [paused]);
+
+  return (
+    <section className="signal-observatory-shell brand-dark relative overflow-hidden border-y border-border">
+      <div className="signal-observatory-grid" aria-hidden="true" />
+      <div className="signal-observatory-beam" aria-hidden="true" />
+      <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <div className="grid gap-10 lg:grid-cols-[.78fr_1.22fr] lg:items-center">
+          <Reveal>
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.18em] text-mint">
+                <span className="observatory-live-dot" /> Live system scan
+              </div>
+              <h2 className="mt-5 text-balance font-display text-4xl font-black tracking-tight text-ice md:text-6xl">
+                Watch the studio system <span className="text-mint">come alive.</span>
+              </h2>
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
+                A cinematic signal layer turns the commercial model into something you can inspect — visibility, enquiries, bookings and retention constantly moving through one diagnostic field.
+              </p>
+
+              <div className="mt-8 grid grid-cols-2 gap-3">
+                {observatorySignals.map((signal, index) => {
+                  const selected = index === active;
+                  return (
+                    <button
+                      key={signal.label}
+                      type="button"
+                      onClick={() => setActive(index)}
+                      onPointerEnter={() => {
+                        setPaused(true);
+                        setActive(index);
+                      }}
+                      onPointerLeave={() => setPaused(false)}
+                      className={`observatory-signal-button ${selected ? "is-active" : ""}`}
+                      aria-pressed={selected}
+                    >
+                      <span>{signal.label}</span>
+                      <strong>{signal.value}</strong>
+                      <small>{signal.tone}</small>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <div
+              className="observatory-console"
+              onPointerEnter={() => setPaused(true)}
+              onPointerLeave={() => setPaused(false)}
+            >
+              <div className="observatory-console-chrome">
+                <div className="flex items-center gap-2">
+                  <span className="observatory-status-dot" />
+                  <span>SIGNAL OBSERVATORY / UK STUDIO MODEL</span>
+                </div>
+                <span className="font-mono text-[10px] text-mint">LIVE · 00:42:17</span>
+              </div>
+
+              <div className="observatory-stage">
+                <div className="observatory-radar" aria-hidden="true">
+                  <span className="observatory-ring observatory-ring-1" />
+                  <span className="observatory-ring observatory-ring-2" />
+                  <span className="observatory-ring observatory-ring-3" />
+                  <span className="observatory-ring observatory-ring-4" />
+                  <span className="observatory-axis observatory-axis-x" />
+                  <span className="observatory-axis observatory-axis-y" />
+                  <span className="observatory-sweep" />
+                  <span className="observatory-sweep-tail" />
+                  {observatorySignals.map((signal, index) => (
+                    <span
+                      key={signal.label}
+                      className={`observatory-node observatory-node-${index} ${index === active ? "is-active" : ""}`}
+                      style={{ left: `${signal.x}%`, top: `${signal.y}%` }}
+                    >
+                      <i />
+                      <b>{signal.label}</b>
+                    </span>
+                  ))}
+                  <div className="observatory-core">
+                    <span>INK</span>
+                    <strong>{activeSignal.value}</strong>
+                    <small>{activeSignal.label}</small>
+                  </div>
+                </div>
+
+                <div className="observatory-side-readout">
+                  <div className="observatory-readout-card is-primary">
+                    <span>ACTIVE SIGNAL</span>
+                    <strong>{activeSignal.label}</strong>
+                    <b>{activeSignal.value}/100</b>
+                    <small>{activeSignal.delta} change</small>
+                  </div>
+                  <div className="observatory-wave" aria-hidden="true">
+                    {Array.from({ length: 24 }).map((_, index) => (
+                      <span key={index} style={{ height: `${18 + ((index * 17) % 52)}%` }} />
+                    ))}
+                  </div>
+                  <div className="observatory-stream" aria-hidden="true">
+                    <span>VISIBILITY_SIGNAL / STABLE</span>
+                    <span>ENQUIRY_ROUTE / CHECK</span>
+                    <span>BOOKING_CONTROL / PASS</span>
+                    <span>RETENTION_LAYER / WATCH</span>
+                    <span>REVENUE_MODEL / SYNC</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="observatory-console-footer">
+                <span>Evidence layer active</span>
+                <span>Constraint detection enabled</span>
+                <span className="text-mint">Next scan 00:03</span>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function SiteEffects() {
   const pulseRef = useRef<HTMLDivElement>(null);
 
