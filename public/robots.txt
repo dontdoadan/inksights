@@ -2,8 +2,10 @@ User-agent: *
 Allow: /
 Disallow: /auth
 Disallow: /dashboard
+Disallow: /workspace
 Disallow: /command-hub
 Disallow: /mcp
+Disallow: /api/
 Disallow: /.mcp/
 Disallow: /.lovable/
 Disallow: /.well-known/
