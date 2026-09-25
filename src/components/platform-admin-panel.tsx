@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any -- generic CMS CRUD spans newly migrated tables until generated Supabase types are refreshed */
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 type FieldKind = "text" | "textarea" | "number" | "boolean" | "json" | "select";
@@ -13,6 +14,8 @@ type ResourceConfig = {
   createdBy?: boolean;
   fields: Field[];
 };
+
+const cmsClient = supabase as any;
 
 const resources: Record<ResourceKey, ResourceConfig> = {
   pages: {
@@ -102,7 +105,6 @@ const defaultValue = (field: Field) => {
 };
 
 export function PlatformAdminPanel() {
-  const client = supabase as any;
   const [role, setRole] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [active, setActive] = useState<ResourceKey>("pages");
@@ -124,7 +126,7 @@ export function PlatformAdminPanel() {
         return;
       }
       setUserId(auth.user.id);
-      const { data } = await client
+      const { data } = await cmsClient
         .from("platform_admins")
         .select("role, active")
         .eq("user_id", auth.user.id)
@@ -138,16 +140,16 @@ export function PlatformAdminPanel() {
   useEffect(() => {
     if (!role) return;
     void loadRows();
-  }, [active, role]);
+  }, [loadRows, role]);
 
   const isExisting = useMemo(() => {
     if (!selectedKey) return false;
     return rows.some((row) => String(row[config.primaryKey]) === selectedKey);
   }, [rows, selectedKey, config.primaryKey]);
 
-  async function loadRows() {
+  const loadRows = useCallback(async () => {
     setMessage("");
-    const { data, error } = await client.from(config.table).select("*").limit(100);
+    const { data, error } = await cmsClient.from(config.table).select("*").limit(100);
     if (error) {
       setMessage(error.message);
       return;
@@ -158,7 +160,7 @@ export function PlatformAdminPanel() {
       const current = list.find((row) => String(row[config.primaryKey]) === selectedKey);
       if (current) setDraft(current);
     }
-  }
+  }, [config.primaryKey, config.table, selectedKey]);
 
   function startNew() {
     const next: Record<string, any> = {};
@@ -196,7 +198,7 @@ export function PlatformAdminPanel() {
       setSaving(true);
       setMessage("");
       const payload = normalizedPayload();
-      let query = client.from(config.table);
+      const query = cmsClient.from(config.table);
       const result = isExisting
         ? await query.update(payload).eq(config.primaryKey, selectedKey)
         : await query.insert(payload);
@@ -213,7 +215,7 @@ export function PlatformAdminPanel() {
   async function remove() {
     if (!isExisting || !selectedKey) return;
     if (!window.confirm("Delete this item? This cannot be undone.")) return;
-    const { error } = await client.from(config.table).delete().eq(config.primaryKey, selectedKey);
+    const { error } = await cmsClient.from(config.table).delete().eq(config.primaryKey, selectedKey);
     if (error) {
       setMessage(error.message);
       return;
@@ -361,7 +363,7 @@ function AdminField({
       ) : field.kind === "boolean" ? (
         <span className="mt-3 flex min-h-12 items-center gap-3 rounded-xl border border-border bg-ink-deep px-4">
           <input type="checkbox" checked={Boolean(value)} disabled={disabled} onChange={(event) => onChange(event.target.checked)} />
-          <span className="text-sm font-normal text-muted-foreground">{Boolean(value) ? "Enabled" : "Disabled"}</span>
+          <span className="text-sm font-normal text-muted-foreground">{value ? "Enabled" : "Disabled"}</span>
         </span>
       ) : (
         <input
