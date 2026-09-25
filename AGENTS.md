@@ -17,40 +17,37 @@ Treat the Google Drive folder `INKSIGHTS` as the canonical business-document wor
 
 ```text
 INKSIGHTS/
-├── 00 Start Here
-├── 01 Strategy
-├── 02 Products & Services
-├── 03 Research
-├── 04 Leads & Sales
-├── 05 Clients
-├── 06 Marketing & Brand
-├── 07 Data & Reports
-├── 08 Operations
-├── 09 Finance
-├── 10 Legal
-├── 11 Templates
-├── 12 Projects
-├── 20 Shared
-├── 30 Public
-└── 90 Archive
+├── 00 - START HERE
+├── 01 - BUSINESS
+├── 02 - PRODUCT
+├── 03 - SYSTEM & TECHNOLOGY
+├── 04 - DATA & INTELLIGENCE
+├── 05 - SALES & CRM
+├── 06 - MARKETING & BRAND
+├── 07 - SERVICE DELIVERY
+├── 08 - RESEARCH & EVIDENCE
+├── 09 - FINANCE & COMMERCIAL
+├── 10 - GOVERNANCE & SECURITY
+├── 11 - SOPs & PLAYBOOKS
+└── 12 - TEMPLATES
 ```
 
 Do not create additional top-level folders casually. Use the existing business-purpose folders first. A new top-level category requires a deliberate architecture decision.
 
 ### Current Drive governance authorities
 
-- `00 Start Here/START HERE — INKSIGHTS Drive Guide` — current filing, naming, authority and system-boundary rules.
-- `08 Operations/File Management/File Creation, Storage & Logging — SOP — ACTIVE` — lifecycle rule for durable files.
-- `08 Operations/File Management/Master File Register — ACTIVE` — durable-file index/control layer.
-- `12 Projects` — execution workspaces only; authoritative project outputs must be promoted to the correct 01–11 business folder when they become durable authorities.
+- `00 - START HERE` — entry point, navigation and current workspace guidance.
+- `10 - GOVERNANCE & SECURITY` — information architecture, governance, security and control standards.
+- `11 - SOPs & PLAYBOOKS` — current operating procedures and repeatable execution playbooks.
+- `Master File Register — ACTIVE` — durable-file index/control layer; use its live registered location rather than assuming a historic folder path.
 
-The previous Drive asset `A-021 / INKSIGHTS - AI Governance & Operating Standard - CANONICAL - v1.0` is currently located in the legacy archive. Treat it as historical reference until an updated authority is deliberately promoted into the clean `INKSIGHTS` structure.
+The pre-reset Drive hierarchy and its documents are historical reference only. Do not use legacy paths as filing targets unless a current authority explicitly promotes them.
 
 ### Storage rules
 
 1. **No loose INKSIGHTS assets.** New durable business assets must be stored in the correct canonical folder.
-2. **Classify by business purpose.** Strategy → `01 Strategy`; offers/product definitions → `02 Products & Services`; research → `03 Research`; sales/CRM support material → `04 Leads & Sales`; client delivery → `05 Clients`; brand/marketing → `06 Marketing & Brand`; human-readable data/reports → `07 Data & Reports`; SOPs/workflows → `08 Operations`; finance → `09 Finance`; legal → `10 Legal`; reusable blank assets → `11 Templates`.
-3. **Project workspaces are temporary execution layers.** Working material can remain in `12 Projects/[project]/02 Working`; durable outputs move to their canonical business folder and the project keeps a reference/shortcut.
+2. **Classify by business purpose.** Company/strategy → `01 - BUSINESS`; product/offers → `02 - PRODUCT`; architecture/system exports → `03 - SYSTEM & TECHNOLOGY`; analysis/data intelligence → `04 - DATA & INTELLIGENCE`; sales/CRM → `05 - SALES & CRM`; brand/marketing → `06 - MARKETING & BRAND`; client delivery → `07 - SERVICE DELIVERY`; research/evidence → `08 - RESEARCH & EVIDENCE`; finance/commercial → `09 - FINANCE & COMMERCIAL`; governance/security → `10 - GOVERNANCE & SECURITY`; SOPs/playbooks → `11 - SOPs & PLAYBOOKS`; reusable blank assets → `12 - TEMPLATES`.
+3. **Do not recreate the old project-folder hierarchy.** Temporary execution material belongs inside the relevant canonical business domain (or a planning tool such as Notion); durable outputs remain in their owning domain.
 4. **Preserve machine contracts.** Do not rename machine-readable files when code, schemas, imports or automations may reference their names. Prefer stable snake_case names for machine assets.
 5. **Human-facing naming convention.** Use plain English and `[Subject] — [Document Type] — [Status] — YYYY-MM-DD` where the date materially identifies the asset.
 6. **Use the approved statuses.** `DRAFT`, `ACTIVE`, `FINAL`, `ARCHIVED`.
