@@ -137,11 +137,6 @@ export function PlatformAdminPanel() {
     return () => { live = false; };
   }, []);
 
-  useEffect(() => {
-    if (!role) return;
-    void loadRows();
-  }, [loadRows, role]);
-
   const isExisting = useMemo(() => {
     if (!selectedKey) return false;
     return rows.some((row) => String(row[config.primaryKey]) === selectedKey);
@@ -161,6 +156,11 @@ export function PlatformAdminPanel() {
       if (current) setDraft(current);
     }
   }, [config.primaryKey, config.table, selectedKey]);
+
+  useEffect(() => {
+    if (!role) return;
+    void loadRows();
+  }, [loadRows, role]);
 
   function startNew() {
     const next: Record<string, any> = {};
