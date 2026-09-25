@@ -185,7 +185,7 @@ export function PlatformAdminPanel() {
     payload.updated_at = new Date().toISOString();
     if (userId) payload.updated_by = userId;
     if (!isExisting && config.createdBy && userId) payload.created_by = userId;
-    if (!isExisting && (active === "pages" || active === "articles") && payload.status === "published") {
+    if ((active === "pages" || active === "articles") && payload.status === "published" && !draft.published_at) {
       payload.published_at = new Date().toISOString();
     }
     return payload;
