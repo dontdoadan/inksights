@@ -1,3 +1,4 @@
+import { PlatformAdminPanel } from "@/components/platform-admin-panel";
 import { Logo } from "@/components/public-site";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
@@ -13,7 +14,7 @@ type Scenario = {
 
 type Submission = {
   id: string;
-  full_name: string;
+  name: string;
   email: string;
   studio_name: string | null;
   status: string;
@@ -57,7 +58,7 @@ function Dashboard() {
     const [{ data: p }, { data: s }, { data: sub }] = await Promise.all([
       supabase.from("profiles").select("full_name, studio_name, location, artist_count, onboarding_stage").eq("id", uid).maybeSingle(),
       supabase.from("scenarios").select("id, name, inputs, results, updated_at").order("updated_at", { ascending: false }),
-      supabase.from("audit_submissions").select("id, full_name, email, studio_name, status, created_at").order("created_at", { ascending: false }),
+      supabase.from("revenue_audit_leads").select("id, name, email, studio_name, status, created_at").order("created_at", { ascending: false }),
     ]);
     setProfile(p as Profile | null);
     setScenarios((s ?? []) as Scenario[]);
@@ -182,7 +183,7 @@ function Dashboard() {
                     <tr key={sub.id} className="border-t border-border/40">
                       <td className="px-4 py-3">{new Date(sub.created_at).toLocaleDateString("en-GB")}</td>
                       <td className="px-4 py-3">{sub.studio_name || "—"}</td>
-                      <td className="px-4 py-3">{sub.full_name} · {sub.email}</td>
+                      <td className="px-4 py-3">{sub.name} · {sub.email}</td>
                       <td className="px-4 py-3">
                         <span className="rounded-full bg-mint/10 text-mint px-2 py-0.5 text-xs font-semibold">
                           {sub.status}
@@ -200,6 +201,7 @@ function Dashboard() {
           <h2 className="font-display font-bold text-2xl mb-4">Studio profile</h2>
           <ProfileForm profile={profile} onSave={saveProfile} />
         </section>
+        <PlatformAdminPanel />
       </main>
     </div>
   );
