@@ -25,7 +25,7 @@ type GoogleWindow = Window & {
   __inksightsGoogleAnalyticsLoaded?: boolean;
 };
 
-export const CONSENT_CONSENT_STORAGE_KEY = "inksight-consent-v1";
+export const CONSENT_STORAGE_KEY = "inksight-consent-v1";
 const META_PIXEL_ID = "1358457972311385";
 export const GOOGLE_TAG_ID = "G-03QJZLEPW0";
 export const GOOGLE_ANALYTICS_MEASUREMENT_ID = "G-V7SQ9SPYMH";
