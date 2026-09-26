@@ -42,7 +42,7 @@ export function CookieConsent() {
           <div className="max-w-2xl">
             <h2 id="cookie-title" className="font-display text-xl font-black text-ice">Your privacy choices</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Essential storage keeps the website working. Optional marketing technology helps us measure campaign journeys. It stays off unless you choose it.
+              Essential storage keeps the website working. Optional analytics and marketing technologies help us understand website performance and campaign journeys. They stay off unless you choose them.
             </p>
           </div>
           <a href="/cookies" className="shrink-0 text-sm font-semibold text-mint hover:text-mint-soft">Cookie details</a>
@@ -51,7 +51,7 @@ export function CookieConsent() {
         {customising ? (
           <div className="mt-5 space-y-3 border-y border-border py-5">
             <ConsentRow title="Essential" description="Required for security, saved form progress and consent preferences." checked disabled onChange={() => undefined} />
-            <ConsentRow title="Analytics" description="Allows privacy-conscious first-party measurement of page views and key conversion events. Form contents and personal contact details are not copied into analytics." checked={analytics} onChange={setAnalytics} />
+            <ConsentRow title="Analytics" description="Allows Google Analytics 4 and privacy-conscious first-party measurement of page views and key conversion events. Form contents and personal contact details are not copied into analytics." checked={analytics} onChange={setAnalytics} />
             <ConsentRow title="Marketing" description="Allows Meta Pixel to load after consent and record page and conversion events." checked={marketing} onChange={setMarketing} />
           </div>
         ) : null}

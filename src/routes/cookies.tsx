@@ -8,7 +8,7 @@ export const Route = createFileRoute("/cookies")({
   head: () => ({
     meta: [
       { title: "Cookie Notice | INKSIGHTS" },
-      { name: "description", content: "How INKSIGHTS uses essential browser storage and optional marketing tracking." },
+      { name: "description", content: "How INKSIGHTS uses essential browser storage, Google Analytics 4 and optional marketing tracking." },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
@@ -31,7 +31,7 @@ function CookiesPage() {
           <thead><tr><th>Category</th><th>Current use</th><th>Choice</th></tr></thead>
           <tbody>
             <tr><td><strong>Essential</strong></td><td>Stores the cookie preference, supports security, authentication where used and may preserve form progress.</td><td>Always active because the requested service cannot operate reliably without it.</td></tr>
-            <tr><td><strong>Analytics</strong></td><td>Reserved for privacy-conscious website measurement. No separate analytics provider is currently loaded by the consent control.</td><td>Optional.</td></tr>
+            <tr><td><strong>Analytics</strong></td><td>Loads Google Analytics 4 (measurement ID <code>G-03QJZLEPW0</code>) after analytics consent and also permits first-party measurement of page views and key conversion events.</td><td>Optional and off until accepted.</td></tr>
             <tr><td><strong>Marketing</strong></td><td>Loads Meta Pixel after consent to record page views and selected conversion events such as assessment completion or booking request.</td><td>Optional and off until accepted.</td></tr>
           </tbody>
         </table>
@@ -39,6 +39,11 @@ function CookiesPage() {
 
       <h2>Essential browser storage</h2>
       <p>The key <code>inksight-consent-v1</code> stores whether analytics and marketing technologies were accepted or rejected, together with the date of the choice. Supabase may also use essential authentication storage for signed-in dashboard users.</p>
+
+      <h2>Google Analytics 4</h2>
+      <p>Google Analytics 4 is configured for the INKSIGHTS website stream at <code>https://getinksights.co.uk</code> using measurement ID <code>G-03QJZLEPW0</code>. The Google tag is loaded only after analytics consent is granted.</p>
+      <p>When enabled, the site can send page-view and interaction events such as diagnostic, contact and checkout events. The implementation does not intentionally send form contents, email addresses, phone numbers or other direct contact details to Google Analytics.</p>
+      <p>If analytics consent is withdrawn, INKSIGHTS updates the Google consent state to deny analytics storage for subsequent measurement.</p>
 
       <h2>Meta Pixel</h2>
       <p>Meta Pixel is not inserted into the page source until marketing consent is selected. Once enabled, it may process browser and event information to measure the journey from a Meta advertisement or social interaction to a website action.</p>
@@ -52,7 +57,7 @@ function CookiesPage() {
       <p>Browsers allow you to block or remove cookies and local storage. Blocking essential storage may prevent saved progress, login or preference features from working correctly.</p>
 
       <h2>Updates</h2>
-      <p>This notice will be updated before a new non-essential provider is activated. The consent interface should accurately reflect the technologies currently available.</p>
+      <p>This notice should be updated before any additional non-essential provider is activated. The consent interface is intended to reflect the technologies currently available.</p>
 
       <h2>Questions</h2>
       <p>Email <a href="mailto:contact@getinksight.co.uk">contact@getinksight.co.uk</a> with questions about tracking or consent records.</p>

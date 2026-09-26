@@ -12,13 +12,22 @@ type MetaPixelFunction = ((...args: unknown[]) => void) & {
   version: string;
 };
 
+type GoogleTagFunction = (...args: unknown[]) => void;
+
 type MetaWindow = Window & {
   fbq?: MetaPixelFunction;
   _fbq?: MetaPixelFunction;
 };
 
+type GoogleWindow = Window & {
+  dataLayer?: unknown[][];
+  gtag?: GoogleTagFunction;
+  __inksightsGoogleAnalyticsLoaded?: boolean;
+};
+
 const STORAGE_KEY = "inksight-consent-v1";
 const META_PIXEL_ID = "1358457972311385";
+export const GOOGLE_ANALYTICS_MEASUREMENT_ID = "G-03QJZLEPW0";
 
 export function readConsent(): InksightConsent | null {
   if (typeof window === "undefined") return null;
@@ -32,16 +41,110 @@ export function readConsent(): InksightConsent | null {
 }
 
 export function saveConsent(value: Omit<InksightConsent, "essential" | "updatedAt">): InksightConsent {
+  const previous = readConsent();
   const consent: InksightConsent = {
     essential: true,
     analytics: Boolean(value.analytics),
     marketing: Boolean(value.marketing),
     updatedAt: new Date().toISOString(),
   };
+
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
   window.dispatchEvent(new CustomEvent("inksight:consent-changed", { detail: consent }));
+
+  if (consent.analytics) {
+    loadGoogleAnalytics();
+    if (!previous?.analytics) trackGooglePageView(window.location.pathname);
+  } else {
+    updateGoogleConsent(consent);
+  }
+
   if (consent.marketing) trackMetaPageView(window.location.pathname);
   return consent;
+}
+
+function ensureGoogleTag() {
+  if (typeof window === "undefined") return null;
+  const global = window as GoogleWindow;
+
+  if (!global.dataLayer) global.dataLayer = [];
+  if (!global.gtag) {
+    global.gtag = (...args: unknown[]) => {
+      global.dataLayer?.push(args);
+    };
+    global.gtag("consent", "default", {
+      analytics_storage: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+    });
+  }
+
+  return global;
+}
+
+export function updateGoogleConsent(consent = readConsent()) {
+  if (typeof window === "undefined") return;
+  const global = window as GoogleWindow;
+  if (!global.gtag) return;
+
+  global.gtag("consent", "update", {
+    analytics_storage: consent?.analytics ? "granted" : "denied",
+    ad_storage: consent?.marketing ? "granted" : "denied",
+    ad_user_data: consent?.marketing ? "granted" : "denied",
+    ad_personalization: consent?.marketing ? "granted" : "denied",
+  });
+}
+
+export function loadGoogleAnalytics() {
+  if (typeof window === "undefined" || !readConsent()?.analytics) return;
+  const global = ensureGoogleTag();
+  if (!global) return;
+
+  updateGoogleConsent();
+  if (global.__inksightsGoogleAnalyticsLoaded) return;
+
+  const existing = document.querySelector<HTMLScriptElement>(
+    `script[data-inksights-ga4="${GOOGLE_ANALYTICS_MEASUREMENT_ID}"]`,
+  );
+
+  if (!existing) {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_MEASUREMENT_ID}`;
+    script.dataset.inksightsGa4 = GOOGLE_ANALYTICS_MEASUREMENT_ID;
+    document.head.appendChild(script);
+  }
+
+  global.gtag?.("js", new Date());
+  global.gtag?.("config", GOOGLE_ANALYTICS_MEASUREMENT_ID, {
+    send_page_view: false,
+  });
+  global.__inksightsGoogleAnalyticsLoaded = true;
+}
+
+export function trackGooglePageView(path: string) {
+  if (typeof window === "undefined" || !readConsent()?.analytics) return;
+  loadGoogleAnalytics();
+  (window as GoogleWindow).gtag?.("event", "page_view", {
+    page_title: document.title,
+    page_location: window.location.href,
+    page_path: path,
+  });
+}
+
+export function trackGoogleEvent(
+  eventName: string,
+  properties: Record<string, string | number | boolean | null | undefined> = {},
+) {
+  if (typeof window === "undefined" || !readConsent()?.analytics) return;
+  loadGoogleAnalytics();
+
+  const cleanProperties = Object.fromEntries(
+    Object.entries(properties).filter(([, value]) => value !== undefined),
+  );
+
+  (window as GoogleWindow).gtag?.("event", eventName, cleanProperties);
 }
 
 export function loadMetaPixel() {

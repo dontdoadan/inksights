@@ -1,4 +1,4 @@
-import { readConsent } from "./consent";
+import { readConsent, trackGoogleEvent, trackGooglePageView } from "./consent";
 
 export type WebsiteEventName =
   | "page_view"
@@ -44,4 +44,13 @@ export function trackWebsiteEvent(
     headers: { "content-type": "text/plain;charset=UTF-8" },
     body,
   }).catch(() => undefined);
+
+  if (eventName === "page_view") {
+    trackGooglePageView(window.location.pathname);
+  } else {
+    trackGoogleEvent(eventName, {
+      page_path: window.location.pathname,
+      ...properties,
+    });
+  }
 }
