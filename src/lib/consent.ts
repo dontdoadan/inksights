@@ -25,14 +25,15 @@ type GoogleWindow = Window & {
   __inksightsGoogleAnalyticsLoaded?: boolean;
 };
 
-const STORAGE_KEY = "inksight-consent-v1";
+export const CONSENT_CONSENT_STORAGE_KEY = "inksight-consent-v1";
 const META_PIXEL_ID = "1358457972311385";
+export const GOOGLE_TAG_ID = "G-03QJZLEPW0";
 export const GOOGLE_ANALYTICS_MEASUREMENT_ID = "G-V7SQ9SPYMH";
 
 export function readConsent(): InksightConsent | null {
   if (typeof window === "undefined") return null;
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "null") as InksightConsent | null;
+    const parsed = JSON.parse(window.localStorage.getItem(CONSENT_STORAGE_KEY) || "null") as InksightConsent | null;
     if (!parsed || parsed.essential !== true) return null;
     return parsed;
   } catch {
@@ -49,7 +50,7 @@ export function saveConsent(value: Omit<InksightConsent, "essential" | "updatedA
     updatedAt: new Date().toISOString(),
   };
 
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(consent));
+  window.localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(consent));
   window.dispatchEvent(new CustomEvent("inksight:consent-changed", { detail: consent }));
 
   if (consent.analytics) {
@@ -102,24 +103,6 @@ export function loadGoogleAnalytics() {
   if (!global) return;
 
   updateGoogleConsent();
-  if (global.__inksightsGoogleAnalyticsLoaded) return;
-
-  const existing = document.querySelector<HTMLScriptElement>(
-    `script[data-inksights-ga4="${GOOGLE_ANALYTICS_MEASUREMENT_ID}"]`,
-  );
-
-  if (!existing) {
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_MEASUREMENT_ID}`;
-    script.dataset.inksightsGa4 = GOOGLE_ANALYTICS_MEASUREMENT_ID;
-    document.head.appendChild(script);
-  }
-
-  global.gtag?.("js", new Date());
-  global.gtag?.("config", GOOGLE_ANALYTICS_MEASUREMENT_ID, {
-    send_page_view: false,
-  });
   global.__inksightsGoogleAnalyticsLoaded = true;
 }
 
