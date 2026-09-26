@@ -39,6 +39,14 @@ async function digest(value: string) {
   return Array.from(new Uint8Array(bytes)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+function explicitTestReason(...values: unknown[]) {
+  const value = values.map((item) => String(item ?? "")).join(" ").toLowerCase();
+  if (/\[qa test\]/.test(value) || /\bqa e2e\b/.test(value)) return "explicit_qa_marker";
+  if (/\[test\]/.test(value) || /\btest studio\b/.test(value)) return "explicit_test_marker";
+  if (/\bclient zero\b/.test(value) || /\bsample-studio\b/.test(value) || /\bdemo tattoo studio\b/.test(value)) return "known_test_fixture";
+  return null;
+}
+
 async function rest(path: string, init: RequestInit = {}) {
   const key = serviceKey();
   const authorization = key.startsWith("sb_secret_") ? {} : { Authorization: `Bearer ${key}` };
@@ -84,6 +92,8 @@ Deno.serve(async (req: Request) => {
     if (rateLimitAllowed !== true) return response({ error: "Too many messages. Try again later." }, 429, origin);
 
     const { name, email, studio_name, location, phone, website, topic, message } = validated.value;
+    const testReason = explicitTestReason(name, studio_name, message);
+    const isTest = testReason !== null;
     const metadata = {
       page_path: clean(body.page_path, 500) || "/contact",
       referrer: clean(body.referrer, 1000) || null,
@@ -99,6 +109,8 @@ Deno.serve(async (req: Request) => {
         data_classification: "external_unverified",
         business_key: "inksights_b2b",
         platform_key: "inksights_b2b",
+        is_test: isTest,
+        test_reason: testReason,
         metadata,
       }),
     });
@@ -125,6 +137,7 @@ Deno.serve(async (req: Request) => {
             topic,
             page_path: metadata.page_path,
             source: "website_contact",
+            is_test: isTest,
           },
         }),
       });
@@ -135,18 +148,22 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // CRM sync is server-to-server and non-blocking for the visitor: the enquiry remains
-    // successfully captured even if HubSpot is temporarily unavailable.
-    try {
-      const key = serviceKey();
-      const syncResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/hubspot-sync-v1`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ source_type: "public_contact_request", source_id: contact.id }),
-      });
-      if (!syncResponse.ok) console.error("HubSpot sync request failed", syncResponse.status, (await syncResponse.text()).slice(0, 300));
-    } catch (syncError) {
-      console.error("HubSpot sync dispatch failed", syncError instanceof Error ? syncError.message : String(syncError));
+    // CRM sync is server-to-server and non-blocking for the visitor. Explicit QA
+    // records are persisted for verification but must never mutate production CRM.
+    if (!isTest) {
+      try {
+        const key = serviceKey();
+        const syncResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/hubspot-sync-v1`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ source_type: "public_contact_request", source_id: contact.id }),
+        });
+        if (!syncResponse.ok) console.error("HubSpot sync request failed", syncResponse.status, (await syncResponse.text()).slice(0, 300));
+      } catch (syncError) {
+        console.error("HubSpot sync dispatch failed", syncError instanceof Error ? syncError.message : String(syncError));
+      }
+    } else {
+      console.log("Skipping HubSpot sync for explicit QA/test contact", contact.id, testReason);
     }
 
     return response({
