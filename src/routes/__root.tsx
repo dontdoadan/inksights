@@ -6,7 +6,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CookieConsent } from "@/components/cookie-consent";
 import { supabase } from "@/integrations/supabase/client";
-import { readConsent, trackMetaPageView } from "@/lib/consent";
+import { CONSENT_STORAGE_KEY, GOOGLE_TAG_ID, readConsent, trackMetaPageView } from "@/lib/consent";
 import { trackWebsiteEvent } from "@/lib/website-events";
 import { SiteEffects } from "@/components/interactive-home";
 
@@ -23,7 +23,53 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   { name: "twitter:card", content: "summary_large_image" },
   { name: "twitter:image", content: "https://getinksights.co.uk/brand/wordmark.webp" },
 ], links: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }, { rel: "apple-touch-icon", href: "/apple-touch-icon.png" }, { rel: "stylesheet", href: appCss }, { rel: "preload", as: "font", type: "font/woff2", href: "/fonts/poppins-400.woff2", crossOrigin: "anonymous" }, { rel: "preload", as: "font", type: "font/woff2", href: "/fonts/poppins-700.woff2", crossOrigin: "anonymous" }] }), shellComponent: RootShell, component: RootComponent, notFoundComponent: NotFoundComponent, errorComponent: ErrorComponent });
-function RootShell({ children }: { children: ReactNode }) { return <html lang="en-GB"><head><HeadContent /></head><body>{children}<SiteEffects /><CookieConsent /><Toaster position="top-center" richColors /><Scripts /></body></html>; }
+function RootShell({ children }: { children: ReactNode }) {
+  const googleConsentBootstrap = `
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', {
+      analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      wait_for_update: 500
+    });
+    try {
+      var savedConsent = JSON.parse(window.localStorage.getItem('${CONSENT_STORAGE_KEY}') || 'null');
+      if (savedConsent && savedConsent.essential === true) {
+        window.gtag('consent', 'update', {
+          analytics_storage: savedConsent.analytics ? 'granted' : 'denied',
+          ad_storage: savedConsent.marketing ? 'granted' : 'denied',
+          ad_user_data: savedConsent.marketing ? 'granted' : 'denied',
+          ad_personalization: savedConsent.marketing ? 'granted' : 'denied'
+        });
+      }
+    } catch (error) {}
+  `;
+
+  const googleTagInit = `
+    window.gtag('js', new Date());
+    window.gtag('config', '${GOOGLE_TAG_ID}', { send_page_view: false });
+  `;
+
+  return (
+    <html lang="en-GB">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: googleConsentBootstrap }} />
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`} data-inksights-google-tag={GOOGLE_TAG_ID} />
+        <script dangerouslySetInnerHTML={{ __html: googleTagInit }} />
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <SiteEffects />
+        <CookieConsent />
+        <Toaster position="top-center" richColors />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
 function RootComponent() { const { queryClient } = Route.useRouteContext(); const router = useRouter(); const pathname = useRouterState({ select: (state) => state.location.pathname }); useEffect(() => { if (typeof window === "undefined") return; const { data: sub } = supabase.auth.onAuthStateChange((event) => { if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return; router.invalidate(); if (event !== "SIGNED_OUT") queryClient.invalidateQueries(); }); const globalWindow = window as unknown as { __inksightsAuthSub?: { unsubscribe: () => void } }; globalWindow.__inksightsAuthSub?.unsubscribe(); globalWindow.__inksightsAuthSub = sub.subscription; return () => { sub.subscription.unsubscribe(); if (globalWindow.__inksightsAuthSub === sub.subscription) delete globalWindow.__inksightsAuthSub; }; }, [queryClient, router]); useEffect(() => {
     if (typeof window === "undefined") return;
     if (readConsent()?.marketing) trackMetaPageView(pathname);
