@@ -76,7 +76,7 @@ function SolutionsPage() {
         title={<>Do not buy another tactic. Find the constraint.</>}
         description={<>INKSIGHTS diagnoses the commercial system first, then routes the studio to the smallest useful intervention. This is built for established and multi-artist UK studios—not generic small-business marketing.</>}
       >
-        <a href="/studio-growth-check" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep">Run the free Revenue Audit <ArrowRight className="h-4 w-4" /></a>
+        <a href="/studio-growth-check" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep">Run the free Studio Growth Check <ArrowRight className="h-4 w-4" /></a>
         <a href="/tattoo-studio-visibility-scorecard" className="inline-flex min-h-12 items-center rounded-full border border-border px-6 py-3 font-bold text-ice">Check studio visibility</a>
       </PageHero>
 
@@ -179,7 +179,7 @@ function SolutionsPage() {
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">INKSIGHTS is building a proprietary dataset covering the conditions that shape tattoo-studio performance: visibility, enquiries, bookings, capacity, cancellations, transaction value, retention and market signals.</p>
         </div>
       </section>
-      <CtaSection title="Start with your studio's actual constraint." description="Run the free Revenue Audit, get the first-pass opportunity estimate and decide whether a deeper INKSIGHTS Audit is justified." />
+      <CtaSection title="Start with your studio's actual constraint." description="Run the free Studio Growth Check, get the first-pass opportunity estimate and decide whether a deeper INKSIGHTS Audit is justified." />
     </PublicShell>
   );
 }

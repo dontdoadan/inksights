@@ -15,11 +15,11 @@ export const Route = createFileRoute("/studio-growth-check")({
   }),
   head: () => ({
     meta: [
-      { title: "Free Revenue Audit V1 — INKSIGHTS" },
+      { title: "Free Studio Growth Check — INKSIGHTS" },
       {
         name: "description",
         content:
-          "Get a first-pass estimate of the revenue your tattoo studio may be leaving on the table across capacity, enquiries, cancellations and repeat clients.",
+          "Identify which commercial constraint deserves investigation first across capacity, enquiry conversion, cancellations and repeat business.",
       },
     ],
     links: [{ rel: "canonical", href: "https://getinksights.co.uk/studio-growth-check" }],
@@ -126,9 +126,9 @@ function RevenueAuditPage() {
       <section className="border-b border-border bg-ink">
         <div className="mx-auto max-w-5xl px-6 py-16 md:py-24">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-mint/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-mint"><ShieldCheck className="h-4 w-4" /> Free Revenue Audit V1</div>
-            <h1 className="mt-6 text-balance font-display text-4xl font-black leading-[.95] tracking-tight text-ice md:text-6xl">Estimate how much revenue your studio may be leaving on the table.</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">Give us a few operating numbers and INKSIGHTS will calculate a first-pass opportunity estimate across unused capacity, unconverted enquiries, cancellations and repeat clients.</p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-mint/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-mint"><ShieldCheck className="h-4 w-4" /> Free Studio Growth Check</div>
+            <h1 className="mt-6 text-balance font-display text-4xl font-black leading-[.95] tracking-tight text-ice md:text-6xl">Find the commercial constraint your studio should investigate first.</h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">Give INKSIGHTS a small set of operating inputs. The Growth Check compares four commercial pressure points and returns a first-pass, modelled value-at-stake range. It separates your supplied inputs from assumptions and does not claim a guaranteed loss or recovery.</p>
             {search.source === "visibility-scorecard" ? (
               <div className="mt-6 rounded-2xl border border-mint/25 bg-mint/5 p-5 text-sm leading-relaxed text-muted-foreground">
                 <b className="text-ice">Visibility Scorecard context carried forward.</b>{" "}
@@ -150,7 +150,7 @@ function RevenueAuditPage() {
             {[
               ["01", "Studio", "Establish the studio structure and operating context."],
               ["02", "Economics", "Use an average month to understand capacity and commercial conditions."],
-              ["03", "Leakage", "Test where demand, time or value may be disappearing."],
+              ["03", "Constraint signals", "Test which commercial pressure deserves investigation first."],
               ["04", "Result", "Return a first-pass estimate and the smallest useful next step."],
             ].map(([number, title, text]) => (
               <div key={number} className="rounded-2xl border border-border bg-ink p-5">
@@ -201,8 +201,8 @@ function RevenueAuditPage() {
               </div>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">03 · Leakage</p>
-              <h2 className="mt-2 font-display text-2xl font-black text-ice">Where might money be escaping?</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">03 · Constraint signals</p>
+              <h2 className="mt-2 font-display text-2xl font-black text-ice">Where should the studio investigate first?</h2>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <Field label="Repeat-client rate (%)" name="repeat_client_rate" type="number" min="0" max="100" placeholder="35" required />
                 <Field label="Cancellation rate (%)" name="cancellation_rate" type="number" min="0" max="100" placeholder="5" required />
@@ -214,9 +214,9 @@ function RevenueAuditPage() {
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">04 · Get the result</p>
               <div className="mt-5 rounded-2xl border border-mint/20 bg-mint/5 p-5"><div className="flex gap-3"><CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-mint" /><p className="text-sm leading-relaxed text-muted-foreground">Your result is generated from the figures you provide. We will clearly distinguish an estimate from verified studio data.</p></div></div>
               <div aria-hidden="true" className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden"><input name="website_honeypot" tabIndex={-1} autoComplete="off" /></div>
-              <label className="mt-5 flex gap-3 text-sm text-muted-foreground"><input className="mt-1" type="checkbox" name="consent" required /><span>I agree to INKSIGHTS using these details to generate and follow up this Revenue Audit. <b className="text-mint">Required.</b></span></label>
+              <label className="mt-5 flex gap-3 text-sm text-muted-foreground"><input className="mt-1" type="checkbox" name="consent" required /><span>I agree to INKSIGHTS using these details to generate and follow up this Studio Growth Check. <b className="text-mint">Required.</b></span></label>
               <label className="mt-3 flex gap-3 text-sm text-muted-foreground"><input className="mt-1" type="checkbox" name="marketing_consent" /><span>Send me occasional INKSIGHTS growth insights.</span></label>
-              <button disabled={loading} className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep transition hover:bg-mint-soft disabled:cursor-wait disabled:opacity-60" type="submit">{loading ? "Calculating…" : "Generate My Revenue Audit"} <ArrowRight className="h-4 w-4" /></button>
+              <button disabled={loading} className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep transition hover:bg-mint-soft disabled:cursor-wait disabled:opacity-60" type="submit">{loading ? "Calculating…" : "Run My Studio Growth Check"} <ArrowRight className="h-4 w-4" /></button>
               {error && <p className="mt-4 text-sm font-semibold text-red-300">{error}</p>}
             </div>
           </div>
@@ -224,15 +224,15 @@ function RevenueAuditPage() {
         <aside className="h-max rounded-3xl border border-border bg-ink p-6 lg:sticky lg:top-24">
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What you receive</p>
           <h2 className="mt-2 font-display text-2xl font-black text-ice">A commercial starting point.</h2>
-          <ul className="mt-5 space-y-4 text-sm leading-relaxed text-muted-foreground"><li>01 — Estimated annual opportunity range</li><li>02 — Largest potential leakage area</li><li>03 — Breakdown across four revenue levers</li><li>04 — Three practical next actions</li><li>05 — Clear boundary between estimates and verified data</li></ul>
-          <div className="mt-6 rounded-2xl border border-border bg-ink-deep p-4 text-xs leading-relaxed text-muted-foreground"><b className="text-ice">Important:</b> V1 is a lead-generation diagnostic, not a financial audit. The paid/full INKSIGHTS service will use actual booking, client and revenue data to replace estimates with observed results.</div>
+          <ul className="mt-5 space-y-4 text-sm leading-relaxed text-muted-foreground"><li>01 — Modelled value-at-stake range</li><li>02 — Largest potential leakage area</li><li>03 — Breakdown across four revenue levers</li><li>04 — Three practical investigation priorities</li><li>05 — Clear boundary between estimates and verified data</li></ul>
+          <div className="mt-6 rounded-2xl border border-border bg-ink-deep p-4 text-xs leading-relaxed text-muted-foreground"><b className="text-ice">Important:</b> This is an indicative commercial diagnostic, not a financial audit or revenue guarantee. Modelled outputs depend on the figures and assumptions supplied. The £395 Studio Intelligence Audit is the evidence-led next step for verifying the constraint and setting a baseline.</div>
         </aside>
       </section>
 
       {result && <section id="audit-result" className="border-t border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-14 md:py-20">
-        <div className="max-w-4xl"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Your Revenue Audit V1</p><h2 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">Estimated opportunity: <span className="text-mint">{currency(result.estimate.annual_low)}–{currency(result.estimate.annual_high)}</span> / year</h2><p className="mt-4 text-lg leading-relaxed text-muted-foreground">The largest estimated opportunity in your inputs is <b className="text-ice">{result.estimate.primary_opportunity}</b>.</p></div>
-        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{result.findings.map((finding) => <div key={finding.label} className="rounded-2xl border border-border bg-ink-deep p-5"><p className="text-sm font-bold text-ice">{finding.label}</p><p className="mt-3 font-display text-2xl font-black text-mint">{currency(finding.annual_low)}–{currency(finding.annual_high)}</p><p className="mt-1 text-xs text-muted-foreground">estimated annual opportunity</p></div>)}</div>
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]"><div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What to do next</p><ol className="mt-5 space-y-4">{result.recommendations.map((item, i) => <li key={item} className="flex gap-4 text-sm leading-relaxed text-muted-foreground"><span className="font-mono text-mint">0{i + 1}</span><span>{item}</span></li>)}</ol></div><div className="rounded-2xl border border-mint/20 bg-mint/5 p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Replace estimates with a structured audit</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Studio Intelligence Audit — £395</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">A paid commercial diagnosis covering visibility, competitors, the customer journey, the top three commercial opportunities, prioritised recommendations and a 90-day action plan.</p><div className="mt-5 flex flex-col gap-3"><a onClick={() => trackWebsiteEvent("cta_clicked", { cta: "growth_check_to_paid_audit", offer: "studio_intelligence_audit" })} href={`/offers/studio-intelligence-audit?lead_id=${encodeURIComponent(result.lead_id || "")}&audit_id=${encodeURIComponent(result.audit_id || "")}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">View / buy the £395 audit <ArrowRight className="h-4 w-4" /></a><a href="/contact?topic=studio-intelligence-audit" className="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">Ask a question first</a></div><p className="mt-4 text-xs leading-relaxed text-muted-foreground">Your Growth Check reference is carried into the next step where available.</p></div></div>
+        <div className="max-w-4xl"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Your Studio Growth Check</p><h2 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">Modelled value at stake: <span className="text-mint">{currency(result.estimate.annual_low)}–{currency(result.estimate.annual_high)}</span> / year</h2><p className="mt-4 text-lg leading-relaxed text-muted-foreground">The largest estimated opportunity in your inputs is <b className="text-ice">{result.estimate.primary_opportunity}</b>.</p></div>
+        <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{result.findings.map((finding) => <div key={finding.label} className="rounded-2xl border border-border bg-ink-deep p-5"><p className="text-sm font-bold text-ice">{finding.label}</p><p className="mt-3 font-display text-2xl font-black text-mint">{currency(finding.annual_low)}–{currency(finding.annual_high)}</p><p className="mt-1 text-xs text-muted-foreground">modelled annual scenario</p></div>)}</div>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]"><div className="rounded-2xl border border-border bg-ink-deep p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">What to do next</p><ol className="mt-5 space-y-4">{result.recommendations.map((item, i) => <li key={item} className="flex gap-4 text-sm leading-relaxed text-muted-foreground"><span className="font-mono text-mint">0{i + 1}</span><span>{item}</span></li>)}</ol></div><div className="rounded-2xl border border-mint/20 bg-mint/5 p-6"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Replace estimates with a structured audit</p><h3 className="mt-2 font-display text-2xl font-black text-ice">Studio Intelligence Audit — £395</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">The Growth Check is indicative. The £395 Studio Intelligence Audit reviews the studio’s public journey and available operating evidence, identifies the strongest supported constraint, quantifies value at stake where defensible, and produces prioritised recommendations plus a 90-day plan.</p><div className="mt-5 flex flex-col gap-3"><a onClick={() => trackWebsiteEvent("cta_clicked", { cta: "growth_check_to_paid_audit", offer: "studio_intelligence_audit" })} href={`/offers/studio-intelligence-audit?lead_id=${encodeURIComponent(result.lead_id || "")}&audit_id=${encodeURIComponent(result.audit_id || "")}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Review / buy the £395 audit <ArrowRight className="h-4 w-4" /></a><a href="/contact?topic=studio-intelligence-audit" className="inline-flex items-center justify-center rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">Ask a question first</a></div><p className="mt-4 text-xs leading-relaxed text-muted-foreground">Your Growth Check reference is carried into the next step where available.</p></div></div>
         <p className="mt-8 max-w-3xl text-xs leading-relaxed text-muted-foreground">{result.disclaimer}</p>
       </div></section>}
     </main>

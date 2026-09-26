@@ -23,6 +23,7 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as StudioVisibilityReportRouteImport } from './routes/studio-visibility-report'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
 import { Route as SolutionsRouteImport } from './routes/solutions'
+import { Route as RevenueLeakageCalculatorRouteImport } from './routes/revenue-leakage-calculator'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark'
@@ -32,6 +33,7 @@ import { Route as GrowthModelRouteImport } from './routes/growth-model'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
+import { Route as CancellationCostCalculatorRouteImport } from './routes/cancellation-cost-calculator'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AccessibilityRouteImport } from './routes/accessibility'
 import { Route as AboutRouteImport } from './routes/about'
@@ -127,6 +129,12 @@ const SolutionsRoute = SolutionsRouteImport.update({
   path: '/solutions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RevenueLeakageCalculatorRoute =
+  RevenueLeakageCalculatorRouteImport.update({
+    id: '/revenue-leakage-calculator',
+    path: '/revenue-leakage-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
@@ -172,6 +180,12 @@ const CaseStudiesRoute = CaseStudiesRouteImport.update({
   path: '/case-studies',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CancellationCostCalculatorRoute =
+  CancellationCostCalculatorRouteImport.update({
+    id: '/cancellation-cost-calculator',
+    path: '/cancellation-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -294,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/auth': typeof AuthRouteWithChildren
+  '/cancellation-cost-calculator': typeof CancellationCostCalculatorRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
@@ -303,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-leakage-calculator': typeof RevenueLeakageCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -340,6 +356,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/auth': typeof AuthRouteWithChildren
+  '/cancellation-cost-calculator': typeof CancellationCostCalculatorRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
@@ -348,6 +365,7 @@ export interface FileRoutesByTo {
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-leakage-calculator': typeof RevenueLeakageCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -387,6 +405,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/accessibility': typeof AccessibilityRoute
   '/auth': typeof AuthRouteWithChildren
+  '/cancellation-cost-calculator': typeof CancellationCostCalculatorRoute
   '/case-studies': typeof CaseStudiesRoute
   '/contact': typeof ContactRoute
   '/cookies': typeof CookiesRoute
@@ -396,6 +415,7 @@ export interface FileRoutesById {
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-leakage-calculator': typeof RevenueLeakageCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -435,6 +455,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/accessibility'
     | '/auth'
+    | '/cancellation-cost-calculator'
     | '/case-studies'
     | '/contact'
     | '/cookies'
@@ -444,6 +465,7 @@ export interface FileRouteTypes {
     | '/pricing-benchmark'
     | '/privacy'
     | '/resources'
+    | '/revenue-leakage-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -481,6 +503,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/accessibility'
     | '/auth'
+    | '/cancellation-cost-calculator'
     | '/case-studies'
     | '/contact'
     | '/cookies'
@@ -489,6 +512,7 @@ export interface FileRouteTypes {
     | '/pricing-benchmark'
     | '/privacy'
     | '/resources'
+    | '/revenue-leakage-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -527,6 +551,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/accessibility'
     | '/auth'
+    | '/cancellation-cost-calculator'
     | '/case-studies'
     | '/contact'
     | '/cookies'
@@ -536,6 +561,7 @@ export interface FileRouteTypes {
     | '/pricing-benchmark'
     | '/privacy'
     | '/resources'
+    | '/revenue-leakage-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -575,6 +601,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AccessibilityRoute: typeof AccessibilityRoute
   AuthRoute: typeof AuthRouteWithChildren
+  CancellationCostCalculatorRoute: typeof CancellationCostCalculatorRoute
   CaseStudiesRoute: typeof CaseStudiesRoute
   ContactRoute: typeof ContactRoute
   CookiesRoute: typeof CookiesRoute
@@ -584,6 +611,7 @@ export interface RootRouteChildren {
   PricingBenchmarkRoute: typeof PricingBenchmarkRoute
   PrivacyRoute: typeof PrivacyRoute
   ResourcesRoute: typeof ResourcesRoute
+  RevenueLeakageCalculatorRoute: typeof RevenueLeakageCalculatorRoute
   SolutionsRoute: typeof SolutionsRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
   StudioVisibilityReportRoute: typeof StudioVisibilityReportRoute
@@ -710,6 +738,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SolutionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/revenue-leakage-calculator': {
+      id: '/revenue-leakage-calculator'
+      path: '/revenue-leakage-calculator'
+      fullPath: '/revenue-leakage-calculator'
+      preLoaderRoute: typeof RevenueLeakageCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resources': {
       id: '/resources'
       path: '/resources'
@@ -771,6 +806,13 @@ declare module '@tanstack/react-router' {
       path: '/case-studies'
       fullPath: '/case-studies'
       preLoaderRoute: typeof CaseStudiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cancellation-cost-calculator': {
+      id: '/cancellation-cost-calculator'
+      path: '/cancellation-cost-calculator'
+      fullPath: '/cancellation-cost-calculator'
+      preLoaderRoute: typeof CancellationCostCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -985,6 +1027,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AccessibilityRoute: AccessibilityRoute,
   AuthRoute: AuthRouteWithChildren,
+  CancellationCostCalculatorRoute: CancellationCostCalculatorRoute,
   CaseStudiesRoute: CaseStudiesRoute,
   ContactRoute: ContactRoute,
   CookiesRoute: CookiesRoute,
@@ -994,6 +1037,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingBenchmarkRoute: PricingBenchmarkRoute,
   PrivacyRoute: PrivacyRoute,
   ResourcesRoute: ResourcesRoute,
+  RevenueLeakageCalculatorRoute: RevenueLeakageCalculatorRoute,
   SolutionsRoute: SolutionsRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
   StudioVisibilityReportRoute: StudioVisibilityReportRoute,

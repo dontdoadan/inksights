@@ -134,7 +134,7 @@ function GrowthModel() {
           </>
         }
       >
-        <PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton>
+        <PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton>
         <SecondaryButton href="/offers/founding-studio-pilot">Review the implementation package</SecondaryButton>
       </PageHero>
 
@@ -289,8 +289,8 @@ function GrowthModel() {
             ))}
           </div>
           <div className="mt-10 flex flex-wrap gap-3">
-            <PrimaryButton href="/studio-growth-check">Start with the free Revenue Audit</PrimaryButton>
-            <SecondaryButton href="/offers/revenue-audit">Review the Revenue Audit</SecondaryButton>
+            <PrimaryButton href="/studio-growth-check">Start with the free Studio Growth Check</PrimaryButton>
+            <SecondaryButton href="/offers/studio-intelligence-audit">Review the £395 Studio Intelligence Audit</SecondaryButton>
           </div>
           <p className="mt-6 text-xs text-muted-foreground">Commercial policy version {POLICY_VERSION}. Calculators provide educational illustrations only.</p>
         </div>
