@@ -79,7 +79,7 @@ Deno.serve(async (req: Request) => {
     weakest_area: rawContext.weakest_area == null ? null : String(rawContext.weakest_area).slice(0, 120),
     visibility_gaps: rawContext.visibility_gaps == null ? null : String(rawContext.visibility_gaps).slice(0, 1500),
   };
-  if (!name || name.length > 120 || !email || !/^\S+@\S+\.\S+$/.test(email) || !studioName || studioName.length > 180 || teamSize < 3 || teamSize > 100 || !consent) return respond({ ok: false, error: "Please complete the required fields. Revenue Audit V1 is currently designed for studios with 3+ artists." }, 400);
+  if (!name || name.length > 120 || !email || !/^\S+@\S+\.\S+$/.test(email) || !studioName || studioName.length > 180 || teamSize < 3 || teamSize > 100 || !consent) return respond({ ok: false, error: "Please complete the required fields. The Studio Growth Check is currently designed for studios with 3+ artists." }, 400);
 
   const revenue = Math.max(0, num(body.monthly_revenue));
   const enquiries = Math.max(0, Math.round(num(body.monthly_enquiries)));
@@ -165,7 +165,7 @@ Deno.serve(async (req: Request) => {
     } catch (syncError) {
       console.error("HubSpot sync dispatch failed", syncError instanceof Error ? syncError.message : String(syncError));
     }
-    return respond({ ok: true, lead_id: leadId, audit_id: auditId, audit_version: "v1.1", estimate: { annual_low: headlineLow, annual_high: headlineHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass estimate based on the figures you supplied. It is not a verified financial audit. A full INKSIGHTS audit uses connected or exported studio data to replace estimates with observed results." }, 200);
+    return respond({ ok: true, lead_id: leadId, audit_id: auditId, audit_version: "v1.1", estimate: { annual_low: headlineLow, annual_high: headlineHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass modelled estimate based on the figures you supplied. It is not a verified financial audit. The INKSIGHTS Studio Intelligence Audit uses studio evidence to verify the strongest supported constraint and replace assumptions with observed data where available." }, 200);
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     return respond({ ok: false, error: "We could not save the audit right now. Please try again." }, 503);
