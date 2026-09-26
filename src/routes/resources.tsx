@@ -190,7 +190,7 @@ function ResourcesPage() {
       </section>
       <CtaSection
         title="Start with the studio diagnosis."
-        description="Run the free Revenue Audit and use the result to decide whether a visibility fix, revenue audit, booking intervention or deeper intelligence work is justified."
+        description="Run the free Studio Growth Check and use the result to decide whether a calculator, targeted intervention or the £395 Studio Intelligence Audit is justified."
       />
     </PublicShell>
   );
