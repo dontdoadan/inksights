@@ -150,7 +150,7 @@ function RevenueAuditPage() {
             {[
               ["01", "Studio", "Establish the studio structure and operating context."],
               ["02", "Economics", "Use an average month to understand capacity and commercial conditions."],
-              ["03", "Leakage", "Test where demand, time or value may be disappearing."],
+              ["03", "Constraint signals", "Test which commercial pressure deserves investigation first."],
               ["04", "Result", "Return a first-pass estimate and the smallest useful next step."],
             ].map(([number, title, text]) => (
               <div key={number} className="rounded-2xl border border-border bg-ink p-5">
