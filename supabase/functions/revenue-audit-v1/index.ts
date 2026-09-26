@@ -111,9 +111,12 @@ Deno.serve(async (req: Request) => {
     { key: "cancellation", label: "Cancellations and no-shows", low: cancellationLow, high: cancellationHigh },
     { key: "retention", label: "Repeat-client opportunity", low: retentionLow, high: retentionHigh },
   ].sort((a, b) => b.high - a.high);
-  const totalLow = money(opportunities.reduce((s, x) => s + x.low, 0) * 12);
-  const totalHigh = money(opportunities.reduce((s, x) => s + x.high, 0) * 12);
+  // Opportunity scenarios can overlap, so the headline estimate uses the
+  // strongest single scenario rather than summing capacity, conversion,
+  // cancellation and retention into a fabricated total.
   const primary = opportunities[0];
+  const headlineLow = money(primary.low * 12);
+  const headlineHigh = money(primary.high * 12);
   const score = Math.round(clamp(100 - ((unusedHours / availableHours) * 30 + Math.max(0, 0.55 - conversionRate) * 35 + retentionGap * 20 + (cancellationRate + noShowRate) * 0.15), 15, 95));
   const findings = opportunities.map((x) => ({ type: x.key, label: x.label, monthly_low: money(x.low), monthly_high: money(x.high), annual_low: money(x.low * 12), annual_high: money(x.high * 12) }));
   const recommendations = [
@@ -127,7 +130,7 @@ Deno.serve(async (req: Request) => {
     const leadRes = await fetch(`${SB}/rest/v1/revenue_audit_leads`, { method: "POST", headers: dbHeaders, body: JSON.stringify({ name, email, studio_name: studioName, website: String(body.website || "").trim() || null, area: String(body.area || "").trim() || null, team_size: teamSize, monthly_revenue_band: String(body.monthly_revenue_band || "").trim() || null, monthly_enquiries: enquiries, monthly_bookings: bookings, average_booking_value: aov, monthly_available_hours: availableHours, monthly_booked_hours: bookedHours, repeat_client_rate: repeatRate, cancellation_rate: cancellationRate, no_show_rate: noShowRate, primary_problem: String(body.primary_problem || "").trim() || null, source_context: sourceContext, consent_at: new Date().toISOString(), marketing_consent: body.marketing_consent === true }) });
     if (!leadRes.ok) throw new Error("Lead persistence failed");
     const leadRows = await leadRes.json(); const leadId = leadRows?.[0]?.id; if (!leadId) throw new Error("Lead persistence returned no id");
-    const auditRes = await fetch(`${SB}/rest/v1/revenue_audits`, { method: "POST", headers: dbHeaders, body: JSON.stringify({ lead_id: leadId, opportunity_low: totalLow, opportunity_high: totalHigh, capacity_opportunity: money(capacityHigh * 12), conversion_opportunity: money(conversionHigh * 12), retention_opportunity: money(retentionHigh * 12), cancellation_opportunity: money(cancellationHigh * 12), primary_opportunity: primary.key, score, findings, recommendations }) });
+    const auditRes = await fetch(`${SB}/rest/v1/revenue_audits`, { method: "POST", headers: dbHeaders, body: JSON.stringify({ lead_id: leadId, opportunity_low: headlineLow, opportunity_high: headlineHigh, capacity_opportunity: money(capacityHigh * 12), conversion_opportunity: money(conversionHigh * 12), retention_opportunity: money(retentionHigh * 12), cancellation_opportunity: money(cancellationHigh * 12), primary_opportunity: primary.key, score, findings, recommendations }) });
     if (!auditRes.ok) throw new Error("Audit persistence failed");
     const auditRows = await auditRes.json();
     const auditId = auditRows?.[0]?.id || null;
@@ -145,7 +148,7 @@ Deno.serve(async (req: Request) => {
         processing_status: "received",
         payload: {
           event_kind: "diagnostic_completed",
-          audit_version: "v1",
+          audit_version: "v1.1",
           primary_opportunity: primary.key,
           source_context: sourceContext,
         },
@@ -162,7 +165,7 @@ Deno.serve(async (req: Request) => {
     } catch (syncError) {
       console.error("HubSpot sync dispatch failed", syncError instanceof Error ? syncError.message : String(syncError));
     }
-    return respond({ ok: true, lead_id: leadId, audit_id: auditId, audit_version: "v1", estimate: { annual_low: totalLow, annual_high: totalHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass estimate based on the figures you supplied. It is not a verified financial audit. A full INKSIGHTS audit uses connected or exported studio data to replace estimates with observed results." }, 200);
+    return respond({ ok: true, lead_id: leadId, audit_id: auditId, audit_version: "v1.1", estimate: { annual_low: headlineLow, annual_high: headlineHigh, primary_opportunity: primary.label, score }, findings, recommendations, disclaimer: "This is a first-pass estimate based on the figures you supplied. It is not a verified financial audit. A full INKSIGHTS audit uses connected or exported studio data to replace estimates with observed results." }, 200);
   } catch (error) {
     console.error(error instanceof Error ? error.message : String(error));
     return respond({ ok: false, error: "We could not save the audit right now. Please try again." }, 503);
