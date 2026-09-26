@@ -745,48 +745,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RevenueLeakageCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/revenue-leakage-calculator': {
-      id: '/revenue-leakage-calculator'
-      path: '/revenue-leakage-calculator'
-      fullPath: '/revenue-leakage-calculator'
-      preLoaderRoute: typeof RevenueLeakageCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/revenue-leakage-calculator': {
-      id: '/revenue-leakage-calculator'
-      path: '/revenue-leakage-calculator'
-      fullPath: '/revenue-leakage-calculator'
-      preLoaderRoute: typeof RevenueLeakageCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/revenue-leakage-calculator': {
-      id: '/revenue-leakage-calculator'
-      path: '/revenue-leakage-calculator'
-      fullPath: '/revenue-leakage-calculator'
-      preLoaderRoute: typeof RevenueLeakageCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/revenue-leakage-calculator': {
-      id: '/revenue-leakage-calculator'
-      path: '/revenue-leakage-calculator'
-      fullPath: '/revenue-leakage-calculator'
-      preLoaderRoute: typeof RevenueLeakageCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/revenue-leakage-calculator': {
-      id: '/revenue-leakage-calculator'
-      path: '/revenue-leakage-calculator'
-      fullPath: '/revenue-leakage-calculator'
-      preLoaderRoute: typeof RevenueLeakageCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/revenue-leakage-calculator': {
-      id: '/revenue-leakage-calculator'
-      path: '/revenue-leakage-calculator'
-      fullPath: '/revenue-leakage-calculator'
-      preLoaderRoute: typeof RevenueLeakageCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/resources': {
       id: '/resources'
       path: '/resources'
@@ -848,48 +806,6 @@ declare module '@tanstack/react-router' {
       path: '/case-studies'
       fullPath: '/case-studies'
       preLoaderRoute: typeof CaseStudiesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cancellation-cost-calculator': {
-      id: '/cancellation-cost-calculator'
-      path: '/cancellation-cost-calculator'
-      fullPath: '/cancellation-cost-calculator'
-      preLoaderRoute: typeof CancellationCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cancellation-cost-calculator': {
-      id: '/cancellation-cost-calculator'
-      path: '/cancellation-cost-calculator'
-      fullPath: '/cancellation-cost-calculator'
-      preLoaderRoute: typeof CancellationCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cancellation-cost-calculator': {
-      id: '/cancellation-cost-calculator'
-      path: '/cancellation-cost-calculator'
-      fullPath: '/cancellation-cost-calculator'
-      preLoaderRoute: typeof CancellationCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cancellation-cost-calculator': {
-      id: '/cancellation-cost-calculator'
-      path: '/cancellation-cost-calculator'
-      fullPath: '/cancellation-cost-calculator'
-      preLoaderRoute: typeof CancellationCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cancellation-cost-calculator': {
-      id: '/cancellation-cost-calculator'
-      path: '/cancellation-cost-calculator'
-      fullPath: '/cancellation-cost-calculator'
-      preLoaderRoute: typeof CancellationCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cancellation-cost-calculator': {
-      id: '/cancellation-cost-calculator'
-      path: '/cancellation-cost-calculator'
-      fullPath: '/cancellation-cost-calculator'
-      preLoaderRoute: typeof CancellationCostCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cancellation-cost-calculator': {
