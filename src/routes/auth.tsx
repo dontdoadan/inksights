@@ -172,12 +172,18 @@ function AuthPage() {
             <input
               type="password"
               required
-              minLength={6}
+              minLength={mode === "signup" ? 12 : 6}
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-full bg-ink-deep border border-border px-5 py-3 text-ice focus:outline-none focus:border-mint"
             />
+            {mode === "signup" ? (
+              <p className="px-2 text-xs text-muted-foreground">
+                Use at least 12 characters. Google sign-in remains the preferred passwordless route.
+              </p>
+            ) : null}
             {error ? (
               <p className="text-sm text-red-400" role="alert">{error}</p>
             ) : null}
