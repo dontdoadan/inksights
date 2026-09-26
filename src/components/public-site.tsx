@@ -28,7 +28,9 @@ const menuGroups = [
     description: "Free diagnostics, benchmarks and commercial decision tools.",
     links: [
       ["/resources", "Resource library", "Browse all free studio tools"],
-      ["/studio-growth-check", "Free Revenue Audit", "Find the strongest commercial pressure"],
+      ["/studio-growth-check", "Studio Growth Check", "Find the strongest commercial pressure"],
+      ["/revenue-leakage-calculator", "Revenue Leakage Calculator", "Model value at stake across capacity, conversion, cancellations and retention"],
+      ["/cancellation-cost-calculator", "Cancellation Cost Calculator", "Estimate unrecovered late-cancellation capacity"],
       ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard", "Check local search and booking visibility"],
       ["/pricing-benchmark", "Pricing Benchmark", "Compare rates with UK reference bands"],
       ["/growth-model", "Revenue Growth Model", "Model volume, value and frequency"],
@@ -170,7 +172,7 @@ export function SiteHeader() {
               href="/studio-growth-check"
               className="shine-button hidden rounded-full bg-mint px-5 py-2.5 text-sm font-bold text-ink-deep transition hover:bg-mint-soft sm:inline-flex"
             >
-              Free Revenue Audit
+              Studio Growth Check
             </a>
             <button
               type="button"
@@ -256,7 +258,7 @@ export function SiteHeader() {
 
             <div className="site-menu-actions">
               <a href="/studio-growth-check" onClick={closeMenu} className="shine-button inline-flex min-h-12 items-center justify-center rounded-full bg-mint px-5 py-3 font-bold text-ink-deep">
-                Run the free Revenue Audit
+                Run the free Studio Growth Check
               </a>
               <a href="/contact" onClick={closeMenu} className="outline-button inline-flex min-h-12 items-center justify-center rounded-full border border-border px-5 py-3 font-bold text-ice">
                 Contact INKSIGHTS
@@ -279,7 +281,7 @@ export function SiteHeader() {
 export function SiteFooter() {
   const groups = [
     { title: "Services", links: [["/solutions", "What we diagnose"], ["/offers", "All services"], ["/offers/72-hour-visibility-fix", "72-Hour Visibility Fix"], ["/offers/visibility-watch", "Visibility Watch"], ["/offers/booking-retention-engine", "Booking & Retention"]] },
-    { title: "Studio tools", links: [["/studio-growth-check", "Free Revenue Audit"], ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard"], ["/tattoo-studio-software", "Software comparison"], ["/growth-model", "Revenue Growth Model"]] },
+    { title: "Studio tools", links: [["/studio-growth-check", "Studio Growth Check"], ["/revenue-leakage-calculator", "Revenue Leakage Calculator"], ["/cancellation-cost-calculator", "Cancellation Cost Calculator"], ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard"], ["/tattoo-studio-software", "Software comparison"], ["/growth-model", "Revenue Growth Model"]] },
     { title: "Company", links: [["/about", "About INKSIGHTS"], ["/case-studies", "Proof library"], ["/support", "Customer support"], ["/contact", "Contact"], ["/privacy", "Privacy"], ["/cookies", "Cookies"], ["/terms", "Terms"], ["/accessibility", "Accessibility"]] }
   ];
   return <footer className="border-t border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-14"><div className="grid gap-10 lg:grid-cols-[1.25fr_2fr]"><div><Logo variant="mono-white" /><p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">Growth intelligence, diagnostics and commercial systems designed specifically for UK tattoo studios.</p><a href="/contact" className="mt-5 inline-block text-sm font-semibold text-mint hover:text-mint-soft">Contact INKSIGHTS →</a></div><div className="grid gap-8 sm:grid-cols-3">{groups.map((group) => <div key={group.title}><h2 className="text-xs font-bold uppercase tracking-[0.16em] text-ice">{group.title}</h2><ul className="mt-4 space-y-3 text-sm text-muted-foreground">{group.links.map(([href, label]) => <li key={href}><a href={href} className="transition hover:text-mint">{label}</a></li>)}</ul></div>)}</div></div><div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} INKSIGHTS. All rights reserved.</p><button type="button" onClick={() => window.dispatchEvent(new Event("inksight:open-consent"))} className="text-left transition hover:text-mint">Change cookie preferences</button></div></div></footer>;
@@ -297,7 +299,7 @@ export function PrimaryButton({ href, children }: { href: string; children: Reac
 export function SecondaryButton({ href, children }: { href: string; children: ReactNode }) { return <a href={href} className="outline-button inline-flex min-h-12 items-center justify-center rounded-full border border-border px-6 py-3 font-bold text-ice transition hover:border-mint hover:text-mint">{children}</a>; }
 export function SectionHeading({ eyebrow, title, description }: { eyebrow?: string; title: ReactNode; description?: ReactNode }) { return <div className="max-w-3xl">{eyebrow ? <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p> : null}<h2 className="mt-3 text-balance font-display text-3xl font-black tracking-tight text-ice md:text-5xl">{title}</h2>{description ? <div className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">{description}</div> : null}</div>; }
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) { return <div className={`interactive-card rounded-2xl border border-border bg-ink p-6 ${className}`}>{children}</div>; }
-export function CtaSection({ eyebrow = "Start with the diagnosis", title = "Find the constraint before buying another tool.", description = "The free Revenue Audit identifies the strongest commercial pressure and routes the studio to the most useful next step." }: { eyebrow?: string; title?: string; description?: string }) { return <section className="brand-dark relative overflow-hidden border-y border-border bg-ink"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><Logo variant="icon" decorative className="cta-logo-mark" /><div className="relative mx-auto max-w-5xl px-6 py-16 text-center md:py-24"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">{title}</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p><div className="mt-8 flex justify-center"><PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton></div></div></section>; }
+export function CtaSection({ eyebrow = "Start with the diagnosis", title = "Find the constraint before buying another tool.", description = "The free Revenue Audit identifies the strongest commercial pressure and routes the studio to the most useful next step." }: { eyebrow?: string; title?: string; description?: string }) { return <section className="brand-dark relative overflow-hidden border-y border-border bg-ink"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><Logo variant="icon" decorative className="cta-logo-mark" /><div className="relative mx-auto max-w-5xl px-6 py-16 text-center md:py-24"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">{title}</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p><div className="mt-8 flex justify-center"><PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton></div></div></section>; }
 export function RevenueLeakageMap() {
   const steps = [
     ["01", "Search", "Can the right clients find you?"],
