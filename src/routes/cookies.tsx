@@ -31,7 +31,7 @@ function CookiesPage() {
           <thead><tr><th>Category</th><th>Current use</th><th>Choice</th></tr></thead>
           <tbody>
             <tr><td><strong>Essential</strong></td><td>Stores the cookie preference, supports security, authentication where used and may preserve form progress.</td><td>Always active because the requested service cannot operate reliably without it.</td></tr>
-            <tr><td><strong>Analytics</strong></td><td>Loads Google Analytics 4 (measurement ID <code>G-03QJZLEPW0</code>) after analytics consent and also permits first-party measurement of page views and key conversion events.</td><td>Optional and off until accepted.</td></tr>
+            <tr><td><strong>Analytics</strong></td><td>Loads Google Analytics 4 (measurement ID <code>G-V7SQ9SPYMH</code>) after analytics consent and also permits first-party measurement of page views and key conversion events.</td><td>Optional and off until accepted.</td></tr>
             <tr><td><strong>Marketing</strong></td><td>Loads Meta Pixel after consent to record page views and selected conversion events such as assessment completion or booking request.</td><td>Optional and off until accepted.</td></tr>
           </tbody>
         </table>
@@ -41,7 +41,7 @@ function CookiesPage() {
       <p>The key <code>inksight-consent-v1</code> stores whether analytics and marketing technologies were accepted or rejected, together with the date of the choice. Supabase may also use essential authentication storage for signed-in dashboard users.</p>
 
       <h2>Google Analytics 4</h2>
-      <p>Google Analytics 4 is configured for the INKSIGHTS website stream at <code>https://getinksights.co.uk</code> using measurement ID <code>G-03QJZLEPW0</code>. The Google tag is loaded only after analytics consent is granted.</p>
+      <p>Google Analytics 4 is configured for the INKSIGHTS website stream at <code>https://getinksights.co.uk</code> using measurement ID <code>G-V7SQ9SPYMH</code>. The Google tag is loaded only after analytics consent is granted.</p>
       <p>When enabled, the site can send page-view and interaction events such as diagnostic, contact and checkout events. The implementation does not intentionally send form contents, email addresses, phone numbers or other direct contact details to Google Analytics.</p>
       <p>If analytics consent is withdrawn, INKSIGHTS updates the Google consent state to deny analytics storage for subsequent measurement.</p>
 
