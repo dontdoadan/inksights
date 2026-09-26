@@ -60,7 +60,7 @@ function Index() {
                   Find where your studio is losing visibility, enquiries, bookings, capacity or revenue — then fix the constraint that matters most.
                 </p>
                 <div className="mt-9 flex flex-wrap gap-3">
-                  <PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton>
+                  <PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton>
                   <SecondaryButton href="/tattoo-studio-visibility-scorecard">Check studio visibility</SecondaryButton>
                 </div>
                 <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
@@ -123,8 +123,8 @@ function Index() {
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="rounded-3xl border border-mint/30 bg-ink-deep p-8 md:p-12">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Start with evidence</p><h2 className="mt-4 max-w-3xl text-balance font-display text-4xl font-black text-ice md:text-6xl">Stop guessing where the growth is.</h2><p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">Run the free Revenue Audit, get your first-pass opportunity estimate and use the result to decide what deserves a deeper INKSIGHTS Audit.</p></div>
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton><SecondaryButton href="/offers">View studio solutions</SecondaryButton></div>
+              <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Start with evidence</p><h2 className="mt-4 max-w-3xl text-balance font-display text-4xl font-black text-ice md:text-6xl">Stop guessing where the growth is.</h2><p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">Run the free Studio Growth Check, get your first-pass opportunity estimate and use the result to decide what deserves a deeper INKSIGHTS Audit.</p></div>
+              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton><SecondaryButton href="/offers">View studio solutions</SecondaryButton></div>
             </div>
           </div>
         </div>
