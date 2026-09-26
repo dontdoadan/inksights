@@ -28,10 +28,10 @@ export const Route = createFileRoute("/resources")({
 const diagnosticResources = [
   {
     icon: Search,
-    title: "Free Tattoo Studio Revenue Audit",
+    title: "Free Studio Growth Check",
     type: "Free diagnostic",
     description:
-      "Estimate where revenue may be leaking across capacity, enquiries, bookings, cancellations and repeat clients.",
+      "Identify which commercial constraint deserves investigation first across capacity, enquiry conversion, cancellations and repeat business.",
     href: "/studio-growth-check",
   },
   {
@@ -45,6 +45,22 @@ const diagnosticResources = [
 ] as const;
 
 const modelResources = [
+  {
+    icon: Calculator,
+    title: "Revenue Leakage Calculator",
+    type: "Scenario calculator",
+    description:
+      "Model value at stake across unused capacity, enquiry conversion, cancellations and repeat business without adding overlapping scenarios.",
+    href: "/revenue-leakage-calculator",
+  },
+  {
+    icon: Calculator,
+    title: "Cancellation Cost Calculator",
+    type: "Capacity-recovery calculator",
+    description:
+      "Estimate unrecovered late-cancellation capacity after refilled time and retained deposits are accounted for.",
+    href: "/cancellation-cost-calculator",
+  },
   {
     icon: Calculator,
     title: "Tattoo Studio Revenue Growth Model",
