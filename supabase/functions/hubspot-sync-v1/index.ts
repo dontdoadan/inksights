@@ -43,6 +43,14 @@ function clean(value: unknown, max = 500) {
   return String(value ?? "").trim().replace(/[\u0000-\u001F\u007F]/g, "").slice(0, max);
 }
 
+function explicitTestReason(...values: unknown[]) {
+  const value = values.map((item) => String(item ?? "")).join(" ").toLowerCase();
+  if (/\[qa test\]/.test(value) || /\bqa e2e\b/.test(value)) return "explicit_qa_marker";
+  if (/\[test\]/.test(value) || /\btest studio\b/.test(value)) return "explicit_test_marker";
+  if (/\bclient zero\b/.test(value) || /\bsample-studio\b/.test(value) || /\bdemo tattoo studio\b/.test(value)) return "known_test_fixture";
+  return null;
+}
+
 function splitName(fullName: string) {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
   if (parts.length <= 1) return { first_name: parts[0] || "", last_name: "" };
@@ -118,12 +126,23 @@ Deno.serve(async (req: Request) => {
 
   try {
     const select = sourceType === "public_contact_request"
-      ? "id,name,email,studio_name,location,phone,website,topic,source,metadata,hubspot_contact_id,hubspot_company_id,hubspot_deal_id,hubspot_synced_at,hubspot_sync_attempts"
-      : "id,name,email,studio_name,website,area,primary_problem,source,source_context,hubspot_contact_id,hubspot_company_id,hubspot_deal_id,hubspot_synced_at,hubspot_sync_attempts";
+      ? "id,name,email,studio_name,location,phone,website,topic,source,metadata,is_test,test_reason,hubspot_contact_id,hubspot_company_id,hubspot_deal_id,hubspot_synced_at,hubspot_sync_attempts"
+      : "id,name,email,studio_name,website,area,primary_problem,source,source_context,is_test,test_reason,hubspot_contact_id,hubspot_company_id,hubspot_deal_id,hubspot_synced_at,hubspot_sync_attempts";
 
     const rows = await rest(`${table}?id=eq.${encodeURIComponent(sourceId)}&select=${select}&limit=1`, { method: "GET" });
     const record = rows?.[0];
     if (!record) throw new Error("Source record not found.");
+
+    const testReason = record.is_test === true
+      ? clean(record.test_reason, 200) || "explicit_test_record"
+      : explicitTestReason(record.name, record.studio_name);
+    if (testReason) {
+      return new Response(JSON.stringify({
+        ok: true,
+        skipped: true,
+        reason: "test_record",
+      }), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
 
     if (record.hubspot_synced_at && record.hubspot_contact_id && record.hubspot_deal_id) {
       return new Response(JSON.stringify({
