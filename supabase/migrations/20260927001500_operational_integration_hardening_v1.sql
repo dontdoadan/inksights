@@ -1,6 +1,8 @@
 -- Operational integration hardening v1
 -- Separates explicit QA/test traffic from genuine commercial lead records so
 -- production CRM and notification workflows can safely ignore synthetic tests.
+-- Environment-specific historical record classification is intentionally
+-- handled as a separately logged operational data correction, not in migration DDL.
 
 alter table public.public_contact_requests
   add column if not exists is_test boolean not null default false,
