@@ -65,6 +65,10 @@ create index if not exists knowledge_items_scope_idx
   on public.knowledge_items (scope_type, scope_key);
 create index if not exists knowledge_items_asset_idx
   on public.knowledge_items (asset_id);
+create index if not exists knowledge_items_created_by_idx
+  on public.knowledge_items (created_by);
+create index if not exists knowledge_items_updated_by_idx
+  on public.knowledge_items (updated_by);
 
 create table if not exists public.knowledge_links (
   id uuid primary key default gen_random_uuid(),
@@ -78,6 +82,9 @@ create table if not exists public.knowledge_links (
 
 comment on table public.knowledge_links is
   'Graph edges between normalized knowledge items, including derived_from, supersedes, depends_on and conflicts_with relationships.';
+
+create index if not exists knowledge_links_target_item_idx
+  on public.knowledge_links (target_item_id);
 
 create table if not exists public.knowledge_query_log (
   id uuid primary key default gen_random_uuid(),
@@ -93,6 +100,11 @@ create table if not exists public.knowledge_query_log (
 
 comment on table public.knowledge_query_log is
   'Founder knowledge-retrieval telemetry used to improve routing and identify recurring information gaps.';
+
+create index if not exists knowledge_query_log_user_idx
+  on public.knowledge_query_log (user_id);
+create index if not exists knowledge_query_log_created_at_idx
+  on public.knowledge_query_log (created_at desc);
 
 alter table public.knowledge_items enable row level security;
 alter table public.knowledge_links enable row level security;
