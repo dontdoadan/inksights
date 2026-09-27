@@ -129,12 +129,24 @@ on public.knowledge_items
 for select to authenticated
 using ((select private.is_platform_admin(array['owner','admin']::text[])));
 
-drop policy if exists "platform admins manage knowledge" on public.knowledge_items;
-create policy "platform admins manage knowledge"
+drop policy if exists "platform admins insert knowledge" on public.knowledge_items;
+create policy "platform admins insert knowledge"
 on public.knowledge_items
-for all to authenticated
+for insert to authenticated
+with check ((select private.is_platform_admin(array['owner','admin']::text[])));
+
+drop policy if exists "platform admins update knowledge" on public.knowledge_items;
+create policy "platform admins update knowledge"
+on public.knowledge_items
+for update to authenticated
 using ((select private.is_platform_admin(array['owner','admin']::text[])))
 with check ((select private.is_platform_admin(array['owner','admin']::text[])));
+
+drop policy if exists "platform admins delete knowledge" on public.knowledge_items;
+create policy "platform admins delete knowledge"
+on public.knowledge_items
+for delete to authenticated
+using ((select private.is_platform_admin(array['owner','admin']::text[])));
 
 drop policy if exists "platform admins read knowledge links" on public.knowledge_links;
 create policy "platform admins read knowledge links"
@@ -142,12 +154,24 @@ on public.knowledge_links
 for select to authenticated
 using ((select private.is_platform_admin(array['owner','admin']::text[])));
 
-drop policy if exists "platform admins manage knowledge links" on public.knowledge_links;
-create policy "platform admins manage knowledge links"
+drop policy if exists "platform admins insert knowledge links" on public.knowledge_links;
+create policy "platform admins insert knowledge links"
 on public.knowledge_links
-for all to authenticated
+for insert to authenticated
+with check ((select private.is_platform_admin(array['owner','admin']::text[])));
+
+drop policy if exists "platform admins update knowledge links" on public.knowledge_links;
+create policy "platform admins update knowledge links"
+on public.knowledge_links
+for update to authenticated
 using ((select private.is_platform_admin(array['owner','admin']::text[])))
 with check ((select private.is_platform_admin(array['owner','admin']::text[])));
+
+drop policy if exists "platform admins delete knowledge links" on public.knowledge_links;
+create policy "platform admins delete knowledge links"
+on public.knowledge_links
+for delete to authenticated
+using ((select private.is_platform_admin(array['owner','admin']::text[])));
 
 drop policy if exists "platform admins read knowledge queries" on public.knowledge_query_log;
 create policy "platform admins read knowledge queries"
