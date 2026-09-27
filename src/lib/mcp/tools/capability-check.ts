@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- paired knowledge migration lands before generated Supabase types are refreshed */
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { requirePlatformAdmin, toolError } from "./_admin";
