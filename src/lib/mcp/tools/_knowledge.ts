@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- paired knowledge migration lands before generated Supabase types are refreshed */
 type KnowledgeSearchInput = {
   query: string;
   domain?: string;
