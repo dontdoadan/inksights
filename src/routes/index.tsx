@@ -42,7 +42,7 @@ function Index() {
         url: CANONICAL_URL,
       }]} />
 
-      <section className="brand-dark cinematic-hero hero-ambient relative overflow-hidden grid-bg">
+      <section className="brand-dark cinematic-hero hero-ambient relative overflow-hidden">
         <div className="ambient-orb ambient-orb-one" aria-hidden="true" />
         <div className="ambient-orb ambient-orb-two" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-ink-deep/30 to-ink-deep" />
