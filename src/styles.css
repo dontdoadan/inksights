@@ -108,13 +108,6 @@
   }
 }
 
-@utility grid-bg {
-  background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--mint) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--mint) 8%, transparent) 1px, transparent 1px);
-  background-size: 56px 56px;
-}
-
 @utility text-balance { text-wrap: balance; }
 
 .form-control {
@@ -277,12 +270,14 @@
 .hero-ambient::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -12%;
   z-index: -1;
-  opacity: 0.16;
-  background-image: radial-gradient(circle at center, rgba(255,255,255,0.34) 0 0.7px, transparent 0.9px);
-  background-size: 22px 22px;
-  mask-image: linear-gradient(to bottom, black, transparent 88%);
+  pointer-events: none;
+  opacity: 0.62;
+  background:
+    radial-gradient(ellipse at 24% 28%, color-mix(in oklab, var(--mint) 8%, transparent), transparent 34%),
+    radial-gradient(ellipse at 78% 44%, color-mix(in oklab, var(--deep-teal) 9%, transparent), transparent 38%);
+  filter: blur(26px);
 }
 .ambient-orb {
   position: absolute;
@@ -336,10 +331,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(to right, color-mix(in oklab, var(--mint) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--mint) 6%, transparent) 1px, transparent 1px);
-  background-size: 38px 38px;
-  mask-image: radial-gradient(circle at var(--panel-x) var(--panel-y), black, transparent 62%);
+    radial-gradient(circle at var(--panel-x) var(--panel-y), color-mix(in oklab, var(--mint) 13%, transparent), transparent 34%),
+    linear-gradient(135deg, color-mix(in oklab, var(--mint) 4%, transparent), transparent 48%);
 }
 .hero-signal-glow {
   position: absolute;
@@ -561,10 +554,10 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: radial-gradient(circle, color-mix(in oklab, var(--mint) 14%, transparent) 0 0.7px, transparent 0.9px);
-  background-size: 18px 18px;
-  opacity: 0.22;
-  mask-image: linear-gradient(to bottom, black, transparent 62%);
+  background:
+    radial-gradient(ellipse at 18% 18%, color-mix(in oklab, var(--mint) 8%, transparent), transparent 34%),
+    linear-gradient(120deg, transparent 48%, color-mix(in oklab, var(--mint) 4%, transparent), transparent 62%);
+  opacity: 0.7;
 }
 .journey-rail {
   position: absolute;
@@ -766,7 +759,7 @@
 .brand-wordmark { display: block; width: 210px; height: 46px; object-fit: contain; }
 .brand-mark { width: 52px; height: 56px; object-fit: contain; }
 .brand-signal { position: relative; overflow: hidden; background: linear-gradient(145deg, #10313a, #0a0f14 65%); }
-.brand-signal::before { content: ''; position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(#00e5d12b 1px, transparent 1px); background-size: 18px 18px; mask-image: linear-gradient(135deg, black, transparent 70%); }
+.brand-signal::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 24% 22%, #00e5d11f, transparent 42%), linear-gradient(135deg, transparent 28%, #00e5d10d 52%, transparent 72%); }
 .brand-signal > * { position: relative; }
 .brand-signature { display: flex; align-items: center; gap: 1.5rem; padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
 .brand-signature img { width: 94px; height: 100px; object-fit: contain; }
@@ -1236,17 +1229,17 @@ h3 { line-height: 1.25; }
     linear-gradient(180deg, #0A0F14 0%, #0C1720 52%, #0A0F14 100%);
   isolation: isolate;
 }
-.signal-observatory-grid {
+.signal-observatory-field {
   position: absolute;
-  inset: 0;
+  inset: -14%;
   z-index: -2;
-  opacity: 0.28;
-  background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--mint) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--mint) 8%, transparent) 1px, transparent 1px);
-  background-size: 34px 34px;
-  mask-image: radial-gradient(circle at 72% 50%, black, transparent 66%);
-  animation: observatory-grid-drift 24s linear infinite;
+  opacity: 0.72;
+  background:
+    radial-gradient(ellipse at 72% 48%, color-mix(in oklab, var(--mint) 11%, transparent), transparent 30%),
+    radial-gradient(ellipse at 52% 68%, color-mix(in oklab, var(--deep-teal) 7%, transparent), transparent 38%),
+    linear-gradient(118deg, transparent 28%, color-mix(in oklab, var(--mint) 3%, transparent) 48%, transparent 66%);
+  filter: blur(24px);
+  animation: observatory-field-drift 18s ease-in-out infinite alternate;
 }
 .signal-observatory-beam {
   position: absolute;
@@ -1623,9 +1616,9 @@ h3 { line-height: 1.25; }
   from { background-position: 0 0; }
   to { background-position: 0 220px; }
 }
-@keyframes observatory-grid-drift {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 68px 0, 0 68px; }
+@keyframes observatory-field-drift {
+  from { transform: translate3d(-1.5%, -1%, 0) scale(1); opacity: 0.55; }
+  to { transform: translate3d(2%, 1.5%, 0) scale(1.035); opacity: 0.82; }
 }
 @keyframes observatory-section-scan {
   0%, 12% { opacity: 0; transform: translateY(-34%); }
@@ -1705,7 +1698,7 @@ h3 { line-height: 1.25; }
 @media (prefers-reduced-motion: reduce) {
   .cinematic-hero::before,
   .cinematic-hero::after,
-  .signal-observatory-grid,
+  .signal-observatory-field,
   .signal-observatory-beam,
   .observatory-live-dot,
   .observatory-status-dot,
@@ -1785,12 +1778,11 @@ h3 { line-height: 1.25; }
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.18;
-  background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--mint) 5%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--mint) 5%, transparent) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: linear-gradient(to bottom, black, transparent 68%);
+  opacity: 0.62;
+  background:
+    radial-gradient(ellipse at 86% 12%, color-mix(in oklab, var(--mint) 9%, transparent), transparent 30%),
+    linear-gradient(145deg, transparent 44%, color-mix(in oklab, var(--mint) 3%, transparent), transparent 72%);
+  mask-image: linear-gradient(to bottom, black, transparent 74%);
 }
 .site-menu-drawer > * {
   position: relative;

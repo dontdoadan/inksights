@@ -413,7 +413,7 @@ export function SignalObservatory() {
 
   return (
     <section className="signal-observatory-shell brand-dark relative overflow-hidden border-y border-border">
-      <div className="signal-observatory-grid" aria-hidden="true" />
+      <div className="signal-observatory-field" aria-hidden="true" />
       <div className="signal-observatory-beam" aria-hidden="true" />
       <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-24">
         <div className="grid gap-10 lg:grid-cols-[.78fr_1.22fr] lg:items-center">
