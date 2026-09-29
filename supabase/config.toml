@@ -1,1 +1,4 @@
 project_id = "ukaxsqwnkoqbbsufpzga"
+
+[functions.golden-audit-report]
+verify_jwt = false
