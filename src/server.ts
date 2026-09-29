@@ -16,6 +16,9 @@ const LEGACY_REDIRECTS = new Map<string, string>([
 const NOINDEX_PATH_PREFIXES = [
   "/auth",
   "/dashboard",
+  "/os",
+  "/workspace",
+  "/audits",
   "/mcp",
   "/.mcp",
   "/.lovable",
