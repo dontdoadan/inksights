@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "name": "INKSIGHTS Knowledge & Control Plane",
+  "status": "candidate",
+  "purpose": "Provide one governed retrieval and control layer for founder and AI work without requiring each chat to preload or rediscover the same files.",
+  "canonical_boundaries": {
+    "supabase": "Live application/intelligence/operational state and normalized knowledge index.",
+    "github": "Code, migrations, tests, machine-readable contracts and technical specifications.",
+    "google_drive": "Human-readable business documents, evidence assets, client deliverables and reusable business templates.",
+    "hubspot": "CRM state.",
+    "stripe": "Payment and billing truth.",
+    "vercel": "Deployment/runtime truth.",
+    "chatgpt": "Reasoning and orchestration only; conversation memory is not canonical storage."
+  },
+  "retrieval_contract": {
+    "default_tool": "get_inksights_context",
+    "before_new_build": "check_existing_capability",
+    "direct_search": "search_knowledge",
+    "learning_capture": "capture_knowledge_candidate",
+    "rule": "CURRENT canonical/live evidence outranks INTENDED/PROPOSED material."
+  },
+  "knowledge_states": [
+    "current",
+    "intended",
+    "proposed",
+    "historical",
+    "unknown"
+  ],
+  "authority_levels": [
+    "canonical",
+    "active",
+    "supporting",
+    "reference"
+  ],
+  "lifecycle": [
+    "retrieve existing state",
+    "execute in owning system",
+    "verify",
+    "capture durable candidate learning",
+    "curator review",
+    "promote or reject",
+    "supersede stale authority explicitly"
+  ],
+  "future_adapters": [
+    "Google Drive incremental content sync",
+    "GitHub knowledge/spec sync",
+    "HubSpot/Stripe/Vercel state summaries",
+    "hybrid semantic + keyword search once corpus size and query telemetry justify embeddings"
+  ]
+}

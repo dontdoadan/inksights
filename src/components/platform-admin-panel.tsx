@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- generic CMS CRUD spans newly migrated tables until generated Supabase types are refreshed */
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 type FieldKind = "text" | "textarea" | "number" | "boolean" | "json" | "select";
@@ -239,9 +240,17 @@ export function PlatformAdminPanel() {
             Publish and maintain site content without editing application source. Access is enforced by Supabase RLS and platform-admin role.
           </p>
         </div>
-        <span className="w-fit rounded-full border border-mint/30 bg-mint/5 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-mint">
-          {role}
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to="/knowledge"
+            className="rounded-full border border-mint/30 px-3 py-1.5 text-xs font-bold text-mint transition hover:bg-mint/5"
+          >
+            Open Founder Knowledge
+          </Link>
+          <span className="w-fit rounded-full border border-mint/30 bg-mint/5 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-mint">
+            {role}
+          </span>
+        </div>
       </div>
 
       <div className="mt-7 flex flex-wrap gap-2">
