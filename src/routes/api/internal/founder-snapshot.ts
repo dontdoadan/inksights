@@ -116,9 +116,161 @@ export const Route = createFileRoute("/api/internal/founder-snapshot")({
           },
         );
       },
+      PATCH: async ({ request }) => {
+        const auth = await requireFounder(request);
+        if (auth instanceof Response) return auth;
+        const { db } = auth;
+
+        const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+        if (!body) return json({ error: "Invalid JSON body." }, 400);
+
+        const kind = typeof body.kind === "string" ? body.kind : "";
+        const key = typeof body.key === "string" ? body.key.trim() : "";
+        const status = typeof body.status === "string" ? body.status.trim() : "";
+        const completionEvidence =
+          typeof body.completion_evidence === "string" ? body.completion_evidence.trim() : null;
+
+        if (!key) return json({ error: "Record key is required." }, 400);
+
+        if (kind === "action") {
+          const allowed = new Set(["open", "in_progress", "done"]);
+          if (!allowed.has(status)) return json({ error: "Invalid action status." }, 400);
+
+          const updates: Record<string, unknown> = {
+            status,
+            updated_at: new Date().toISOString(),
+            completed_at: status === "done" ? new Date().toISOString() : null,
+          };
+          if (completionEvidence) updates.completion_evidence = completionEvidence;
+
+          const { data, error } = await db
+            .from("ops_actions")
+            .update(updates)
+            .eq("action_key", key)
+            .select("action_key, status, completion_evidence, completed_at")
+            .maybeSingle();
+
+          if (error) {
+            console.error("Founder action update failed", error);
+            return json({ error: "Action update failed." }, 500);
+          }
+          if (!data) return json({ error: "Action not found." }, 404);
+          return json({ ok: true, record: data }, 200, { "cache-control": "private, no-store" });
+        }
+
+        if (kind === "priority") {
+          const allowed = new Set(["active", "done"]);
+          if (!allowed.has(status)) return json({ error: "Invalid priority status." }, 400);
+
+          const { data, error } = await db
+            .from("ops_priorities")
+            .update({ status, updated_at: new Date().toISOString() })
+            .eq("priority_key", key)
+            .select("priority_key, status")
+            .maybeSingle();
+
+          if (error) {
+            console.error("Founder priority update failed", error);
+            return json({ error: "Priority update failed." }, 500);
+          }
+          if (!data) return json({ error: "Priority not found." }, 404);
+          return json({ ok: true, record: data }, 200, { "cache-control": "private, no-store" });
+        }
+
+        return json({ error: "Unsupported record kind." }, 400);
+      },
+
+      POST: async ({ request }) => {
+        const auth = await requireFounder(request);
+        if (auth instanceof Response) return auth;
+        const { db } = auth;
+
+        const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+        if (!body) return json({ error: "Invalid JSON body." }, 400);
+
+        const title = typeof body.title === "string" ? body.title.trim() : "";
+        const owner = typeof body.owner === "string" ? body.owner.trim() : "Founder";
+        const deadline = typeof body.deadline === "string" && body.deadline ? body.deadline : null;
+        if (title.length < 3) return json({ error: "Action title must be at least 3 characters." }, 400);
+
+        const { data: brief, error: briefError } = await db
+          .from("ops_current_founder_brief")
+          .select("cycle_id, business_key")
+          .limit(1)
+          .maybeSingle();
+
+        if (briefError || !brief) {
+          console.error("Founder action create: active cycle unavailable", briefError);
+          return json({ error: "An active founder operating cycle is required." }, 409);
+        }
+
+        const actionKey = `manual-${crypto.randomUUID()}`;
+        const { data, error } = await db
+          .from("ops_actions")
+          .insert({
+            action_key: actionKey,
+            business_key: brief.business_key,
+            cycle_id: brief.cycle_id,
+            title,
+            owner: owner || "Founder",
+            deadline,
+            status: "open",
+            source_type: "manual",
+            source_ref: null,
+            completion_evidence: null,
+            metadata: { created_from: "inksights_os" },
+          })
+          .select("action_key, title, owner, deadline, status")
+          .single();
+
+        if (error) {
+          console.error("Founder action create failed", error);
+          return json({ error: "Action creation failed." }, 500);
+        }
+
+        return json({ ok: true, record: data }, 201, { "cache-control": "private, no-store" });
+      },
     },
   },
 });
+
+async function requireFounder(request: Request) {
+  const authHeader = request.headers.get("authorization") ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    return json({ error: "Authentication required." }, 401);
+  }
+
+  const token = authHeader.slice("Bearer ".length).trim();
+  if (!token || token.split(".").length !== 3) {
+    return json({ error: "Invalid authentication token." }, 401);
+  }
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const db = supabaseAdmin as any;
+  const { data: auth, error: authError } = await supabaseAdmin.auth.getUser(token);
+  const user = auth?.user;
+
+  if (authError || !user) {
+    return json({ error: "Authentication failed." }, 401);
+  }
+
+  const { data: admin, error: adminError } = await db
+    .from("platform_admins")
+    .select("role, active")
+    .eq("user_id", user.id)
+    .eq("active", true)
+    .maybeSingle();
+
+  if (adminError) {
+    console.error("Founder admin lookup failed", adminError);
+    return json({ error: "Admin access check failed." }, 500);
+  }
+  if (!admin) {
+    return json({ error: "Founder access required." }, 403);
+  }
+
+  return { db, user, admin };
+}
 
 function json(body: unknown, status: number, extraHeaders: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), {
