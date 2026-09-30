@@ -1,5 +1,5 @@
 import { Logo } from "@/components/public-site";
-import { loadFounderSnapshot } from "@/features/os/queries";
+import { createFounderAction, loadFounderSnapshot, updateFounderAction, updateFounderPriority } from "@/features/os/queries";
 import type {
   CommercialMetric,
   FounderAction,
@@ -18,7 +18,9 @@ import {
   Database,
   FileCheck2,
   Gauge,
+  Plus,
   RefreshCw,
+  RotateCcw,
   ShieldCheck,
   Target,
 } from "lucide-react";
@@ -41,6 +43,11 @@ function InksightsOS() {
   const [snapshot, setSnapshot] = useState<FounderSnapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [mutationKey, setMutationKey] = useState("");
+  const [showAddAction, setShowAddAction] = useState(false);
+  const [newActionTitle, setNewActionTitle] = useState("");
+  const [newActionOwner, setNewActionOwner] = useState("Founder");
+  const [newActionDeadline, setNewActionDeadline] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -63,6 +70,55 @@ function InksightsOS() {
     if (!brief?.period_end) return false;
     return new Date(`${brief.period_end}T23:59:59Z`).getTime() < Date.now();
   }, [brief?.period_end]);
+
+  const changeActionStatus = useCallback(async (action: FounderAction, status: "open" | "in_progress" | "done") => {
+    setMutationKey(action.action_key);
+    setError("");
+    try {
+      await updateFounderAction(action.action_key, status);
+      await load();
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to update action.");
+    } finally {
+      setMutationKey("");
+    }
+  }, [load]);
+
+  const changePriorityStatus = useCallback(async (priority: FounderPriority, status: "active" | "done") => {
+    setMutationKey(priority.priority_key);
+    setError("");
+    try {
+      await updateFounderPriority(priority.priority_key, status);
+      await load();
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to update priority.");
+    } finally {
+      setMutationKey("");
+    }
+  }, [load]);
+
+  const addAction = useCallback(async (event: React.FormEvent) => {
+    event.preventDefault();
+    const title = newActionTitle.trim();
+    if (title.length < 3) return;
+    setMutationKey("new-action");
+    setError("");
+    try {
+      await createFounderAction({
+        title,
+        owner: newActionOwner.trim() || "Founder",
+        deadline: newActionDeadline || null,
+      });
+      setNewActionTitle("");
+      setNewActionDeadline("");
+      setShowAddAction(false);
+      await load();
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to create action.");
+    } finally {
+      setMutationKey("");
+    }
+  }, [load, newActionDeadline, newActionOwner, newActionTitle]);
 
   return (
     <div className="min-h-screen bg-ink-deep text-foreground">
@@ -182,17 +238,70 @@ function InksightsOS() {
               <SectionHeading eyebrow="Execution" title="Three priorities" />
               <div className="mt-4 space-y-3">
                 {(brief?.priorities ?? []).map((priority) => (
-                  <PriorityCard key={priority.priority_key} priority={priority} />
+                  <PriorityCard
+                    key={priority.priority_key}
+                    priority={priority}
+                    busy={mutationKey === priority.priority_key}
+                    onStatusChange={(status) => void changePriorityStatus(priority, status)}
+                  />
                 ))}
                 {!loading && !(brief?.priorities?.length) ? <EmptyState text="No active priorities." /> : null}
               </div>
             </div>
 
             <div>
-              <SectionHeading eyebrow="Operating queue" title="What needs action" />
+              <div className="flex items-end justify-between gap-4">
+                <SectionHeading eyebrow="Operating queue" title="What needs action" />
+                <button
+                  type="button"
+                  onClick={() => setShowAddAction((value) => !value)}
+                  className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-mint/[0.05] px-3.5 py-2 text-xs font-bold text-mint hover:bg-mint/[0.09]"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add action
+                </button>
+              </div>
+
+              {showAddAction ? (
+                <form onSubmit={(event) => void addAction(event)} className="mt-4 grid gap-3 rounded-[24px] border border-mint/20 bg-mint/[0.03] p-4 md:grid-cols-[minmax(0,1fr)_180px_170px_auto]">
+                  <input
+                    value={newActionTitle}
+                    onChange={(event) => setNewActionTitle(event.target.value)}
+                    placeholder="Next action"
+                    className="rounded-xl border border-border bg-ink-deep px-3 py-2.5 text-sm text-ice outline-none focus:border-mint/50"
+                    required
+                    minLength={3}
+                  />
+                  <input
+                    value={newActionOwner}
+                    onChange={(event) => setNewActionOwner(event.target.value)}
+                    placeholder="Owner"
+                    className="rounded-xl border border-border bg-ink-deep px-3 py-2.5 text-sm text-ice outline-none focus:border-mint/50"
+                  />
+                  <input
+                    type="datetime-local"
+                    value={newActionDeadline}
+                    onChange={(event) => setNewActionDeadline(event.target.value)}
+                    className="rounded-xl border border-border bg-ink-deep px-3 py-2.5 text-sm text-ice outline-none focus:border-mint/50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={mutationKey === "new-action"}
+                    className="rounded-xl bg-mint px-4 py-2.5 text-sm font-black text-ink-deep disabled:opacity-50"
+                  >
+                    {mutationKey === "new-action" ? "Saving…" : "Create"}
+                  </button>
+                </form>
+              ) : null}
+
               <div className="mt-4 overflow-hidden rounded-[24px] border border-border/70 bg-ink">
                 {(brief?.execution_queue ?? []).map((action, index) => (
-                  <ActionRow key={action.action_key} action={action} last={index === (brief?.execution_queue?.length ?? 0) - 1} />
+                  <ActionRow
+                    key={action.action_key}
+                    action={action}
+                    last={index === (brief?.execution_queue?.length ?? 0) - 1}
+                    busy={mutationKey === action.action_key}
+                    onStatusChange={(status) => void changeActionStatus(action, status)}
+                  />
                 ))}
                 {!loading && !(brief?.execution_queue?.length) ? <EmptyState text="Execution queue is clear." /> : null}
               </div>
@@ -331,7 +440,15 @@ function MetricCard({ metric }: { metric: CommercialMetric }) {
   );
 }
 
-function PriorityCard({ priority }: { priority: FounderPriority }) {
+function PriorityCard({
+  priority,
+  busy,
+  onStatusChange,
+}: {
+  priority: FounderPriority;
+  busy: boolean;
+  onStatusChange: (status: "active" | "done") => void;
+}) {
   return (
     <article className="rounded-[24px] border border-border/70 bg-ink p-5 md:p-6">
       <div className="flex items-start gap-4">
@@ -351,20 +468,51 @@ function PriorityCard({ priority }: { priority: FounderPriority }) {
             <p className="text-[10px] font-black uppercase tracking-[0.16em] text-mint">Next action</p>
             <p className="mt-2 text-sm font-semibold leading-6 text-ice">{priority.next_action}</p>
           </div>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => onStatusChange(priority.status === "done" ? "active" : "done")}
+            className="mt-4 inline-flex items-center gap-2 rounded-full border border-border px-3.5 py-2 text-xs font-bold text-muted-foreground hover:border-mint/40 hover:text-mint disabled:opacity-50"
+          >
+            {priority.status === "done" ? <RotateCcw className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+            {busy ? "Saving…" : priority.status === "done" ? "Reopen priority" : "Mark priority done"}
+          </button>
         </div>
       </div>
     </article>
   );
 }
 
-function ActionRow({ action, last }: { action: FounderAction; last: boolean }) {
+function ActionRow({
+  action,
+  last,
+  busy,
+  onStatusChange,
+}: {
+  action: FounderAction;
+  last: boolean;
+  busy: boolean;
+  onStatusChange: (status: "open" | "in_progress" | "done") => void;
+}) {
+  const nextStatus = action.status === "open" ? "in_progress" : action.status === "in_progress" ? "done" : "open";
+  const nextLabel = action.status === "open" ? "Start" : action.status === "in_progress" ? "Complete" : "Reopen";
+
   return (
-    <div className={`grid gap-3 p-4 md:grid-cols-[1fr_auto] md:items-center ${last ? "" : "border-b border-border/50"}`}>
+    <div className={`grid gap-3 p-4 md:grid-cols-[1fr_auto_auto] md:items-center ${last ? "" : "border-b border-border/50"}`}>
       <div>
         <p className="text-sm font-bold leading-6 text-ice">{action.title}</p>
         <p className="mt-1 text-xs text-muted-foreground">{action.owner}{action.deadline ? ` · ${dateLabel(action.deadline)}` : ""}</p>
       </div>
       <StatusPill status={action.status} />
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => onStatusChange(nextStatus)}
+        className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-3 py-1.5 text-[11px] font-bold text-muted-foreground hover:border-mint/40 hover:text-mint disabled:opacity-50"
+      >
+        {action.status === "done" ? <RotateCcw className="h-3 w-3" /> : <CheckCircle2 className="h-3 w-3" />}
+        {busy ? "Saving…" : nextLabel}
+      </button>
     </div>
   );
 }
