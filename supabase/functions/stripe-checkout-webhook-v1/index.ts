@@ -233,19 +233,18 @@ async function ensureContactAndCrm(session: Record<string, any>) {
     console.error("Payment integration event persistence failed", eventError instanceof Error ? eventError.message : String(eventError));
   }
 
-  try {
-    const key = serviceKey();
-    const sync = await fetch(`${SB}/functions/v1/hubspot-sync-v1`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        source_type: "public_contact_request",
-        source_id: contact.id,
-      }),
-    });
-    if (!sync.ok) console.error("HubSpot sync request failed", sync.status, (await sync.text()).slice(0, 400));
-  } catch (syncError) {
-    console.error("HubSpot sync dispatch failed", syncError instanceof Error ? syncError.message : String(syncError));
+  const key = serviceKey();
+  const sync = await fetch(`${SB}/functions/v1/hubspot-sync-v1`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source_type: "public_contact_request",
+      source_id: contact.id,
+    }),
+  });
+  const syncText = await sync.text();
+  if (!sync.ok) {
+    throw new Error(`HubSpot sync request failed: ${sync.status} ${syncText.slice(0, 400)}`);
   }
 
   return contact.id;
