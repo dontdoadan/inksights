@@ -251,6 +251,12 @@ function CheckoutButton({
       onClick={async () => {
         setIsLoading(true);
         trackWebsiteEvent("checkout_started", { offer: offer.slug });
+
+        if (offer.checkoutUrl) {
+          window.location.href = offer.checkoutUrl;
+          return;
+        }
+
         try {
           const { url } = await startCheckout({ data: { slug: offer.slug, leadId, auditId } });
           if (url) {
@@ -260,12 +266,7 @@ function CheckoutButton({
           throw new Error("Checkout session did not return a URL.");
         } catch {
           trackWebsiteEvent("checkout_error", { offer: offer.slug, reason: "checkout_initialization_failed" });
-          if (offer.checkoutUrl) {
-            window.location.href = offer.checkoutUrl;
-            return;
-          }
           toast.error("Secure checkout is temporarily unavailable. Please ask a scope question and we will help you complete the purchase.");
-        } finally {
           setIsLoading(false);
         }
       }}
