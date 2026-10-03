@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>INKSIGHTS Sandbox</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">IS</div>
+        <div>
+          <strong>INKSIGHTS</strong>
+          <span>Sandbox</span>
+        </div>
+      </div>
+
+      <div class="sandbox-badge">SANDBOX · SYNTHETIC ONLY</div>
+
+      <nav id="nav">
+        <button data-view="overview" class="active">Overview</button>
+        <button data-view="studios">Studios</button>
+        <button data-view="growth">Growth Check</button>
+        <button data-view="audit">Intelligence Audit</button>
+        <button data-view="evidence">Evidence & Metrics</button>
+        <button data-view="findings">Findings / Diagnosis</button>
+        <button data-view="recommendations">Recommendations</button>
+        <button data-view="interventions">Interventions & Outcomes</button>
+        <button data-view="reports">Reports</button>
+        <button data-view="scenarios">Scenarios</button>
+        <button data-view="connectors">Connectors</button>
+        <button data-view="events">Event Log</button>
+        <button data-view="safety">Settings / Safety</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div>APP_ENV</div>
+        <strong>sandbox</strong>
+        <small>No production adapters</small>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">INTERNAL TEST ENVIRONMENT</div>
+          <h1 id="page-title">Overview</h1>
+        </div>
+        <div class="top-actions">
+          <select id="studio-select" aria-label="Selected synthetic studio"></select>
+          <button id="refresh" class="secondary">Refresh</button>
+        </div>
+      </header>
+
+      <div class="warning-strip">
+        <strong>SYNTHETIC SANDBOX — NOT FOR CLIENT USE.</strong>
+        No live payments, CRM writes, external email or production database access.
+      </div>
+
+      <section id="view" class="view"></section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
