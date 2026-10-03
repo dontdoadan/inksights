@@ -1,6 +1,9 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const SB = Deno.env.get("SUPABASE_URL") || "";
+const DEFAULT_DEAL_PIPELINE = "default";
+const DEFAULT_NEW_LEAD_STAGE = "6160204007";
+const DEFAULT_PAID_BOOKED_STAGE = "6161522919";
 
 function serviceKeys() {
   const values: string[] = [];
@@ -70,14 +73,20 @@ function domainFromWebsite(value: string | null | undefined) {
 
 async function runtimeConfig() {
   const rows = await rest(
-    "integration_runtime_config?config_key=in.(make_hubspot_sync_url,make_hubspot_sync_token)&select=config_key,config_value",
+    "integration_runtime_config?config_key=in.(make_hubspot_sync_url,make_hubspot_sync_token,hubspot_deal_pipeline,hubspot_stage_new_lead,hubspot_stage_paid_booked)&select=config_key,config_value",
     { method: "GET" },
   ) as Array<{ config_key: string; config_value: string }>;
   const map = Object.fromEntries(rows.map((row) => [row.config_key, row.config_value]));
   if (!map.make_hubspot_sync_url || !map.make_hubspot_sync_token) {
     throw new Error("HubSpot sync runtime configuration is incomplete.");
   }
-  return { url: map.make_hubspot_sync_url, token: map.make_hubspot_sync_token };
+  return {
+    url: map.make_hubspot_sync_url,
+    token: map.make_hubspot_sync_token,
+    dealPipeline: map.hubspot_deal_pipeline || DEFAULT_DEAL_PIPELINE,
+    newLeadStage: map.hubspot_stage_new_lead || DEFAULT_NEW_LEAD_STAGE,
+    paidBookedStage: map.hubspot_stage_paid_booked || DEFAULT_PAID_BOOKED_STAGE,
+  };
 }
 
 async function recordAttempt(table: string, id: string, error: string | null = null) {
@@ -171,6 +180,7 @@ Deno.serve(async (req: Request) => {
     const auditId = clean(body.audit_id, 100);
     const sourceLabel = sourceType === "public_contact_request" ? "website_contact" : "revenue_audit_v1";
     const dealAmount = topic === "studio-intelligence-audit" ? 395 : 0;
+    const dealStage = topic === "studio-intelligence-audit" ? config.paidBookedStage : config.newLeadStage;
     const dealName = `${studioName} — ${topic === "studio-intelligence-audit" ? "Studio Intelligence Audit" : sourceType === "revenue_audit_lead" ? "Revenue Audit follow-up" : "Website enquiry"} — ${sourceId.slice(0, 8)}`;
 
     const makeResponse = await fetch(config.url, {
@@ -199,8 +209,8 @@ Deno.serve(async (req: Request) => {
         audit_id: auditId,
         deal_name: dealName,
         deal_amount: dealAmount,
-        deal_pipeline: "default",
-        deal_stage: "5869458631",
+        deal_pipeline: config.dealPipeline,
+        deal_stage: dealStage,
       }),
     });
 
