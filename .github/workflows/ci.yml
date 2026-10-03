@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -58,6 +58,25 @@ jobs:
 
       - name: Build and generate route types
         run: npm run build
+
+      - name: Reconcile dependency lock and generated route tree
+        if: github.event_name == 'pull_request' && github.head_ref == 'fix/stripe-checkout-fallback' && github.actor != 'github-actions[bot]'
+        run: |
+          cp package-lock.json /tmp/package-lock.json
+          cp src/routeTree.gen.ts /tmp/routeTree.gen.ts
+          git fetch origin fix/stripe-checkout-fallback
+          git checkout -B fix/stripe-checkout-fallback origin/fix/stripe-checkout-fallback
+          cp /tmp/package-lock.json package-lock.json
+          cp /tmp/routeTree.gen.ts src/routeTree.gen.ts
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json src/routeTree.gen.ts
+          if git diff --cached --quiet; then
+            echo "Generated files are already reconciled."
+          else
+            git commit -m "chore: reconcile TanStack lockfile and generated routes"
+            git push origin HEAD:fix/stripe-checkout-fallback
+          fi
 
       - name: Upload generated route tree
         uses: actions/upload-artifact@v4
