@@ -36,6 +36,12 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps --no-audit --no-fund
 
+      - name: Emit resolved lockfile diff
+        run: |
+          echo "LOCKFILE_DIFF_BEGIN"
+          git diff -- package-lock.json
+          echo "LOCKFILE_DIFF_END"
+
       - name: Lint
         id: lint
         continue-on-error: true
