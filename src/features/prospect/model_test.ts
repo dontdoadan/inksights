@@ -106,6 +106,6 @@ Deno.test("acquisition snapshot contains limits and never presents prospect scor
   assertEquals(snapshot.schema, "acquisition-snapshot/1.0");
   assert(snapshot.scope.publicEvidenceOnly);
   assert(snapshot.scope.limitations.some((line) => /lost revenue/i.test(line)));
-  assert(snapshot.score.note.toLowerCase().includes("not an industry benchmark"));
+  assert(!("score" in snapshot));
   assertEquals(snapshot.cta.foundingValidationPrice, "£395 one-off");
 });
