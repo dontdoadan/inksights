@@ -692,8 +692,8 @@ async function persistProspectIntelligence(
       constraint_type: "prospect_public_acquisition",
       confidence: score.confidence,
       rank: 1,
-      resolution_state: "open",
-      constraint_family: "demand",
+      resolution_state: "supported",
+      constraint_family: "demand_visibility",
     }).select("id").single();
     if (diagnosisError) throw new Error(`prospect_diagnosis:${diagnosisError.message}`);
 
