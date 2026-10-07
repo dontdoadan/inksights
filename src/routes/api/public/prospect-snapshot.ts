@@ -12,8 +12,7 @@ export const Route = createFileRoute("/api/public/prospect-snapshot")({
 
         const tokenHash = await sha256(token);
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const db = supabaseAdmin as any;
-        const { data, error } = await db
+        const { data, error } = await supabaseAdmin
           .from("audit_runs")
           .select("audit_id,output_summary,completed_at")
           .eq("engine_key", "prospect_snapshot")
@@ -23,11 +22,13 @@ export const Route = createFileRoute("/api/public/prospect-snapshot")({
           .limit(1)
           .maybeSingle();
 
-        if (error || !data?.output_summary?.snapshot) {
+        const output = isRecord(data?.output_summary) ? data.output_summary : null;
+        const snapshot = output?.["snapshot"];
+        if (error || !snapshot) {
           return json({ ok: false, error: "Snapshot link is invalid, superseded or no longer available." }, 404);
         }
 
-        return json({ ok: true, snapshot: data.output_summary.snapshot }, 200, {
+        return json({ ok: true, snapshot }, 200, {
           "cache-control": "private, no-store, max-age=0",
           "x-robots-tag": "noindex, nofollow",
         });
@@ -35,6 +36,10 @@ export const Route = createFileRoute("/api/public/prospect-snapshot")({
     },
   },
 });
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
 
 async function sha256(value: string) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
