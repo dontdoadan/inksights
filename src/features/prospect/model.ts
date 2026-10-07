@@ -377,6 +377,7 @@ export function buildAcquisitionSnapshot(
   score: ProspectScore,
   findings: DerivedProspectFinding[],
   evidence: ProspectEvidence[],
+  offer: { name: string; price: string },
   generatedAt = new Date().toISOString(),
 ): AcquisitionSnapshot {
   const evidenceById = new Map(evidence.map((item) => [item.id, item]));
@@ -444,8 +445,8 @@ export function buildAcquisitionSnapshot(
     cta: {
       title: "This is the snapshot. The full audit goes further.",
       body: "The Studio Intelligence Audit connects the strongest available evidence into a prioritised diagnosis and action plan, then identifies what should be measured next.",
-      offer: "Studio Intelligence Audit",
-      foundingValidationPrice: "£395",
+      offer: offer.name === "INKSIGHTS Studio Intelligence Audit" ? "Studio Intelligence Audit" : "Studio Intelligence Audit",
+      foundingValidationPrice: offer.price,
     },
   };
 }
