@@ -10,7 +10,7 @@ import {
   type ProspectIdentity,
 } from "./model";
 
-type AdminClient = any;
+type AdminClient = (typeof import("@/integrations/supabase/client.server"))["supabaseAdmin"];
 
 type StudioRecord = {
   id: string;
@@ -65,7 +65,13 @@ const EXCLUDED_DISCOVERY_DOMAINS = [
 ];
 
 function clean(value: unknown, max = 500) {
-  return String(value ?? "").trim().replace(/[\u0000-\u001F\u007F]/g, "").replace(/\s+/g, " ").slice(0, max);
+  const printable = Array.from(String(value ?? ""))
+    .filter((character) => {
+      const code = character.charCodeAt(0);
+      return code >= 32 && code !== 127;
+    })
+    .join("");
+  return printable.trim().replace(/\s+/g, " ").slice(0, max);
 }
 
 export function normalizeName(value: string) {
