@@ -312,6 +312,18 @@ function Workspace() {
           </div>
           <div className="flex items-center gap-2">
             <Link
+              to="/prospects"
+              className="hidden rounded-full border border-mint/25 bg-mint/[0.05] px-4 py-2 text-xs font-semibold text-mint transition-colors hover:bg-mint/10 sm:inline-flex"
+            >
+              Prospect Intelligence
+            </Link>
+            <Link
+              to="/audits"
+              className="hidden rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:border-mint/60 hover:text-mint md:inline-flex"
+            >
+              Audits
+            </Link>
+            <Link
               to="/dashboard"
               className="hidden rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground transition-colors hover:border-mint/60 hover:text-mint sm:inline-flex"
             >
