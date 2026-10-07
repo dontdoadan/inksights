@@ -67,13 +67,6 @@ export type AcquisitionSnapshot = {
     location: string | null;
   };
   generatedAt: string;
-  score: {
-    value: number;
-    priority: ProspectPriority;
-    confidence: Confidence;
-    label: "INKSIGHTS prospect priority";
-    note: string;
-  };
   findings: Array<{
     title: string;
     observation: string;
@@ -422,13 +415,6 @@ export function buildAcquisitionSnapshot(
       location: identity.location,
     },
     generatedAt,
-    score: {
-      value: score.value,
-      priority: score.priority,
-      confidence: score.confidence,
-      label: "INKSIGHTS prospect priority",
-      note: "Internal prioritisation index derived from observed public evidence. It is not an industry benchmark, revenue forecast or client performance score.",
-    },
     findings: snapshotFindings,
     scope: {
       publicEvidenceOnly: true,
