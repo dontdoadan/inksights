@@ -1,0 +1,23 @@
+{
+  "checks": [
+    "anonymous direct database read denied",
+    "anonymous cannot invoke analyst writes",
+    "unrelated direct database read denied",
+    "unrelated cannot invoke analyst writes",
+    "Published version cannot be edited",
+    "Published version cannot re-enter review",
+    "Stale draft hash rejected",
+    "Unpublished report access cannot be granted",
+    "Granted client direct read returns only published version",
+    "Granted client cannot read correction draft",
+    "Client cannot grant themselves access",
+    "Client direct table update denied",
+    "Client cannot fabricate audit event",
+    "Client cannot insert report grants",
+    "Analyst can record implementation and learning",
+    "Client reads progress with full methodology tail",
+    "Unrelated client cannot read progress",
+    "Lifecycle retained in append-only event log",
+    "Revocation effective with existing access token"
+  ]
+}

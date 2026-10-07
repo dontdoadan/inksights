@@ -1,0 +1,1 @@
+'use client';export default function ErrorPage({reset}:{reset:()=>void}){return <main id="main" className="page"><div className="panel"><h1>Unable to load this page.</h1><p>Please try again. If the problem continues, contact your INKSIGHTS analyst.</p><button onClick={reset}>Try again</button><p><a href="/">Return to reports</a></p></div></main>}
