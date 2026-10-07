@@ -1,6 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
 import { loadAuditBundle } from "@/features/audit/queries";
 import type { Audit, AuditBundle, Studio } from "@/features/audit/types";
+import type { Database } from "@/integrations/supabase/types";
+
+type ProspectMetricRow = Pick<Database["public"]["Tables"]["audit_metrics"]["Row"], "audit_id" | "value_numeric" | "confidence" | "provenance">;
+type ProspectSnapshotRow = Pick<Database["public"]["Tables"]["audit_runs"]["Row"], "audit_id" | "status">;
 
 export type ProspectListItem = {
   audit: Audit;
@@ -75,11 +79,15 @@ export async function loadProspects(): Promise<ProspectListItem[]> {
   if (studioError) throw studioError;
 
   const byStudio = new Map(((studios ?? []) as Studio[]).map((studio) => [studio.id, studio]));
-  const byMetric = new Map((metrics ?? []).map((metric: any) => [metric.audit_id, metric]));
-  const snapshotIds = new Set((snapshots ?? []).map((row: any) => row.audit_id));
+  const byMetric = new Map(
+    ((metrics ?? []) as ProspectMetricRow[]).map((metric) => [metric.audit_id, metric]),
+  );
+  const snapshotIds = new Set(
+    ((snapshots ?? []) as ProspectSnapshotRow[]).map((row) => row.audit_id),
+  );
 
   return typedAudits.map((audit) => {
-    const metric: any = byMetric.get(audit.id);
+    const metric = byMetric.get(audit.id);
     const provenance = metric?.provenance && typeof metric.provenance === "object" ? metric.provenance : {};
     return {
       audit,
