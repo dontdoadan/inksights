@@ -151,6 +151,22 @@ Supabase reports an applied migration named `studio_intelligence_delivery_v1` wi
 **Decision:** insufficient public evidence may produce an “insufficient evidence” finding rather than an invented score/opportunity.  
 **Reason:** evidence discipline is part of the INKSIGHTS brand and commercial moat.
 
+### D-004 — Acquisition score is internal IP
+**Decision:** the Prospect Acquisition Score and A/B/C/HOLD priority are visible only in the founder/operator dossier and are excluded from the external Studio Intelligence Snapshot.  
+**Reason:** the score exists to allocate INKSIGHTS acquisition effort; it is not a client performance score or an industry benchmark.
+
+### D-005 — Reuse Golden Audit for evidence acquisition
+**Decision:** run the canonical Golden Audit for website/search evidence and add only prospect-specific interpretation/scoring. Use a truthfully labelled DuckDuckGo fallback only when canonical search evidence is unavailable.  
+**Reason:** avoids a duplicate audit engine while preserving continuity when a configured primary search provider is unavailable.
+
+### D-006 — Reuse the HubSpot sync contract
+**Decision:** qualified outbound prospects use the existing `hubspot-sync-v1` path with `source_type=prospect_audit`; idempotency/auditability is stored in `integration_events` using the existing `lead.created` vocabulary.  
+**Reason:** HubSpot remains CRM authority and outbound prospects are not misrepresented as inbound contact requests.
+
+### D-007 — Unknown artist count must remain NULL
+**Decision:** the review migration changes `visibility_studios.artist_count` from mandatory default zero to nullable/no default.  
+**Reason:** a cold prospect's unobserved team size is unknown, not zero.
+
 ## 9. Evidence log
 
 | Date | Evidence | Classification | Result |
@@ -161,16 +177,33 @@ Supabase reports an applied migration named `studio_intelligence_delivery_v1` wi
 | 2026-10-08 | GitHub migration-directory inspection | VERIFIED | no matching delivery migration in `main`; drift exists |
 | 2026-10-08 | Supabase Edge Function inventory | VERIFIED | visibility/search, Golden Audit, HubSpot and founder-control functions active |
 | 2026-10-08 | Authenticated route inventory | VERIFIED | workspace and audit operator surfaces already exist |
+| 2026-10-08 | Historical branch `codex/studio-intelligence-v1` | VERIFIED | contains the source corresponding to the live paid-delivery migration; standalone app is not being merged wholesale |
+| 2026-10-08 | Golden Audit deployed source | VERIFIED | deployed wrappers pin historical commit `4955ce7846170aa3215d1210cb6e7fba3c560126`; exact orchestrator/evidence contracts recovered from Git history |
+| 2026-10-08 | Audit RLS helper `app_private.can_read_studio` | VERIFIED | active platform owner/admin may read canonical audit data; existing audit dossier can be reused |
+| 2026-10-08 | Live constraint vocabulary | VERIFIED | diagnosis state/family constraints inspected and implementation corrected before deployment |
+| 2026-10-08 | CI lint diagnostics | VERIFIED | first branch validation stopped on six new lint errors; all six remediated and recheck pending |
 
 ## 10. Change log
 
 | Date | Change | Surface | Verification |
 | --- | --- | --- | --- |
-| 2026-10-08 | Created project control record and dedicated feature branch | GitHub | pending read-back |
+| 2026-10-08 | Created project control record and dedicated feature branch | GitHub | verified by branch/file read-back |
+| 2026-10-08 | Added deterministic Prospect Intelligence findings, scoring and acquisition-snapshot model | Application | unit test added; CI pending |
+| 2026-10-08 | Added review-only prospect provenance/data-quality migration | Supabase migration source | not applied to production |
+| 2026-10-08 | Added founder-only Prospect Intelligence orchestration service | Application server | CI/runtime verification pending |
+| 2026-10-08 | Added authenticated prospect queue and dossier routes | Application UI | route/build verification pending |
+| 2026-10-08 | Added token-scoped external Studio Intelligence Snapshot route | Application public surface | route/build/runtime verification pending |
+| 2026-10-08 | Extended existing HubSpot sync source contract with `prospect_audit` and idempotent `integration_events` ledger | Edge Function source | not deployed; CI pending |
+| 2026-10-08 | Added Workspace navigation to Prospect Intelligence | Application UI | route/build verification pending |
+| 2026-10-08 | Removed internal acquisition-priority score from public snapshot | Product/evidence boundary | source review verified |
 
 ## 11. Test log
 
-No implementation tests run yet. Audit phase in progress.
+| Date | Test / gate | Result | Evidence / remediation |
+| --- | --- | --- | --- |
+| 2026-10-08 | Live schema contract review | PASS WITH FIX | Found prospect diagnosis vocabulary mismatch before deployment; corrected `resolution_state=open` → `supported` and `constraint_family=demand` → `demand_visibility`. |
+| 2026-10-08 | PR #97 CI run 37704945542 — lint | FAIL | Six Prospect Intelligence lint errors: untyped queue rows, untyped admin client, control-character regex, untyped public snapshot lookup. Build/typecheck correctly did not proceed. |
+| 2026-10-08 | Lint remediation commit set | FIXED IN SOURCE / RECHECK PENDING | Added generated DB row types, typed admin client, character-code sanitizer and typed JSON output narrowing. CI run 37705246753 pending. |
 
 ## 12. Documentation / IP outputs required
 
