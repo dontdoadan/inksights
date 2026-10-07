@@ -111,6 +111,187 @@ async function recordAttempt(table: string, id: string, error: string | null = n
     });
 }
 
+
+async function syncProspectAudit(sourceId: string) {
+  const idempotencyKey = `prospect_hubspot_sync:${sourceId}`;
+  const prior = await rest(
+    `integration_events?idempotency_key=eq.${encodeURIComponent(idempotencyKey)}&select=event_id,processing_status,contact_ref,opportunity_ref,payload,attempt_count&limit=1`,
+    { method: "GET" },
+  ) as Array<Record<string, any>>;
+  const existing = prior?.[0];
+  if (existing?.processing_status === "processed" && existing.contact_ref && existing.opportunity_ref) {
+    return new Response(JSON.stringify({
+      ok: true,
+      already_synced: true,
+      contact_id: existing.contact_ref,
+      deal_id: existing.opportunity_ref,
+      company_id: existing.payload?.company_id || null,
+    }), { status: 200, headers: { "Content-Type": "application/json" } });
+  }
+
+  const audits = await rest(
+    `audits?id=eq.${encodeURIComponent(sourceId)}&audit_type=eq.prospect_intelligence&select=id,studio_id,context&limit=1`,
+    { method: "GET" },
+  ) as Array<Record<string, any>>;
+  const audit = audits?.[0];
+  if (!audit) throw new Error("Prospect audit source record not found.");
+
+  const studios = await rest(
+    `studios?id=eq.${encodeURIComponent(String(audit.studio_id))}&select=id,name,website_url,primary_location,internal_validation&limit=1`,
+    { method: "GET" },
+  ) as Array<Record<string, any>>;
+  const studio = studios?.[0];
+  if (!studio) throw new Error("Prospect studio record not found.");
+  if (studio.internal_validation === true || explicitTestReason(studio.name)) {
+    return new Response(JSON.stringify({ ok: true, skipped: true, reason: "test_record" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const context = audit.context && typeof audit.context === "object" ? audit.context as Record<string, any> : {};
+  const contact = context.prospect_contact && typeof context.prospect_contact === "object"
+    ? context.prospect_contact as Record<string, any>
+    : {};
+  const name = clean(contact.name, 120);
+  const email = clean(contact.email, 254).toLowerCase();
+  const phone = clean(contact.phone, 80);
+  if (!name || !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)) {
+    throw new Error("Prospect CRM handoff requires a valid named contact and email.");
+  }
+
+  const config = await runtimeConfig();
+  const studioName = clean(studio.name, 180);
+  const website = clean(studio.website_url, 500);
+  const location = clean(studio.primary_location, 180);
+  const companyDomain = domainFromWebsite(website);
+  const { first_name, last_name } = splitName(name);
+  const dealName = `${studioName} — Prospect Intelligence follow-up — ${sourceId.slice(0, 8)}`;
+  const score = context.prospect_score && typeof context.prospect_score === "object"
+    ? context.prospect_score as Record<string, any>
+    : {};
+
+  const now = new Date().toISOString();
+  if (!existing) {
+    await rest("integration_events", {
+      method: "POST",
+      body: JSON.stringify({
+        event_type: "lead.created",
+        occurred_at: now,
+        source_system: "inksights_prospect_intelligence",
+        source_event_id: sourceId,
+        idempotency_key: idempotencyKey,
+        correlation_id: sourceId,
+        studio_id: audit.studio_id,
+        contact_ref: email,
+        processing_status: "received",
+        attempt_count: 1,
+        payload: {
+          contact_name: name,
+          contact_email: email,
+          studio_name: studioName,
+          prospect_score: score,
+          audit_id: sourceId,
+        },
+      }),
+    });
+  } else {
+    await rest(`integration_events?event_id=eq.${encodeURIComponent(String(existing.event_id))}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({
+        processing_status: "received",
+        attempt_count: Number(existing.attempt_count || 0) + 1,
+        error_code: null,
+        error_detail: null,
+        updated_at: now,
+      }),
+    });
+  }
+
+  try {
+    const makeResponse = await fetch(config.url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sync_token: config.token,
+        sync_version: "v1",
+        source_type: "prospect_audit",
+        source_id: sourceId,
+        email,
+        name,
+        first_name,
+        last_name,
+        studio_name: studioName,
+        location,
+        phone,
+        website,
+        company_domain: companyDomain,
+        company_lookup: companyDomain || studioName,
+        topic: "studio-intelligence-audit",
+        primary_problem: "Evidence-backed public acquisition constraint identified by INKSIGHTS Prospect Intelligence",
+        source: "prospect_intelligence_v1",
+        page_path: "",
+        referrer: "",
+        audit_id: sourceId,
+        deal_name: dealName,
+        deal_amount: 0,
+        deal_pipeline: config.dealPipeline,
+        deal_stage: config.newLeadStage,
+      }),
+    });
+    const responseText = await makeResponse.text();
+    let makeResult: Record<string, any> = {};
+    try { makeResult = responseText ? JSON.parse(responseText) : {}; } catch { makeResult = {}; }
+    if (!makeResponse.ok || makeResult.ok !== true || !makeResult.contact_id || !makeResult.deal_id) {
+      throw new Error(`Make/HubSpot sync failed: ${makeResponse.status} ${responseText.slice(0, 300)}`);
+    }
+
+    await rest(`integration_events?idempotency_key=eq.${encodeURIComponent(idempotencyKey)}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({
+        processing_status: "processed",
+        contact_ref: String(makeResult.contact_id),
+        opportunity_ref: String(makeResult.deal_id),
+        payload: {
+          contact_name: name,
+          contact_email: email,
+          studio_name: studioName,
+          prospect_score: score,
+          audit_id: sourceId,
+          company_id: makeResult.company_id ? String(makeResult.company_id) : null,
+          synced_at: new Date().toISOString(),
+        },
+        error_code: null,
+        error_detail: null,
+        updated_at: new Date().toISOString(),
+      }),
+    });
+
+    return new Response(JSON.stringify({
+      ok: true,
+      contact_id: makeResult.contact_id,
+      company_id: makeResult.company_id || null,
+      deal_id: makeResult.deal_id,
+      synced_at: new Date().toISOString(),
+    }), { status: 200, headers: { "Content-Type": "application/json" } });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    await rest(`integration_events?idempotency_key=eq.${encodeURIComponent(idempotencyKey)}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({
+        processing_status: "failed",
+        error_code: "hubspot_sync_failed",
+        error_detail: message.slice(0, 1000),
+        updated_at: new Date().toISOString(),
+      }),
+    });
+    throw error;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json" } });
 
@@ -127,8 +308,21 @@ Deno.serve(async (req: Request) => {
 
   const sourceType = clean(body.source_type, 80);
   const sourceId = clean(body.source_id, 100);
-  if (!sourceId || !["public_contact_request", "revenue_audit_lead"].includes(sourceType)) {
+  if (!sourceId || !["public_contact_request", "revenue_audit_lead", "prospect_audit"].includes(sourceType)) {
     return new Response(JSON.stringify({ error: "Invalid source" }), { status: 400, headers: { "Content-Type": "application/json" } });
+  }
+
+  if (sourceType === "prospect_audit") {
+    try {
+      return await syncProspectAudit(sourceId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error("hubspot-sync-v1 prospect failure", message);
+      return new Response(JSON.stringify({ ok: false, error: "HubSpot sync failed" }), {
+        status: 502,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   }
 
   const table = sourceType === "public_contact_request" ? "public_contact_requests" : "revenue_audit_leads";
