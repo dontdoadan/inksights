@@ -1,5 +1,13 @@
-import { assertEquals, assert } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { buildAcquisitionSnapshot, deriveProspectFindings, scoreProspect, type ProspectEvidence, type ProspectIdentity } from "./model.ts";
+
+function assert(condition: unknown, message = "assertion failed"): asserts condition {
+  if (!condition) throw new Error(message);
+}
+function assertEquals(actual: unknown, expected: unknown) {
+  if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+    throw new Error(`Expected ${JSON.stringify(expected)}, received ${JSON.stringify(actual)}`);
+  }
+}
 
 const identity: ProspectIdentity = {
   studioId: "00000000-0000-4000-8000-000000000001",
