@@ -102,10 +102,10 @@ Deno.test("prospect model holds outreach when evidence does not establish an opp
 Deno.test("acquisition snapshot contains limits and never presents prospect score as revenue", () => {
   const findings = deriveProspectFindings(evidence);
   const score = scoreProspect(identity, evidence, findings);
-  const snapshot = buildAcquisitionSnapshot(identity, score, findings, evidence, "2026-10-08T13:00:00Z");
+  const snapshot = buildAcquisitionSnapshot(identity, score, findings, evidence, { price: "£395 one-off" }, "2026-10-08T13:00:00Z");
   assertEquals(snapshot.schema, "acquisition-snapshot/1.0");
   assert(snapshot.scope.publicEvidenceOnly);
   assert(snapshot.scope.limitations.some((line) => /lost revenue/i.test(line)));
-  assert(!JSON.stringify(snapshot.score).toLowerCase().includes("revenue forecast"));
-  assertEquals(snapshot.cta.foundingValidationPrice, "£395");
+  assert(snapshot.score.note.toLowerCase().includes("not an industry benchmark"));
+  assertEquals(snapshot.cta.foundingValidationPrice, "£395 one-off");
 });
