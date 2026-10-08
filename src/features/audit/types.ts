@@ -4,7 +4,7 @@ export type Materiality = "low" | "medium" | "high" | "critical";
 export type RecommendationPhase = "0-30" | "31-60" | "61-90";
 
 export type Studio = { id:string; name:string; slug:string; website_url:string|null; primary_location:string|null; internal_validation:boolean };
-export type Audit = { id:string; studio_id:string; audit_version:string; mode:"A"|"B"|"C"; status:string; period_start:string|null; period_end:string|null; context:Record<string,unknown>; qa_status:string; report_status:string; created_at:string; completed_at:string|null };
+export type Audit = { id:string; studio_id:string; audit_type:string; audit_version:string; mode:"A"|"B"|"C"; status:string; period_start:string|null; period_end:string|null; context:Record<string,unknown>; qa_status:string; report_status:string; created_at:string; completed_at:string|null };
 export type Metric = { id:string; metric_key:string; value_numeric:number|null; value_text:string|null; unit:string|null; period_start:string|null; period_end:string|null; evidence_classification:EvidenceClass; confidence:Confidence; measurement_status:string; not_measurable_reason:string|null; required_source:string|null; calculation_version:string; provenance:Record<string,unknown> };
 export type Evidence = { id:string; evidence_type:string; title:string; summary:string; classification:EvidenceClass; confidence:Confidence; provenance:Record<string,unknown>; observed_at:string|null; created_at:string };
 export type Finding = { id:string; finding_key:string; title:string; statement:string; category:string; classification:EvidenceClass; confidence:Confidence; materiality:Materiality; status:string; created_at:string };

@@ -96,3 +96,6 @@ jobs:
 
       - name: Test Edge Function security boundaries
         run: deno test --allow-net=false supabase/functions/studio-visibility-report-v2/security_test.ts
+
+      - name: Test Prospect Intelligence scoring and public snapshot boundaries
+        run: deno test --allow-net=false src/features/prospect/model_test.ts

@@ -41,17 +41,22 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAuditsRouteImport } from './routes/_authenticated/audits'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedProspectsRouteImport } from './routes/_authenticated/prospects'
 import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as GuidesFullSleeveCostUkRouteImport } from './routes/guides.full-sleeve-cost-uk'
 import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/guides.grey-line-healing-week-by-week'
 import { Route as OffersIndexRouteImport } from './routes/offers.index'
 import { Route as OffersSlugRouteImport } from './routes/offers.$slug'
+import { Route as ProspectTokenRouteImport } from './routes/prospect.$token'
 import { Route as ReportTokenRouteImport } from './routes/report.$token'
 import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/tools.tattoo-pain-chart-reality-check'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
+import { Route as AuthenticatedProspectsAuditIdRouteImport } from './routes/_authenticated/prospects.$auditId'
+import { Route as ApiInternalProspectIntelligenceRouteImport } from './routes/api/internal/prospect-intelligence'
+import { Route as ApiPublicProspectSnapshotRouteImport } from './routes/api/public/prospect-snapshot'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 
@@ -218,6 +223,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProspectsRoute = AuthenticatedProspectsRouteImport.update({
+  id: '/prospects',
+  path: '/prospects',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
   id: '/workspace',
   path: '/workspace',
@@ -249,6 +259,11 @@ const OffersSlugRoute = OffersSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => OffersRoute,
 } as any)
+const ProspectTokenRoute = ProspectTokenRouteImport.update({
+  id: '/prospect/$token',
+  path: '/prospect/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportTokenRoute = ReportTokenRouteImport.update({
   id: '/report/$token',
   path: '/report/$token',
@@ -276,6 +291,24 @@ const AuthenticatedAuditsAuditIdRoute =
     id: '/$auditId',
     path: '/$auditId',
     getParentRoute: () => AuthenticatedAuditsRoute,
+  } as any)
+const AuthenticatedProspectsAuditIdRoute =
+  AuthenticatedProspectsAuditIdRouteImport.update({
+    id: '/$auditId',
+    path: '/$auditId',
+    getParentRoute: () => AuthenticatedProspectsRoute,
+  } as any)
+const ApiInternalProspectIntelligenceRoute =
+  ApiInternalProspectIntelligenceRouteImport.update({
+    id: '/api/internal/prospect-intelligence',
+    path: '/api/internal/prospect-intelligence',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicProspectSnapshotRoute =
+  ApiPublicProspectSnapshotRouteImport.update({
+    id: '/api/public/prospect-snapshot',
+    path: '/api/public/prospect-snapshot',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe-webhook',
@@ -321,17 +354,22 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/prospects': typeof AuthenticatedProspectsRouteWithChildren
   '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
+  '/prospect/$token': typeof ProspectTokenRoute
   '/report/$token': typeof ReportTokenRoute
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers/': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/prospects/$auditId': typeof AuthenticatedProspectsAuditIdRoute
+  '/api/internal/prospect-intelligence': typeof ApiInternalProspectIntelligenceRoute
+  '/api/public/prospect-snapshot': typeof ApiPublicProspectSnapshotRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -366,17 +404,22 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/prospects': typeof AuthenticatedProspectsRouteWithChildren
   '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
+  '/prospect/$token': typeof ProspectTokenRoute
   '/report/$token': typeof ReportTokenRoute
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/prospects/$auditId': typeof AuthenticatedProspectsAuditIdRoute
+  '/api/internal/prospect-intelligence': typeof ApiInternalProspectIntelligenceRoute
+  '/api/public/prospect-snapshot': typeof ApiPublicProspectSnapshotRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -414,17 +457,22 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/prospects': typeof AuthenticatedProspectsRouteWithChildren
   '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
+  '/prospect/$token': typeof ProspectTokenRoute
   '/report/$token': typeof ReportTokenRoute
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers/': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/_authenticated/prospects/$auditId': typeof AuthenticatedProspectsAuditIdRoute
+  '/api/internal/prospect-intelligence': typeof ApiInternalProspectIntelligenceRoute
+  '/api/public/prospect-snapshot': typeof ApiPublicProspectSnapshotRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -462,17 +510,22 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
+    | '/prospects'
     | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
+    | '/prospect/$token'
     | '/report/$token'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/prospects/$auditId'
+    | '/api/internal/prospect-intelligence'
+    | '/api/public/prospect-snapshot'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesByTo: FileRoutesByTo
@@ -507,17 +560,22 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
+    | '/prospects'
     | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
+    | '/prospect/$token'
     | '/report/$token'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/prospects/$auditId'
+    | '/api/internal/prospect-intelligence'
+    | '/api/public/prospect-snapshot'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   id:
@@ -554,17 +612,22 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/audits'
     | '/_authenticated/dashboard'
+    | '/_authenticated/prospects'
     | '/_authenticated/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
+    | '/prospect/$token'
     | '/report/$token'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/audits/$auditId'
+    | '/_authenticated/prospects/$auditId'
+    | '/api/internal/prospect-intelligence'
+    | '/api/public/prospect-snapshot'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesById: FileRoutesById
@@ -602,10 +665,13 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   GuidesFullSleeveCostUkRoute: typeof GuidesFullSleeveCostUkRoute
   GuidesGreyLineHealingWeekByWeekRoute: typeof GuidesGreyLineHealingWeekByWeekRoute
+  ProspectTokenRoute: typeof ProspectTokenRoute
   ReportTokenRoute: typeof ReportTokenRoute
   ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiInternalProspectIntelligenceRoute: typeof ApiInternalProspectIntelligenceRoute
+  ApiPublicProspectSnapshotRoute: typeof ApiPublicProspectSnapshotRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
 }
@@ -836,6 +902,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/prospects': {
+      id: '/_authenticated/prospects'
+      path: '/prospects'
+      fullPath: '/prospects'
+      preLoaderRoute: typeof AuthenticatedProspectsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/workspace': {
       id: '/_authenticated/workspace'
       path: '/workspace'
@@ -878,6 +951,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OffersSlugRouteImport
       parentRoute: typeof OffersRoute
     }
+    '/prospect/$token': {
+      id: '/prospect/$token'
+      path: '/prospect/$token'
+      fullPath: '/prospect/$token'
+      preLoaderRoute: typeof ProspectTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/report/$token': {
       id: '/report/$token'
       path: '/report/$token'
@@ -913,6 +993,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditsAuditIdRouteImport
       parentRoute: typeof AuthenticatedAuditsRoute
     }
+    '/_authenticated/prospects/$auditId': {
+      id: '/_authenticated/prospects/$auditId'
+      path: '/$auditId'
+      fullPath: '/prospects/$auditId'
+      preLoaderRoute: typeof AuthenticatedProspectsAuditIdRouteImport
+      parentRoute: typeof AuthenticatedProspectsRoute
+    }
+    '/api/internal/prospect-intelligence': {
+      id: '/api/internal/prospect-intelligence'
+      path: '/api/internal/prospect-intelligence'
+      fullPath: '/api/internal/prospect-intelligence'
+      preLoaderRoute: typeof ApiInternalProspectIntelligenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/prospect-snapshot': {
+      id: '/api/public/prospect-snapshot'
+      path: '/api/public/prospect-snapshot'
+      fullPath: '/api/public/prospect-snapshot'
+      preLoaderRoute: typeof ApiPublicProspectSnapshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
@@ -941,15 +1042,31 @@ const AuthenticatedAuditsRouteChildren: AuthenticatedAuditsRouteChildren = {
 const AuthenticatedAuditsRouteWithChildren =
   AuthenticatedAuditsRoute._addFileChildren(AuthenticatedAuditsRouteChildren)
 
+interface AuthenticatedProspectsRouteChildren {
+  AuthenticatedProspectsAuditIdRoute: typeof AuthenticatedProspectsAuditIdRoute
+}
+
+const AuthenticatedProspectsRouteChildren: AuthenticatedProspectsRouteChildren =
+  {
+    AuthenticatedProspectsAuditIdRoute: AuthenticatedProspectsAuditIdRoute,
+  }
+
+const AuthenticatedProspectsRouteWithChildren =
+  AuthenticatedProspectsRoute._addFileChildren(
+    AuthenticatedProspectsRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditsRoute: typeof AuthenticatedAuditsRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedProspectsRoute: typeof AuthenticatedProspectsRouteWithChildren
   AuthenticatedWorkspaceRoute: typeof AuthenticatedWorkspaceRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditsRoute: AuthenticatedAuditsRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedProspectsRoute: AuthenticatedProspectsRouteWithChildren,
   AuthenticatedWorkspaceRoute: AuthenticatedWorkspaceRoute,
 }
 
@@ -1013,10 +1130,13 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   GuidesFullSleeveCostUkRoute: GuidesFullSleeveCostUkRoute,
   GuidesGreyLineHealingWeekByWeekRoute: GuidesGreyLineHealingWeekByWeekRoute,
+  ProspectTokenRoute: ProspectTokenRoute,
   ReportTokenRoute: ReportTokenRoute,
   ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiInternalProspectIntelligenceRoute: ApiInternalProspectIntelligenceRoute,
+  ApiPublicProspectSnapshotRoute: ApiPublicProspectSnapshotRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
 }
