@@ -32,14 +32,30 @@ function Index() {
       <JsonLd data={[{
         "@context": "https://schema.org",
         "@type": "Organization",
+        "@id": "https://getinksights.co.uk/#organization",
         name: "INKSIGHTS",
+        alternateName: "INKSIGHTS Tattoo Studio Growth Intelligence",
         url: CANONICAL_URL,
+        logo: "https://getinksights.co.uk/brand/logo-v3/primary-dark.svg",
         description: "Growth intelligence and commercial systems designed specifically for UK tattoo studios.",
+        areaServed: { "@type": "Country", name: "United Kingdom" },
+        knowsAbout: [
+          "tattoo studio growth",
+          "tattoo studio SEO",
+          "tattoo studio marketing",
+          "tattoo studio booking",
+          "tattoo studio management",
+          "tattoo studio revenue",
+          "tattoo client retention",
+        ],
       }, {
         "@context": "https://schema.org",
         "@type": "WebSite",
+        "@id": "https://getinksights.co.uk/#website",
         name: "INKSIGHTS",
+        alternateName: "INKSIGHTS Tattoo Studio Growth Intelligence",
         url: CANONICAL_URL,
+        publisher: { "@id": "https://getinksights.co.uk/#organization" },
       }]} />
 
       <section className="brand-dark cinematic-hero hero-ambient relative overflow-hidden">
