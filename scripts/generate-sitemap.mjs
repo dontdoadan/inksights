@@ -1,7 +1,20 @@
 import { writeFileSync } from "node:fs";
 
 const domain = "https://getinksights.co.uk";
-const lastmod = process.env.SITEMAP_LASTMOD || new Date().toISOString().slice(0, 10);
+
+const lastmodByRoute = {
+  "/": "2026-10-08",
+  "/resources": "2026-10-08",
+  "/tattoo-studio-growth": "2026-10-08",
+  "/tattoo-studio-marketing": "2026-10-08",
+  "/tattoo-studio-management": "2026-10-08",
+  "/tattoo-studio-seo": "2026-10-08",
+  "/tattoo-studio-revenue": "2026-10-08",
+  "/tattoo-studio-booking": "2026-10-08",
+  "/tattoo-studio-client-retention": "2026-10-08",
+  "/tattoo-studio-software": "2026-07-26",
+};
+
 const routes = [
   ["/", "weekly", "1.0"],
   ["/solutions", "weekly", "0.9"],
@@ -37,10 +50,11 @@ const routes = [
 ];
 
 const body = routes
-  .map(
-    ([path, changefreq, priority]) =>
-      `  <url><loc>${domain}${path}</loc><lastmod>${lastmod}</lastmod><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`,
-  )
+  .map(([path, changefreq, priority]) => {
+    const lastmod = lastmodByRoute[path];
+    const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : "";
+    return `  <url><loc>${domain}${path}</loc>${lastmodTag}<changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+  })
   .join("\n");
 
 writeFileSync(
