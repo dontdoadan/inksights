@@ -27,12 +27,15 @@ export const Route = createFileRoute("/offers/$slug")({
     audit_id: typeof search.audit_id === "string" ? search.audit_id : undefined,
     invite: typeof search.invite === "string" ? search.invite : undefined,
   }),
-  head: ({ params }) => {
+  head: ({ params, match }) => {
     const offer = getPublicOffer(params.slug);
     const canonical = `https://getinksights.co.uk/offers/${params.slug}`;
+    const routeSearch = (match.search || {}) as Record<string, unknown>;
+    const privateFoundingState = typeof routeSearch.invite === "string" || routeSearch.checkout === "founding-success";
     return {
       meta: [
         { title: offer ? `${offer.name} | INKSIGHTS` : "INKSIGHTS Offer" },
+        ...(privateFoundingState ? [{ name: "robots", content: "noindex,nofollow,noarchive" }] : []),
         { name: "description", content: offer?.summary || "INKSIGHTS tattoo studio growth solution." },
         { property: "og:title", content: offer?.name || "INKSIGHTS Offer" },
         { property: "og:description", content: offer?.summary || "INKSIGHTS tattoo studio growth solution." },
@@ -40,6 +43,11 @@ export const Route = createFileRoute("/offers/$slug")({
       ],
       links: [{ rel: "canonical", href: canonical }],
     };
+  },
+  headers: ({ match }) => {
+    const routeSearch = (match.search || {}) as Record<string, unknown>;
+    const privateFoundingState = typeof routeSearch.invite === "string" || routeSearch.checkout === "founding-success";
+    return privateFoundingState ? { "X-Robots-Tag": "noindex, nofollow, noarchive" } : {};
   },
 });
 
