@@ -6,6 +6,7 @@ const topic: StudioTopic = {
   title: "Tattoo Studio Revenue: Find and Fix Revenue Leakage | INKSIGHTS",
   description: "Learn how to diagnose tattoo studio revenue using clients, transaction value, purchase frequency, capacity, conversion and retention.",
   eyebrow: "Tattoo studio revenue guide · UK",
+  updated: "2026-10-08",
   intro: <>Revenue problems are rarely caused by one number. A studio can have strong demand but weak conversion, a busy diary but low average value, or healthy sales with poor repeat behaviour. INKSIGHTS treats revenue as the output of a measurable operating system.</>,
   sections: [
     { title: "Revenue starts with booked, delivered work", body: <>Separate demand from realised revenue. Enquiries are not bookings, bookings are not attendance, and booked hours are not necessarily productive hours. Establish each stage before deciding what to change.</>, bullets: ["Enquiries received", "Qualified enquiries", "Bookings secured", "Deposits collected", "Appointments attended", "Revenue realised"] },
