@@ -273,7 +273,7 @@ async function ensureContactAndCrm(session: Record<string, any>) {
         source_system: "stripe",
         source_event_id: sessionId,
         idempotency_key: `stripe_checkout_paid:${sessionId}`,
-        correlation_id: sessionId,
+        correlation_id: crypto.randomUUID(),
         contact_ref: contact.id,
         processing_status: "received",
         payload: {
