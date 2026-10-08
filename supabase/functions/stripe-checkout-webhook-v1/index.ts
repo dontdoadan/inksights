@@ -142,6 +142,10 @@ async function upsertOrder(session: Record<string, any>, paid: boolean) {
       payment_status: clean(session.payment_status, 40) || null,
       checkout_status: clean(session.status, 40) || null,
     },
+    list_value_minor: Number.isFinite(session.amount_total) ? session.amount_total : null,
+    waiver_amount_minor: 0,
+    amount_collected_minor: Number.isFinite(session.amount_total) ? session.amount_total : null,
+    access_type: "paid",
     updated_at: new Date().toISOString(),
   };
   return rest("orders?on_conflict=stripe_session_id", {
@@ -149,6 +153,56 @@ async function upsertOrder(session: Record<string, any>, paid: boolean) {
     headers: { Prefer: "resolution=merge-duplicates,return=representation" },
     body: JSON.stringify(body),
   });
+}
+
+async function syncContactToHubSpot(contactId: string) {
+  const key = serviceKey();
+  const sync = await fetch(`${SB}/functions/v1/hubspot-sync-v1`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source_type: "public_contact_request",
+      source_id: contactId,
+    }),
+  });
+  const syncText = await sync.text();
+  if (!sync.ok) {
+    throw new Error(`HubSpot sync request failed: ${sync.status} ${syncText.slice(0, 400)}`);
+  }
+}
+
+async function processFoundingCheckout(event: Record<string, any>, session: Record<string, any>) {
+  const email = clean(session.customer_details?.email || session.customer_email, 254).toLowerCase();
+  const contactName = clean(
+    session.collected_information?.individual_name ||
+      session.customer_details?.individual_name ||
+      session.customer_details?.name,
+    120,
+  );
+  const studio = studioName(session);
+  const website = customField(session, "studiowebsite");
+
+  const result = await rest("rpc/process_founding_studio_checkout", {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({
+      p_event_id: clean(event.id, 120),
+      p_session_id: clean(session.id, 120),
+      p_payment_link_id: clean(session.payment_link, 120),
+      p_customer_id: typeof session.customer === "string" ? session.customer : "",
+      p_email: email,
+      p_contact_name: contactName,
+      p_studio_name: studio,
+      p_website: website,
+      p_currency: clean(session.currency, 20).toLowerCase() || "gbp",
+      p_amount_total: Number.isFinite(session.amount_total) ? session.amount_total : null,
+      p_livemode: event.livemode === true,
+    }),
+  }) as Record<string, any>;
+
+  const contactRequestId = clean(result?.contact_request_id, 100);
+  if (contactRequestId) await syncContactToHubSpot(contactRequestId);
+  return result;
 }
 
 async function ensureContactAndCrm(session: Record<string, any>) {
@@ -233,19 +287,7 @@ async function ensureContactAndCrm(session: Record<string, any>) {
     console.error("Payment integration event persistence failed", eventError instanceof Error ? eventError.message : String(eventError));
   }
 
-  const key = serviceKey();
-  const sync = await fetch(`${SB}/functions/v1/hubspot-sync-v1`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      source_type: "public_contact_request",
-      source_id: contact.id,
-    }),
-  });
-  const syncText = await sync.text();
-  if (!sync.ok) {
-    throw new Error(`HubSpot sync request failed: ${sync.status} ${syncText.slice(0, 400)}`);
-  }
+  await syncContactToHubSpot(contact.id);
 
   return contact.id;
 }
@@ -276,6 +318,17 @@ Deno.serve(async (req: Request) => {
 
     const session = event.data?.object as Record<string, any>;
     if (!session?.id || session.object !== "checkout.session") return response({ error: "Invalid Checkout Session payload" }, 400);
+
+    const accessType = clean(session.metadata?.access_type, 100);
+    if (accessType === "founding_studio_waiver") {
+      const founding = await processFoundingCheckout(event, session);
+      return response({
+        received: true,
+        event_id: clean(event.id, 120),
+        session_id: clean(session.id, 120),
+        founding,
+      });
+    }
 
     const metadataOffer = clean(session.metadata?.offer_slug || session.metadata?.offer, 100);
     const isAuditCheckout = clean(session.payment_link, 120) === AUDIT_PAYMENT_LINK_ID || metadataOffer === "studio_intelligence_audit" || metadataOffer === AUDIT_OFFER;
