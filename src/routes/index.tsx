@@ -119,6 +119,45 @@ function Index() {
         </div>
       </section>
 
+      <section className="brand-dark border-b border-border bg-ink">
+        <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
+          <Reveal>
+            <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-start">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Tattoo studio growth library</p>
+                <h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-5xl">
+                  Understand the system before choosing the tactic.
+                </h2>
+                <p className="mt-5 text-base leading-relaxed text-muted-foreground">
+                  Use the INKSIGHTS guides to diagnose the commercial relationship between discovery, enquiries, bookings,
+                  capacity, client return and revenue.
+                </p>
+                <a href="/resources" className="mt-6 inline-flex font-bold text-mint hover:text-mint-soft">
+                  Browse all studio tools and guides →
+                </a>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {[
+                  ["/tattoo-studio-growth", "Tattoo studio growth", "Find the first constraint limiting profitable growth."],
+                  ["/tattoo-studio-seo", "Tattoo studio SEO", "Improve Google and local-search discovery with evidence."],
+                  ["/tattoo-studio-marketing", "Tattoo studio marketing", "Connect demand generation to qualified bookings."],
+                  ["/tattoo-studio-management", "Tattoo studio management", "Control enquiries, capacity, workflow and KPIs."],
+                  ["/tattoo-studio-booking", "Tattoo studio booking", "Turn qualified enquiries into protected diary time."],
+                  ["/tattoo-studio-client-retention", "Client retention", "Build repeat work, referrals and reactivation."],
+                  ["/tattoo-studio-revenue", "Tattoo studio revenue", "Explain revenue through volume, value and frequency."],
+                  ["/tattoo-studio-software", "Tattoo studio software", "Compare platforms against the workflow they must support."],
+                ].map(([href, title, description]) => (
+                  <a key={href} href={href} className="rounded-2xl border border-border bg-ink-deep p-5 transition hover:border-mint">
+                    <h3 className="font-display text-lg font-black text-ice">{title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       <section className="brand-dark relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="rounded-3xl border border-mint/30 bg-ink-deep p-8 md:p-12">
