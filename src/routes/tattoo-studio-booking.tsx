@@ -6,6 +6,7 @@ const topic: StudioTopic = {
   title: "Tattoo Studio Booking Systems: Reduce Booking Friction & No-Shows | INKSIGHTS",
   description: "A practical tattoo studio booking framework covering enquiry intake, project approval, deposits, reminders, cancellations and client follow-up.",
   eyebrow: "Tattoo studio booking guide · UK",
+  updated: "2026-10-08",
   intro: <>Tattoo bookings are projects, not just appointments. A useful booking system needs to capture enough information to qualify the request, protect artist time, collect the right deposit, manage exceptions and make the client's next step obvious.</>,
   sections: [
     { title: "Start with structured enquiry intake", body: <>The studio should collect the information an artist or manager needs before offering appointment time. This usually includes placement, approximate size, style, reference images, preferred artist, availability and relevant project context.</>, bullets: ["Avoid making the owner reconstruct project details from Instagram DMs.", "Separate required qualification data from optional marketing questions.", "Give the client an immediate confirmation after submission.", "Route unsuitable or incomplete requests to a non-calendar follow-up path."] },
