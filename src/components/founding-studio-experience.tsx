@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- public RPCs precede generated Supabase type refresh */
 import { CheckCircle2, Clock3, Loader2, ShieldCheck, TicketCheck, TriangleAlert } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { PageHero, PublicShell } from "@/components/public-site";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMinorGbp, sha256Hex } from "@/lib/founding-studio";
@@ -311,7 +312,7 @@ export function FoundingStudioCompletionExperience({ sessionId }: { sessionId: s
   );
 }
 
-function CenteredState({ icon, title, description }: { icon: React.ReactNode; title: string; description?: string }) {
+function CenteredState({ icon, title, description }: { icon: ReactNode; title: string; description?: string }) {
   return (
     <main className="flex min-h-[65vh] items-center justify-center px-6 py-20">
       <div className="max-w-xl text-center">
