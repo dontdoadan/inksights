@@ -174,14 +174,32 @@ Deno.serve(async (req: Request) => {
     const { first_name, last_name } = splitName(name);
     const location = clean(sourceType === "public_contact_request" ? record.location : record.area, 180);
     const topic = clean(sourceType === "public_contact_request" ? record.topic : "revenue-audit", 100);
-    const primaryProblem = clean(sourceType === "revenue_audit_lead" ? record.primary_problem : record.topic, 180);
+    const isFoundingStudio =
+      sourceType === "public_contact_request" &&
+      (clean(record.source, 80) === "founding_studio_checkout" || clean(record.metadata?.access_type, 80) === "founding_studio");
+    const basePrimaryProblem = clean(sourceType === "revenue_audit_lead" ? record.primary_problem : record.topic, 180);
+    const primaryProblem = isFoundingStudio
+      ? "Founding Studio Waiver — Studio Intelligence Audit commercial value £395; £0 collected."
+      : basePrimaryProblem;
     const pagePath = clean(record.metadata?.page_path || "", 500);
     const referrer = clean(record.metadata?.referrer || "", 1000);
-    const auditId = clean(body.audit_id, 100);
-    const sourceLabel = sourceType === "public_contact_request" ? "website_contact" : "revenue_audit_v1";
-    const dealAmount = topic === "studio-intelligence-audit" ? 395 : 0;
+    const auditId = clean(body.audit_id || record.metadata?.audit_id, 100);
+    const sourceLabel = isFoundingStudio
+      ? "founding_studio_checkout"
+      : sourceType === "public_contact_request"
+        ? "website_contact"
+        : "revenue_audit_v1";
+    const collectedMinor = Number(record.metadata?.amount_collected_minor ?? record.metadata?.amount_total);
+    const dealAmount = topic === "studio-intelligence-audit"
+      ? isFoundingStudio
+        ? 0
+        : Number.isFinite(collectedMinor) && collectedMinor > 0
+          ? collectedMinor / 100
+          : 395
+      : 0;
     const dealStage = topic === "studio-intelligence-audit" ? config.paidBookedStage : config.newLeadStage;
-    const dealName = `${studioName} — ${topic === "studio-intelligence-audit" ? "Studio Intelligence Audit" : sourceType === "revenue_audit_lead" ? "Revenue Audit follow-up" : "Website enquiry"} — ${sourceId.slice(0, 8)}`;
+    const auditLabel = isFoundingStudio ? "Studio Intelligence Audit — Founding Studio (£395 waived)" : "Studio Intelligence Audit";
+    const dealName = `${studioName} — ${topic === "studio-intelligence-audit" ? auditLabel : sourceType === "revenue_audit_lead" ? "Revenue Audit follow-up" : "Website enquiry"} — ${sourceId.slice(0, 8)}`;
 
     const makeResponse = await fetch(config.url, {
       method: "POST",

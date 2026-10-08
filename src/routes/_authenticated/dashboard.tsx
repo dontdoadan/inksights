@@ -1,3 +1,4 @@
+import { FoundingStudioInvitesPanel } from "@/components/founding-studio-invites-panel";
 import { PlatformAdminPanel } from "@/components/platform-admin-panel";
 import { Logo } from "@/components/public-site";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -203,6 +204,7 @@ function Dashboard() {
           <h2 className="font-display font-bold text-2xl mb-4">Studio profile</h2>
           <ProfileForm profile={profile} onSave={saveProfile} />
         </section>
+        <FoundingStudioInvitesPanel />
         <PlatformAdminPanel />
       </main>
     </div>
