@@ -47,7 +47,7 @@ export const Route = createFileRoute("/offers/$slug")({
   headers: ({ match }) => {
     const routeSearch = (match.search || {}) as Record<string, unknown>;
     const privateFoundingState = typeof routeSearch.invite === "string" || routeSearch.checkout === "founding-success";
-    return privateFoundingState ? { "X-Robots-Tag": "noindex, nofollow, noarchive" } : {};
+    return privateFoundingState ? { "X-Robots-Tag": "noindex, nofollow, noarchive" } : undefined;
   },
 });
 
