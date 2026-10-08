@@ -109,6 +109,7 @@ export function FoundingStudioInviteExperience({ token }: { token: string }) {
 
   return (
     <PublicShell>
+      <meta name="robots" content="noindex,nofollow,noarchive" />
       <PageHero
         eyebrow="Private Founding Studio invitation"
         title="INKSIGHTS Studio Intelligence Audit"
@@ -252,6 +253,7 @@ export function FoundingStudioCompletionExperience({ sessionId }: { sessionId: s
   if (submittedAuditId || completion.onboarding_status === "submitted") {
     return (
       <PublicShell>
+        <meta name="robots" content="noindex,nofollow,noarchive" />
         <PageHero
           eyebrow="Founding Studio confirmed"
           title="Your Studio Intelligence Audit is now in the delivery pipeline."
@@ -274,6 +276,7 @@ export function FoundingStudioCompletionExperience({ sessionId }: { sessionId: s
 
   return (
     <PublicShell>
+      <meta name="robots" content="noindex,nofollow,noarchive" />
       <PageHero
         eyebrow="Founding Studio confirmed"
         title="Complete your Studio Intelligence Audit intake."
