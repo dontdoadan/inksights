@@ -14,6 +14,17 @@ const topic: StudioTopic = {
     { title: "Fix the system before adding software", body: <>A new platform is useful only when it removes a proven bottleneck. First define the desired workflow, ownership, exceptions, policies and metrics. Then assess whether the current tools can support it.</>, bullets: ["Map the current journey from discovery to repeat booking.", "Document which steps require human judgement.", "Define the one metric that should improve first.", "Choose the smallest change that can test the hypothesis."] },
     { title: "Build a studio growth baseline", body: <>The long-term advantage comes from knowing the studio's normal operating position. A structured baseline makes future changes measurable and allows a studio to compare periods without relying on memory.</>, bullets: ["Revenue and booking mix", "Artist utilisation and available capacity", "Lead source and response time", "Cancellation and no-show conditions", "Average transaction value", "Repeat bookings, referrals and reactivation"] },
   ],
+  related: [
+    { href: "/tattoo-studio-marketing", label: "Tattoo studio marketing", description: "Understand how demand generation fits into the studio growth system." },
+    { href: "/tattoo-studio-revenue", label: "Tattoo studio revenue", description: "Break growth down into clients, value, frequency and capacity." },
+    { href: "/tattoo-studio-client-retention", label: "Tattoo client retention", description: "Turn completed work into repeat projects, referrals and reactivation." },
+    { href: "/tattoo-studio-management", label: "Tattoo studio management", description: "Build the management information needed to control growth." },
+  ],
+  faqs: [
+    { question: "What is the first thing to fix when a tattoo studio wants to grow?", answer: "Identify the first material constraint. More demand will not solve weak enquiry conversion, insufficient capacity, low average value or poor client return. The highest-value first action depends on where the studio is currently losing demand, time or value." },
+    { question: "Should a studio grow by adding more artists?", answer: "Only when demand, management capacity, workspace economics and artist fit justify it. Adding capacity before demand is stable can create more empty hours rather than more profit." },
+    { question: "Which tattoo studio growth metrics matter most?", answer: "Start with a small consistent set: qualified enquiries, enquiry-to-booking conversion, booked versus available artist hours, average booking value, cancellations or no-shows, repeat-client rate and realised revenue." },
+  ],
   ctaTitle: "Find your studio's biggest growth constraint.",
   ctaDescription: "Run the free INKSIGHTS Revenue Audit to estimate where opportunity may be sitting before you spend more on traffic, software or tactics.",
 };
