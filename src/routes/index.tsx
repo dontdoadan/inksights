@@ -32,14 +32,30 @@ function Index() {
       <JsonLd data={[{
         "@context": "https://schema.org",
         "@type": "Organization",
+        "@id": "https://getinksights.co.uk/#organization",
         name: "INKSIGHTS",
+        alternateName: "INKSIGHTS Tattoo Studio Growth Intelligence",
         url: CANONICAL_URL,
+        logo: "https://getinksights.co.uk/brand/logo-v3/primary-dark.svg",
         description: "Growth intelligence and commercial systems designed specifically for UK tattoo studios.",
+        areaServed: { "@type": "Country", name: "United Kingdom" },
+        knowsAbout: [
+          "tattoo studio growth",
+          "tattoo studio SEO",
+          "tattoo studio marketing",
+          "tattoo studio booking",
+          "tattoo studio management",
+          "tattoo studio revenue",
+          "tattoo client retention",
+        ],
       }, {
         "@context": "https://schema.org",
         "@type": "WebSite",
+        "@id": "https://getinksights.co.uk/#website",
         name: "INKSIGHTS",
+        alternateName: "INKSIGHTS Tattoo Studio Growth Intelligence",
         url: CANONICAL_URL,
+        publisher: { "@id": "https://getinksights.co.uk/#organization" },
       }]} />
 
       <section className="brand-dark cinematic-hero hero-ambient relative overflow-hidden">
@@ -116,6 +132,45 @@ function Index() {
               <PrimaryButton href="/pricing-benchmark">Open Pricing Benchmark</PrimaryButton>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="brand-dark border-b border-border bg-ink">
+        <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
+          <Reveal>
+            <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-start">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Tattoo studio growth library</p>
+                <h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-5xl">
+                  Understand the system before choosing the tactic.
+                </h2>
+                <p className="mt-5 text-base leading-relaxed text-muted-foreground">
+                  Use the INKSIGHTS guides to diagnose the commercial relationship between discovery, enquiries, bookings,
+                  capacity, client return and revenue.
+                </p>
+                <a href="/resources" className="mt-6 inline-flex font-bold text-mint hover:text-mint-soft">
+                  Browse all studio tools and guides →
+                </a>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {[
+                  ["/tattoo-studio-growth", "Tattoo studio growth", "Find the first constraint limiting profitable growth."],
+                  ["/tattoo-studio-seo", "Tattoo studio SEO", "Improve Google and local-search discovery with evidence."],
+                  ["/tattoo-studio-marketing", "Tattoo studio marketing", "Connect demand generation to qualified bookings."],
+                  ["/tattoo-studio-management", "Tattoo studio management", "Control enquiries, capacity, workflow and KPIs."],
+                  ["/tattoo-studio-booking", "Tattoo studio booking", "Turn qualified enquiries into protected diary time."],
+                  ["/tattoo-studio-client-retention", "Client retention", "Build repeat work, referrals and reactivation."],
+                  ["/tattoo-studio-revenue", "Tattoo studio revenue", "Explain revenue through volume, value and frequency."],
+                  ["/tattoo-studio-software", "Tattoo studio software", "Compare platforms against the workflow they must support."],
+                ].map(([href, title, description]) => (
+                  <a key={href} href={href} className="rounded-2xl border border-border bg-ink-deep p-5 transition hover:border-mint">
+                    <h3 className="font-display text-lg font-black text-ice">{title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
 

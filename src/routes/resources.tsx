@@ -104,6 +104,30 @@ const operatingResources = [
       "Examine repeat booking, reactivation, referrals and the systems that determine whether the client relationship continues after a session.",
     href: "/tattoo-studio-client-retention",
   },
+  {
+    icon: BarChart3,
+    title: "How to Grow a Tattoo Studio",
+    type: "Growth guide",
+    description:
+      "Use visibility, conversion, capacity, transaction value and client return to identify the next growth constraint.",
+    href: "/tattoo-studio-growth",
+  },
+  {
+    icon: Search,
+    title: "Tattoo Studio Marketing",
+    type: "Acquisition guide",
+    description:
+      "Connect positioning, demand generation, enquiry capture, conversion and retention to measurable studio outcomes.",
+    href: "/tattoo-studio-marketing",
+  },
+  {
+    icon: Workflow,
+    title: "Tattoo Studio Management",
+    type: "Management guide",
+    description:
+      "Build a controllable operating system across enquiries, bookings, artist capacity, revenue and repeat clients.",
+    href: "/tattoo-studio-management",
+  },
 ] as const;
 
 function ResourcesPage() {
