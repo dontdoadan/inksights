@@ -155,7 +155,7 @@ async function upsertOrder(session: Record<string, any>, paid: boolean) {
   });
 }
 
-async function syncContactToHubSpot(contactId: string) {
+async function syncContactToHubSpot(contactId: string, auditId?: string) {
   const key = serviceKey();
   const sync = await fetch(`${SB}/functions/v1/hubspot-sync-v1`, {
     method: "POST",
@@ -163,6 +163,7 @@ async function syncContactToHubSpot(contactId: string) {
     body: JSON.stringify({
       source_type: "public_contact_request",
       source_id: contactId,
+      ...(auditId ? { audit_id: auditId } : {}),
     }),
   });
   const syncText = await sync.text();
@@ -201,7 +202,8 @@ async function processFoundingCheckout(event: Record<string, any>, session: Reco
   }) as Record<string, any>;
 
   const contactRequestId = clean(result?.contact_request_id, 100);
-  if (contactRequestId) await syncContactToHubSpot(contactRequestId);
+  const auditId = clean(result?.audit_id, 100);
+  if (contactRequestId) await syncContactToHubSpot(contactRequestId, auditId || undefined);
   return result;
 }
 
