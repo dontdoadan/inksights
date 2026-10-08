@@ -6,6 +6,7 @@ const topic: StudioTopic = {
   title: "How to Grow a Tattoo Studio in the UK | INKSIGHTS",
   description: "A practical framework for growing a UK tattoo studio through visibility, enquiry conversion, capacity, transaction value and client return.",
   eyebrow: "Tattoo studio growth guide · UK",
+  updated: "2026-10-08",
   intro: <>Growing a tattoo studio is not simply a matter of getting more followers or more enquiries. A studio needs a reliable system for attracting the right clients, converting enquiries, protecting artist time, realising value from each booking and creating reasons to return.</>,
   sections: [
     { title: "Start with the growth constraint", body: <>Before spending more on advertising, identify the first material point where performance is being lost. More traffic will not repair weak enquiry handling, an under-used diary or poor client return.</>, bullets: ["Low visibility: the right local prospects are not finding the studio.", "Low conversion: enquiries arrive but fail to become qualified bookings.", "Low utilisation: artists have avoidable gaps or weak demand matching.", "Low value or frequency: booked work is not creating enough revenue per client over time."] },
