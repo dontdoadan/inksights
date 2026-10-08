@@ -62,11 +62,13 @@ export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
     dateModified: topic.updated,
     author: {
       "@type": "Organization",
+      "@id": "https://getinksights.co.uk/#organization",
       name: "INKSIGHTS",
       url: "https://getinksights.co.uk/about",
     },
     publisher: {
       "@type": "Organization",
+      "@id": "https://getinksights.co.uk/#organization",
       name: "INKSIGHTS",
       url: "https://getinksights.co.uk/",
       logo: {
