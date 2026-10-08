@@ -4,6 +4,7 @@ import { AlertTriangle, CheckCircle2, Clock3, Loader2, XCircle } from "lucide-re
 import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
+import { FoundingStudioCompletionExperience, FoundingStudioInviteExperience } from "@/components/founding-studio-experience";
 import {
   CtaSection,
   JsonLd,
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/offers/$slug")({
     session_id: typeof search.session_id === "string" ? search.session_id : undefined,
     lead_id: typeof search.lead_id === "string" ? search.lead_id : undefined,
     audit_id: typeof search.audit_id === "string" ? search.audit_id : undefined,
+    invite: typeof search.invite === "string" ? search.invite : undefined,
   }),
   head: ({ params }) => {
     const offer = getPublicOffer(params.slug);
@@ -71,6 +73,14 @@ function OfferPage() {
         </PageHero>
       </PublicShell>
     );
+  }
+
+  if (offer.slug === "studio-intelligence-audit" && search.invite) {
+    return <FoundingStudioInviteExperience token={search.invite} />;
+  }
+
+  if (offer.slug === "studio-intelligence-audit" && search.checkout === "founding-success" && search.session_id) {
+    return <FoundingStudioCompletionExperience sessionId={search.session_id} />;
   }
 
   const canonical = `https://getinksights.co.uk/offers/${offer.slug}`;
