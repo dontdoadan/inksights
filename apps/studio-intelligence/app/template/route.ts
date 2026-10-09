@@ -1,0 +1,1 @@
+import {goldenInput} from '@/lib/golden';export function GET(){return new Response(JSON.stringify(goldenInput,null,2),{headers:{'Content-Type':'application/json','Content-Disposition':'attachment; filename="studio-intelligence-input-example.json"'}})}
