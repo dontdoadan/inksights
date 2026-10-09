@@ -1,0 +1,18 @@
+{
+  "name": "inksights-sandbox",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "APP_ENV=sandbox node src/server.js",
+    "test": "APP_ENV=sandbox node --test",
+    "check": "APP_ENV=sandbox node scripts/check.mjs",
+    "check:phase2": "APP_ENV=sandbox node scripts/check-phase2.mjs",
+    "cycle": "APP_ENV=sandbox node scripts/cycle.mjs",
+    "sample": "APP_ENV=sandbox node scripts/sample.mjs",
+    "reset": "APP_ENV=sandbox node scripts/reset.mjs"
+  }
+}
