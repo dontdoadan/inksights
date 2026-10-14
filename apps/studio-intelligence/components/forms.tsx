@@ -1,0 +1,3 @@
+'use client';
+import {useActionState,type ReactNode} from 'react';import {mutate} from '@/app/actions';
+export function ActionForm({action,reportId,hash,children,label,primary=false}:{action:string;reportId?:string;hash?:string;children?:ReactNode;label:string;primary?:boolean}){const [state,formAction,pending]=useActionState(mutate,{});return <form action={formAction}><input type="hidden" name="action" value={action}/>{reportId&&<input type="hidden" name="reportId" value={reportId}/>}<input type="hidden" name="expectedHash" value={hash||''}/>{children}{state.error&&<p className="error" role="alert">{state.error}</p>}<button className={primary?'primary':''} disabled={pending}>{pending?'Saving…':label}</button></form>}

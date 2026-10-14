@@ -1,0 +1,28 @@
+{
+  "base": "http://localhost:3100",
+  "checks": [
+    "Golden reference renders all 15 sections",
+    "Chart toggles to appointments",
+    "Evidence filter returns matching source",
+    "No horizontal page overflow at 390px",
+    "No horizontal page overflow at 768px",
+    "No horizontal page overflow at 1440px",
+    "Anonymous analyst route requires login",
+    "Real Supabase analyst sign-in works",
+    "Structured input creates persisted draft",
+    "Draft edit saved",
+    "Draft enters review",
+    "Review approves immutable version",
+    "Approved report publishes",
+    "Named client granted",
+    "Granted client reads published report",
+    "Granted client PDF is generated",
+    "Unrelated client cannot read report",
+    "Unrelated client cannot download PDF",
+    "Unrelated client cannot enter analyst workspace",
+    "Revocation blocks subsequent client reads",
+    "Correction creates separate v2 draft",
+    "No uncaught page errors"
+  ],
+  "errors": []
+}

@@ -1,0 +1,1 @@
+export default function NotFound(){return <main id="main" className="page"><div className="panel"><h1>Report unavailable.</h1><p>This report is not available to your account, or the address is no longer valid.</p><a href="/">Back to your reports →</a></div></main>}

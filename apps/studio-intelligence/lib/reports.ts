@@ -1,0 +1,3 @@
+import {notFound} from 'next/navigation';import {session} from './supabase';import {readManifest} from './contract';
+export const labels:Record<string,string>={draft:'Draft',qa:'In review',client_ready:'Approved',published:'Published'};
+export async function loadReport(id:string){if(!/^[0-9a-f-]{36}$/i.test(id))notFound();const s=await session();const {data,error}=await s.db.from('report_versions').select('id,audit_id,version,status,manifest,manifest_hash,generated_at').eq('id',id).eq('manifest->>schemaVersion','studio-intelligence/1.0').maybeSingle();if(error||!data)notFound();const report=readManifest(data.manifest);const {data:progress}=await s.db.from('si_progress').select('*').eq('report_id',id);return {...s,row:data,report,progress:progress||[]}}
