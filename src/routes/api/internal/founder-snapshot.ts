@@ -29,6 +29,7 @@ export const Route = createFileRoute("/api/internal/founder-snapshot")({
           .select("role, active")
           .eq("user_id", user.id)
           .eq("active", true)
+          .in("role", ["owner", "admin"])
           .maybeSingle();
 
         if (adminError) {
