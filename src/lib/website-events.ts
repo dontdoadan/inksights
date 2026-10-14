@@ -51,7 +51,7 @@ function safeAnalyticsPath(pathname: string): string {
 }
 
 function safeMarketingTag(value: string | null): string | null {
-  if (!value || value.length > 100 || !/^[a-z0-9 ._\/-]+$/i.test(value)) return null;
+  if (!value || value.length > 100 || !/^[a-z0-9 ._-]+$/i.test(value)) return null;
   return value;
 }
 
