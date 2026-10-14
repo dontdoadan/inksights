@@ -38,10 +38,27 @@ function classifySearchReferrer(hostname: string | null) {
   return null;
 }
 
+// Analytics records only route patterns and bounded marketing tags: never full URLs or access tokens.
+function safeAnalyticsPath(pathname: string): string {
+  if (/^\/(?:founding-studio|invite|invitations|prospect|report|reports)(?:\/|$)/i.test(pathname)) {
+    return "/private-flow";
+  }
+  return pathname.split("/").map((part) =>
+    /^[0-9a-f]{32,}$/i.test(part) || /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(part) || part.length > 48
+      ? ":id"
+      : part,
+  ).join("/");
+}
+
+function safeMarketingTag(value: string | null): string | null {
+  if (!value || value.length > 100 || !/^[a-z0-9 ._\/-]+$/i.test(value)) return null;
+  return value;
+}
+
 function acquisitionProperties(): EventProperties {
   if (typeof window === "undefined") return {};
 
-  const key = "inksights-acquisition-session-v1";
+  const key = "inksights-acquisition-session-v2";
   const existing = window.sessionStorage.getItem(key);
   if (existing) {
     try {
@@ -61,21 +78,27 @@ function acquisitionProperties(): EventProperties {
 
   const searchEngine = classifySearchReferrer(referrerHost);
   const acquisition: EventProperties = {
-    landing_path: window.location.pathname,
-    landing_url: window.location.href,
-    initial_referrer: document.referrer || null,
+    landing_path: safeAnalyticsPath(window.location.pathname),
     initial_referrer_host: referrerHost,
     search_engine: searchEngine,
     is_organic_search: Boolean(searchEngine) && !params.get("gclid") && !params.get("gbraid") && !params.get("wbraid"),
-    utm_source: params.get("utm_source"),
-    utm_medium: params.get("utm_medium"),
-    utm_campaign: params.get("utm_campaign"),
-    utm_content: params.get("utm_content"),
-    utm_term: params.get("utm_term"),
+    utm_source: safeMarketingTag(params.get("utm_source")),
+    utm_medium: safeMarketingTag(params.get("utm_medium")),
+    utm_campaign: safeMarketingTag(params.get("utm_campaign")),
+    utm_content: safeMarketingTag(params.get("utm_content")),
+    utm_term: safeMarketingTag(params.get("utm_term")),
   };
 
   window.sessionStorage.setItem(key, JSON.stringify(acquisition));
   return acquisition;
+}
+
+function referrerHostForAnalytics(): string | null {
+  try {
+    return document.referrer ? new URL(document.referrer).hostname : null;
+  } catch {
+    return null;
+  }
 }
 
 export function trackWebsiteEvent(
@@ -92,8 +115,8 @@ export function trackWebsiteEvent(
 
   const body = JSON.stringify({
     event_name: eventName,
-    page_path: window.location.pathname,
-    referrer: document.referrer || null,
+    page_path: safeAnalyticsPath(window.location.pathname),
+    referrer: referrerHostForAnalytics(),
     session_id: sessionId(),
     properties: enrichedProperties,
   });
@@ -107,10 +130,10 @@ export function trackWebsiteEvent(
   }).catch(() => undefined);
 
   if (eventName === "page_view") {
-    trackGooglePageView(window.location.pathname);
+    trackGooglePageView(safeAnalyticsPath(window.location.pathname));
   } else {
     trackGoogleEvent(eventName, {
-      page_path: window.location.pathname,
+      page_path: safeAnalyticsPath(window.location.pathname),
       ...enrichedProperties,
     });
   }
