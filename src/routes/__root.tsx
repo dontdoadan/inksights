@@ -19,6 +19,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   { property: "og:title", content: "INKSIGHTS | Tattoo Studio Growth & Intelligence" },
   { property: "og:description", content: "Growth intelligence and diagnostics built specifically for UK tattoo studio owners." },
   { property: "og:type", content: "website" },
+  { property: "og:site_name", content: "INKSIGHTS" },
   { property: "og:image", content: "https://getinksights.co.uk/brand/wordmark.webp" },
   { name: "twitter:card", content: "summary_large_image" },
   { name: "twitter:image", content: "https://getinksights.co.uk/brand/wordmark.webp" },
