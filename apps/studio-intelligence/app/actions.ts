@@ -3,7 +3,7 @@ import {adminSession,serverClient} from '@/lib/supabase';import {generateReport}
 export type ActionState={error?:string};
 export async function signOut(){const db=await serverClient();await db.auth.signOut();redirect('/login')}
 export async function mutate(_state:ActionState,form:FormData):Promise<ActionState>{
-const {db}=await adminSession();let destination='';try{const action=z.enum(['create','save','review','approve','publish','return','clone','grant','revoke','progress']).parse(form.get('action'));const rawId=form.get('reportId');const reportId=rawId?z.uuid().parse(rawId):null;let payload:Record<string,unknown>={note:String(form.get('note')||''),expectedHash:String(form.get('expectedHash')||'')};
+const {db}=await adminSession();let destination='';try{const action=z.enum(['create','save','review','approve','publish','return','clone','grant','revoke','progress']).parse(form.get('action'));const rawId=form.get('reportId');const reportId=rawId?z.uuid().parse(rawId):null;const payload:Record<string,unknown>={note:String(form.get('note')||''),expectedHash:String(form.get('expectedHash')||'')};
 if(['create','save'].includes(action)){const raw=String(form.get('input')||'');if(raw.length>300000)throw new Error('Input is too large. Maximum 300 KB.');payload.manifest=generateReport(JSON.parse(raw));if(action==='create'&&form.get('studioId'))payload.studioId=z.uuid().parse(form.get('studioId'));}
 if(action==='approve'&&form.get('confirmed')!=='yes')throw new Error('Confirm the evidence, calculations and recommendations before approval.');
 if(['grant','revoke'].includes(action))payload.email=z.email().parse(form.get('email'));
