@@ -45,12 +45,14 @@ import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/gu
 import { Route as GuidesFullSleeveCostUkRouteImport } from './routes/guides.full-sleeve-cost-uk'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
+import { Route as AuthenticatedOsRouteImport } from './routes/_authenticated/os'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAuditsRouteImport } from './routes/_authenticated/audits'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
+import { Route as ApiInternalFounderSnapshotRouteImport } from './routes/api/internal/founder-snapshot'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
@@ -238,6 +240,11 @@ const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
   path: '/workspace',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOsRoute = AuthenticatedOsRouteImport.update({
+  id: '/os',
+  path: '/os',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -271,6 +278,12 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   path: '/api/public/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiInternalFounderSnapshotRoute =
+  ApiInternalFounderSnapshotRouteImport.update({
+    id: '/api/internal/founder-snapshot',
+    path: '/api/internal/founder-snapshot',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAuditsAuditIdRoute =
   AuthenticatedAuditsAuditIdRouteImport.update({
     id: '/$auditId',
@@ -321,6 +334,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/os': typeof AuthenticatedOsRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
@@ -332,6 +346,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/internal/founder-snapshot': typeof ApiInternalFounderSnapshotRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -366,6 +381,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/os': typeof AuthenticatedOsRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
@@ -377,6 +393,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/internal/founder-snapshot': typeof ApiInternalFounderSnapshotRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -414,6 +431,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/os': typeof AuthenticatedOsRoute
   '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
@@ -425,6 +443,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/internal/founder-snapshot': typeof ApiInternalFounderSnapshotRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -462,6 +481,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
+    | '/os'
     | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
@@ -473,6 +493,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/internal/founder-snapshot'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesByTo: FileRoutesByTo
@@ -507,6 +528,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
+    | '/os'
     | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
@@ -518,6 +540,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/internal/founder-snapshot'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   id:
@@ -554,6 +577,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/audits'
     | '/_authenticated/dashboard'
+    | '/_authenticated/os'
     | '/_authenticated/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
@@ -565,6 +589,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/audits/$auditId'
+    | '/api/internal/founder-snapshot'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesById: FileRoutesById
@@ -606,6 +631,7 @@ export interface RootRouteChildren {
   ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiInternalFounderSnapshotRoute: typeof ApiInternalFounderSnapshotRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
 }
@@ -864,6 +890,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspaceRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/os': {
+      id: '/_authenticated/os'
+      path: '/os'
+      fullPath: '/os'
+      preLoaderRoute: typeof AuthenticatedOsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -906,6 +939,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/internal/founder-snapshot': {
+      id: '/api/internal/founder-snapshot'
+      path: '/api/internal/founder-snapshot'
+      fullPath: '/api/internal/founder-snapshot'
+      preLoaderRoute: typeof ApiInternalFounderSnapshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/audits/$auditId': {
       id: '/_authenticated/audits/$auditId'
       path: '/$auditId'
@@ -944,12 +984,14 @@ const AuthenticatedAuditsRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditsRoute: typeof AuthenticatedAuditsRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedOsRoute: typeof AuthenticatedOsRoute
   AuthenticatedWorkspaceRoute: typeof AuthenticatedWorkspaceRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditsRoute: AuthenticatedAuditsRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedOsRoute: AuthenticatedOsRoute,
   AuthenticatedWorkspaceRoute: AuthenticatedWorkspaceRoute,
 }
 
@@ -1017,6 +1059,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiInternalFounderSnapshotRoute: ApiInternalFounderSnapshotRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
 }
