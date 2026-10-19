@@ -18,6 +18,7 @@ INKSIGHTS uses a constraint-led commercial model:
 The current customer-facing pathway is:
 
 1. **Studio Growth Check** — free diagnostic and qualification entry point.
+   - **Optional Prove step: 72-Hour Studio Visibility Fix** — £249 scoped correction **only if** observed public-facing issues justify it and delivery/checkout eligibility are confirmed; may be skipped.
 2. **Studio Intelligence Audit** — paid productised diagnostic. Current founding validation price: **£395**.
 3. **Primary Constraint Programme** — scoped implementation proposal based on one evidenced commercial constraint.
 4. **Outcome Review** — measured result review, attribution and learning capture.
@@ -43,12 +44,16 @@ The £395 Studio Intelligence Audit is a validation price, not a permanent marke
 | Stage | Offer | Commercial state | Price / billing rule |
 | --- | --- | --- | --- |
 | Detect | Studio Growth Check | Active free qualification | Free |
+| Prove (optional) | 72-Hour Studio Visibility Fix | Scope-confirmed enquiry; checkout not yet approved | £249 once; 3 working days only after complete access and approved scope |
 | Diagnose | Studio Intelligence Audit | Active founding validation product | £395 one-off validation price |
 | Improve | Primary Constraint Programme | Sales-assisted / scoped | Configurable, evidence/value informed |
 | Review | Outcome Review | Included where intervention measurement exists | Determined by engagement scope |
 | Monitor | INKSIGHTS Watch | Deferred / selectively offered | Configure only where recurring monitoring creates value |
+| Monitor (narrow pilot) | Visibility Watch | Deferred pilot enquiry only | £99/month indicative; no subscription until monitoring, terms and recurring billing are proven |
 
 No additional fixed-price public product is active merely because a legacy system, page, Stripe product or HubSpot line item still exists.
+
+**Funnel control, 20 October 2026:** The Prove step is optional. A modelled Growth Check estimate is not sufficient evidence for a visibility fix. The fixed work package is bounded to up to three approved corrections; no ranking, enquiry or revenue improvement is guaranteed. The £395 Audit remains the main evidence-backed diagnostic. Outcome Review is included within an approved implementation scope. Visibility Watch is a narrower, unlaunched pilot; do not confuse it with the deferred full INKSIGHTS Watch. See [commercial-journey-v1.md](product/commercial-journey-v1.md) for scope and release gates.
 
 ## 4. Value and evidence rules
 
