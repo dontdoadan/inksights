@@ -121,7 +121,30 @@ function studioName(session: Record<string, any>) {
   );
 }
 
-async function upsertOrder(session: Record<string, any>, paid: boolean) {
+async function verifiedGrowthCheckLead(session: Record<string, any>): Promise<string | null> {
+  // Payment Link URL reference is user-supplied. It becomes a verified CRM
+  // association only after the paid Checkout Session email matches the lead.
+  const reference = clean(session.client_reference_id, 80);
+  const email = clean(session.customer_details?.email || session.customer_email, 254).toLowerCase();
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(reference) || !email) return null;
+  const rows = await rest(
+    `revenue_audit_leads?id=eq.${encodeURIComponent(reference)}&select=id,email&limit=1`,
+    { method: "GET" },
+  ) as Array<{ id: string; email: string }>;
+  if (!rows?.length || rows[0].email?.trim().toLowerCase() !== email) return null;
+  return rows[0].id;
+}
+
+async function growthCheckAuditId(leadId: string | null): Promise<string | null> {
+  if (!leadId) return null;
+  const rows = await rest(
+    `revenue_audits?lead_id=eq.${encodeURIComponent(leadId)}&select=id&limit=1`,
+    { method: "GET" },
+  ) as Array<{ id: string }>;
+  return rows?.[0]?.id || null;
+}
+
+async function upsertOrder(session: Record<string, any>, paid: boolean, growthCheckLeadId: string | null) {
   const metadata = session.metadata && typeof session.metadata === "object" ? session.metadata : {};
   const body = {
     stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
@@ -137,6 +160,8 @@ async function upsertOrder(session: Record<string, any>, paid: boolean) {
     customer_email: clean(session.customer_details?.email || session.customer_email, 254).toLowerCase() || null,
     metadata: {
       ...metadata,
+      stripe_client_reference_id: clean(session.client_reference_id, 80) || null,
+      verified_growth_check_lead_id: growthCheckLeadId,
       source: "stripe_payment_link",
       payment_link: clean(session.payment_link, 120) || null,
       payment_status: clean(session.payment_status, 40) || null,
@@ -207,7 +232,7 @@ async function processFoundingCheckout(event: Record<string, any>, session: Reco
   return result;
 }
 
-async function ensureContactAndCrm(session: Record<string, any>) {
+async function ensureContactAndCrm(session: Record<string, any>, growthCheckLeadId: string | null) {
   const sessionId = clean(session.id, 120);
   const email = clean(session.customer_details?.email || session.customer_email, 254).toLowerCase();
   const name = clean(
@@ -252,6 +277,7 @@ async function ensureContactAndCrm(session: Record<string, any>) {
           amount_total: Number.isFinite(session.amount_total) ? session.amount_total : null,
           currency: clean(session.currency, 20).toLowerCase() || null,
           page_path: "/offers/studio-intelligence-audit",
+          verified_growth_check_lead_id: growthCheckLeadId,
           source: "stripe_payment_link",
         },
         is_test: false,
@@ -273,12 +299,13 @@ async function ensureContactAndCrm(session: Record<string, any>) {
         source_system: "stripe",
         source_event_id: sessionId,
         idempotency_key: `stripe_checkout_paid:${sessionId}`,
-        correlation_id: crypto.randomUUID(),
+        correlation_id: growthCheckLeadId || crypto.randomUUID(),
         contact_ref: contact.id,
         processing_status: "received",
         payload: {
           event_kind: "studio_intelligence_audit_paid",
           offer: AUDIT_OFFER,
+          linked_growth_check: Boolean(growthCheckLeadId),
           payment_link: clean(session.payment_link, 120) || null,
           amount_total: Number.isFinite(session.amount_total) ? session.amount_total : null,
           currency: clean(session.currency, 20).toLowerCase() || null,
@@ -289,7 +316,8 @@ async function ensureContactAndCrm(session: Record<string, any>) {
     console.error("Payment integration event persistence failed", eventError instanceof Error ? eventError.message : String(eventError));
   }
 
-  await syncContactToHubSpot(contact.id);
+  const linkedAuditId = await growthCheckAuditId(growthCheckLeadId);
+  await syncContactToHubSpot(contact.id, linkedAuditId || undefined);
 
   return contact.id;
 }
@@ -337,10 +365,11 @@ Deno.serve(async (req: Request) => {
     if (!isAuditCheckout) return response({ received: true, skipped: "unrelated_checkout" }, 200);
 
     const paid = event.type === "checkout.session.async_payment_succeeded" || session.payment_status === "paid";
-    await upsertOrder(session, paid);
+    const growthCheckLeadId = paid ? await verifiedGrowthCheckLead(session) : null;
+    await upsertOrder(session, paid, growthCheckLeadId);
 
     let contactRequestId: string | null = null;
-    if (paid) contactRequestId = await ensureContactAndCrm(session);
+    if (paid) contactRequestId = await ensureContactAndCrm(session, growthCheckLeadId);
 
     return response({
       received: true,
