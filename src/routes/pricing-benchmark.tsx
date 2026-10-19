@@ -81,6 +81,31 @@ function PricingBenchmark() {
   const [prices, setPrices] = useState<Record<number, string>>({});
   const [leadTime, setLeadTime] = useState("4");
   const benchmarks = BENCHMARKS[region];
+  const [saved, setSaved] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [accepted, setAccepted] = useState(false);
+  const invalidate = () => { setSaved(false); setError(""); };
+  async function submit() {
+    if (busy) return;
+    if (!accepted) { setError("Acknowledge the data-use notice before submitting."); return; }
+    const values = benchmarks.map((_, i) => prices[i] ? Number(prices[i]) : null);
+    if (values.every(v => v === null) || values.some(v => v !== null && (!Number.isFinite(v) || v <= 0 || v > 50000))) {
+      setError("Enter at least one valid price."); return;
+    }
+    setBusy(true); setError("");
+    try {
+      const response = await fetch("https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/public-pricing-benchmark-submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ region, prices: values, leadTimeWeeks: Number(leadTime), submissionKey: crypto.randomUUID(), consentVersion: "2026-10-tool-v1", dataNoticeAccepted: true })
+      });
+      const body = await response.json();
+      if (!response.ok || !body?.submissionId || !body?.result) throw new Error(body?.error ?? "Unable to save submission.");
+      setSaved(true);
+    } catch (e) { setError(e instanceof Error ? e.message : "Submission failed."); }
+    finally { setBusy(false); }
+  }
 
   const results = useMemo(
     () =>
@@ -140,7 +165,7 @@ function PricingBenchmark() {
                 <select
                   id="region"
                   value={region}
-                  onChange={(event) => { setRegion(event.target.value as Region); setPrices({}); }}
+                  onChange={(event) => { setRegion(event.target.value as Region); setPrices({}); invalidate(); }}
                   className="mt-2 w-full rounded-xl border border-border bg-ink-deep px-4 py-3 text-sm text-ice outline-none focus:border-mint"
                 >
                   <option value="uk">{REGION_LABELS.uk}</option>
@@ -164,7 +189,7 @@ function PricingBenchmark() {
                         step="1"
                         inputMode="decimal"
                         value={prices[index] ?? ""}
-                        onChange={(event) => setPrices((current) => ({ ...current, [index]: event.target.value }))}
+                        onChange={(event) => { setPrices((current) => ({ ...current, [index]: event.target.value })); invalidate(); }}
                         placeholder="Your price"
                         className="w-full rounded-lg border border-border bg-ink px-3 py-3 pl-7 text-sm text-ice placeholder:text-muted-foreground outline-none focus:border-mint"
                       />
@@ -189,25 +214,33 @@ function PricingBenchmark() {
                   <label className="text-xs font-bold uppercase tracking-[.14em] text-muted-foreground" htmlFor="lead-time">Typical lead time</label>
                   <span className="font-display text-3xl font-black text-ice">{leadTime} weeks</span>
                 </div>
-                <input id="lead-time" type="range" min="1" max="26" value={leadTime} onChange={(event) => setLeadTime(event.target.value)} className="mt-6 w-full accent-current" />
+                <input id="lead-time" type="range" min="1" max="26" value={leadTime} onChange={(event) => { setLeadTime(event.target.value); invalidate(); }} className="mt-6 w-full accent-current" />
                 <div className="mt-2 flex justify-between text-[11px] text-muted-foreground"><span>1 week</span><span>13 weeks</span><span>26 weeks</span></div>
               </div>
 
               <div className="mt-8 rounded-2xl border border-mint/20 bg-mint/5 p-5">
                 <TrendingUp className="h-6 w-6 text-mint" />
-                <h3 className="mt-4 font-display text-xl font-black text-ice">{leadTimeSignal.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{leadTimeSignal.text}</p>
+                <h3 className="mt-4 font-display text-xl font-black text-ice">{saved ? leadTimeSignal.title : "Submit to reveal your demand assessment"}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{saved ? leadTimeSignal.text : "Your analysis will appear once the data has been saved."}</p>
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-[.12em] text-muted-foreground">Below reference</p><p className="mt-2 font-display text-2xl font-black text-ice">{below}</p></div>
-                <div className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-[.12em] text-muted-foreground">Above reference</p><p className="mt-2 font-display text-2xl font-black text-ice">{above}</p></div>
+                <div className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-[.12em] text-muted-foreground">Below reference</p><p className="mt-2 font-display text-2xl font-black text-ice">{saved ? below : "—"}</p></div>
+                <div className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-[.12em] text-muted-foreground">Above reference</p><p className="mt-2 font-display text-2xl font-black text-ice">{saved ? above : "—"}</p></div>
               </div>
             </Card>
           </div>
         </div>
       </section>
 
+      <section className="bg-ink-deep border-b border-border">
+        <div className="mx-auto max-w-7xl px-6 py-8">
+          <label className="flex gap-3 text-sm text-muted-foreground"><input type="checkbox" checked={accepted} onChange={e => setAccepted(e.target.checked)} /><span>I understand that INKSIGHTS stores my submitted data for this assessment and aggregate benchmarking research. This does not opt me into marketing. <a className="underline" href="/privacy">Privacy notice</a>.</span></label>
+          <button type="button" disabled={busy} onClick={submit} className="mt-5 rounded-xl bg-mint px-6 py-3 font-bold text-ink-deep disabled:opacity-50">{busy ? "Saving…" : "Submit data & view results"}</button>
+          {error && <p role="alert" className="mt-3 text-sm text-red-300">{error}</p>}
+          {saved && <p role="status" className="mt-3 text-sm text-mint">Your submission was saved. Results are unlocked below.</p>}
+        </div>
+      </section>
       <section className="border-b border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
           <SectionHeading
@@ -216,7 +249,8 @@ function PricingBenchmark() {
             description="A benchmark is a reference point. It is not a pricing recommendation. Use the position below with demand, utilisation, conversion, portfolio strength and margin."
           />
 
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
+          {!saved && <Card className="mt-10 bg-ink-deep p-6">Submit your pricing data above to unlock your results.</Card>}
+          {saved && <div className="mt-10 grid gap-4 md:grid-cols-2">
             {results.map(({ benchmark, value, result }) => (
               <Card key={benchmark.name} className="bg-ink-deep p-5">
                 <div className="flex items-start justify-between gap-4">
@@ -240,7 +274,7 @@ function PricingBenchmark() {
                 )}
               </Card>
             ))}
-          </div>
+          </div>}
 
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             <Card className="bg-ink-deep p-5"><BarChart3 className="h-6 w-6 text-mint" /><h3 className="mt-4 font-display text-lg font-black text-ice">Add utilisation</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">A high rate with an empty diary is a different problem from a high rate with a stable waitlist.</p></Card>
