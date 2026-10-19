@@ -48,7 +48,7 @@ Legacy revenue audit, Booking & Retention Engine and older founding package page
 **Entry:** directly from Growth Check or from a completed Fix; do not force the Fix.  
 **Ingestion:** reuse Growth Check `lead_id` and `audit_id` plus recorded site/visibility observations; avoid a second copy of studio identity.  
 **Deliverable:** approved evidence-linked commercial report, differentiated baseline, primary constraint, prioritised opportunities and 90-day implementation/measurement plan.  
-**Billing:** payment must resolve to the purchased Stripe price; the signed webhook and authoritative order state—not a browser redirect—determine fulfilment. Existing founding-studio waiver is a separate authorised path.  
+**Billing:** The existing live Stripe Payment Link remains the working purchase route because `inksight-main` currently lacks a preview/production `STRIPE_SECRET_KEY`. Where a visitor comes from the Growth Check, pass only the opaque `lead_id` as the Payment Link `client_reference_id`; the signed Supabase webhook must verify the buyer's checkout email against the original Growth Check lead email before recording a verified association. The related free assessment can be resolved from `revenue_audits.lead_id`. Checkout verification through server-created Stripe Sessions is a future option only once configuration, origin and webhook QA are complete. The webhook and authoritative order state—not a browser redirect—determine fulfilment. Existing founding-studio waiver is a separate authorised path.  
 **Margin constraint:** measure delivery minutes; £395 remains a founding-validation rate, not a permanent anchor.
 
 ## Offer 4 — Improve: Primary Constraint Programme
