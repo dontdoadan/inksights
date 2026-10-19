@@ -16,7 +16,7 @@ export const Route = createFileRoute("/studio-growth-check")({
   }),
   head: () => ({
     meta: [
-      { title: "Free Revenue Audit V1 — INKSIGHTS" },
+      { title: "Free Studio Growth Check — INKSIGHTS" },
       {
         name: "description",
         content:
@@ -134,7 +134,7 @@ function RevenueAuditPage() {
       <section className="border-b border-border bg-ink">
         <div className="mx-auto max-w-5xl px-6 py-16 md:py-24">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-mint/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-mint"><ShieldCheck className="h-4 w-4" /> Free Revenue Audit V1</div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-mint/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-mint"><ShieldCheck className="h-4 w-4" /> Free Studio Growth Check</div>
             <h1 className="mt-6 text-balance font-display text-4xl font-black leading-[.95] tracking-tight text-ice md:text-6xl">Estimate how much revenue your studio may be leaving on the table.</h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">Give us a few operating numbers and INKSIGHTS will calculate a first-pass opportunity estimate across unused capacity, unconverted enquiries, cancellations and repeat clients.</p>
             {search.source === "visibility-scorecard" ? (
@@ -238,7 +238,7 @@ function RevenueAuditPage() {
       </section>
 
       {result && <section id="audit-result" className="border-t border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-14 md:py-20">
-        <div className="max-w-4xl"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Your Revenue Audit V1</p><h2 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">Estimated opportunity: <span className="text-mint">{currency(result.estimate.annual_low)}–{currency(result.estimate.annual_high)}</span> / year</h2><p className="mt-4 text-lg leading-relaxed text-muted-foreground">The largest estimated opportunity in your inputs is <b className="text-ice">{result.estimate.primary_opportunity}</b>.</p></div>
+        <div className="max-w-4xl"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Your Studio Growth Check</p><h2 className="mt-3 font-display text-4xl font-black tracking-tight text-ice md:text-6xl">Estimated opportunity: <span className="text-mint">{currency(result.estimate.annual_low)}–{currency(result.estimate.annual_high)}</span> / year</h2><p className="mt-4 text-lg leading-relaxed text-muted-foreground">The largest estimated opportunity in your inputs is <b className="text-ice">{result.estimate.primary_opportunity}</b>.</p></div>
         <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">{result.findings.map((finding) => <div key={finding.label} className="rounded-2xl border border-border bg-ink-deep p-5"><p className="text-sm font-bold text-ice">{finding.label}</p><p className="mt-3 font-display text-2xl font-black text-mint">{currency(finding.annual_low)}–{currency(finding.annual_high)}</p><p className="mt-1 text-xs text-muted-foreground">estimated annual opportunity</p></div>)}</div>
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_.8fr]">
           <div className="rounded-2xl border border-border bg-ink-deep p-6">
