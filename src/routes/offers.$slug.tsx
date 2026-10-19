@@ -18,6 +18,34 @@ import { createCheckoutSession, verifyCheckoutSession } from "@/lib/payments.fun
 import { trackWebsiteEvent } from "@/lib/website-events";
 import { getPublicOffer, growthLeverLabels } from "@/lib/offer-data";
 
+const OFFER_SEO: Record<string, { title: string; description: string }> = {
+  "studio-intelligence-audit": {
+    title: "Tattoo Studio Business Audit UK | INKSIGHTS",
+    description:
+      "A £395 tattoo studio business audit for established UK studios covering search visibility, competitors, booking journey, commercial opportunities and a 90-day action plan.",
+  },
+  "72-hour-visibility-fix": {
+    title: "Tattoo Studio SEO & Google Visibility Fix | INKSIGHTS",
+    description:
+      "A focused UK tattoo studio visibility intervention covering Google Business Profile, local search presentation, website friction and booking calls to action.",
+  },
+  "visibility-watch": {
+    title: "Tattoo Studio Google Visibility Monitoring | INKSIGHTS",
+    description:
+      "Ongoing monitoring for UK tattoo studios across search visibility, Google Business Profile issues, reputation changes and public conversion risks.",
+  },
+  "revenue-audit": {
+    title: "Tattoo Studio Revenue Audit UK | INKSIGHTS",
+    description:
+      "Diagnose tattoo studio revenue leakage across enquiries, bookings, capacity, cancellations, transaction value, repeat work and measurement.",
+  },
+  "booking-retention-engine": {
+    title: "Tattoo Studio Booking & Retention System | INKSIGHTS",
+    description:
+      "Build a controlled tattoo studio enquiry, booking, reminder, cancellation, follow-up and client-retention system around the studio's real workflow.",
+  },
+};
+
 export const Route = createFileRoute("/offers/$slug")({
   component: OfferPage,
   validateSearch: (search: Record<string, unknown>) => ({
@@ -32,14 +60,16 @@ export const Route = createFileRoute("/offers/$slug")({
     const canonical = `https://getinksights.co.uk/offers/${params.slug}`;
     const routeSearch = (match.search || {}) as Record<string, unknown>;
     const privateFoundingState = typeof routeSearch.invite === "string" || routeSearch.checkout === "founding-success";
+    const seo = offer ? OFFER_SEO[offer.slug] : undefined;
     return {
       meta: [
-        { title: offer ? `${offer.name} | INKSIGHTS` : "INKSIGHTS Offer" },
-        ...(privateFoundingState ? [{ name: "robots", content: "noindex,nofollow,noarchive" }] : []),
-        { name: "description", content: offer?.summary || "INKSIGHTS tattoo studio growth solution." },
-        { property: "og:title", content: offer?.name || "INKSIGHTS Offer" },
-        { property: "og:description", content: offer?.summary || "INKSIGHTS tattoo studio growth solution." },
+        { title: seo?.title ?? (offer ? `${offer.name} | INKSIGHTS` : "INKSIGHTS Offer") },
+        ...(privateFoundingState || !offer ? [{ name: "robots", content: "noindex,nofollow,noarchive" }] : []),
+        { name: "description", content: seo?.description ?? offer?.summary ?? "INKSIGHTS tattoo studio growth solution." },
+        { property: "og:title", content: seo?.title ?? offer?.name ?? "INKSIGHTS Offer" },
+        { property: "og:description", content: seo?.description ?? offer?.summary ?? "INKSIGHTS tattoo studio growth solution." },
         { property: "og:url", content: canonical },
+        { property: "og:type", content: "website" },
       ],
       links: [{ rel: "canonical", href: canonical }],
     };
@@ -94,7 +124,7 @@ function OfferPage() {
   const canonical = `https://getinksights.co.uk/offers/${offer.slug}`;
   return (
     <PublicShell>
-      <JsonLd data={{
+      <JsonLd data={[{
         "@context": "https://schema.org",
         "@type": "Service",
         name: offer.name,
@@ -111,11 +141,26 @@ function OfferPage() {
               url: offer.checkoutUrl || canonical,
             }
           : undefined,
-      }} />
+      }, {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Services", item: "https://getinksights.co.uk/offers" },
+          { "@type": "ListItem", position: 2, name: offer.name, item: canonical },
+        ],
+      }]} />
       <PageHero eyebrow={offer.eyebrow} title={offer.name} description={offer.summary}>
         {offer.stripePriceId ? <CheckoutButton offer={offer} leadId={search.lead_id} auditId={search.audit_id} /> : <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>}
         <SecondaryButton href="/contact">Ask a scope question</SecondaryButton>
       </PageHero>
+
+      <nav aria-label="Breadcrumb" className="border-b border-border bg-ink-deep">
+        <ol className="mx-auto flex max-w-7xl items-center gap-2 px-6 py-4 text-sm text-muted-foreground">
+          <li><a href="/offers" className="font-semibold transition hover:text-mint">Services</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page" className="truncate text-ice">{offer.name}</li>
+        </ol>
+      </nav>
 
       {search.checkout === "success" && (
         <div className="border-b border-mint/30 bg-mint/10 px-6 py-4 text-center text-sm font-medium text-mint">
