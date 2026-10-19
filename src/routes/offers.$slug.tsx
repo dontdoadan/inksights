@@ -135,7 +135,7 @@ function OfferPage() {
         url: canonical,
         provider: { "@type": "Organization", name: "INKSIGHTS", url: "https://getinksights.co.uk" },
         areaServed: { "@type": "Country", name: "United Kingdom" },
-        offers: offer.structuredPrice
+        offers: offer.stripePriceId && offer.structuredPrice
           ? {
               "@type": "Offer",
               priceCurrency: "GBP",
