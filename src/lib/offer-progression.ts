@@ -30,6 +30,7 @@ export function recommendNextCommercialStep(input: GrowthCheckHandoff): NextComm
     typeof input.visibilityScore === "string" &&
     input.visibilityScore.trim() !== "" &&
     Number.isFinite(score) &&
+    score >= 0 &&
     score < 85;
 
   if (eligibleSelfAssessment) {
