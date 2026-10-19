@@ -10,6 +10,8 @@ const CANONICAL_URL = "https://getinksights.co.uk/contact";
 export const Route = createFileRoute("/contact")({
   validateSearch: (search: Record<string, unknown>) => ({
     topic: typeof search.topic === "string" ? search.topic : undefined,
+    lead_id: typeof search.lead_id === "string" && /^[0-9a-f-]{36}$/i.test(search.lead_id) ? search.lead_id : undefined,
+    audit_id: typeof search.audit_id === "string" && /^[0-9a-f-]{36}$/i.test(search.audit_id) ? search.audit_id : undefined,
   }),
   component: ContactPage,
   head: () => ({
@@ -28,6 +30,9 @@ function ContactPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const started = useRef(false);
+  const diagnosticReference = search.lead_id || search.audit_id
+    ? `Following my INKSIGHTS Growth Check (lead: ${search.lead_id || "not supplied"}; assessment: ${search.audit_id || "not supplied"}), I would like to discuss the next step for my studio.\n\n`
+    : "";
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -66,7 +71,7 @@ function ContactPage() {
       <PageHero
         eyebrow="Contact INKSIGHTS"
         title={<>Ask a specific question or start with the diagnosis.</>}
-        description={<>Use the form for existing-client support, billing or cancellation questions, offer scope, partnerships, technical issues or general enquiries. Studio owners seeking a recommendation should normally start with the free Revenue Audit.</>}
+        description={<>Use the form for existing-client support, billing or cancellation questions, offer scope, partnerships, technical issues or general enquiries. Studio owners seeking a recommendation should normally start with the free Studio Growth Check.</>}
       />
 
       <section>
@@ -87,8 +92,8 @@ function ContactPage() {
             <div className="rounded-2xl border border-border bg-ink p-6">
               <MessageSquareText className="h-7 w-7 text-mint" />
               <h2 className="mt-5 font-display text-2xl font-black text-ice">Studio recommendation</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The Revenue Audit collects enough commercial context to recommend a useful route rather than beginning with an unstructured sales message.</p>
-              <a href="/studio-growth-check" className="mt-5 inline-flex rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Start the free Revenue Audit</a>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The Growth Check collects enough commercial context to recommend a useful route rather than beginning with an unstructured sales message.</p>
+              <a href="/studio-growth-check" className="mt-5 inline-flex rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Start the free Studio Growth Check</a>
             </div>
             <div className="rounded-2xl border border-border bg-ink p-6">
               <ShieldCheck className="h-7 w-7 text-mint" />
@@ -134,7 +139,9 @@ function ContactPage() {
                       <option value="existing-client-support">Existing client support</option>
                       <option value="billing-cancellation">Billing, subscription or cancellation</option>
                       <option value="72-hour-visibility-fix">72-Hour Visibility Fix</option>
-                      <option value="growth-check">Revenue Audit or recommendation</option>
+                      <option value="primary-constraint-programme">Primary Constraint Programme</option>
+                      <option value="visibility-watch">Visibility Watch enquiry</option>
+                      <option value="growth-check">Growth Check or recommendation</option>
                       <option value="studio-intelligence-audit">£395 Studio Intelligence Audit</option>
                       <option value="partnership">Partnership or case study</option>
                       <option value="website-support">Website or technical issue</option>
@@ -145,7 +152,7 @@ function ContactPage() {
                   </Field>
                 </div>
                 <Field label="Message" required>
-                  <textarea name="message" required minLength={10} rows={7} className="form-control resize-y" placeholder="Include the studio, relevant links or references, what happened and the outcome you need. Do not include passwords, full card details, private API keys or verification codes." />
+                  <textarea name="message" required minLength={10} rows={7} defaultValue={diagnosticReference} className="form-control resize-y" placeholder="Include the studio, relevant links or references, what happened and the outcome you need. Do not include passwords, full card details, private API keys or verification codes." />
                 </Field>
                 <div className="hidden" aria-hidden="true">
                   <label>Company URL<input name="company_url" tabIndex={-1} autoComplete="off" /></label>

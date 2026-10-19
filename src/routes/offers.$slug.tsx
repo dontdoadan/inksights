@@ -86,12 +86,14 @@ function OfferPage() {
   const search = useSearch({ from: "/offers/$slug" });
   const offer = getPublicOffer(slug);
   const verifyCheckout = useServerFn(verifyCheckoutSession);
+  const [checkoutVerified, setCheckoutVerified] = useState<"checking" | "paid" | "not_verified">("checking");
 
   useEffect(() => {
     if (!offer || search.checkout !== "success" || !search.session_id) return;
-    void verifyCheckout({ data: { sessionId: search.session_id } })
+    void verifyCheckout({ data: { sessionId: search.session_id, slug: offer.slug } })
       .then((verified) => {
-        if (!verified.paid) return;
+        if (!verified.paid) { setCheckoutVerified("not_verified"); return; }
+        setCheckoutVerified("paid");
         trackWebsiteEvent("payment_completed", {
           offer: verified.offerSlug || offer.slug,
           amount_minor: verified.amountTotal || 0,
@@ -99,6 +101,7 @@ function OfferPage() {
         });
       })
       .catch(() => {
+        setCheckoutVerified("not_verified");
         trackWebsiteEvent("checkout_error", { offer: offer.slug, reason: "verification_failed" });
       });
   }, [offer, search.checkout, search.session_id, verifyCheckout]);
@@ -132,7 +135,7 @@ function OfferPage() {
         url: canonical,
         provider: { "@type": "Organization", name: "INKSIGHTS", url: "https://getinksights.co.uk" },
         areaServed: { "@type": "Country", name: "United Kingdom" },
-        offers: offer.structuredPrice
+        offers: offer.stripePriceId && offer.structuredPrice
           ? {
               "@type": "Offer",
               priceCurrency: "GBP",
@@ -150,7 +153,9 @@ function OfferPage() {
         ],
       }]} />
       <PageHero eyebrow={offer.eyebrow} title={offer.name} description={offer.summary}>
-        {offer.stripePriceId ? <CheckoutButton offer={offer} leadId={search.lead_id} auditId={search.audit_id} /> : <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>}
+        {offer.stripePriceId
+          ? <CheckoutButton offer={offer} leadId={search.lead_id} auditId={search.audit_id} />
+          : <PrimaryButton href={`/contact?topic=${encodeURIComponent(offer.slug)}${search.lead_id ? `&lead_id=${encodeURIComponent(search.lead_id)}` : ""}${search.audit_id ? `&audit_id=${encodeURIComponent(search.audit_id)}` : ""}`}>Request a scoped next step</PrimaryButton>}
         <SecondaryButton href="/contact">Ask a scope question</SecondaryButton>
       </PageHero>
 
@@ -163,8 +168,12 @@ function OfferPage() {
       </nav>
 
       {search.checkout === "success" && (
-        <div className="border-b border-mint/30 bg-mint/10 px-6 py-4 text-center text-sm font-medium text-mint">
-          Payment successful. Thank you — INKSIGHTS will contact you within one working day to begin intake.
+        <div role="status" className="border-b border-mint/30 bg-mint/10 px-6 py-4 text-center text-sm font-medium text-mint">
+          {checkoutVerified === "checking"
+            ? "Checking payment status with Stripe…"
+            : checkoutVerified === "paid"
+              ? "Payment confirmed by Stripe. Your order has been received; onboarding details will follow."
+              : "We could not confirm payment from this link. Please check your Stripe receipt or contact INKSIGHTS before retrying."}
         </div>
       )}
       {search.checkout === "cancelled" && (
@@ -316,7 +325,15 @@ function CheckoutButton({
         trackWebsiteEvent("checkout_started", { offer: offer.slug });
 
         if (offer.checkoutUrl) {
-          window.location.href = offer.checkoutUrl;
+          // Stripe Payment Links accept client_reference_id in the query string.
+          // A Growth Check lead UUID is an opaque reference, not personal data.
+          // The signed webhook must verify that checkout email matches the lead
+          // before associating the payment with the original assessment.
+          const paymentLink = new URL(offer.checkoutUrl);
+          if (leadId && /^[0-9a-f-]{36}$/i.test(leadId)) {
+            paymentLink.searchParams.set("client_reference_id", leadId);
+          }
+          window.location.href = paymentLink.toString();
           return;
         }
 

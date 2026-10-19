@@ -53,7 +53,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
   });
 
 export const verifyCheckoutSession = createServerFn({ method: "POST" })
-  .validator((data: { sessionId: string }) => data)
+  .validator((data: { sessionId: string; slug: string }) => data)
   .handler(async ({ data }) => {
     const secretKey = process.env["STRIPE_SECRET_KEY"];
     if (!secretKey) throw new Error("Stripe is not configured.");
@@ -63,8 +63,13 @@ export const verifyCheckoutSession = createServerFn({ method: "POST" })
       apiVersion: "2026-08-26.dahlia",
       typescript: true,
     });
+    const offer = getPublicOffer(data.slug);
+    if (!offer?.stripePriceId) throw new Error("Unknown checkout offer.");
     const session = await stripe.checkout.sessions.retrieve(data.sessionId);
-    const paid = session.payment_status === "paid" || (session.mode === "subscription" && session.status === "complete");
+    const lineItems = await stripe.checkout.sessions.listLineItems(data.sessionId, { limit: 20 });
+    const expectedPrice = lineItems.data.some((item) => item.price?.id === offer.stripePriceId);
+    const expectedOffer = !session.metadata?.offer_slug || session.metadata.offer_slug === offer.slug;
+    const paid = Boolean(expectedPrice && expectedOffer && session.payment_status === "paid");
 
     return {
       paid,
