@@ -324,8 +324,16 @@ function CheckoutButton({
         setIsLoading(true);
         trackWebsiteEvent("checkout_started", { offer: offer.slug });
 
-        if (offer.checkoutUrl && !leadId && !auditId) {
-          window.location.href = offer.checkoutUrl;
+        if (offer.checkoutUrl) {
+          // Stripe Payment Links accept client_reference_id in the query string.
+          // A Growth Check lead UUID is an opaque reference, not personal data.
+          // The signed webhook must verify that checkout email matches the lead
+          // before associating the payment with the original assessment.
+          const paymentLink = new URL(offer.checkoutUrl);
+          if (leadId && /^[0-9a-f-]{36}$/i.test(leadId)) {
+            paymentLink.searchParams.set("client_reference_id", leadId);
+          }
+          window.location.href = paymentLink.toString();
           return;
         }
 
