@@ -4,7 +4,16 @@ import { AuditReport } from "@/features/audit/components/AuditReport";
 import { loadPublishedReport } from "@/features/audit/queries";
 import type { PublishedReportBundle } from "@/features/audit/types";
 
-export const Route=createFileRoute("/report/$token")({component:PublishedReportPage,head:()=>({meta:[{title:"Studio Intelligence Audit — INKSIGHTS"},{name:"robots",content:"noindex,nofollow"}]})});
+export const Route = createFileRoute("/report/$token")({
+  component: PublishedReportPage,
+  head: () => ({
+    meta: [
+      { title: "Studio Intelligence Audit — INKSIGHTS" },
+      { name: "robots", content: "noindex,nofollow,noarchive" },
+    ],
+  }),
+  headers: () => ({ "X-Robots-Tag": "noindex, nofollow, noarchive" }),
+});
 
 function PublishedReportPage(){
   const {token}=Route.useParams(); const [data,setData]=useState<PublishedReportBundle|null>(null); const [error,setError]=useState("");
