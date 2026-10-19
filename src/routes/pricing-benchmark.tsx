@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, Clock3, Info, PoundSterling, ShieldCheck, TrendingUp } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Card,
   JsonLd,
@@ -16,6 +16,9 @@ const DATASET_VERSION = "2026-09-05-initial";
 
 type Region = "uk" | "london";
 type Benchmark = { name: string; sub: string; min: number; max: number };
+type PricingResponse = { submissionId: string; result: { below: number; above: number; positions: Array<"below" | "within" | "above" | null>; lead_time_signal: string; dataset_version: string } };
+type SubmittedPricing = { prices: Array<number | null>; result: PricingResponse["result"] };
+const CONSENT_VERSION = "2026-10-tool-v1";
 
 const BENCHMARKS: Record<Region, Benchmark[]> = {
   uk: [
@@ -80,21 +83,82 @@ function PricingBenchmark() {
   const [region, setRegion] = useState<Region>("uk");
   const [prices, setPrices] = useState<Record<number, string>>({});
   const [leadTime, setLeadTime] = useState("4");
+  const [dataNoticeAccepted, setDataNoticeAccepted] = useState(false);
+  const [submitted, setSubmitted] = useState<SubmittedPricing | null>(null);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const submissionKey = useRef<string | null>(null);
   const benchmarks = BENCHMARKS[region];
+
+  function clearResult() {
+    setSubmitted(null);
+    setSubmissionId(null);
+    setSubmitError(null);
+    submissionKey.current = null;
+  }
+
+  async function submitPricing() {
+    if (submitting) return;
+    setSubmitError(null);
+    const normalizedPrices = benchmarks.map((_, index) => {
+      const raw = prices[index];
+      return raw === undefined || raw === "" ? null : Number(raw);
+    });
+    if (!normalizedPrices.some((value) => value !== null)) {
+      setSubmitError("Enter at least one current price to receive your benchmark.");
+      return;
+    }
+    if (normalizedPrices.some((value) => value !== null && (!Number.isFinite(value) || value <= 0 || value > 50000 || Math.round(value * 100) !== value * 100))) {
+      setSubmitError("Enter valid GBP prices greater than £0 and no more than £50,000.");
+      return;
+    }
+    if (!dataNoticeAccepted) {
+      setSubmitError("Please acknowledge how your submitted data will be used.");
+      return;
+    }
+    const key = submissionKey.current ?? crypto.randomUUID();
+    submissionKey.current = key;
+    setSubmitting(true);
+    try {
+      const response = await fetch("/api/public/pricing-benchmark-submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          region,
+          prices: normalizedPrices,
+          leadTimeWeeks: Number(leadTime),
+          submissionKey: key,
+          consentVersion: CONSENT_VERSION,
+          dataNoticeAccepted: true,
+        }),
+      });
+      const payload = await response.json() as Partial<PricingResponse> & { error?: string };
+      if (!response.ok || !payload.result || !payload.submissionId) {
+        throw new Error(payload.error || "Your result could not be saved. Please try again.");
+      }
+      setSubmitted({ prices: normalizedPrices, result: payload.result });
+      setSubmissionId(payload.submissionId);
+    } catch (error) {
+      setSubmitted(null);
+      setSubmitError(error instanceof Error ? error.message : "Submission failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   const results = useMemo(
     () =>
       benchmarks.map((benchmark, index) => {
-        const raw = prices[index];
-        const value = raw ? Number(raw) : NaN;
-        return { benchmark, value, result: Number.isFinite(value) && value > 0 ? position(value, benchmark) : null };
+        const value = submitted?.prices[index] ?? NaN;
+        return { benchmark, value, result: submitted && Number.isFinite(value) && value > 0 ? position(value, benchmark) : null };
       }),
-    [benchmarks, prices],
+    [benchmarks, submitted],
   );
 
-  const entered = results.filter((item) => item.result);
-  const below = entered.filter((item) => item.result?.label === "Below reference").length;
-  const above = entered.filter((item) => item.result?.label === "Above reference").length;
+  const below = submitted?.result.below ?? 0;
+  const above = submitted?.result.above ?? 0;
   const leadTimeNumber = Number(leadTime);
 
   const leadTimeSignal =
@@ -140,7 +204,7 @@ function PricingBenchmark() {
                 <select
                   id="region"
                   value={region}
-                  onChange={(event) => { setRegion(event.target.value as Region); setPrices({}); }}
+                  onChange={(event) => { setRegion(event.target.value as Region); setPrices({}); clearResult(); }}
                   className="mt-2 w-full rounded-xl border border-border bg-ink-deep px-4 py-3 text-sm text-ice outline-none focus:border-mint"
                 >
                   <option value="uk">{REGION_LABELS.uk}</option>
@@ -164,13 +228,25 @@ function PricingBenchmark() {
                         step="1"
                         inputMode="decimal"
                         value={prices[index] ?? ""}
-                        onChange={(event) => setPrices((current) => ({ ...current, [index]: event.target.value }))}
+                        onChange={(event) => { setPrices((current) => ({ ...current, [index]: event.target.value })); clearResult(); }}
                         placeholder="Your price"
                         className="w-full rounded-lg border border-border bg-ink px-3 py-3 pl-7 text-sm text-ice placeholder:text-muted-foreground outline-none focus:border-mint"
                       />
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-7 rounded-xl border border-border bg-ink-deep p-5">
+                <label className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
+                  <input type="checkbox" checked={dataNoticeAccepted} onChange={(event) => setDataNoticeAccepted(event.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-current" />
+                  <span>I understand that INKSIGHTS will store the prices and booking lead time I submit to provide my result and may use de-identified, unverified responses for aggregated research. <a className="text-mint underline" href="/privacy">Read the Privacy Notice</a>.</span>
+                </label>
+                <button type="button" onClick={submitPricing} disabled={submitting} className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-mint px-6 py-3 font-bold text-ink-deep transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
+                  {submitting ? "Saving your submission…" : "Submit data and view my benchmark"}
+                </button>
+                {submitError && <p role="alert" className="mt-3 text-sm text-amber-300">{submitError}</p>}
+                {submissionId && <p role="status" className="mt-3 text-sm text-mint">Submission saved. Your benchmark results are displayed below.</p>}
               </div>
             </Card>
 
@@ -189,19 +265,19 @@ function PricingBenchmark() {
                   <label className="text-xs font-bold uppercase tracking-[.14em] text-muted-foreground" htmlFor="lead-time">Typical lead time</label>
                   <span className="font-display text-3xl font-black text-ice">{leadTime} weeks</span>
                 </div>
-                <input id="lead-time" type="range" min="1" max="26" value={leadTime} onChange={(event) => setLeadTime(event.target.value)} className="mt-6 w-full accent-current" />
+                <input id="lead-time" type="range" min="1" max="26" value={leadTime} onChange={(event) => { setLeadTime(event.target.value); clearResult(); }} className="mt-6 w-full accent-current" />
                 <div className="mt-2 flex justify-between text-[11px] text-muted-foreground"><span>1 week</span><span>13 weeks</span><span>26 weeks</span></div>
               </div>
 
               <div className="mt-8 rounded-2xl border border-mint/20 bg-mint/5 p-5">
                 <TrendingUp className="h-6 w-6 text-mint" />
-                <h3 className="mt-4 font-display text-xl font-black text-ice">{leadTimeSignal.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{leadTimeSignal.text}</p>
+                <h3 className="mt-4 font-display text-xl font-black text-ice">{submitted ? leadTimeSignal.title : "Submit your data to reveal the demand signal"}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{submitted ? leadTimeSignal.text : "Your demand interpretation will be shown only after your data has been successfully saved."}</p>
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-[.12em] text-muted-foreground">Below reference</p><p className="mt-2 font-display text-2xl font-black text-ice">{below}</p></div>
-                <div className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-[.12em] text-muted-foreground">Above reference</p><p className="mt-2 font-display text-2xl font-black text-ice">{above}</p></div>
+                <div className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-[.12em] text-muted-foreground">Below reference</p><p className="mt-2 font-display text-2xl font-black text-ice">{submitted ? below : "—"}</p></div>
+                <div className="rounded-xl border border-border bg-ink-deep p-4"><p className="text-xs uppercase tracking-[.12em] text-muted-foreground">Above reference</p><p className="mt-2 font-display text-2xl font-black text-ice">{submitted ? above : "—"}</p></div>
               </div>
             </Card>
           </div>
@@ -216,7 +292,12 @@ function PricingBenchmark() {
             description="A benchmark is a reference point. It is not a pricing recommendation. Use the position below with demand, utilisation, conversion, portfolio strength and margin."
           />
 
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
+          {!submitted && (
+            <div className="mt-10 rounded-xl border border-border bg-ink-deep p-6 text-muted-foreground" role="status">
+              Your personal pricing position is hidden until you submit your information using the button above. No submission means no result is recorded.
+            </div>
+          )}
+          {submitted && <div className="mt-10 grid gap-4 md:grid-cols-2">
             {results.map(({ benchmark, value, result }) => (
               <Card key={benchmark.name} className="bg-ink-deep p-5">
                 <div className="flex items-start justify-between gap-4">
@@ -240,7 +321,7 @@ function PricingBenchmark() {
                 )}
               </Card>
             ))}
-          </div>
+          </div>}
 
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             <Card className="bg-ink-deep p-5"><BarChart3 className="h-6 w-6 text-mint" /><h3 className="mt-4 font-display text-lg font-black text-ice">Add utilisation</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">A high rate with an empty diary is a different problem from a high rate with a stable waitlist.</p></Card>
