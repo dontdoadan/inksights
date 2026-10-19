@@ -49,7 +49,7 @@ export const publicOffers: PublicOffer[] = [
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
     performancePricing: "Fixed one-time audit fee; no performance percentage applies.",
     summary:
-      "A structured commercial audit for established UK tattoo studios, combining visibility, competitor and customer-journey analysis with prioritised recommendations and a 90-day action plan.",
+      "A structured tattoo studio business audit for established UK studios, combining search visibility, competitor and customer-journey analysis with prioritised recommendations and a 90-day action plan.",
     problem:
       "The studio has demand, activity or revenue but cannot reliably identify which commercial constraint should be fixed first.",
     timeframe: "Onboarding begins after payment; the findings timetable is confirmed once the required studio information is complete.",
@@ -88,6 +88,7 @@ export const publicOffers: PublicOffer[] = [
       { title: "Findings and 90-day plan", description: "Present the evidence, recommendations and a practical 90-day action plan with one measurable starting intervention." },
     ],
     faqs: [
+      ["What does a tattoo studio business audit cover?", "The Studio Intelligence Audit reviews the studio's public visibility, competitors, website and booking journey, then connects those observations to the commercial constraints affecting enquiries, capacity, retention and revenue. The output is prioritised rather than a generic marketing checklist."],
       ["Is this the free Revenue Audit?", "No. The free Revenue Audit is a first-pass estimate. The £395 Studio Intelligence Audit is the paid diagnostic that replaces broad assumptions with a structured review of the studio and its commercial journey."],
       ["Is implementation included?", "No. Implementation is scoped separately only when the audit identifies a justified intervention."],
       ["Is payment secure?", "Yes. Checkout is handled by Stripe using the active INKSIGHTS live account."],

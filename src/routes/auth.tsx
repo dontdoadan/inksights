@@ -14,6 +14,7 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { title: "Sign in — INKSIGHTS" },
       { name: "description", content: "Sign in to your INKSIGHTS studio dashboard." },
+      { name: "robots", content: "noindex,nofollow,noarchive" },
     ],
   }),
 });

@@ -3,11 +3,11 @@ import { StudioTopicPage, topicHead, type StudioTopic } from "@/components/studi
 
 const topic: StudioTopic = {
   canonical: "https://getinksights.co.uk/tattoo-studio-seo",
-  title: "Tattoo Studio SEO: Google & Local Search Guide for UK Studios | INKSIGHTS",
+  title: "Tattoo Studio SEO UK: Google & Local Search Guide | INKSIGHTS",
   description:
     "A practical UK tattoo studio SEO guide covering Google Business Profile, local search, service and style pages, portfolio proof, internal linking, reviews, measurement and booking conversion.",
   eyebrow: "Tattoo studio SEO & local search guide · UK",
-  updated: "2026-10-08",
+  updated: "2026-10-19",
   intro: (
     <>
       Tattoo studio SEO is not about publishing the most pages or repeating the phrase “tattoo studio near me”. The commercial

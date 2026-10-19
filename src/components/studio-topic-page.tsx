@@ -52,10 +52,11 @@ function formatUpdatedDate(value: string) {
 
 export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
   const visibleUpdated = topic.updatedLabel ?? formatUpdatedDate(topic.updated);
+  const displayTitle = topic.title.replace(/\s*\|\s*INKSIGHTS\s*$/, "");
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: topic.title,
+    headline: displayTitle,
     description: topic.description,
     url: topic.canonical,
     mainEntityOfPage: topic.canonical,
@@ -91,7 +92,7 @@ export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
       {
         "@type": "ListItem",
         position: 2,
-        name: topic.title.replace(" | INKSIGHTS", ""),
+        name: displayTitle,
         item: topic.canonical,
       },
     ],
@@ -115,7 +116,7 @@ export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
   return (
     <PublicShell>
       <JsonLd data={faqJsonLd ? [articleJsonLd, breadcrumbJsonLd, faqJsonLd] : [articleJsonLd, breadcrumbJsonLd]} />
-      <PageHero eyebrow={topic.eyebrow} title={topic.title} description={topic.intro}>
+      <PageHero eyebrow={topic.eyebrow} title={displayTitle} description={topic.intro}>
         <a
           href="/studio-growth-check"
           className="inline-flex min-h-12 items-center rounded-full bg-mint px-6 py-3 font-bold text-ink-deep"
@@ -129,6 +130,14 @@ export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
           Check studio visibility
         </a>
       </PageHero>
+
+      <nav aria-label="Breadcrumb" className="border-b border-border bg-ink-deep">
+        <ol className="mx-auto flex max-w-5xl items-center gap-2 px-6 py-4 text-sm text-muted-foreground">
+          <li><a href="/resources" className="font-semibold transition hover:text-mint">Resources</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page" className="truncate text-ice">{displayTitle}</li>
+        </ol>
+      </nav>
 
       <section className="border-b border-border bg-ink">
         <div className="mx-auto max-w-5xl px-6 py-8">
@@ -243,6 +252,20 @@ export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
           ) : null}
 
           {topic.sources?.length ? <SourceList sources={topic.sources} /> : null}
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-ink-deep">
+        <div className="mx-auto flex max-w-5xl flex-col gap-4 px-6 py-10 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Need a deeper diagnosis?</p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              The paid Studio Intelligence Audit combines search visibility with competitor, booking, capacity, retention and revenue evidence.
+            </p>
+          </div>
+          <a href="/offers/studio-intelligence-audit" className="font-bold text-mint hover:text-mint-soft">
+            View the Tattoo Studio Intelligence Audit →
+          </a>
         </div>
       </section>
 
