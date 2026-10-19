@@ -71,7 +71,7 @@ function ContactPage() {
       <PageHero
         eyebrow="Contact INKSIGHTS"
         title={<>Ask a specific question or start with the diagnosis.</>}
-        description={<>Use the form for existing-client support, billing or cancellation questions, offer scope, partnerships, technical issues or general enquiries. Studio owners seeking a recommendation should normally start with the free Revenue Audit.</>}
+        description={<>Use the form for existing-client support, billing or cancellation questions, offer scope, partnerships, technical issues or general enquiries. Studio owners seeking a recommendation should normally start with the free Studio Growth Check.</>}
       />
 
       <section>
@@ -92,8 +92,8 @@ function ContactPage() {
             <div className="rounded-2xl border border-border bg-ink p-6">
               <MessageSquareText className="h-7 w-7 text-mint" />
               <h2 className="mt-5 font-display text-2xl font-black text-ice">Studio recommendation</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The Revenue Audit collects enough commercial context to recommend a useful route rather than beginning with an unstructured sales message.</p>
-              <a href="/studio-growth-check" className="mt-5 inline-flex rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Start the free Revenue Audit</a>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The Growth Check collects enough commercial context to recommend a useful route rather than beginning with an unstructured sales message.</p>
+              <a href="/studio-growth-check" className="mt-5 inline-flex rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Start the free Studio Growth Check</a>
             </div>
             <div className="rounded-2xl border border-border bg-ink p-6">
               <ShieldCheck className="h-7 w-7 text-mint" />
@@ -141,7 +141,7 @@ function ContactPage() {
                       <option value="72-hour-visibility-fix">72-Hour Visibility Fix</option>
                       <option value="primary-constraint-programme">Primary Constraint Programme</option>
                       <option value="visibility-watch">Visibility Watch enquiry</option>
-                      <option value="growth-check">Revenue Audit or recommendation</option>
+                      <option value="growth-check">Growth Check or recommendation</option>
                       <option value="studio-intelligence-audit">£395 Studio Intelligence Audit</option>
                       <option value="partnership">Partnership or case study</option>
                       <option value="website-support">Website or technical issue</option>
