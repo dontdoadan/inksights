@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { isGrowthCheckId, verifiedGrowthCheckReference } from "./reference_policy.mjs";
 
 const SB = Deno.env.get("SUPABASE_URL") || "";
 const WEBHOOK_CONFIG_KEY = "stripe_checkout_webhook_signing_secret_v1";
@@ -126,13 +127,13 @@ async function verifiedGrowthCheckLead(session: Record<string, any>): Promise<st
   // association only after the paid Checkout Session email matches the lead.
   const reference = clean(session.client_reference_id, 80);
   const email = clean(session.customer_details?.email || session.customer_email, 254).toLowerCase();
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(reference) || !email) return null;
+  if (!isGrowthCheckId(reference) || !email) return null;
   const rows = await rest(
     `revenue_audit_leads?id=eq.${encodeURIComponent(reference)}&select=id,email&limit=1`,
     { method: "GET" },
   ) as Array<{ id: string; email: string }>;
-  if (!rows?.length || rows[0].email?.trim().toLowerCase() !== email) return null;
-  return rows[0].id;
+  if (!rows?.length) return null;
+  return verifiedGrowthCheckReference(reference, email, rows[0].email) ? rows[0].id : null;
 }
 
 async function growthCheckAuditId(leadId: string | null): Promise<string | null> {
