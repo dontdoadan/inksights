@@ -5,10 +5,9 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CookieConsent } from "@/components/cookie-consent";
-import { supabase } from "@/integrations/supabase/client";
 import { CONSENT_STORAGE_KEY, GOOGLE_TAG_ID, readConsent, trackMetaPageView } from "@/lib/consent";
 import { trackWebsiteEvent } from "@/lib/website-events";
-import { SiteEffects } from "@/components/interactive-home";
+import { SiteEffects } from "@/components/site-effects";
 
 function NotFoundComponent() { return <div className="flex min-h-screen items-center justify-center bg-ink-deep px-4 text-ice"><div className="max-w-md text-center"><p className="text-xs font-bold uppercase tracking-[0.2em] text-mint">404</p><h1 className="mt-4 font-display text-5xl font-black">Page not found</h1><p className="mt-4 text-sm leading-relaxed text-muted-foreground">The page may have moved. Use the resource library or return to the INKSIGHTS homepage.</p><div className="mt-7 flex flex-wrap justify-center gap-3"><Link to="/" className="rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Go home</Link><a href="/resources" className="rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">Browse resources</a></div></div></div>; }
 function ErrorComponent({ error, reset }: ErrorComponentProps) { const normalizedError = error instanceof Error ? error : new Error(String(error)); console.error(normalizedError); const router = useRouter(); useEffect(() => { reportLovableError(normalizedError, { boundary: "tanstack_root_error_component" }); }, [normalizedError]); return <div className="flex min-h-screen items-center justify-center bg-ink-deep px-4 text-ice"><div className="max-w-md text-center"><h1 className="font-display text-3xl font-black">This page did not load</h1><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Try the page again or return to the homepage.</p><div className="mt-6 flex flex-wrap justify-center gap-2"><button onClick={() => { router.invalidate(); reset(); }} className="rounded-full bg-mint px-5 py-3 font-bold text-ink-deep">Try again</button><a href="/" className="rounded-full border border-border px-5 py-3 font-bold text-ice">Go home</a></div></div></div>; }
@@ -48,17 +47,10 @@ function RootShell({ children }: { children: ReactNode }) {
     } catch (error) {}
   `;
 
-  const googleTagInit = `
-    window.gtag('js', new Date());
-    window.gtag('config', '${GOOGLE_TAG_ID}', { send_page_view: false });
-  `;
-
   return (
     <html lang="en-GB">
       <head>
         <script dangerouslySetInnerHTML={{ __html: googleConsentBootstrap }} />
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`} data-inksights-google-tag={GOOGLE_TAG_ID} />
-        <script dangerouslySetInnerHTML={{ __html: googleTagInit }} />
         <HeadContent />
       </head>
       <body>
@@ -71,8 +63,50 @@ function RootShell({ children }: { children: ReactNode }) {
     </html>
   );
 }
-function RootComponent() { const { queryClient } = Route.useRouteContext(); const router = useRouter(); const pathname = useRouterState({ select: (state) => state.location.pathname }); useEffect(() => { if (typeof window === "undefined") return; const { data: sub } = supabase.auth.onAuthStateChange((event) => { if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return; router.invalidate(); if (event !== "SIGNED_OUT") queryClient.invalidateQueries(); }); const globalWindow = window as unknown as { __inksightsAuthSub?: { unsubscribe: () => void } }; globalWindow.__inksightsAuthSub?.unsubscribe(); globalWindow.__inksightsAuthSub = sub.subscription; return () => { sub.subscription.unsubscribe(); if (globalWindow.__inksightsAuthSub === sub.subscription) delete globalWindow.__inksightsAuthSub; }; }, [queryClient, router]); useEffect(() => {
+function RootComponent() {
+  const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Public search visitors do not need the Supabase auth runtime. Authenticated
+    // routes and sign-in flows load it on demand instead of paying that cost site-wide.
+    const needsAuthRuntime =
+      pathname.startsWith("/auth") ||
+      pathname.startsWith("/dashboard") ||
+      pathname.startsWith("/workspace") ||
+      pathname.startsWith("/audits");
+
+    if (!needsAuthRuntime) return;
+
+    let cancelled = false;
+    let activeSubscription: { unsubscribe: () => void } | undefined;
+
+    void import("@/integrations/supabase/client").then(({ supabase }) => {
+      if (cancelled) return;
+
+      const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+        if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+        router.invalidate();
+        if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+      });
+
+      activeSubscription = sub.subscription;
+    });
+
+    return () => {
+      cancelled = true;
+      activeSubscription?.unsubscribe();
+    };
+  }, [pathname, queryClient, router]);
+
+  useEffect(() => {
     if (typeof window === "undefined") return;
     if (readConsent()?.marketing) trackMetaPageView(pathname);
     trackWebsiteEvent("page_view");
-  }, [pathname]); return <QueryClientProvider client={queryClient}><Outlet /></QueryClientProvider>; }
+  }, [pathname]);
+
+  return <QueryClientProvider client={queryClient}><Outlet /></QueryClientProvider>;
+}

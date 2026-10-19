@@ -23,6 +23,7 @@ type GoogleWindow = Window & {
   dataLayer?: unknown[][];
   gtag?: GoogleTagFunction;
   __inksightsGoogleAnalyticsLoaded?: boolean;
+  __inksightsGoogleAnalyticsLoading?: boolean;
 };
 
 export const CONSENT_STORAGE_KEY = "inksight-consent-v1";
@@ -103,7 +104,39 @@ export function loadGoogleAnalytics() {
   if (!global) return;
 
   updateGoogleConsent();
-  global.__inksightsGoogleAnalyticsLoaded = true;
+
+  if (global.__inksightsGoogleAnalyticsLoaded || global.__inksightsGoogleAnalyticsLoading) return;
+
+  // Queue configuration before the external library arrives. This preserves
+  // GA4 event ordering while avoiding a third-party network request for visitors
+  // who have not opted into analytics.
+  global.gtag?.("js", new Date());
+  global.gtag?.("config", GOOGLE_TAG_ID, { send_page_view: false });
+  global.__inksightsGoogleAnalyticsLoading = true;
+
+  const existing = document.querySelector<HTMLScriptElement>(
+    `script[data-inksights-google-tag="${GOOGLE_TAG_ID}"]`,
+  );
+
+  if (existing) {
+    global.__inksightsGoogleAnalyticsLoaded = true;
+    global.__inksightsGoogleAnalyticsLoading = false;
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.async = true;
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GOOGLE_TAG_ID)}`;
+  script.dataset.inksightsGoogleTag = GOOGLE_TAG_ID;
+  script.addEventListener("load", () => {
+    global.__inksightsGoogleAnalyticsLoaded = true;
+    global.__inksightsGoogleAnalyticsLoading = false;
+    updateGoogleConsent();
+  }, { once: true });
+  script.addEventListener("error", () => {
+    global.__inksightsGoogleAnalyticsLoading = false;
+  }, { once: true });
+  document.head.appendChild(script);
 }
 
 export function trackGooglePageView(path: string) {
