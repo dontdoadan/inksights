@@ -7,6 +7,11 @@ const CANONICAL_URL = "https://getinksights.co.uk/tattoo-studio-software";
 const platforms = [
   { name: "Tattoo Studio Pro", emphasis: "Tattoo-specific studio administration", strengths: "Client profiles, consent workflows, deposits, point of sale and scheduling.", evaluate: "Confirm current UK payment support, reporting depth, data export and multi-artist controls.", href: "https://tattoostudiopro.com/" },
   { name: "Venue Ink", emphasis: "Tattoo enquiries and booking workflow", strengths: "Request forms, scheduling, deposits and client conversations in one workflow.", evaluate: "Check studio-level permissions, portability and current communication features.", href: "https://venue.ink/" },
+  { name: "Orbis Salon", emphasis: "UK tattoo-studio booking and client management", strengths: "Appointments, clients, artists, deposits, consent, session records, aftercare and payments are presented as one connected workflow.", evaluate: "Test custom-intake depth, migration, permissions, analytics and fit against the studio's real approval process.", href: "https://orbissalon.co.uk/tattoo-studio-software" },
+  { name: "InkWell", emphasis: "Tattoo enquiry-to-booking workflow", strengths: "Structured tattoo briefs, studio approval, pricing and artist calendars are central to its UK beta positioning.", evaluate: "Validate beta maturity, payments, consent, exports, integrations and multi-artist permissions before migration.", href: "https://theinkwell.app/" },
+  { name: "Runavel", emphasis: "Tattoo studio diary, paperwork and money", strengths: "Client records, appointments, consents, payments and studio administration are positioned in one system.", evaluate: "Review current release maturity, export options, integrations and whether the active-development cadence suits the studio.", href: "https://runavel.com/" },
+  { name: "INKOS", emphasis: "All-in-one tattoo studio operations", strengths: "Public booking, multi-studio calendars, CRM, inbox, campaigns, payments, stock, aftercare and a mini-site are presented in one platform.", evaluate: "Confirm UK payment, messaging, reporting, data-portability and support requirements against the studio's stack.", href: "https://www.inkos.me/" },
+  { name: "TattSet", emphasis: "Tattoo booking and studio management", strengths: "Bookings, clients, consent, deposits, reminders and multi-artist management are part of its studio plan.", evaluate: "Check platform availability across the team's devices, export controls, integrations and reporting depth.", href: "https://www.tattset.com/" },
   { name: "Fresha", emphasis: "Broader beauty and appointment platform", strengths: "Established booking infrastructure for appointment-led businesses, including tattoo and piercing.", evaluate: "Review marketplace, payment and commercial terms against tattoo-specific alternatives.", href: "https://www.fresha.com/" },
   { name: "Square Appointments", emphasis: "Payments-first operations", strengths: "Scheduling, payments, online booking and team management within the Square ecosystem.", evaluate: "Test whether custom enquiry, reference-image and consent workflows require separate tools.", href: "https://squareup.com/gb/en/appointments" },
   { name: "Setmore", emphasis: "Accessible online scheduling", strengths: "Appointments, reminders and booking links that can be used from studio profiles.", evaluate: "Assess deposits, custom intake, project approval and reporting requirements.", href: "https://www.setmore.com/" },
@@ -28,9 +33,9 @@ export const Route = createFileRoute("/tattoo-studio-software")({
   component: TattooStudioSoftwarePage,
   head: () => ({
     meta: [
-      { title: "Tattoo Studio Software Comparison 2026 | INKSIGHTS" },
-      { name: "description", content: "Compare tattoo studio booking and management software by enquiry, deposits, consent, communication, workflow and reporting." },
-      { property: "og:title", content: "Tattoo Studio Software Comparison 2026" },
+      { title: "Tattoo Studio Software UK: 2026 Comparison | INKSIGHTS" },
+      { name: "description", content: "Compare tattoo studio software in the UK for booking, enquiries, deposits, consent, client management, communication, workflow and reporting." },
+      { property: "og:title", content: "Tattoo Studio Software UK: 2026 Comparison" },
       { property: "og:description", content: "Compare tattoo studio software by the complete workflow it must support—not feature-count marketing." },
       { property: "og:url", content: CANONICAL_URL },
     ],
@@ -44,13 +49,13 @@ function TattooStudioSoftwarePage() {
       <JsonLd data={{
         "@context": "https://schema.org",
         "@type": "Article",
-        headline: "Tattoo Studio Software Comparison 2026",
+        headline: "Tattoo Studio Software UK: 2026 Comparison",
         url: CANONICAL_URL,
-        dateModified: "2026-07-26",
+        dateModified: "2026-10-19",
         publisher: { "@type": "Organization", name: "INKSIGHTS" },
       }} />
       <PageHero
-        eyebrow="Independent workflow guide · Last verified 26 July 2026"
+        eyebrow="Independent workflow guide · Last verified 19 October 2026"
         title={<>Tattoo studio software should fit the way tattoo work is actually sold.</>}
         description={<>The correct platform is not necessarily the one with the longest feature list. It is the one that reliably moves a custom request from enquiry to approval, deposit, consent, appointment, post-session follow-up and repeat booking with the least duplicate administration.</>}
       />
