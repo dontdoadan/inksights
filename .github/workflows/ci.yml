@@ -91,6 +91,9 @@ jobs:
       - name: Test search intelligence authorization policy
         run: node --test supabase/functions/search-intelligence-v1/auth_policy_test.mjs
 
+      - name: Test commercial offer progression rules
+        run: deno test --allow-net=false tests/offer-progression.test.ts
+
       - name: Test Revenue Audit preview CORS policy
         run: node --test supabase/functions/revenue-audit-v1/cors_policy_test.mjs
 
