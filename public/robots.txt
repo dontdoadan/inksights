@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /auth
 Disallow: /dashboard
 Disallow: /workspace
 Disallow: /command-hub
