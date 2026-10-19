@@ -22,30 +22,37 @@ export const Route = createFileRoute("/offers/")({
 const serviceStages = [
   {
     number: "01",
-    label: "Diagnose",
-    title: "Find the constraint before choosing the intervention.",
-    description: "Use a structured diagnosis when several commercial problems could be causing the same revenue symptom.",
-    slugs: ["studio-intelligence-audit", "revenue-audit"],
+    label: "Discover",
+    title: "Understand the starting point for free.",
+    description: "Complete the Growth Check. The result informs the next step, without claiming an estimate is verified revenue.",
+    slugs: [],
   },
   {
     number: "02",
-    label: "Fix",
-    title: "Correct one visible, commercially relevant weakness.",
-    description: "Use a tightly scoped correction when the evidence points to one immediate public-facing problem.",
+    label: "Prove",
+    title: "Correct a focused, visible problem when justified.",
+    description: "The 72-Hour Visibility Fix is appropriate only when a verified and manageable public-facing weakness can be addressed in a small scope.",
     slugs: ["72-hour-visibility-fix"],
   },
   {
     number: "03",
-    label: "Implement",
-    title: "Build the operating system required to hold the gain.",
-    description: "Use implementation when the constraint depends on workflow, routing, booking control, follow-up or operational consistency.",
-    slugs: ["booking-retention-engine", "founding-studio-pilot"],
+    label: "Diagnose",
+    title: "Find the most valuable commercial constraint.",
+    description: "The Studio Intelligence Audit evaluates the wider commercial system, prioritises opportunities and proposes the next measurable intervention.",
+    slugs: ["studio-intelligence-audit"],
   },
   {
     number: "04",
+    label: "Improve",
+    title: "Implement one measurable commercial improvement.",
+    description: "The Primary Constraint Programme delivers an agreed intervention and Outcome Review, not an unlimited retainer.",
+    slugs: ["primary-constraint-programme"],
+  },
+  {
+    number: "05",
     label: "Monitor",
-    title: "Watch the signals that can deteriorate after the fix.",
-    description: "Use ongoing monitoring only where an established baseline and meaningful change thresholds already exist.",
+    title: "Protect the gain and spot the next useful action.",
+    description: "Watch remains a gated pilot until recurring monitoring, reporting, privacy and delivery economics have been validated.",
     slugs: ["visibility-watch"],
   },
 ] as const;
@@ -82,12 +89,12 @@ function OffersPage() {
         "@type": "CollectionPage",
         name: "INKSIGHTS tattoo studio growth services",
         url: CANONICAL_URL,
-        hasPart: publicOffers.map((offer) => ({ "@type": "Service", name: offer.name, url: `${CANONICAL_URL}/${offer.slug}` })),
+        hasPart: publicOffers.filter((offer) => serviceStages.some((stage) => stage.slugs.includes(offer.slug as never))).map((offer) => ({ "@type": "Service", name: offer.name, url: `${CANONICAL_URL}/${offer.slug}` })),
       }} />
 
       <PageHero
         eyebrow="Services by stage"
-        title={<>Diagnose first. Buy only what the evidence justifies.</>}
+        title={<>Discover. Prove. Diagnose. Improve. Monitor.</>}
         description={<>INKSIGHTS separates diagnosis, correction, implementation and monitoring so a studio does not buy a larger service than the current constraint requires.</>}
       >
         <PrimaryButton href="/studio-growth-check">Diagnose the studio first</PrimaryButton>
@@ -95,7 +102,7 @@ function OffersPage() {
 
       <section className="border-b border-border bg-ink-deep">
         <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-5">
             {serviceStages.map((stage) => (
               <div key={stage.number} className="rounded-2xl border border-border bg-ink p-5">
                 <div className="font-mono text-xs text-mint">{stage.number}</div>
@@ -116,7 +123,14 @@ function OffersPage() {
                 <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">{stage.description}</p>
               </div>
               <div className={stage.slugs.length > 1 ? "grid gap-6 xl:grid-cols-2" : "grid gap-6"}>
-                {stage.slugs.map((slug) => <OfferCard key={slug} slug={slug} />)}
+                {stage.slugs.length === 0
+                    ? <a href="/studio-growth-check" className="interactive-card group flex h-full flex-col rounded-3xl border border-border bg-ink p-7 transition hover:border-mint md:p-9">
+                        <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Free diagnostic</p>
+                        <h3 className="mt-3 font-display text-3xl font-black text-ice">Studio Growth Check</h3>
+                        <p className="mt-5 flex-1 text-muted-foreground">Submit your studio's operating figures once. Receive a clearly labelled first-pass estimate and an evidence-aware next recommendation.</p>
+                        <span className="mt-7 inline-flex items-center gap-2 font-bold text-mint">Start for free <ArrowRight className="h-4 w-4" /></span>
+                      </a>
+                    : stage.slugs.map((slug) => <OfferCard key={slug} slug={slug} />)}
               </div>
             </div>
           </div>
