@@ -2,7 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/tools/tattoo-pain-chart-reality-check")({
   beforeLoad: () => {
-    throw redirect({ to: "/resources" });
+    throw redirect({ to: "/resources", statusCode: 301 });
   },
   component: () => null,
 });
