@@ -27,7 +27,8 @@ export function recommendNextCommercialStep(input: GrowthCheckHandoff): NextComm
   const eligibleSelfAssessment =
     input.source === "visibility-scorecard" &&
     visibilityRelatedAreas.has(input.weakestArea ?? "") &&
-    input.visibilityScore !== undefined &&
+    typeof input.visibilityScore === "string" &&
+    input.visibilityScore.trim() !== "" &&
     Number.isFinite(score) &&
     score < 85;
 
