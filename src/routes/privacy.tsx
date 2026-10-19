@@ -48,11 +48,14 @@ function PrivacyPage() {
         </table>
       </div>
 
+      <h2>Pricing and commercial calculators</h2>
+      <p>When you choose to submit information to a pricing or commercial calculator, we save the information entered and the result returned. We use those records to provide your calculation, maintain an audit trail and improve the accuracy of future analysis. Self-reported responses remain labelled unverified; aggregated research does not treat them as independent market evidence. Calculator submissions are not a request to receive marketing messages.</p>
+
       <h2>Automated qualification</h2>
       <p>The Studio Growth Check uses assessment answers to calculate scores such as urgency, readiness and commercial fit. The result routes people to a relevant offer, booking request or nurture path. It does not make a legal, employment, credit, medical or similarly significant decision.</p>
 
       <h2>Who may process the information?</h2>
-      <p>INKSIGHTS uses service providers for website hosting, databases, CRM, source control, automation, email, calendar and advertising measurement. Current systems may include Supabase, GitHub, HubSpot, Google services, n8n and Meta where enabled. Providers receive only the information needed for their role and are subject to their own security and data-processing terms.</p>
+      <p>INKSIGHTS uses service providers for website hosting, databases, CRM, source control, automation, email, calendar and advertising measurement. Current systems may include Supabase, GitHub, HubSpot, Google services, Make and Meta where enabled. Providers receive only the information needed for their role and are subject to their own security and data-processing terms.</p>
 
       <h2>International transfers</h2>
       <p>Some technology providers may process information outside the United Kingdom. Where this occurs, INKSIGHTS will rely on an appropriate transfer mechanism or the provider's applicable safeguards.</p>
