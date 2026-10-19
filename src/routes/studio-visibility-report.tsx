@@ -70,20 +70,32 @@ type ReportPayload = {
 
 export const Route = createFileRoute("/studio-visibility-report")({
   component: StudioVisibilityReport,
-  head: () => ({
-    meta: [
-      { title: "Studio Visibility Report | INKSIGHTS" },
-      { name: "description", content: "An evidence-led studio visibility report built from website and search observations." },
-      { property: "og:url", content: "https://getinksights.co.uk/studio-visibility-report" },
-    ],
-    links: [{ rel: "canonical", href: "https://getinksights.co.uk/studio-visibility-report" }],
+  validateSearch: (search: Record<string, unknown>) => ({
+    reportId: typeof search.reportId === "string" ? search.reportId : undefined,
+    token: typeof search.token === "string" ? search.token : undefined,
   }),
+  head: ({ match }) => {
+    const routeSearch = (match.search || {}) as Record<string, unknown>;
+    const privateReportState = typeof routeSearch.reportId === "string" || typeof routeSearch.token === "string";
+    return {
+      meta: [
+        { title: "Tattoo Studio Visibility Report UK | INKSIGHTS" },
+        { name: "description", content: "Generate an evidence-led tattoo studio visibility report from website and search observations, without invented rankings, search volume or revenue claims." },
+        ...(privateReportState ? [{ name: "robots", content: "noindex,nofollow,noarchive" }] : []),
+        { property: "og:url", content: "https://getinksights.co.uk/studio-visibility-report" },
+      ],
+      links: [{ rel: "canonical", href: "https://getinksights.co.uk/studio-visibility-report" }],
+    };
+  },
+  headers: ({ match }) => {
+    const routeSearch = (match.search || {}) as Record<string, unknown>;
+    const privateReportState = typeof routeSearch.reportId === "string" || typeof routeSearch.token === "string";
+    return privateReportState ? { "X-Robots-Tag": "noindex, nofollow, noarchive" } : undefined;
+  },
 });
 
 function StudioVisibilityReport() {
-  const params = typeof window === "undefined" ? new URLSearchParams() : new URLSearchParams(window.location.search);
-  const reportId = params.get("reportId");
-  const token = params.get("token");
+  const { reportId, token } = Route.useSearch();
   const [report, setReport] = useState<ReportPayload | null>(null);
   const [loading, setLoading] = useState(Boolean(reportId));
   const [error, setError] = useState<string | null>(null);
