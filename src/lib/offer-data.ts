@@ -89,7 +89,7 @@ export const publicOffers: PublicOffer[] = [
     ],
     faqs: [
       ["What does a tattoo studio business audit cover?", "The Studio Intelligence Audit reviews the studio's public visibility, competitors, website and booking journey, then connects those observations to the commercial constraints affecting enquiries, capacity, retention and revenue. The output is prioritised rather than a generic marketing checklist."],
-      ["Is this the free Revenue Audit?", "No. The free Revenue Audit is a first-pass estimate. The £395 Studio Intelligence Audit is the paid diagnostic that replaces broad assumptions with a structured review of the studio and its commercial journey."],
+      ["Is this the free Studio Growth Check?", "No. The free Growth Check is a first-pass estimate. The £395 Studio Intelligence Audit is the paid diagnostic that replaces broad assumptions with a structured review of the studio and its commercial journey."],
       ["Is implementation included?", "No. Implementation is scoped separately only when the audit identifies a justified intervention."],
       ["Is payment secure?", "Yes. Checkout is handled by Stripe using the active INKSIGHTS live account."],
       ["What happens after payment?", "You receive a confirmation and INKSIGHTS follows up with the onboarding and information request needed to begin the audit."],
