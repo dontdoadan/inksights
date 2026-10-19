@@ -25,7 +25,7 @@ export type PublicOffer = {
   faqs: Array<[string, string]>;
 };
 
-export const OFFER_POLICY_VERSION = "2026-07-28";
+export const OFFER_POLICY_VERSION = "2026-10-20";
 
 export const growthLeverLabels: Record<GrowthLever, string> = {
   clients: "Number of clients",
@@ -102,7 +102,7 @@ export const publicOffers: PublicOffer[] = [
     price: "£249 one-off",
     structuredPrice: "249",
     billing: "Paid in full before work begins",
-    commercialStatus: "Sales-assisted while direct checkout is revalidated",
+    commercialStatus: "Scoped enquiry only — checkout not yet enabled",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients"],
     performancePricing: "Not performance-fee based; this is a fixed-scope intervention.",
@@ -123,7 +123,8 @@ export const publicOffers: PublicOffer[] = [
       "Website or booking-link friction review",
       "Priority Google Business Profile and local visibility checks",
       "Exact copy corrections and recommended public changes",
-      "Three-working-day implementation checklist and follow-up review",
+      "Up to three agreed, access-dependent corrections within the approved scope",
+      "Evidence of approved changes and a scheduled post-fix review",
     ],
     requirements: [
       "Payment in full before delivery begins",
@@ -155,10 +156,9 @@ export const publicOffers: PublicOffer[] = [
     slug: "visibility-watch",
     name: "Tattoo Studio Visibility Watch",
     eyebrow: "Monitoring and early warning",
-    price: "£99/month",
-    structuredPrice: "99",
-    billing: "Billed monthly in advance until cancelled",
-    commercialStatus: "Sales-assisted while direct checkout is revalidated",
+    price: "£99/month proposed",
+    billing: "Pilot enquiry only; no recurring billing until accepted and verified",
+    commercialStatus: "Deferred — monitored pilot by invitation",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients"],
     performancePricing: "Fixed monthly subscription; no performance percentage applies.",
@@ -201,7 +201,55 @@ export const publicOffers: PublicOffer[] = [
     faqs: [
       ["Is this rank tracking only?", "No. It combines available search signals with public-profile, reputation and conversion checks."],
       ["Will every fluctuation create an alert?", "No. The goal is to escalate changes that affect action, trust or booking potential."],
-      ["How does cancellation work?", "Cancel before the next renewal to avoid the next charge. Service continues until the end of the paid billing period."],
+      ["How does cancellation work?", "No recurring subscription is currently available. Billing, renewal and cancellation terms will be provided before any pilot becomes a paid service."],
+    ],
+  },
+  {
+    slug: "primary-constraint-programme",
+    name: "INKSIGHTS Primary Constraint Programme",
+    eyebrow: "Scoped commercial implementation",
+    price: "Tailored quotation",
+    billing: "Written scope, milestones and payment terms before any implementation",
+    commercialStatus: "Sales-assisted after evidence-backed diagnosis",
+    policyVersion: OFFER_POLICY_VERSION,
+    growthLevers: ["clients", "transaction_value", "purchase_frequency"],
+    performancePricing: "Any performance fee requires a verified baseline, incremental contribution and defensible attribution.",
+    summary: "A focused improvement engagement that implements and measures the most commercially important, evidence-supported constraint affecting your studio.",
+    problem: "The studio has an identified constraint but lacks the time, systems or expertise to deliver and measure a corrective intervention.",
+    timeframe: "Milestones and measurement window are agreed in writing for each engagement.",
+    idealFor: [
+      "Studios with a completed commercial diagnosis and a clearly evidenced primary constraint",
+      "Owners with authority and operational capacity to implement agreed changes",
+      "Teams prepared to collect consistent baseline and outcome measurements",
+    ],
+    deliverables: [
+      "One approved primary constraint and evidence-backed improvement hypothesis",
+      "Agreed implementation scope, ownership and milestone plan",
+      "A measurable baseline and success/guardrail metrics",
+      "Delivery of agreed corrective workflow or operational intervention",
+      "Outcome Review with evidence, limitations and recommended next step",
+    ],
+    requirements: [
+      "A signed written proposal defining scope, timing and fee",
+      "Named decision-maker and appropriate system access",
+      "Baseline information adequate to evaluate the intervention",
+      "Approval before externally visible or customer-facing changes",
+    ],
+    exclusions: [
+      "Unlimited consulting or unrestricted implementation work",
+      "Guaranteed bookings, profit, visibility or return on investment",
+      "Unapproved advertising spend or third-party subscription fees",
+      "Full software rebuild unless explicitly included in the statement of work",
+    ],
+    process: [
+      { title: "Approve the diagnosis", description: "Confirm the primary constraint, baseline, economic relevance and evidence gaps." },
+      { title: "Implement one intervention", description: "Deliver the agreed change under a bounded scope, approvals and measurable success criteria." },
+      { title: "Review outcomes", description: "Compare against baseline, document limitations, decide whether to maintain, modify, stop or monitor." },
+    ],
+    faqs: [
+      ["Is the programme a subscription?", "No. Implementation is separately scoped. Ongoing monitoring is available only where a suitable Watch pilot has been agreed."],
+      ["Can we purchase it without an Audit?", "A complete paid Audit is not compulsory if INKSIGHTS already has enough reliable evidence to approve a measurable intervention."],
+      ["Is revenue uplift guaranteed?", "No. Any scenario is clearly labelled modelled until outcomes and their attribution are established."],
     ],
   },
   {
@@ -210,7 +258,7 @@ export const publicOffers: PublicOffer[] = [
     eyebrow: "Commercial diagnosis",
     price: "Scoped quote after the Growth Check",
     billing: "Written scope and payment schedule before work begins",
-    commercialStatus: "Active sales-assisted service",
+    commercialStatus: "Legacy diagnostic — not a separate approved paid product",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
     performancePricing: "May define a later performance-linked arrangement, but the audit itself is quoted in writing.",
@@ -263,7 +311,7 @@ export const publicOffers: PublicOffer[] = [
     eyebrow: "System implementation",
     price: "Scoped quote after diagnosis",
     billing: "Written scope, dependencies and payment schedule before work begins",
-    commercialStatus: "Active sales-assisted implementation capability",
+    commercialStatus: "Intervention capability — scoped under Primary Constraint Programme",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
     performancePricing: "Optional verified-uplift terms may be included in the written scope where attribution is defensible.",
@@ -317,7 +365,7 @@ export const publicOffers: PublicOffer[] = [
     eyebrow: "Application-only implementation package",
     price: "£1,500 setup + £750/month for 3 months",
     billing: "£1,500 before implementation; £750 monthly in advance; minimum three-month management term",
-    commercialStatus: "Active application-only package",
+    commercialStatus: "Legacy validation package — not currently offered to new customers",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
     performancePricing: "An optional agreed percentage of verified uplift may be added only through the signed service order.",
