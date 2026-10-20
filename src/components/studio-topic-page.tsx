@@ -124,7 +124,7 @@ export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
           href="/studio-growth-check"
           className="inline-flex min-h-12 items-center rounded-full bg-mint px-6 py-3 font-bold text-ink-deep"
         >
-          Run the free Revenue Audit →
+          Run the free Studio Growth Check →
         </a>
         <a
           href="/tattoo-studio-visibility-scorecard"

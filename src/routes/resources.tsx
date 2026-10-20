@@ -28,10 +28,10 @@ export const Route = createFileRoute("/resources")({
 const diagnosticResources = [
   {
     icon: Search,
-    title: "Free Tattoo Studio Revenue Audit",
+    title: "Free Studio Growth Check",
     type: "Free diagnostic",
     description:
-      "Estimate where revenue may be leaking across capacity, enquiries, bookings, cancellations and repeat clients.",
+      "Use your studio figures to estimate opportunities across capacity, enquiries, cancellations and repeat clients. Results are modelled, not verified lost revenue.",
     href: "/studio-growth-check",
   },
   {
@@ -211,7 +211,7 @@ function ResourcesPage() {
 
       <CtaSection
         title="Start with the studio diagnosis."
-        description="Run the free Revenue Audit and use the result to decide whether a visibility fix, revenue audit, booking intervention or deeper intelligence work is justified."
+        description="Run the free Studio Growth Check and use the result to decide whether a visibility fix, revenue audit, booking intervention or deeper intelligence work is justified."
       />
     </PublicShell>
   );

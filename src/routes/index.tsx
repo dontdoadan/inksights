@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, Database, Gauge, Search, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
 import { HeroSignalPanel, Reveal, SignalObservatory, SignalTicker, TiltCard } from "@/components/interactive-home";
+import { StudioJourney, StudioFaqs, IndustryEnquiry } from "@/components/studio-journey";
 import { Card, JsonLd, Logo, PrimaryButton, PublicShell, RevenueLeakageMap, SecondaryButton } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/";
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Tattoo Studio Growth & Intelligence | INKSIGHTS" },
-      { name: "description", content: "Growth intelligence for UK tattoo studios. Find where you are losing visibility, enquiries, bookings, capacity or revenue, then fix the constraint that matters most." },
+      { name: "description", content: "Find what is holding your UK tattoo studio back. Start with a free Growth Check, then explore the £395 Studio Intelligence Audit and practical next steps." },
       { property: "og:title", content: "Tattoo Studio Growth & Intelligence | INKSIGHTS" },
       { property: "og:description", content: "Find the commercial constraint holding your tattoo studio back, then act on the evidence." },
       { property: "og:url", content: CANONICAL_URL },
@@ -70,17 +71,17 @@ function Index() {
                   <Sparkles className="h-4 w-4" /> FOR UK TATTOO STUDIO OWNERS
                 </div>
                 <h1 className="mt-7 max-w-5xl text-balance font-display text-4xl font-bold leading-tight tracking-tight text-ice sm:text-5xl md:text-6xl xl:text-7xl">
-                  Growth intelligence for <span className="text-mint">UK tattoo studios.</span>
+                  Know what is holding <span className="text-mint">your studio back.</span>
                 </h1>
                 <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-                  Find where your studio is losing visibility, enquiries, bookings, capacity or revenue — then fix the constraint that matters most.
+                  Turn scattered enquiries, diary gaps and uncertain numbers into a clear next step. INKSIGHTS helps UK tattoo studios find the problem worth fixing first — and measure what changes.
                 </p>
                 <div className="mt-9 flex flex-wrap gap-3">
-                  <PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton>
-                  <SecondaryButton href="/tattoo-studio-visibility-scorecard">Check studio visibility</SecondaryButton>
+                  <PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton>
+                  <SecondaryButton href="/offers/studio-intelligence-audit">Explore the £395 audit</SecondaryButton>
                 </div>
                 <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                  Built for established and multi-artist studios, especially teams with 3+ artists that have outgrown ad-hoc Instagram, email and spreadsheet management.
+                  Built for established UK studios with 3+ artists. Start free with your own figures; choose paid help only when the next step is clear.
                 </p>
               </div>
             </Reveal>
@@ -92,6 +93,7 @@ function Index() {
         </div>
       </section>
 
+      <StudioJourney />
       <SignalTicker />
       <SignalObservatory />
 
@@ -115,9 +117,9 @@ function Index() {
         <Logo variant="primary-light" decorative className="brand-light-logo-watermark" />
         <div className="relative mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
-            <Reveal><div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">The dataset</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-5xl">Built around the economics of real tattoo studios.</h2><p className="mt-5 text-lg leading-relaxed text-muted-foreground">INKSIGHTS is building a proprietary dataset covering the conditions that influence studio performance: local search visibility, enquiries, booking conversion, artist capacity, cancellations, no-shows, average booking value, repeat clients and competitive signals.</p><a href="/research-methodology" className="mt-5 inline-flex text-sm font-bold text-mint hover:text-mint-soft">How the data is collected and verified →</a></div></Reveal>
+            <Reveal><div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Evidence you can inspect</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-5xl">Know what supports each recommendation.</h2><p className="mt-5 text-lg leading-relaxed text-muted-foreground">INKSIGHTS is early-stage. Our proof library shows labelled examples and the method behind the work. We are building towards measured studio case studies; the illustrative scores on this site are not client results.</p><a href="/case-studies" className="mt-5 inline-flex font-bold text-mint">See the examples and evidence standard →</a><a href="/research-methodology" className="mt-3 block text-sm font-bold text-mint hover:text-mint-soft">How the data is collected and verified →</a></div></Reveal>
             <div className="grid gap-4 sm:grid-cols-2">
-              {[{ icon: Database, title: "Canonical studio records", text: "Identity, location, trading status and confidence are separated from guesses." }, { icon: Gauge, title: "Scoring layer", text: "Visibility, conversion, capacity and commercial conditions become comparable signals." }, { icon: Target, title: "Opportunity engine", text: "Prioritise the studio problem worth solving next, rather than selling another tactic." }, { icon: ShieldCheck, title: "Evidence first", text: "Observed data, public evidence, estimates and unknowns remain clearly distinguished." }].map(({ icon: Icon, title, text }, i) => <Reveal key={title} delay={i * 60}><div className="rounded-2xl border border-border bg-ink-deep p-6"><Icon className="h-6 w-6 text-mint" /><h3 className="mt-5 font-display text-lg font-black text-ice">{title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p></div></Reveal>)}
+              {[{ icon: Database, title: "Studio context", text: "Check the studio, location and available information before drawing conclusions." }, { icon: Gauge, title: "Clear baselines", text: "Record the starting position and data gaps before recommending a change." }, { icon: Target, title: "A practical priority", text: "Prioritise the studio problem worth solving next, rather than selling another tactic." }, { icon: ShieldCheck, title: "Evidence first", text: "Observed data, public evidence, estimates and unknowns remain clearly distinguished." }].map(({ icon: Icon, title, text }, i) => <Reveal key={title} delay={i * 60}><div className="rounded-2xl border border-border bg-ink-deep p-6"><Icon className="h-6 w-6 text-mint" /><h3 className="mt-5 font-display text-lg font-black text-ice">{title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p></div></Reveal>)}
             </div>
           </div>
         </div>
@@ -128,7 +130,7 @@ function Index() {
         <div className="relative mx-auto max-w-7xl px-6 py-16 md:py-20">
           <div className="rounded-3xl border border-mint/20 bg-ink p-8 md:p-10">
             <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Free studio tool</p><h2 className="mt-3 max-w-3xl font-display text-3xl font-black text-ice md:text-4xl">Benchmark your pricing — without sending your data to a third party.</h2><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">Use the native INKSIGHTS Pricing Benchmark to compare current rates with reference bands and interpret them alongside booking lead time.</p></div>
+              <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Free studio tool</p><h2 className="mt-3 max-w-3xl font-display text-3xl font-black text-ice md:text-4xl">Explore what a pricing change could mean.</h2><p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">Compare your rates with the tool’s reference bands alongside booking lead time. Treat the result as a planning aid, not a verified market valuation or a reason to raise prices automatically.</p></div>
               <PrimaryButton href="/pricing-benchmark">Open Pricing Benchmark</PrimaryButton>
             </div>
           </div>
@@ -174,12 +176,14 @@ function Index() {
         </div>
       </section>
 
+      <StudioFaqs />
+      <IndustryEnquiry />
       <section className="brand-dark relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <div className="rounded-3xl border border-mint/30 bg-ink-deep p-8 md:p-12">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Start with evidence</p><h2 className="mt-4 max-w-3xl text-balance font-display text-4xl font-black text-ice md:text-6xl">Stop guessing where the growth is.</h2><p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">Run the free Revenue Audit, get your first-pass opportunity estimate and use the result to decide what deserves a deeper INKSIGHTS Audit.</p></div>
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton><SecondaryButton href="/offers">View studio solutions</SecondaryButton></div>
+              <div><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">Start with evidence</p><h2 className="mt-4 max-w-3xl text-balance font-display text-4xl font-black text-ice md:text-6xl">Stop guessing where the growth is.</h2><p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">Start with a free estimate based on your figures. If the opportunity needs investigation, the £395 Studio Intelligence Audit provides a structured review and a 90-day action plan.</p></div>
+              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col"><PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton><SecondaryButton href="/offers">View studio solutions</SecondaryButton></div>
             </div>
           </div>
         </div>

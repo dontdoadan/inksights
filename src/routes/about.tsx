@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Eye, ShieldCheck, Workflow } from "lucide-react";
+import { IndustryEnquiry } from "@/components/studio-journey";
 import { CtaSection, JsonLd, PageHero, PublicShell, SectionHeading } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/about";
@@ -26,7 +27,7 @@ function AboutPage() {
       <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
         <SectionHeading
           eyebrow="What INKSIGHTS is"
-          title="Commercial intelligence for tattoo studios — not another generic marketing layer."
+          title="Help for the business decisions behind the artwork."
           description="The role is to help a studio understand where demand, bookings, capacity, retention or revenue is being lost, then decide what deserves attention next."
         />
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
@@ -86,6 +87,7 @@ function AboutPage() {
 
     <section className="border-y border-border bg-ink"><div className="mx-auto max-w-7xl px-6 py-20 md:py-28"><SectionHeading eyebrow="Operating principles" title="How trust is earned." /><div className="mt-10 grid gap-5 md:grid-cols-2">{principles.map(({ icon: Icon, title, description }) => <div key={title} className="rounded-2xl border border-border bg-ink-deep p-7"><Icon className="h-7 w-7 text-mint" /><h2 className="mt-5 font-display text-2xl font-black text-ice">{title}</h2><p className="mt-3 leading-relaxed text-muted-foreground">{description}</p></div>)}</div></div></section>
     <section><div className="mx-auto max-w-5xl px-6 py-20 text-center md:py-28"><p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Current stage</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">Founding systems, controlled pilots and verified proof.</h2><p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">INKSIGHTS is early-stage. The methodology and working infrastructure can be shown now; genuine client outcomes will only be published with permission and enough measurement context to make the claim credible.</p><a href="/case-studies" className="mt-8 inline-flex rounded-full border border-mint px-6 py-3 font-bold text-mint hover:bg-mint/10">Review the proof library</a></div></section>
-    <CtaSection title="Start by finding the constraint." description="Run the free Revenue Audit and use the evidence to decide what the studio actually needs next." />
+    <IndustryEnquiry />
+    <CtaSection title="Start by finding the constraint." description="Run the free Studio Growth Check and use the evidence to decide what the studio actually needs next." />
   </PublicShell>;
 }

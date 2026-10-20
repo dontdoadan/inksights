@@ -171,7 +171,7 @@ const topic: StudioTopic = {
   ],
   ctaTitle: "Find out whether more marketing is actually the next move.",
   ctaDescription:
-    "Run the free Revenue Audit to identify whether the current constraint is visibility, conversion, capacity, retention or revenue.",
+    "Run the free Studio Growth Check to identify whether the current constraint is visibility, conversion, capacity, retention or revenue.",
 };
 
 export const Route = createFileRoute("/tattoo-studio-marketing")({

@@ -171,7 +171,7 @@ const topic: StudioTopic = {
   ],
   ctaTitle: "Measure whether client return is a meaningful growth lever.",
   ctaDescription:
-    "Run the free Revenue Audit to estimate whether the strongest opportunity sits in retention or elsewhere in the studio system.",
+    "Run the free Studio Growth Check to estimate whether the strongest opportunity sits in retention or elsewhere in the studio system.",
 };
 
 export const Route = createFileRoute("/tattoo-studio-client-retention")({

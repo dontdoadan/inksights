@@ -27,7 +27,7 @@ const topic: StudioTopic = {
     { question: "What is the most useful booking KPI?", answer: "There is no single universal KPI. Enquiry-to-booking conversion, deposit conversion, response time, cancellation rate and attended appointments together show where the booking journey is leaking." },
   ],
   ctaTitle: "Find out whether booking is actually your constraint.",
-  ctaDescription: "Run the free Revenue Audit before buying or migrating to another booking platform. The right system depends on the studio's actual workflow and commercial bottleneck.",
+  ctaDescription: "Run the free Studio Growth Check before buying or migrating to another booking platform. The right system depends on the studio's actual workflow and commercial bottleneck.",
 };
 
 export const Route = createFileRoute("/tattoo-studio-booking")({ component: () => <StudioTopicPage topic={topic} />, head: () => topicHead(topic) });

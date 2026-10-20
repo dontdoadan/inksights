@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { CtaSection, JsonLd, PageHero, PrimaryButton, PublicShell, SectionHeading } from "@/components/public-site";
+import { StudioJourney, StudioFaqs, IndustryEnquiry } from "@/components/studio-journey";
 import { publicOffers } from "@/lib/offer-data";
 
 const CANONICAL_URL = "https://getinksights.co.uk/offers";
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/offers/")({
   head: () => ({
     meta: [
       { title: "Tattoo Studio Growth Services | INKSIGHTS" },
-      { name: "description", content: "Compare INKSIGHTS diagnosis, correction, implementation and monitoring services for UK tattoo studios." },
+      { name: "description", content: "Compare the free Growth Check, £249 Visibility Fix, £395 Studio Intelligence Audit, scoped implementation and £99/month Visibility Watch for UK studios." },
       { property: "og:title", content: "Tattoo Studio Growth Services | INKSIGHTS" },
       { property: "og:description", content: "Start with diagnosis, then use the smallest practical intervention for the studio's actual constraint." },
       { property: "og:url", content: CANONICAL_URL },
@@ -20,34 +21,11 @@ export const Route = createFileRoute("/offers/")({
 });
 
 const serviceStages = [
-  {
-    number: "01",
-    label: "Diagnose",
-    title: "Find the constraint before choosing the intervention.",
-    description: "Use a structured diagnosis when several commercial problems could be causing the same revenue symptom.",
-    slugs: ["studio-intelligence-audit", "revenue-audit"],
-  },
-  {
-    number: "02",
-    label: "Fix",
-    title: "Correct one visible, commercially relevant weakness.",
-    description: "Use a tightly scoped correction when the evidence points to one immediate public-facing problem.",
-    slugs: ["72-hour-visibility-fix"],
-  },
-  {
-    number: "03",
-    label: "Implement",
-    title: "Build the operating system required to hold the gain.",
-    description: "Use implementation when the constraint depends on workflow, routing, booking control, follow-up or operational consistency.",
-    slugs: ["booking-retention-engine", "founding-studio-pilot"],
-  },
-  {
-    number: "04",
-    label: "Monitor",
-    title: "Watch the signals that can deteriorate after the fix.",
-    description: "Use ongoing monitoring only where an established baseline and meaningful change thresholds already exist.",
-    slugs: ["visibility-watch"],
-  },
+  { number: "01", label: "Focused visibility help", title: "Fix a clear public-facing problem.", description: "After the free check, a visible profile or booking-route issue may justify a focused correction. The three-working-day fix and monthly watch are separate services.", slugs: ["72-hour-visibility-fix"] },
+  { number: "02", label: "Investigate", title: "Understand what deserves attention first.", description: "The £395 Studio Intelligence Audit is the defined paid diagnosis. It provides a structured review, recommendations and a 90-day action plan; implementation is separate.", slugs: ["studio-intelligence-audit"] },
+  { number: "03", label: "Implement and review", title: "Put one evidenced priority into practice.", description: "A Primary Constraint Programme is scoped after diagnosis. Booking and retention work is one possible intervention; the application-only pilot has its own published terms.", slugs: ["primary-constraint-programme", "booking-retention-engine", "founding-studio-pilot"] },
+  { number: "04", label: "Monitor", title: "Keep watching what matters to the next decision.", description: "Visibility Watch covers agreed public signals. Broader ongoing monitoring is considered separately when useful, with scope and terms confirmed first.", slugs: ["visibility-watch"] },
+  { number: "05", label: "Wider questions", title: "Need a review beyond the standard audit?", description: "If your locations, information or commercial questions fall outside the £395 audit, discuss a wider scope before committing.", slugs: ["revenue-audit"] },
 ] as const;
 
 function OfferCard({ slug }: { slug: string }) {
@@ -87,12 +65,13 @@ function OffersPage() {
 
       <PageHero
         eyebrow="Services by stage"
-        title={<>Diagnose first. Buy only what the evidence justifies.</>}
+        title={<>Choose the help your studio needs next.</>}
         description={<>INKSIGHTS separates diagnosis, correction, implementation and monitoring so a studio does not buy a larger service than the current constraint requires.</>}
       >
-        <PrimaryButton href="/studio-growth-check">Diagnose the studio first</PrimaryButton>
+        <PrimaryButton href="/studio-growth-check">Start the free Studio Growth Check</PrimaryButton>
       </PageHero>
 
+      <StudioJourney />
       <section className="border-b border-border bg-ink-deep">
         <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
           <div className="grid gap-4 md:grid-cols-4">
@@ -128,11 +107,13 @@ function OffersPage() {
           <SectionHeading
             eyebrow="Routing principle"
             title="The correct answer can still be: do nothing yet."
-            description="Where a studio lacks implementation capacity, decision-maker access or a commercially material problem, the appropriate route is a free action plan or nurture—not an unnecessary sales call."
+            description="Where a studio lacks implementation capacity, decision-maker access or a commercially material problem, the appropriate route is a more measurement or a smaller practical action."
           />
         </div>
       </section>
 
+      <StudioFaqs />
+      <IndustryEnquiry />
       <CtaSection />
     </PublicShell>
   );

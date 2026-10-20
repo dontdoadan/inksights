@@ -65,8 +65,8 @@ function ContactPage() {
     <PublicShell>
       <PageHero
         eyebrow="Contact INKSIGHTS"
-        title={<>Ask a specific question or start with the diagnosis.</>}
-        description={<>Use the form for existing-client support, billing or cancellation questions, offer scope, partnerships, technical issues or general enquiries. Studio owners seeking a recommendation should normally start with the free Revenue Audit.</>}
+        title={<>Tell us what you want to improve.</>}
+        description={<>Ask about a service, an existing engagement or a tattoo-industry partnership. Studio owners with 3+ artists can start with the free Studio Growth Check. Smaller studios and other tattoo businesses can use this form to discuss fit.</>}
       />
 
       <section>
@@ -74,8 +74,8 @@ function ContactPage() {
           <div className="space-y-5">
             <div className="rounded-2xl border border-border bg-ink p-6">
               <Mail className="h-7 w-7 text-mint" />
-              <h2 className="mt-5 font-display text-2xl font-black text-ice">Form-first contact</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Use the secure form so the enquiry is recorded with its studio, topic and source rather than depending on a public mailbox.</p>
+              <h2 className="mt-5 font-display text-2xl font-black text-ice">A useful first conversation</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Tell us about your business, the problem you can see and the outcome you want. We will review your enquiry and reply by email; sending this form creates no payment or booking.</p>
               <p className="mt-4 text-xs leading-relaxed text-muted-foreground">If the form is unavailable, the page will show a fallback contact route.</p>
             </div>
             <div className="rounded-2xl border border-border bg-ink p-6">
@@ -87,12 +87,12 @@ function ContactPage() {
             <div className="rounded-2xl border border-border bg-ink p-6">
               <MessageSquareText className="h-7 w-7 text-mint" />
               <h2 className="mt-5 font-display text-2xl font-black text-ice">Studio recommendation</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The Revenue Audit collects enough commercial context to recommend a useful route rather than beginning with an unstructured sales message.</p>
-              <a href="/studio-growth-check" className="mt-5 inline-flex rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Start the free Revenue Audit</a>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">The free Studio Growth Check uses your monthly figures to estimate possible opportunities. If you do not have those figures, explain the situation in the form instead.</p>
+              <a href="/studio-growth-check" className="mt-5 inline-flex rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Start the free Studio Growth Check</a>
             </div>
             <div className="rounded-2xl border border-border bg-ink p-6">
               <ShieldCheck className="h-7 w-7 text-mint" />
-              <h2 className="mt-5 font-display text-2xl font-black text-ice">Privacy</h2>
+              <h2 className="mt-5 font-display text-2xl font-black text-ice">Tattoo-industry businesses</h2><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Suppliers, product brands, software providers, educators and event organisers have different commercial questions from studio owners. Choose the partnership topic and describe the audience, question and decision you need help with. Scope and fit are considered separately.</p><h2 className="mt-5 font-display text-2xl font-black text-ice">Privacy</h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Messages are stored securely for response and operational follow-up. They are not sold to advertisers.</p>
               <a href="/privacy" className="mt-4 inline-block text-sm font-bold text-mint">Read the privacy notice</a>
             </div>
@@ -124,19 +124,21 @@ function ContactPage() {
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field label="Name" required><input name="name" required autoComplete="name" className="form-control" /></Field>
                   <Field label="Email" required><input name="email" type="email" required autoComplete="email" className="form-control" /></Field>
-                  <Field label="Studio name"><input name="studio_name" autoComplete="organization" className="form-control" /></Field>
+                  <Field label="Studio or business name"><input name="studio_name" autoComplete="organization" className="form-control" /></Field>
                   <Field label="Town / city"><input name="location" autoComplete="address-level2" className="form-control" /></Field>
                   <Field label="Phone (optional)"><input name="phone" type="tel" autoComplete="tel" className="form-control" /></Field>
-                  <Field label="Studio website (optional)"><input name="website" type="url" autoComplete="url" placeholder="https://" className="form-control" /></Field>
+                  <Field label="Website (optional)"><input name="website" type="url" autoComplete="url" placeholder="https://" className="form-control" /></Field>
                   <Field label="Topic" required>
                     <select name="topic" required defaultValue={search.topic || ""} className="form-control">
                       <option value="">Select a topic</option>
                       <option value="existing-client-support">Existing client support</option>
                       <option value="billing-cancellation">Billing, subscription or cancellation</option>
                       <option value="72-hour-visibility-fix">72-Hour Visibility Fix</option>
-                      <option value="growth-check">Revenue Audit or recommendation</option>
+                      <option value="primary-constraint-programme">Primary Constraint Programme</option>
+                      <option value="visibility-watch">Ongoing visibility monitoring</option>
+                      <option value="growth-check">Studio Growth Check or recommendation</option>
                       <option value="studio-intelligence-audit">£395 Studio Intelligence Audit</option>
-                      <option value="partnership">Partnership or case study</option>
+                      <option value="partnership">Tattoo-industry business, partnership or research</option>
                       <option value="website-support">Website or technical issue</option>
                       <option value="privacy-data-request">Privacy or data request</option>
                       <option value="media">Media or research</option>

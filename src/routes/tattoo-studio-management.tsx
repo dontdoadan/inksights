@@ -175,7 +175,7 @@ const topic: StudioTopic = {
   ],
   ctaTitle: "Find the management constraint before adding another system.",
   ctaDescription:
-    "Run the free Revenue Audit to see whether the current pressure is demand, conversion, capacity, retention or revenue.",
+    "Run the free Studio Growth Check to see whether the current pressure is demand, conversion, capacity, retention or revenue.",
 };
 
 export const Route = createFileRoute("/tattoo-studio-management")({

@@ -253,7 +253,7 @@ function PricingBenchmark() {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton>
+            <PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton>
             <SecondaryButton href="/offers">Explore INKSIGHTS solutions</SecondaryButton>
           </div>
         </div>

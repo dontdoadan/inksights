@@ -35,9 +35,39 @@ export const growthLeverLabels: Record<GrowthLever, string> = {
 
 export const publicOffers: PublicOffer[] = [
   {
+    slug: "primary-constraint-programme",
+    name: "Primary Constraint Programme",
+    eyebrow: "Implementation after diagnosis",
+    price: "Separately scoped proposal",
+    billing: "Written scope and payment terms agreed before work begins",
+    commercialStatus: "Enquire after an evidenced priority is established",
+    policyVersion: OFFER_POLICY_VERSION,
+    growthLevers: ["clients", "transaction_value", "purchase_frequency"],
+    performancePricing: "Any performance-linked terms require a separately agreed baseline, attribution and verified contribution.",
+    summary: "Turn one evidenced studio priority into a practical change. Agree what will be done, who will own it and how the outcome will be reviewed before implementation starts.",
+    problem: "The studio knows what needs attention but needs help turning the findings into a change it can operate and measure.",
+    timeframe: "Confirmed in the written proposal after diagnosis, access and delivery responsibilities are agreed.",
+    idealFor: ["Established UK tattoo studios with one evidenced priority", "Owners able to approve changes and provide the required information", "Teams ready to own the improved process and review what happens"],
+    deliverables: ["A written proposal for one primary commercial constraint", "Agreed implementation work and responsibilities", "A starting baseline and measurement plan where evidence permits", "An outcome review within the agreed engagement scope"],
+    requirements: ["An evidenced priority, normally established through diagnosis", "An approved scope and payment terms", "Required access, studio information and timely approvals", "A named owner for the changed process"],
+    exclusions: ["Implementation included automatically in the £395 audit", "Unlimited work or unspecified software costs", "Guaranteed rankings, bookings, revenue or return on investment", "Automatic enrolment in ongoing monitoring"],
+    process: [
+      { title: "Agree the priority", description: "Use the diagnosis to choose the problem worth addressing first." },
+      { title: "Scope the work", description: "Agree the intervention, responsibilities, price, dependencies and measures in writing." },
+      { title: "Implement and check", description: "Apply the agreed change and verify that the studio can use the improved process." },
+      { title: "Review the outcome", description: "Compare what happened with the starting position. Record limitations before deciding whether to stop, refine or monitor." },
+    ],
+    faqs: [
+      ["How much does it cost?", "The price follows the evidenced problem and agreed scope. There is no universal programme price. A written proposal sets the work and payment terms before you commit."],
+      ["Do I need the £395 audit first?", "The programme requires a justified priority and enough evidence to scope it. The Studio Intelligence Audit is the normal starting point; discuss fit if you already have a reliable diagnosis."],
+      ["Is this the Founding Studio Pilot?", "The programme describes the implementation stage. The Founding Studio Pilot is a separately published, application-only package with its own scope and commitment. It is not an automatic upgrade or a price for every programme."],
+      ["What happens after implementation?", "Review the measured outcome and any remaining uncertainty. Ongoing INKSIGHTS Watch is considered only where repeated monitoring would inform useful decisions; its scope and terms are agreed separately."],
+    ],
+  },
+  {
     slug: "studio-intelligence-audit",
     name: "INKSIGHTS Studio Intelligence Audit",
-    eyebrow: "Paid commercial diagnosis",
+    eyebrow: "Founding validation price · paid diagnosis",
     price: "£395 one-off",
     structuredPrice: "395",
     billing: "One-time payment before the audit begins",
@@ -89,10 +119,10 @@ export const publicOffers: PublicOffer[] = [
     ],
     faqs: [
       ["What does a tattoo studio business audit cover?", "The Studio Intelligence Audit reviews the studio's public visibility, competitors, website and booking journey, then connects those observations to the commercial constraints affecting enquiries, capacity, retention and revenue. The output is prioritised rather than a generic marketing checklist."],
-      ["Is this the free Revenue Audit?", "No. The free Revenue Audit is a first-pass estimate. The £395 Studio Intelligence Audit is the paid diagnostic that replaces broad assumptions with a structured review of the studio and its commercial journey."],
+      ["How is this different from the free Growth Check?", "The free Studio Growth Check is a first-pass estimate based on your answers. The £395 Studio Intelligence Audit is the paid diagnostic that replaces broad assumptions with a structured review of the studio and its commercial journey."],
       ["Is implementation included?", "No. Implementation is scoped separately only when the audit identifies a justified intervention."],
-      ["Is payment secure?", "Yes. Checkout is handled by Stripe using the active INKSIGHTS live account."],
-      ["What happens after payment?", "You receive a confirmation and INKSIGHTS follows up with the onboarding and information request needed to begin the audit."],
+      ["How do I pay?", "The £395 one-off audit payment is handled by Stripe. Review the scope and terms before continuing to checkout."],
+      ["What happens after payment?", "INKSIGHTS follows up with the information request needed to begin. The findings timetable is confirmed once the required studio information is complete."],
     ],
   },
   {
@@ -102,7 +132,7 @@ export const publicOffers: PublicOffer[] = [
     price: "£249 one-off",
     structuredPrice: "249",
     billing: "Paid in full before work begins",
-    commercialStatus: "Sales-assisted while direct checkout is revalidated",
+    commercialStatus: "Enquire to confirm scope and arrange payment",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients"],
     performancePricing: "Not performance-fee based; this is a fixed-scope intervention.",
@@ -146,7 +176,7 @@ export const publicOffers: PublicOffer[] = [
     ],
     faqs: [
       ["When does the three-day period begin?", "Only after payment, complete intake, required access and a named approver are in place."],
-      ["Does checkout require terms acceptance?", "Yes. The live Stripe checkout requires the buyer to actively accept INKSIGHTS's Terms of Service before completing payment."],
+      ["How do I book this service?", "Enquire first so we can confirm fit, scope, access and payment arrangements. Work starts after the required information, payment and approvals are in place."],
       ["Does £249 include ad spend?", "No. The offer fixes the public conversion foundation before paid traffic is considered."],
       ["What happens afterwards?", "The studio receives a follow-up review and a recommendation to stop, maintain, or consider a larger system only where the evidence supports it."],
     ],
@@ -158,12 +188,12 @@ export const publicOffers: PublicOffer[] = [
     price: "£99/month",
     structuredPrice: "99",
     billing: "Billed monthly in advance until cancelled",
-    commercialStatus: "Sales-assisted while direct checkout is revalidated",
+    commercialStatus: "Enquire to confirm scope and arrange payment",
     policyVersion: OFFER_POLICY_VERSION,
     growthLevers: ["clients"],
     performancePricing: "Fixed monthly subscription; no performance percentage applies.",
     summary:
-      "Ongoing monitoring for search visibility, Google Business Profile issues, reputation changes and public conversion risks.",
+      "Keep track of agreed changes in local search, public profiles and reputation after a visibility baseline is established. Receive prioritised actions when something needs attention; correction work is governed by the agreed scope.",
     problem:
       "Visibility problems are often noticed only after enquiries fall, a listing changes, a competitor overtakes the studio or a public detail becomes inaccurate.",
     timeframe: "Recurring monthly monitoring after the baseline and account details are confirmed.",
@@ -199,6 +229,7 @@ export const publicOffers: PublicOffer[] = [
       { title: "Escalate", description: "Send a prioritised correction with evidence when a relevant threshold is crossed." },
     ],
     faqs: [
+      ["Does this include the 72-Hour Visibility Fix?", "No. Visibility Watch is the separately published £99/month monitoring service. The £249 visibility fix is a one-off engagement; neither automatically enrols you in the other."],
       ["Is this rank tracking only?", "No. It combines available search signals with public-profile, reputation and conversion checks."],
       ["Will every fluctuation create an alert?", "No. The goal is to escalate changes that affect action, trust or booking potential."],
       ["How does cancellation work?", "Cancel before the next renewal to avoid the next charge. Service continues until the end of the paid billing period."],
@@ -215,7 +246,7 @@ export const publicOffers: PublicOffer[] = [
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
     performancePricing: "May define a later performance-linked arrangement, but the audit itself is quoted in writing.",
     summary:
-      "A structured review of the commercial path from discovery and enquiry through booking, attendance, transaction value, repeat work and post-session revenue.",
+      "A separately scoped review for revenue questions that extend beyond the published £395 Studio Intelligence Audit. Start with that defined audit scope and enquire if your studio needs a wider investigation.",
     problem:
       "A studio may know revenue is inconsistent without knowing whether the main leak is client volume, transaction value, purchase frequency, cancellations, pricing, retention or owner workload.",
     timeframe: "Scope and turnaround are confirmed after the free Studio Growth Check.",
@@ -254,7 +285,7 @@ export const publicOffers: PublicOffer[] = [
       ["Is this accountancy advice?", "No. It is an operational and commercial systems diagnosis."],
       ["Do we need perfect data?", "No, but missing information is marked as unknown rather than replaced with invented assumptions."],
       ["Can it lead to performance pricing?", "Yes, only where a later written scope defines the baseline, fee percentage, attribution rules, adjustments, evidence and approval process."],
-      ["What will it cost?", "A fixed quote is issued after the Growth Check confirms the locations, data, workflows and questions to review."],
+      ["How does this relate to the £395 audit?", "The Studio Intelligence Audit is the defined £395 starting diagnosis. This wider service is only quoted where the locations, data or questions require a separate written scope; it is not another name for the free Growth Check."],
     ],
   },
   {
@@ -268,7 +299,7 @@ export const publicOffers: PublicOffer[] = [
     growthLevers: ["clients", "transaction_value", "purchase_frequency"],
     performancePricing: "Optional verified-uplift terms may be included in the written scope where attribution is defensible.",
     summary:
-      "A studio-specific enquiry, booking, reminder, cancellation, follow-up and client-return system using tools the studio can realistically maintain.",
+      "An implementation option within a Primary Constraint Programme when the evidence points to enquiry handling, booking control or client return. The agreed scope uses tools the studio can realistically maintain.",
     problem:
       "Enquiries are fragmented, responses are inconsistent, booking protection is manual and clients leave without a structured return path.",
     timeframe: "Phased implementation after workflow mapping, scope approval and access confirmation.",

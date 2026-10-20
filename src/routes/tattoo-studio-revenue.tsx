@@ -27,7 +27,7 @@ const topic: StudioTopic = {
     { question: "What revenue metrics should a tattoo studio track?", answer: "A practical baseline includes realised revenue, average booking value, enquiry-to-booking conversion, booked versus available hours, cancellation or no-show rate, and repeat-client rate." },
   ],
   ctaTitle: "Estimate the revenue opportunity before changing the studio.",
-  ctaDescription: "Run the free INKSIGHTS Revenue Audit and see which part of the studio economics may contain the largest first-pass opportunity.",
+  ctaDescription: "Run the free Studio Growth Check and see which part of the studio economics may contain the largest first-pass opportunity.",
 };
 
 export const Route = createFileRoute("/tattoo-studio-revenue")({ component: () => <StudioTopicPage topic={topic} />, head: () => topicHead(topic) });
