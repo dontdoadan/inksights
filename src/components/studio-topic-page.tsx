@@ -61,6 +61,9 @@ export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
     url: topic.canonical,
     mainEntityOfPage: topic.canonical,
     dateModified: topic.updated,
+    inLanguage: "en-GB",
+    isPartOf: { "@id": "https://getinksights.co.uk/#website" },
+    citation: topic.sources?.map((source) => source.href),
     author: {
       "@type": "Organization",
       "@id": "https://getinksights.co.uk/#organization",
@@ -145,12 +148,12 @@ export function StudioTopicPage({ topic }: { topic: StudioTopic }) {
             <div>
               <p className="text-sm font-semibold text-ice">Last updated {visibleUpdated}</p>
               <p className="mt-1 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                Reviewed by INKSIGHTS. Guidance is written specifically for UK tattoo-studio operators and distinguishes
-                observed evidence, operating principles and recommendations.
+                Reviewed under the INKSIGHTS evidence standard. Guidance distinguishes observed evidence, calculations,
+                models, hypotheses and recommendations instead of presenting them as the same kind of claim.
               </p>
             </div>
-            <a href="/about" className="text-sm font-bold text-mint hover:text-mint-soft">
-              How INKSIGHTS evaluates evidence →
+            <a href="/research-methodology" className="text-sm font-bold text-mint hover:text-mint-soft">
+              Research methodology and evidence standards →
             </a>
           </div>
         </div>

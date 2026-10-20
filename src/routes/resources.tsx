@@ -196,6 +196,19 @@ function ResourcesPage() {
           />
         </div>
       </section>
+      <section className="border-t border-border bg-ink-deep">
+        <div className="mx-auto max-w-7xl px-6 py-14">
+          <div className="rounded-2xl border border-mint/20 bg-mint/5 p-6 md:flex md:items-center md:justify-between md:gap-8">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Research standard</p>
+              <h2 className="mt-2 font-display text-2xl font-black text-ice">See how INKSIGHTS decides what counts as evidence.</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">The methodology explains evidence labels, provenance, benchmark rules, confidence and case-study attribution.</p>
+            </div>
+            <a href="/research-methodology" className="mt-5 inline-flex shrink-0 font-bold text-mint hover:text-mint-soft md:mt-0">Read the methodology →</a>
+          </div>
+        </div>
+      </section>
+
       <CtaSection
         title="Start with the studio diagnosis."
         description="Run the free Revenue Audit and use the result to decide whether a visibility fix, revenue audit, booking intervention or deeper intelligence work is justified."
