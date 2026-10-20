@@ -18,7 +18,8 @@ const menuGroups = [
       ["/solutions", "What we fix", "Start with the commercial constraint"],
       ["/offers", "All solutions", "Compare the full INKSIGHTS offer stack"],
       ["/offers/72-hour-visibility-fix", "72-Hour Visibility Fix", "Repair urgent local visibility issues"],
-      ["/offers/revenue-audit", "Revenue Audit", "Diagnose conversion, capacity and revenue leakage"],
+      ["/offers/studio-intelligence-audit", "£395 Studio Intelligence Audit", "A structured review and 90-day action plan"],
+      ["/offers/primary-constraint-programme", "Primary Constraint Programme", "Implement one agreed priority"],
       ["/offers/booking-retention-engine", "Booking & Retention", "Improve booking control and repeat value"],
       ["/offers/visibility-watch", "Visibility Watch", "Ongoing visibility monitoring"],
     ],
@@ -28,7 +29,7 @@ const menuGroups = [
     description: "Free diagnostics, benchmarks and commercial decision tools.",
     links: [
       ["/resources", "Resource library", "Browse all free studio tools"],
-      ["/studio-growth-check", "Free Revenue Audit", "Find the strongest commercial pressure"],
+      ["/studio-growth-check", "Free Studio Growth Check", "Find the strongest commercial pressure"],
       ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard", "Check local search and booking visibility"],
       ["/pricing-benchmark", "Pricing Benchmark", "Compare rates with UK reference bands"],
       ["/growth-model", "Revenue Growth Model", "Model volume, value and frequency"],
@@ -171,7 +172,7 @@ export function SiteHeader() {
               href="/studio-growth-check"
               className="shine-button hidden rounded-full bg-mint px-5 py-2.5 text-sm font-bold text-ink-deep transition hover:bg-mint-soft sm:inline-flex"
             >
-              Free Revenue Audit
+              Free Studio Growth Check
             </a>
             <button
               type="button"
@@ -257,7 +258,7 @@ export function SiteHeader() {
 
             <div className="site-menu-actions">
               <a href="/studio-growth-check" onClick={closeMenu} className="shine-button inline-flex min-h-12 items-center justify-center rounded-full bg-mint px-5 py-3 font-bold text-ink-deep">
-                Run the free Revenue Audit
+                Run the free Studio Growth Check
               </a>
               <a href="/contact" onClick={closeMenu} className="outline-button inline-flex min-h-12 items-center justify-center rounded-full border border-border px-5 py-3 font-bold text-ice">
                 Contact INKSIGHTS
@@ -279,8 +280,8 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   const groups = [
-    { title: "Services", links: [["/solutions", "What we diagnose"], ["/offers", "All services"], ["/offers/72-hour-visibility-fix", "72-Hour Visibility Fix"], ["/offers/visibility-watch", "Visibility Watch"], ["/offers/booking-retention-engine", "Booking & Retention"]] },
-    { title: "Studio tools", links: [["/studio-growth-check", "Free Revenue Audit"], ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard"], ["/tattoo-studio-software", "Software comparison"], ["/growth-model", "Revenue Growth Model"]] },
+    { title: "Services", links: [["/solutions", "What we diagnose"], ["/offers", "All services"], ["/offers/studio-intelligence-audit", "£395 Studio Intelligence Audit"], ["/offers/primary-constraint-programme", "Primary Constraint Programme"], ["/offers/72-hour-visibility-fix", "72-Hour Visibility Fix"], ["/offers/visibility-watch", "Visibility Watch"], ["/offers/booking-retention-engine", "Booking & Retention"]] },
+    { title: "Studio tools", links: [["/studio-growth-check", "Free Studio Growth Check"], ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard"], ["/tattoo-studio-software", "Software comparison"], ["/growth-model", "Revenue Growth Model"]] },
     { title: "Growth guides", links: [["/tattoo-studio-growth", "Studio growth"], ["/tattoo-studio-marketing", "Marketing"], ["/tattoo-studio-seo", "SEO & local search"], ["/tattoo-studio-management", "Management"], ["/tattoo-studio-booking", "Booking systems"], ["/tattoo-studio-client-retention", "Client retention"], ["/tattoo-studio-revenue", "Revenue"]] },
     { title: "Company", links: [["/about", "About INKSIGHTS"], ["/research-methodology", "Research methodology"], ["/case-studies", "Proof library"], ["/support", "Customer support"], ["/contact", "Contact"], ["/privacy", "Privacy"], ["/cookies", "Cookies"], ["/terms", "Terms"], ["/accessibility", "Accessibility"]] }
   ];
@@ -299,7 +300,7 @@ export function PrimaryButton({ href, children }: { href: string; children: Reac
 export function SecondaryButton({ href, children }: { href: string; children: ReactNode }) { return <a href={href} className="outline-button inline-flex min-h-12 items-center justify-center rounded-full border border-border px-6 py-3 font-bold text-ice transition hover:border-mint hover:text-mint">{children}</a>; }
 export function SectionHeading({ eyebrow, title, description }: { eyebrow?: string; title: ReactNode; description?: ReactNode }) { return <div className="max-w-3xl">{eyebrow ? <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p> : null}<h2 className="mt-3 text-balance font-display text-3xl font-black tracking-tight text-ice md:text-5xl">{title}</h2>{description ? <div className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">{description}</div> : null}</div>; }
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) { return <div className={`interactive-card rounded-2xl border border-border bg-ink p-6 ${className}`}>{children}</div>; }
-export function CtaSection({ eyebrow = "Start with the diagnosis", title = "Find the constraint before buying another tool.", description = "The free Revenue Audit identifies the strongest commercial pressure and routes the studio to the most useful next step." }: { eyebrow?: string; title?: string; description?: string }) { return <section className="brand-dark relative overflow-hidden border-y border-border bg-ink"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><Logo variant="icon" decorative className="cta-logo-mark" /><div className="relative mx-auto max-w-5xl px-6 py-16 text-center md:py-24"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">{title}</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p><div className="mt-8 flex justify-center"><PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton></div></div></section>; }
+export function CtaSection({ eyebrow = "Start with the diagnosis", title = "Find your studio’s next useful step.", description = "Use your studio figures to explore where there may be room to improve. Your free result is an estimate; it helps decide what to investigate next." }: { eyebrow?: string; title?: string; description?: string }) { return <section className="brand-dark relative overflow-hidden border-y border-border bg-ink"><div className="ambient-orb ambient-orb-one" aria-hidden="true" /><Logo variant="icon" decorative className="cta-logo-mark" /><div className="relative mx-auto max-w-5xl px-6 py-16 text-center md:py-24"><p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">{eyebrow}</p><h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">{title}</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{description}</p><div className="mt-8 flex justify-center"><PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton></div></div></section>; }
 export function RevenueLeakageMap() {
   const steps = [
     ["01", "Search", "Can the right clients find you?"],

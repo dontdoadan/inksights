@@ -18,7 +18,7 @@ const constraints = [
     title: "Enquiries are not becoming bookings",
     summary: "Demand exists, but vague intake, slow responses or unclear next steps create leakage between interest and deposit.",
     symptoms: ["High enquiry volume", "Low enquiry-to-booking conversion", "Repeated questions in DMs", "No clear response-time expectation"],
-    route: "/offers/revenue-audit",
+    route: "/offers/studio-intelligence-audit",
     cta: "Audit the conversion path",
   },
   {
@@ -26,7 +26,7 @@ const constraints = [
     title: "Artist time is going unused",
     summary: "The studio has available capacity, but the diary is not being filled with the right projects at the right value.",
     symptoms: ["Gaps between appointments", "Unclear utilisation", "Last-minute filling of the diary", "No consistent capacity baseline"],
-    route: "/offers/revenue-audit",
+    route: "/offers/studio-intelligence-audit",
     cta: "Audit capacity and revenue",
   },
   {
@@ -42,7 +42,7 @@ const constraints = [
     title: "Revenue looks healthy, but the owner cannot explain it",
     summary: "Reporting shows totals but not the commercial conditions producing them or the constraint most worth fixing next.",
     symptoms: ["Spreadsheet-heavy reporting", "No common KPI definitions", "Unknown lead sources", "Decisions based on anecdote"],
-    route: "/offers/revenue-audit",
+    route: "/offers/studio-intelligence-audit",
     cta: "Create a commercial baseline",
   },
 ];
@@ -73,10 +73,10 @@ function SolutionsPage() {
       }} />
       <PageHero
         eyebrow="For UK tattoo studio owners"
-        title={<>Do not buy another tactic. Find the constraint.</>}
+        title={<>Find the problem worth fixing first.</>}
         description={<>INKSIGHTS diagnoses the commercial system first, then routes the studio to the smallest useful intervention. This is built for established and multi-artist UK studios—not generic small-business marketing.</>}
       >
-        <a href="/studio-growth-check" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep">Run the free Revenue Audit <ArrowRight className="h-4 w-4" /></a>
+        <a href="/studio-growth-check" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-6 py-3 font-bold text-ink-deep">Run the free Studio Growth Check <ArrowRight className="h-4 w-4" /></a>
         <a href="/tattoo-studio-visibility-scorecard" className="inline-flex min-h-12 items-center rounded-full border border-border px-6 py-3 font-bold text-ice">Check studio visibility</a>
       </PageHero>
 
@@ -175,11 +175,11 @@ function SolutionsPage() {
       <section>
         <div className="mx-auto max-w-5xl px-6 py-20 text-center md:py-28">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Built for tattoo studios</p>
-          <h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">The operating model behind the website is the product.</h2>
+          <h2 className="mt-4 text-balance font-display text-4xl font-black text-ice md:text-6xl">A clear priority, backed by the available evidence.</h2>
           <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">INKSIGHTS is building a proprietary dataset covering the conditions that shape tattoo-studio performance: visibility, enquiries, bookings, capacity, cancellations, transaction value, retention and market signals.</p>
         </div>
       </section>
-      <CtaSection title="Start with your studio's actual constraint." description="Run the free Revenue Audit, get the first-pass opportunity estimate and decide whether a deeper INKSIGHTS Audit is justified." />
+      <CtaSection title="Start with your studio's actual constraint." description="Start with the free Studio Growth Check. Explore a focused visibility fix or the £395 Studio Intelligence Audit when the evidence calls for a closer look." />
     </PublicShell>
   );
 }

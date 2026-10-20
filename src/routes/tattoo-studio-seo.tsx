@@ -256,7 +256,7 @@ const topic: StudioTopic = {
   ],
   ctaTitle: "See where your studio is visible — and where it is leaking demand.",
   ctaDescription:
-    "Run the free Tattoo Studio Visibility Scorecard or Revenue Audit before investing in more SEO work.",
+    "Run the free Tattoo Studio Visibility Scorecard or Studio Growth Check before investing in more SEO work.",
 };
 
 export const Route = createFileRoute("/tattoo-studio-seo")({

@@ -27,7 +27,7 @@ const topic: StudioTopic = {
     { question: "Which tattoo studio growth metrics matter most?", answer: "Start with a small consistent set: qualified enquiries, enquiry-to-booking conversion, booked versus available artist hours, average booking value, cancellations or no-shows, repeat-client rate and realised revenue." },
   ],
   ctaTitle: "Find your studio's biggest growth constraint.",
-  ctaDescription: "Run the free INKSIGHTS Revenue Audit to estimate where opportunity may be sitting before you spend more on traffic, software or tactics.",
+  ctaDescription: "Run the free Studio Growth Check to estimate where opportunity may be sitting before you spend more on traffic, software or tactics.",
 };
 
 export const Route = createFileRoute("/tattoo-studio-growth")({ component: () => <StudioTopicPage topic={topic} />, head: () => topicHead(topic) });

@@ -61,7 +61,7 @@ const journeySteps = [
 
 const signalMetrics = [
   { label: "Visibility", value: 78, note: "Discoverable but inconsistent" },
-  { label: "Enquiry route", value: 42, note: "Primary constraint detected" },
+  { label: "Enquiry route", value: 42, note: "Example enquiry gap" },
   { label: "Booking control", value: 71, note: "Strong foundation" },
   { label: "Client return", value: 55, note: "Untapped follow-up value" },
 ] as const;
@@ -203,9 +203,9 @@ export function HeroSignalPanel() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-ink-deep/75 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-mint backdrop-blur-xl">
-              <span className="live-dot" /> Interactive model
+              <span className="live-dot" /> Illustrative example
             </div>
-            <h2 className="mt-4 max-w-xs font-display text-2xl font-black leading-tight text-ice sm:text-3xl">See where studio demand loses momentum.</h2>
+            <h2 className="mt-4 max-w-xs font-display text-2xl font-black leading-tight text-ice sm:text-3xl">See how a studio review works.</h2><p className="mt-3 text-xs leading-relaxed text-muted-foreground">Made-up scores to explain the method. This is not a live scan, benchmark or client result.</p>
           </div>
           <Activity className="h-7 w-7 shrink-0 text-mint" />
         </div>
@@ -236,11 +236,11 @@ export function HeroSignalPanel() {
 
         <div className="mt-5 flex items-center justify-between gap-4 rounded-2xl border border-mint/20 bg-ink-deep/75 p-4 backdrop-blur-xl">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-mint">Current priority</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-mint">Selected example</p>
             <p className="mt-1 text-sm font-bold text-ice">{signalMetrics[activeMetric].label}</p>
           </div>
           <a href="/studio-growth-check" className="group inline-flex items-center gap-2 text-sm font-bold text-mint">
-            Diagnose yours <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            Start your check <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </a>
         </div>
       </div>
@@ -420,13 +420,13 @@ export function SignalObservatory() {
           <Reveal>
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 rounded-full border border-mint/30 bg-mint/5 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[.18em] text-mint">
-                <span className="observatory-live-dot" /> Live system scan
+                <span className="observatory-live-dot" /> Illustrative studio model
               </div>
               <h2 className="mt-5 text-balance font-display text-4xl font-black tracking-tight text-ice md:text-6xl">
-                Watch the studio system <span className="text-mint">come alive.</span>
+                See how the pieces <span className="text-mint">fit together.</span>
               </h2>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground md:text-lg">
-                A cinematic signal layer turns the commercial model into something you can inspect — visibility, enquiries, bookings and retention constantly moving through one diagnostic field.
+                Visibility, enquiries, bookings and repeat clients affect each other. Select an area to explore this illustration. All scores and changes shown here are made up; no studio or account is being monitored.
               </p>
 
               <div className="mt-8 grid grid-cols-2 gap-3">
@@ -466,7 +466,7 @@ export function SignalObservatory() {
                   <span className="observatory-status-dot" />
                   <span>SIGNAL OBSERVATORY / UK STUDIO MODEL</span>
                 </div>
-                <span className="font-mono text-[10px] text-mint">LIVE · 00:42:17</span>
+                <span className="font-mono text-[10px] text-mint">DEMO · SAMPLE DATA</span>
               </div>
 
               <div className="observatory-stage">
@@ -498,10 +498,10 @@ export function SignalObservatory() {
 
                 <div className="observatory-side-readout">
                   <div className="observatory-readout-card is-primary">
-                    <span>ACTIVE SIGNAL</span>
+                    <span>EXAMPLE SIGNAL</span>
                     <strong>{activeSignal.label}</strong>
                     <b>{activeSignal.value}/100</b>
-                    <small>{activeSignal.delta} change</small>
+                    <small>{activeSignal.delta} illustrative change</small>
                   </div>
                   <div className="observatory-wave" aria-hidden="true">
                     {Array.from({ length: 24 }).map((_, index) => (
@@ -519,9 +519,9 @@ export function SignalObservatory() {
               </div>
 
               <div className="observatory-console-footer">
-                <span>Evidence layer active</span>
-                <span>Constraint detection enabled</span>
-                <span className="text-mint">Next scan 00:03</span>
+                <span>Illustration only</span>
+                <span>No client data</span>
+                <span className="text-mint">No live scan</span>
               </div>
             </div>
           </Reveal>

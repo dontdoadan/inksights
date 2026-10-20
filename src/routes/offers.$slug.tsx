@@ -19,20 +19,22 @@ import { trackWebsiteEvent } from "@/lib/website-events";
 import { getPublicOffer, growthLeverLabels } from "@/lib/offer-data";
 
 const OFFER_SEO: Record<string, { title: string; description: string }> = {
+  "primary-constraint-programme": { title: "Tattoo Studio Improvement Programme | INKSIGHTS", description: "Implement one evidenced studio priority with an INKSIGHTS Primary Constraint Programme. Scope, price, responsibilities and outcome review agreed in writing." },
+  "founding-studio-pilot": { title: "Founding Studio Pilot: Scope & Cost | INKSIGHTS", description: "Application-only implementation for one UK tattoo studio: £1,500 setup plus £750/month for three months. Review scope, requirements and minimum commitment." },
   "studio-intelligence-audit": {
     title: "Tattoo Studio Business Audit UK | INKSIGHTS",
     description:
-      "A £395 tattoo studio business audit for established UK studios covering search visibility, competitors, booking journey, commercial opportunities and a 90-day action plan.",
+      "A £395 one-off audit for UK tattoo studios: visibility, competitors, booking journey, prioritised recommendations, a 90-day plan and findings session.",
   },
   "72-hour-visibility-fix": {
     title: "Tattoo Studio SEO & Google Visibility Fix | INKSIGHTS",
     description:
-      "A focused UK tattoo studio visibility intervention covering Google Business Profile, local search presentation, website friction and booking calls to action.",
+      "£249 one-off visibility fix for UK tattoo studios. Profile, local-search and booking-route corrections over three working days once intake and access are complete.",
   },
   "visibility-watch": {
     title: "Tattoo Studio Google Visibility Monitoring | INKSIGHTS",
     description:
-      "Ongoing monitoring for UK tattoo studios across search visibility, Google Business Profile issues, reputation changes and public conversion risks.",
+      "£99/month Visibility Watch for UK tattoo studios. Monitor agreed search, public-profile and reputation changes, with prioritised actions when needed.",
   },
   "revenue-audit": {
     title: "Tattoo Studio Revenue Audit UK | INKSIGHTS",
@@ -150,8 +152,8 @@ function OfferPage() {
         ],
       }]} />
       <PageHero eyebrow={offer.eyebrow} title={offer.name} description={offer.summary}>
-        {offer.stripePriceId ? <CheckoutButton offer={offer} leadId={search.lead_id} auditId={search.audit_id} /> : <PrimaryButton href="/studio-growth-check">Check studio fit</PrimaryButton>}
-        <SecondaryButton href="/contact">Ask a scope question</SecondaryButton>
+        {offer.stripePriceId ? <CheckoutButton offer={offer} leadId={search.lead_id} auditId={search.audit_id} /> : <PrimaryButton href={`/contact?topic=${offer.slug === "founding-studio-pilot" || offer.slug === "booking-retention-engine" || offer.slug === "revenue-audit" ? "other" : offer.slug}`}>Discuss this service</PrimaryButton>}
+        <SecondaryButton href="/studio-growth-check">Start with the free Growth Check</SecondaryButton>
       </PageHero>
 
       <nav aria-label="Breadcrumb" className="border-b border-border bg-ink-deep">
@@ -181,7 +183,6 @@ function OfferPage() {
           <Info label="Delivery" value={offer.timeframe} icon={<Clock3 className="h-5 w-5" />} />
           <Info label="Growth levers" value={offer.growthLevers.map((lever) => growthLeverLabels[lever]).join(" · ")} />
           <Info label="Performance pricing" value={offer.performancePricing} />
-          <Info label="Policy version" value={offer.policyVersion} />
         </div>
       </section>
 
@@ -190,7 +191,7 @@ function OfferPage() {
           <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
             <SectionHeading
               eyebrow="What you receive"
-              title="A visible deliverable before you commit."
+              title="What your £395 audit includes."
               description="The Studio Intelligence Audit is a defined commercial diagnosis. These representative sections show the shape of the output so the studio can understand what the £395 purchase produces before checkout."
             />
             <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -210,7 +211,7 @@ function OfferPage() {
               ))}
             </div>
             <div className="mt-6 rounded-2xl border border-mint/25 bg-mint/5 p-5 text-sm leading-relaxed text-muted-foreground">
-              <strong className="text-ice">Preview standard:</strong> representative sections explain the deliverable structure only. Any example studio data or outcomes used in future previews must remain explicitly labelled as demonstration data unless verified client evidence exists.
+              <strong className="text-ice">Scope preview:</strong> these sections explain the deliverable, not a completed client result. The audit includes a 45–60 minute findings session. Implementation is priced separately; the delivery timetable is confirmed once the required information is complete.
             </div>
           </div>
         </section>
@@ -336,7 +337,7 @@ function CheckoutButton({
       className="inline-flex items-center justify-center gap-2 rounded-full bg-mint px-6 py-3 text-sm font-bold text-ink-deep transition hover:bg-mint-soft disabled:opacity-60"
     >
       {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-      Continue to secure checkout
+      {offer.slug === "studio-intelligence-audit" ? "Buy the audit — £395 one-off" : "Continue to secure checkout"}
     </button>
   );
 }

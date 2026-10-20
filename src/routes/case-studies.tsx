@@ -121,13 +121,13 @@ function ProofPage() {
 
       <section className="border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
-          <SectionHeading eyebrow="System proof" title="Infrastructure that can be inspected and validated." />
+          <SectionHeading eyebrow="System proof" title="What you can ask us to explain." />
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {[
-              [Database, "Server-side lead qualification", "Studio answers are scored and stored in Supabase rather than trusted to a browser-only result."],
-              [Workflow, "Qualified booking routing", "Hot and warm leads can request times; lower-readiness leads receive a non-calendar route."],
-              [GitPullRequest, "Version-controlled changes", "Public-site and automation changes are built in GitHub branches, reviewed through pull requests and validated by CI."],
-              [ShieldCheck, "Approval and dry-run controls", "Automation replacements remain gated until credentials, approval and controlled live tests are complete."],
+              [Database, "How your check is calculated", "Review how your submitted figures feed an estimate, which assumptions it uses and where better evidence is needed."],
+              [Workflow, "Why a next step is recommended", "Ask why a visibility fix, a structured audit or more measurement would be useful for your studio."],
+              [GitPullRequest, "What changed", "A useful intervention records the starting point, the agreed changes and the checks used to verify them."],
+              [ShieldCheck, "What remains uncertain", "Ask which information is missing and what can be measured before a result is claimed."],
             ].map(([Icon, title, description]) => {
               const ProofIcon = Icon as typeof Database;
               return (
@@ -165,7 +165,7 @@ function ProofPage() {
           </div>
         </div>
       </section>
-      <CtaSection title="Apply as a founding studio and help create the first verified case study." />
+      <CtaSection title="Start with your studio. Build evidence from what happens next." />
     </PublicShell>
   );
 }

@@ -3,9 +3,14 @@ import { writeFileSync } from "node:fs";
 const domain = "https://getinksights.co.uk";
 
 const lastmodByRoute = {
-  "/research-methodology": "2026-10-20",
-  "/case-studies": "2026-10-20",
+  "/offers/primary-constraint-programme": "2026-10-20",
+  "/offers": "2026-10-20",
+  "/studio-growth-check": "2026-10-20",
+  "/solutions": "2026-10-20",
   "/about": "2026-10-20",
+  "/case-studies": "2026-10-20",
+  "/contact": "2026-10-20",
+  "/research-methodology": "2026-10-20",
   "/": "2026-10-20",
   "/resources": "2026-10-20",
   "/tattoo-studio-growth": "2026-10-20",
@@ -16,12 +21,12 @@ const lastmodByRoute = {
   "/tattoo-studio-booking": "2026-10-20",
   "/tattoo-studio-client-retention": "2026-10-20",
   "/tattoo-studio-software": "2026-10-19",
-  "/offers/studio-intelligence-audit": "2026-10-19",
-  "/offers/72-hour-visibility-fix": "2026-10-19",
-  "/offers/visibility-watch": "2026-10-19",
-  "/offers/revenue-audit": "2026-10-19",
-  "/offers/booking-retention-engine": "2026-10-19",
-  "/offers/founding-studio-pilot": "2026-10-19",
+  "/offers/studio-intelligence-audit": "2026-10-20",
+  "/offers/72-hour-visibility-fix": "2026-10-20",
+  "/offers/visibility-watch": "2026-10-20",
+  "/offers/revenue-audit": "2026-10-20",
+  "/offers/booking-retention-engine": "2026-10-20",
+  "/offers/founding-studio-pilot": "2026-10-20",
   "/studio-visibility-report": "2026-10-19",
 };
 
@@ -37,6 +42,7 @@ const routes = [
   "/tattoo-studio-client-retention",
   "/offers",
   "/offers/studio-intelligence-audit",
+  "/offers/primary-constraint-programme",
   "/offers/72-hour-visibility-fix",
   "/offers/visibility-watch",
   "/offers/revenue-audit",
