@@ -37,7 +37,7 @@ function ProofPage() {
         <div className="mx-auto max-w-7xl px-6 py-10">
           <div className="flex items-start gap-3 rounded-2xl border border-amber-300/35 bg-amber-300/10 p-5 text-sm leading-relaxed text-amber-100">
             <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-200" />
-            <p><strong className="text-amber-200">Current proof status:</strong> no performance result on this page is presented as a completed paying-client case study. Demonstration numbers illustrate how the reporting system works.</p>
+            <p><strong className="text-amber-200">Current proof status:</strong> no performance result on this page is presented as a completed paying-client case study. Demonstration numbers illustrate how the reporting system works. <a href="/research-methodology" className="font-bold underline underline-offset-2">Read the evidence and case-study standard.</a></p>
           </div>
         </div>
       </section>
