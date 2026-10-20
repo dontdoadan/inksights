@@ -9,6 +9,54 @@ import { CONSENT_STORAGE_KEY, GOOGLE_TAG_ID, readConsent, trackMetaPageView } fr
 import { trackWebsiteEvent } from "@/lib/website-events";
 import { SiteEffects } from "@/components/site-effects";
 
+const SITE_ENTITY_GRAPH = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://getinksights.co.uk/#organization",
+      name: "INKSIGHTS",
+      alternateName: "INKSIGHTS — Growth Intelligence for UK Tattoo Studios",
+      url: "https://getinksights.co.uk/",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://getinksights.co.uk/brand/logo-v3/primary-dark.svg",
+      },
+      description:
+        "Growth intelligence, diagnostics and commercial systems designed specifically for UK tattoo studios.",
+      areaServed: {
+        "@type": "Country",
+        name: "United Kingdom",
+      },
+      knowsAbout: [
+        "tattoo studio growth",
+        "tattoo studio SEO",
+        "tattoo studio marketing",
+        "tattoo studio booking",
+        "tattoo studio client retention",
+        "tattoo studio revenue",
+        "tattoo studio benchmarking",
+      ],
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        url: "https://getinksights.co.uk/contact",
+        areaServed: "GB",
+        availableLanguage: "English",
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://getinksights.co.uk/#website",
+      url: "https://getinksights.co.uk/",
+      name: "INKSIGHTS",
+      alternateName: "Growth Intelligence for UK Tattoo Studios",
+      inLanguage: "en-GB",
+      publisher: { "@id": "https://getinksights.co.uk/#organization" },
+    },
+  ],
+} as const;
+
 function NotFoundComponent() { return <div className="flex min-h-screen items-center justify-center bg-ink-deep px-4 text-ice"><div className="max-w-md text-center"><p className="text-xs font-bold uppercase tracking-[0.2em] text-mint">404</p><h1 className="mt-4 font-display text-5xl font-black">Page not found</h1><p className="mt-4 text-sm leading-relaxed text-muted-foreground">The page may have moved. Use the resource library or return to the INKSIGHTS homepage.</p><div className="mt-7 flex flex-wrap justify-center gap-3"><Link to="/" className="rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep">Go home</Link><a href="/resources" className="rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">Browse resources</a></div></div></div>; }
 function ErrorComponent({ error, reset }: ErrorComponentProps) { const normalizedError = error instanceof Error ? error : new Error(String(error)); console.error(normalizedError); const router = useRouter(); useEffect(() => { reportLovableError(normalizedError, { boundary: "tanstack_root_error_component" }); }, [normalizedError]); return <div className="flex min-h-screen items-center justify-center bg-ink-deep px-4 text-ice"><div className="max-w-md text-center"><h1 className="font-display text-3xl font-black">This page did not load</h1><p className="mt-3 text-sm leading-relaxed text-muted-foreground">Try the page again or return to the homepage.</p><div className="mt-6 flex flex-wrap justify-center gap-2"><button onClick={() => { router.invalidate(); reset(); }} className="rounded-full bg-mint px-5 py-3 font-bold text-ink-deep">Try again</button><a href="/" className="rounded-full border border-border px-5 py-3 font-bold text-ice">Go home</a></div></div></div>; }
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({ head: () => ({ meta: [
@@ -52,6 +100,10 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: googleConsentBootstrap }} />
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(SITE_ENTITY_GRAPH) }}
+        />
       </head>
       <body>
         {children}
