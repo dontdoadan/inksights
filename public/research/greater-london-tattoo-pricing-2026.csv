@@ -1,0 +1,20 @@
+studio_name,scope,source_tier,hourly_gbp,minimum_gbp,full_day_gbp,half_day_gbp,flat_deposit_gbp,deposit_pct,cancellation_notice_hours,source_url
+Big Hands Private Studio,artist,third_party,90,90,,,50,,48,https://www.tattoodo.com/artists/cig.thief.tattoo
+JuJu Tattoo Studio,studio,official,80,50,,,,,,https://www.jujutattoostudio.co.uk/about-juju-tattoo-studio-croydon.html
+London Rabbits / Wimbledon Tattoo Group,studio,official,,70,,,50,,,https://londonrabbits.com/faq/
+Major INK LTD,artist,third_party,120,70,700,,,,,https://web.tattoodo.io/artists/dean_oleary_1
+Maximum Dosage Tattoo & Piercing,artist,third_party,100,70,750,,50,,,https://www.tattoodo.co.uk/artists/dan.tattoos
+Never Say Die! Tattoo Studio,artist,official,140,,,,100,,,https://kali.tattoo/
+Sasa.tattoist / 93 Battersea Rise,artist,third_party,120,100,800,,,,48,https://www.tattoodo.com/artists/salvatoreranieri12
+Sorry Mum London Tattoos,artist,third_party,140,140,,,100,,,https://www.tattoodo.co.uk/artists/dor_llhpoke
+Sorry Mum London Tattoos,artist,third_party,150,150,,,50,,,https://www.tattoodo.co.uk/artists/sorrymumlondon
+Sorry Mum London Tattoos,studio_policy,official,,,,,50,,72,https://www.sorrymumlondon.com/work/faq
+Sorry Mum London Tattoos,studio_policy,official,,,800,,50,,72,https://www.sorrymumlondon.com/work/bookatattoo
+Steel Point Tattoos,studio,official,,,,,,,72,https://steelpointtattoos.co.uk/booking-terms/
+The Temple Tattoos,artist,third_party,140,150,1200,,,,,https://www.tattoodo.co.uk/artists/kotasovaj
+Timebomb Tattoo & Piercing,flash_offer,third_party,,,,,,,,https://walkintattoos.co.uk/walk-in-tattoos-croydon/
+Tooting Tattoo Studio,artist,third_party,100,60,500,,,,,https://www.tattoodo.com/artists/luissa_marina
+Triangle Tattoo,studio,official,110,80,550,275,,50,48,https://www.triangletattoo.uk/faq
+Wanderlust Ink,studio,official,,,,,,,24,https://wanderlustink.co.uk/faqs
+Wimbledon Tattoo Studio,artist,third_party,90,90,600,,,,,https://www.tattoodo.com/artists/lara_g_3
+Wimbledon Tattoo Studio,studio_session_menu,third_party,,,,300,,,,https://www.fresha.com/a/wimbledon-tattoo-studio-london-600-kingston-road-eqzl9wgs

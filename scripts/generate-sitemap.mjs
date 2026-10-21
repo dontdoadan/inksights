@@ -3,6 +3,8 @@ import { writeFileSync } from "node:fs";
 const domain = "https://getinksights.co.uk";
 
 const lastmodByRoute = {
+  "/press": "2026-10-21",
+  "/research/greater-london-tattoo-pricing-2026": "2026-10-21",
   "/offers/primary-constraint-programme": "2026-10-20",
   "/offers": "2026-10-20",
   "/studio-growth-check": "2026-10-20",
@@ -12,7 +14,7 @@ const lastmodByRoute = {
   "/contact": "2026-10-20",
   "/research-methodology": "2026-10-20",
   "/": "2026-10-20",
-  "/resources": "2026-10-20",
+  "/resources": "2026-10-21",
   "/tattoo-studio-growth": "2026-10-20",
   "/tattoo-studio-marketing": "2026-10-20",
   "/tattoo-studio-management": "2026-10-20",
@@ -51,12 +53,14 @@ const routes = [
   "/studio-growth-check",
   "/studio-visibility-report",
   "/resources",
+  "/research/greater-london-tattoo-pricing-2026",
   "/tattoo-studio-visibility-scorecard",
   "/tattoo-studio-software",
   "/growth-model",
   "/pricing-benchmark",
   "/case-studies",
   "/about",
+  "/press",
   "/research-methodology",
   "/support",
   "/contact",
