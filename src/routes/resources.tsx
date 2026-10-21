@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BarChart3, Calculator, Search, ShieldCheck, Workflow } from "lucide-react";
+import { BarChart3, Calculator, Database, Search, ShieldCheck, Workflow } from "lucide-react";
 import { CtaSection, JsonLd, PageHero, PublicShell, SectionHeading } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/resources";
@@ -60,6 +60,25 @@ const modelResources = [
     description:
       "Compare studio pricing with UK reference bands and interpret price position alongside booking lead time before changing rates.",
     href: "/pricing-benchmark",
+  },
+] as const;
+
+const researchResources = [
+  {
+    icon: Database,
+    title: "Greater London Tattoo Pricing & Booking Policy Snapshot 2026",
+    type: "Original research",
+    description:
+      "A transparent pilot dataset of published hourly rates, minimums, full-day rates, deposits and cancellation policies across 15 Greater London studio identities.",
+    href: "/research/greater-london-tattoo-pricing-2026",
+  },
+  {
+    icon: ShieldCheck,
+    title: "INKSIGHTS Research Methodology",
+    type: "Methodology",
+    description:
+      "See the evidence labels, provenance rules, benchmark standards and case-study controls used before INKSIGHTS publishes a claim.",
+    href: "/research-methodology",
   },
 ] as const;
 
@@ -180,6 +199,12 @@ function ResourcesPage() {
         title="Put commercial questions into numbers."
         description="Use these tools to test revenue assumptions, pricing position and the possible size of an opportunity before making a change."
         resources={modelResources}
+      />
+      <ResourceSection
+        eyebrow="Original INKSIGHTS research"
+        title="Use evidence that can be inspected and cited."
+        description="Research releases publish the scope, sample, source mix and limitations alongside the findings so studios and industry partners can reuse them responsibly."
+        resources={researchResources}
       />
       <ResourceSection
         eyebrow="Guides and operating systems"
