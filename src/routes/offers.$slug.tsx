@@ -1,4 +1,4 @@
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, notFound, useSearch } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, CheckCircle2, Clock3, Loader2, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -49,6 +49,7 @@ const OFFER_SEO: Record<string, { title: string; description: string }> = {
 };
 
 export const Route = createFileRoute("/offers/$slug")({
+  beforeLoad: ({ params }) => { if (!getPublicOffer(params.slug)) throw notFound(); },
   component: OfferPage,
   validateSearch: (search: Record<string, unknown>) => ({
     checkout: typeof search.checkout === "string" ? search.checkout : undefined,
@@ -88,19 +89,28 @@ function OfferPage() {
   const search = useSearch({ from: "/offers/$slug" });
   const offer = getPublicOffer(slug);
   const verifyCheckout = useServerFn(verifyCheckoutSession);
+  const [checkoutVerification, setCheckoutVerification] = useState<"idle" | "checking" | "paid" | "failed">("idle");
 
   useEffect(() => {
-    if (!offer || search.checkout !== "success" || !search.session_id) return;
+    if (!offer || search.checkout !== "success") return;
+    if (!search.session_id) { setCheckoutVerification("failed"); return; }
+    setCheckoutVerification("checking");
     void verifyCheckout({ data: { sessionId: search.session_id } })
       .then((verified) => {
-        if (!verified.paid) return;
+        if (!verified.paid || verified.offerSlug !== offer.slug) {
+          setCheckoutVerification("failed");
+          trackWebsiteEvent("checkout_error", { offer: offer.slug, reason: "payment_not_verified" });
+          return;
+        }
+        setCheckoutVerification("paid");
         trackWebsiteEvent("payment_completed", {
-          offer: verified.offerSlug || offer.slug,
+          offer: offer.slug,
           amount_minor: verified.amountTotal || 0,
           currency: verified.currency || "gbp",
         });
       })
       .catch(() => {
+        setCheckoutVerification("failed");
         trackWebsiteEvent("checkout_error", { offer: offer.slug, reason: "verification_failed" });
       });
   }, [offer, search.checkout, search.session_id, verifyCheckout]);
@@ -164,9 +174,19 @@ function OfferPage() {
         </ol>
       </nav>
 
-      {search.checkout === "success" && (
-        <div className="border-b border-mint/30 bg-mint/10 px-6 py-4 text-center text-sm font-medium text-mint">
-          Payment successful. Thank you — INKSIGHTS will contact you within one working day to begin intake.
+      {search.checkout === "success" && checkoutVerification === "checking" && (
+        <div role="status" className="border-b border-border bg-ink px-6 py-4 text-center text-sm font-medium text-ice">
+          Verifying payment with Stripe…
+        </div>
+      )}
+      {search.checkout === "success" && checkoutVerification === "paid" && (
+        <div role="status" className="border-b border-mint/30 bg-mint/10 px-6 py-4 text-center text-sm font-medium text-mint">
+          Payment verified. INKSIGHTS will contact you within one working day to begin intake.
+        </div>
+      )}
+      {search.checkout === "success" && checkoutVerification === "failed" && (
+        <div role="alert" className="border-b border-amber-300/30 bg-ink px-6 py-4 text-center text-sm font-medium text-amber-200">
+          Payment could not be verified here. Check your Stripe receipt or contact INKSIGHTS before paying again.
         </div>
       )}
       {search.checkout === "cancelled" && (
