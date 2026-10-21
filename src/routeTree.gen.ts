@@ -22,7 +22,6 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as ResearchMethodologyRouteImport } from './routes/research-methodology'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
@@ -53,6 +52,7 @@ import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/t
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
+import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 
@@ -118,11 +118,6 @@ const PricingBenchmarkRoute = PricingBenchmarkRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResearchMethodologyRoute = ResearchMethodologyRouteImport.update({
-  id: '/research-methodology',
-  path: '/research-methodology',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
@@ -283,6 +278,12 @@ const AuthenticatedAuditsAuditIdRoute =
     path: '/$auditId',
     getParentRoute: () => AuthenticatedAuditsRoute,
   } as any)
+const ApiPublicPricingBenchmarkSubmitRoute =
+  ApiPublicPricingBenchmarkSubmitRouteImport.update({
+    id: '/api/public/pricing-benchmark-submit',
+    path: '/api/public/pricing-benchmark-submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe-webhook',
   path: '/api/public/stripe-webhook',
@@ -308,7 +309,6 @@ export interface FileRoutesByFullPath {
   '/offers': typeof OffersRouteWithChildren
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
-  '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
@@ -339,6 +339,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -354,7 +355,6 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
-  '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
@@ -385,6 +385,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -403,7 +404,6 @@ export interface FileRoutesById {
   '/offers': typeof OffersRouteWithChildren
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
-  '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
@@ -434,6 +434,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -452,7 +453,6 @@ export interface FileRouteTypes {
     | '/offers'
     | '/pricing-benchmark'
     | '/privacy'
-    | '/research-methodology'
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
@@ -483,6 +483,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesByTo: FileRoutesByTo
@@ -498,7 +499,6 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/pricing-benchmark'
     | '/privacy'
-    | '/research-methodology'
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
@@ -529,6 +529,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   id:
@@ -546,7 +547,6 @@ export interface FileRouteTypes {
     | '/offers'
     | '/pricing-benchmark'
     | '/privacy'
-    | '/research-methodology'
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
@@ -577,6 +577,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/audits/$auditId'
+    | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesById: FileRoutesById
@@ -595,7 +596,6 @@ export interface RootRouteChildren {
   OffersRoute: typeof OffersRouteWithChildren
   PricingBenchmarkRoute: typeof PricingBenchmarkRoute
   PrivacyRoute: typeof PrivacyRoute
-  ResearchMethodologyRoute: typeof ResearchMethodologyRoute
   ResourcesRoute: typeof ResourcesRoute
   SolutionsRoute: typeof SolutionsRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
@@ -619,6 +619,7 @@ export interface RootRouteChildren {
   ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
 }
@@ -714,13 +715,6 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/research-methodology': {
-      id: '/research-methodology'
-      path: '/research-methodology'
-      fullPath: '/research-methodology'
-      preLoaderRoute: typeof ResearchMethodologyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resources': {
@@ -933,6 +927,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditsAuditIdRouteImport
       parentRoute: typeof AuthenticatedAuditsRoute
     }
+    '/api/public/pricing-benchmark-submit': {
+      id: '/api/public/pricing-benchmark-submit'
+      path: '/api/public/pricing-benchmark-submit'
+      fullPath: '/api/public/pricing-benchmark-submit'
+      preLoaderRoute: typeof ApiPublicPricingBenchmarkSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
@@ -1013,7 +1014,6 @@ const rootRouteChildren: RootRouteChildren = {
   OffersRoute: OffersRouteWithChildren,
   PricingBenchmarkRoute: PricingBenchmarkRoute,
   PrivacyRoute: PrivacyRoute,
-  ResearchMethodologyRoute: ResearchMethodologyRoute,
   ResourcesRoute: ResourcesRoute,
   SolutionsRoute: SolutionsRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
@@ -1038,6 +1038,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
 }

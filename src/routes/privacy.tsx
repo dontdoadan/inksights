@@ -48,6 +48,8 @@ function PrivacyPage() {
         </table>
       </div>
 
+      <p>When you submit information to a pricing or commercial calculator, INKSIGHTS stores the submitted values and returned result to provide the tool, maintain an audit trail and improve future analysis. Self-reported responses remain labelled unverified; aggregate research must not misrepresent them as independently verified market observations. Tool submissions do not automatically subscribe users to marketing.</p>
+
       <h2>Automated qualification</h2>
       <p>The Studio Growth Check uses assessment answers to calculate scores such as urgency, readiness and commercial fit. The result routes people to a relevant offer, booking request or nurture path. It does not make a legal, employment, credit, medical or similarly significant decision.</p>
 
