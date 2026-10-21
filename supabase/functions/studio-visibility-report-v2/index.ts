@@ -200,14 +200,31 @@ Deno.serve(async (req) => {
       return json({ ok: false, error: "Submission is too large." }, 413);
     }
 
-    const body = JSON.parse(rawBody);
+    let body: Record<string, unknown>;
+    try {
+      const parsed: unknown = JSON.parse(rawBody);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        return json({ ok: false, error: "The submission must be a JSON object." }, 400);
+      }
+      body = parsed as Record<string, unknown>;
+    } catch {
+      return json({ ok: false, error: "Invalid JSON submission." }, 400);
+    }
+    if (body.consent !== true) {
+      return json({ ok: false, error: "Please acknowledge how your data will be used." }, 400);
+    }
     if (clean(body.website_honeypot)) return json({ ok: false, error: "Invalid submission." }, 400);
 
     const studioName = clean(body.studio_name, 160);
     const contactName = clean(body.contact_name, 120);
     const email = clean(body.email, 254).toLowerCase();
     const area = clean(body.area, 120);
-    const website = validatePublicUrl(body.website);
+    let website: URL;
+    try {
+      website = validatePublicUrl(body.website);
+    } catch {
+      return json({ ok: false, error: "Please provide a valid public website URL." }, 400);
+    }
     const artists = Number(body.artist_count);
     const services = list(body.services);
     const styles = list(body.styles);
