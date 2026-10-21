@@ -120,6 +120,11 @@ function ContactPage() {
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Secure contact form</p>
                   <h2 className="mt-2 font-display text-3xl font-black text-ice">What do you need help with?</h2>
+                  {search.topic === "growth-check" ? (
+                    <div className="mt-4 rounded-2xl border border-mint/25 bg-mint/5 p-4 text-sm leading-relaxed text-muted-foreground">
+                      <b className="text-ice">No reliable monthly figures? You can still enquire.</b> Tell us your studio size, how enquiries and bookings currently work, which figures you have and what is missing. We can discuss the appropriate next step. Submitting this message does not generate a Growth Check estimate or create a booking.
+                    </div>
+                  ) : null}
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field label="Name" required><input name="name" required autoComplete="name" className="form-control" /></Field>
