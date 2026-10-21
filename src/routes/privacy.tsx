@@ -23,7 +23,7 @@ function PrivacyPage() {
       description="This notice explains how INKSIGHTS handles personal information submitted through the public website, assessments, contact forms and business relationship."
     >
       <h2>Who controls the information?</h2>
-      <p>INKSIGHTS is the controller for personal information collected directly through this website. Privacy questions and rights requests can be sent to <a href="mailto:contact@getinksight.co.uk">contact@getinksight.co.uk</a>.</p>
+      <p>INKSIGHTS is the controller for personal information collected directly through this website. Privacy questions and rights requests can be submitted through the <a href="/contact">INKSIGHTS contact form</a>.</p>
 
       <h2>Information we may collect</h2>
       <ul>
@@ -64,7 +64,7 @@ function PrivacyPage() {
       <p>Public forms submit through server-side validation and rate limiting. Sensitive service credentials are not placed in the browser. Database tables use access controls and row-level security where appropriate. No system is completely risk-free, but access is restricted and changes are version controlled.</p>
 
       <h2>Your rights</h2>
-      <p>Depending on the circumstances, UK data-protection law may give you rights to access, correct, delete or restrict personal information; object to certain processing; receive portable information; and withdraw consent. You can make a request by emailing <a href="mailto:contact@getinksight.co.uk">contact@getinksight.co.uk</a>.</p>
+      <p>Depending on the circumstances, UK data-protection law may give you rights to access, correct, delete or restrict personal information; object to certain processing; receive portable information; and withdraw consent. You can make a request through the <a href="/contact">INKSIGHTS contact form</a>.</p>
       <p>You may also complain to the Information Commissioner's Office if you believe your information has been handled unlawfully.</p>
 
       <h2>Marketing and advertisers</h2>

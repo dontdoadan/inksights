@@ -25,6 +25,8 @@ The current customer-facing pathway is:
 
 The £395 Studio Intelligence Audit is a validation price, not a permanent market-validated price anchor. Implementation pricing remains configurable and must not be hard-coded into product logic.
 
+**21 October 2026 launch control:** The Studio Intelligence Audit is the sole immediately purchasable public paid offer. Fixed scope, five-working-day reporting commitment after complete paid intake, 45–60 minute findings session, post-payment operating procedure and founding-studio exception are controlled by [`offers/studio-intelligence-audit-v1.md`](offers/studio-intelligence-audit-v1.md). Other services may be described or quoted, but are not self-checkout offers. Complimentary audit waivers require individually approved, tracked founding-pilot invitations; never advertise a general public free checkout.
+
 ## 2. Commercial governance
 
 1. Current public and sales materials must use INKSIGHTS naming.

@@ -17,10 +17,10 @@ const journey = [
   },
   {
     title: "Studio Intelligence Audit",
-    detail: "For a wider or uncertain problem, investigate visibility, competitors and the customer journey. Receive prioritised recommendations, a 90-day action plan and a 45–60 minute findings session.",
+    detail: "Buy directly for £395. For one studio location, receive an evidence-led PDF report on visibility, competitors and the booking journey, top three priorities and a 90-day plan within five working days of complete intake, plus a findings session.",
     href: "/offers/studio-intelligence-audit",
     cta: "Explore the £395 audit",
-    price: "£395 one-off · founding validation price",
+    price: "£395 one-off",
   },
   {
     title: "Primary Constraint Programme",

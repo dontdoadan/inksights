@@ -192,7 +192,7 @@ function OfferPage() {
             <SectionHeading
               eyebrow="What you receive"
               title="What your £395 audit includes."
-              description="The Studio Intelligence Audit is a defined commercial diagnosis. These representative sections show the shape of the output so the studio can understand what the £395 purchase produces before checkout."
+              description="One clearly defined £395 purchase: a written, evidence-led diagnosis for one location, prioritised next steps and a live findings session. You can purchase without a sales call."
             />
             <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {[
@@ -211,7 +211,7 @@ function OfferPage() {
               ))}
             </div>
             <div className="mt-6 rounded-2xl border border-mint/25 bg-mint/5 p-5 text-sm leading-relaxed text-muted-foreground">
-              <strong className="text-ice">Scope preview:</strong> these sections explain the deliverable, not a completed client result. The audit includes a 45–60 minute findings session. Implementation is priced separately; the delivery timetable is confirmed once the required information is complete.
+              <strong className="text-ice">Delivery commitment:</strong> we email the intake request within one working day of payment. Your PDF report follows within five working days of complete intake; we offer a 45–60 minute remote findings session within five further working days. Implementation and monitoring are separate purchases.
             </div>
           </div>
         </section>
@@ -291,7 +291,16 @@ function OfferPage() {
           </div>
         </div>
       </section>
-      <CtaSection title={`Check whether ${offer.name} is the correct next step.`} />
+      {offer.slug === "studio-intelligence-audit" ? (
+        <section className="border-t border-border bg-ink-deep">
+          <div className="mx-auto flex max-w-5xl flex-col items-start gap-5 px-6 py-16 md:py-20">
+            <h2 className="font-display text-3xl font-black text-ice md:text-4xl">One studio. One clear diagnosis. £395.</h2>
+            <p className="max-w-2xl leading-relaxed text-muted-foreground">Secure one-time checkout, with no subscription or mandatory sales call. You receive an intake request within one working day of payment.</p>
+            <CheckoutButton offer={offer} leadId={search.lead_id} auditId={search.audit_id} />
+            <p className="text-xs text-muted-foreground">Please review the <a href="/terms" className="font-bold text-mint">terms</a> and <a href="/privacy" className="font-bold text-mint">privacy notice</a> before purchase.</p>
+          </div>
+        </section>
+      ) : <CtaSection title={`Check whether ${offer.name} is the correct next step.`} /> }
     </PublicShell>
   );
 }
