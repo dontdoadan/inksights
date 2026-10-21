@@ -15,14 +15,28 @@ export async function syncHubSpotDirect(payload, { token, fetcher = fetch } = {}
   const data = validateCrmPayload(payload);
   if (!token || typeof token !== "string") throw new Error("hubspot_private_token_missing");
   const request = async (method, path, body, options = {}) => {
-    const response = await fetcher(BASE + path, {
-      method,
-      headers: {
-        "authorization": "Bearer " + token,
-        "content-type": "application/json",
-      },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    });
+    let response;
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        response = await fetcher(BASE + path, {
+          method,
+          headers: {
+            "authorization": "Bearer " + token,
+            "content-type": "application/json",
+          },
+          ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+          signal: AbortSignal.timeout(8_000),
+        });
+      } catch {
+        // Retrying a create after an ambiguous network timeout can duplicate
+        // records. Fail closed and let the next sync re-read HubSpot first.
+        throw new Error("hubspot_transport_unavailable");
+      }
+      if (response.status !== 429 && response.status < 500) break;
+      if (attempt === 2) break;
+      if (method === "POST" && !path.endsWith("/search")) break;
+      await new Promise(resolve => setTimeout(resolve, 200 * (attempt + 1)));
+    }
     if (options.allow404 && response.status === 404) return null;
     if (options.allow409 && response.status === 409) return { conflict: true };
     if (!response.ok) {
