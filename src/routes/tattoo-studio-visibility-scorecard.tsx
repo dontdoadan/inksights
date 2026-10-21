@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, Clipboard, RotateCcw, ShieldCheck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { JsonLd, PageHero, PublicShell } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/tattoo-studio-visibility-scorecard";
 const STORAGE_KEY = "inksight-visibility-scorecard-v1";
+const SCORECARD_VERSION = "2026-10-scorecard-v1";
+const CONSENT_VERSION = "2026-10-tool-v1";
+type SavedScorecard = { score: number; checked_count: number; total_checks: number; sections: Array<{ id: string; title: string; score: number }>; weakest_area: string; gaps: string[] };
 
 type CheckItem = { id: string; label: string; evidence: string };
 type Section = { id: string; title: string; description: string; checks: readonly CheckItem[] };
@@ -95,6 +98,12 @@ function scoreSummary(score: number) {
 function TattooStudioVisibilityScorecard() {
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState(false);
+  const [submitted, setSubmitted] = useState<SavedScorecard | null>(null);
+  const [submissionId, setSubmissionId] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [acknowledged, setAcknowledged] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const submissionKey = useRef<string | null>(null);
 
   useEffect(() => {
     try {
@@ -109,29 +118,68 @@ function TattooStudioVisibilityScorecard() {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(completed));
   }, [completed]);
 
-  const checkedCount = useMemo(() => allChecks.reduce((total, check) => total + (completed[check.id] ? 1 : 0), 0), [completed]);
-  const score = Math.round((checkedCount / allChecks.length) * 100);
-  const sectionScores = useMemo(() => sections.map((section) => ({
-    id: section.id,
-    title: section.title,
-    score: Math.round((section.checks.filter((check) => completed[check.id]).length / section.checks.length) * 100),
-  })), [completed]);
-  const weakest = [...sectionScores].sort((a, b) => a.score - b.score)[0];
-  const gaps = allChecks.filter((check) => !completed[check.id]).map((check) => check.id);
-  const handoff = `/studio-growth-check?source=visibility-scorecard&score=${score}&weakest=${encodeURIComponent(weakest?.id || "unknown")}&gaps=${encodeURIComponent(gaps.join(","))}`;
+  // The only displayable score is the *persisted, server-computed* snapshot.
+  const score = submitted?.score ?? 0;
+  const sectionScores = submitted?.sections ?? [];
+  const weakest = sectionScores.find((section) => section.id === submitted?.weakest_area);
+  const gaps = submitted?.gaps ?? [];
+  const handoff = submitted ? `/studio-growth-check?source=visibility-scorecard&score=${score}&weakest=${encodeURIComponent(submitted.weakest_area)}&gaps=${encodeURIComponent(gaps.join(","))}` : null;
+
+  function invalidate() {
+    setSubmitted(null);
+    setSubmissionId(null);
+    setCopied(false);
+    setSubmitError("");
+    submissionKey.current = null;
+  }
+
+  async function submitScorecard() {
+    if (submitting) return;
+    setSubmitError("");
+    if (!acknowledged) { setSubmitError("Please acknowledge how your selections will be stored."); return; }
+    const key = submissionKey.current ?? crypto.randomUUID();
+    submissionKey.current = key;
+    setSubmitting(true);
+    try {
+      const response = await fetch("/api/public/visibility-scorecard-submit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          submissionKey: key,
+          scorecardVersion: SCORECARD_VERSION,
+          consentVersion: CONSENT_VERSION,
+          dataNoticeAccepted: true,
+          checkedIds: allChecks.filter((check) => completed[check.id]).map((check) => check.id),
+        }),
+      });
+      const payload = await response.json() as { submissionId?: string; result?: SavedScorecard; error?: string };
+      if (!response.ok || typeof payload.submissionId !== "string" || !payload.result) {
+        throw new Error(payload.error || "We could not save your scorecard. Please retry.");
+      }
+      setSubmitted(payload.result);
+      setSubmissionId(payload.submissionId);
+    } catch (error) {
+      setSubmitted(null);
+      setSubmissionId(null);
+      setSubmitError(error instanceof Error ? error.message : "We could not save your scorecard. Please retry.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   function toggle(id: string) {
     setCompleted((current) => ({ ...current, [id]: !current[id] }));
-    setCopied(false);
+    invalidate();
   }
 
   function reset() {
     setCompleted({});
-    setCopied(false);
+    invalidate();
   }
 
   async function copyResult() {
-    const text = `INKSIGHTS Tattoo Studio Visibility Score: ${score}/100 — ${scoreLabel(score)}. Weakest area: ${weakest?.title || "not assessed"}.`;
+    if (!submitted) return;
+    const text = `INKSIGHTS Tattoo Studio Visibility Score: ${submitted.score}/100 — ${scoreLabel(submitted.score)}. Weakest area: ${weakest?.title || "not assessed"}.`;
     await navigator.clipboard.writeText(text);
     setCopied(true);
   }
@@ -163,7 +211,7 @@ function TattooStudioVisibilityScorecard() {
                     <h2 className="font-display text-2xl font-black text-ice md:text-3xl">{section.title}</h2>
                     <p className="mt-2 text-muted-foreground">{section.description}</p>
                   </div>
-                  <span className="rounded-full bg-mint/10 px-3 py-1 text-xs font-bold text-mint">{sectionScores.find((item) => item.id === section.id)?.score || 0}%</span>
+                  <span className="rounded-full bg-mint/10 px-3 py-1 text-xs font-bold text-mint">{submitted ? `${sectionScores.find((item) => item.id === section.id)?.score ?? 0}%` : "—"}</span>
                 </div>
                 <div className="mt-6 space-y-4">
                   {section.checks.map((check) => {
@@ -195,27 +243,36 @@ function TattooStudioVisibilityScorecard() {
 
           <aside className="rounded-2xl border border-mint/35 bg-ink-deep p-7 shadow-2xl shadow-black/20 lg:sticky lg:top-24">
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-mint">Current score</p>
-            <div className="mt-4 font-display text-7xl font-black text-ice">{score}</div>
-            <div className="text-sm font-semibold text-mint">out of 100</div>
+            <div className="mt-4 font-display text-7xl font-black text-ice">{submitted ? score : "—"}</div>
+            <div className="text-sm font-semibold text-mint">{submitted ? "out of 100" : "Submit to reveal"}</div>
             <div className="mt-6 h-3 overflow-hidden rounded-full bg-ink"><div className="h-full rounded-full bg-mint transition-all" style={{ width: `${score}%` }} /></div>
-            <p className="mt-5 text-xl font-bold text-ice">{scoreLabel(score)}</p>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{scoreSummary(score)}</p>
+            <p className="mt-5 text-xl font-bold text-ice">{submitted ? scoreLabel(score) : "Complete your checks, then submit"}</p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{submitted ? scoreSummary(score) : "Your personalised visibility findings remain hidden until your reviewed responses are saved successfully."}</p>
             <div className="mt-5 rounded-xl border border-border bg-ink p-4">
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Weakest area</p>
-              <p className="mt-2 font-bold text-ice">{weakest?.title || "Complete the checks"}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{weakest?.score || 0}% confirmed</p>
+              <p className="mt-2 font-bold text-ice">{submitted ? weakest?.title || "Not assessed" : "Hidden until submission"}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{submitted ? `${weakest?.score ?? 0}% self-reported` : "Not yet calculated"}</p>
             </div>
-            <p className="mt-5 text-sm text-muted-foreground">{checkedCount} of {allChecks.length} conditions confirmed.</p>
-            <a href={handoff} className="mt-7 flex w-full justify-center rounded-full bg-mint px-5 py-3.5 text-center font-bold text-ink-deep hover:bg-mint-soft">
+            <p className="mt-5 text-sm text-muted-foreground">{submitted ? `${submitted.checked_count} of ${submitted.total_checks} conditions marked true.` : "Review each condition and submit when finished."}</p>
+            <label className="mt-6 flex items-start gap-3 text-xs leading-relaxed text-muted-foreground">
+              <input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} className="mt-0.5 accent-mint" />
+              <span>I have reviewed these 15 conditions. INKSIGHTS may store my unverified responses and returned result for analysis. This is not marketing consent. <a href="/privacy" className="text-mint underline">Privacy notice</a>.</span>
+            </label>
+            <button type="button" onClick={submitScorecard} disabled={submitting} className="mt-4 flex w-full justify-center rounded-full bg-mint px-5 py-3.5 text-center font-bold text-ink-deep disabled:opacity-50">
+              {submitting ? "Saving your answers…" : "Submit answers and reveal my score"}
+            </button>
+            {submitError && <p role="alert" className="mt-3 text-sm text-amber-300">{submitError}</p>}
+            {submissionId && <p role="status" className="mt-3 text-sm text-mint">Saved successfully. Your score is displayed above.</p>}
+            {handoff && <a href={handoff} className="mt-4 flex w-full justify-center rounded-full border border-mint px-5 py-3.5 text-center font-bold text-mint hover:bg-ink">
               Build my action plan →
-            </a>
-            <button type="button" onClick={copyResult} className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-semibold text-muted-foreground hover:border-mint hover:text-mint">
+            </a>}
+            <button type="button" onClick={copyResult} disabled={!submitted} className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-semibold text-muted-foreground hover:border-mint hover:text-mint">
               <Clipboard className="h-4 w-4" /> {copied ? "Result copied" : "Copy result"}
             </button>
             <button type="button" onClick={reset} className="mt-3 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-muted-foreground hover:text-mint">
               <RotateCcw className="h-4 w-4" /> Reset scorecard
             </button>
-            <div className="mt-6 flex gap-2 text-xs leading-relaxed text-muted-foreground"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-mint" />Selections stay in this browser until you reset or clear site data.</div>
+            <div className="mt-6 flex gap-2 text-xs leading-relaxed text-muted-foreground"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-mint" />Draft selections stay in this browser. A submitted snapshot is saved in INKSIGHTS as an unverified self-report; never as independent market evidence.</div>
           </aside>
         </div>
       </section>
