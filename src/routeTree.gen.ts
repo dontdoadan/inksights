@@ -56,6 +56,7 @@ import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authen
 import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
+import { Route as ApiPublicVisibilityScorecardSubmitRouteImport } from './routes/api/public/visibility-scorecard-submit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -301,6 +302,12 @@ const ApiPublicVisibilityReportRoute =
     path: '/api/public/visibility-report',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicVisibilityScorecardSubmitRoute =
+  ApiPublicVisibilityScorecardSubmitRouteImport.update({
+    id: '/api/public/visibility-scorecard-submit',
+    path: '/api/public/visibility-scorecard-submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
+  '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -396,6 +404,7 @@ export interface FileRoutesByTo {
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
+  '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -446,6 +455,7 @@ export interface FileRoutesById {
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
+  '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -496,6 +506,7 @@ export interface FileRouteTypes {
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
+    | '/api/public/visibility-scorecard-submit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -543,6 +554,7 @@ export interface FileRouteTypes {
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
+    | '/api/public/visibility-scorecard-submit'
   id:
     | '__root__'
     | '/'
@@ -592,6 +604,7 @@ export interface FileRouteTypes {
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
+    | '/api/public/visibility-scorecard-submit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -635,6 +648,7 @@ export interface RootRouteChildren {
   ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
+  ApiPublicVisibilityScorecardSubmitRoute: typeof ApiPublicVisibilityScorecardSubmitRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -968,6 +982,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicVisibilityReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/visibility-scorecard-submit': {
+      id: '/api/public/visibility-scorecard-submit'
+      path: '/api/public/visibility-scorecard-submit'
+      fullPath: '/api/public/visibility-scorecard-submit'
+      preLoaderRoute: typeof ApiPublicVisibilityScorecardSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1062,6 +1083,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
+  ApiPublicVisibilityScorecardSubmitRoute: ApiPublicVisibilityScorecardSubmitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
