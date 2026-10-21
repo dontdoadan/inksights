@@ -24,6 +24,7 @@ import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResearchMethodologyRouteImport } from './routes/research-methodology'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as RevenueOpportunityCalculatorRouteImport } from './routes/revenue-opportunity-calculator'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
 import { Route as StudioVisibilityReportRouteImport } from './routes/studio-visibility-report'
@@ -53,6 +54,7 @@ import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/t
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
+import { Route as ApiPublicRevenueScenarioRouteImport } from './routes/api/public/revenue-scenario'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 
@@ -130,6 +132,12 @@ const ResourcesRoute = ResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RevenueOpportunityCalculatorRoute =
+  RevenueOpportunityCalculatorRouteImport.update({
+    id: '/revenue-opportunity-calculator',
+    path: '/revenue-opportunity-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
@@ -283,6 +291,12 @@ const AuthenticatedAuditsAuditIdRoute =
     path: '/$auditId',
     getParentRoute: () => AuthenticatedAuditsRoute,
   } as any)
+const ApiPublicRevenueScenarioRoute =
+  ApiPublicRevenueScenarioRouteImport.update({
+    id: '/api/public/revenue-scenario',
+    path: '/api/public/revenue-scenario',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe-webhook',
   path: '/api/public/stripe-webhook',
@@ -310,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -339,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -356,6 +372,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -385,6 +402,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -405,6 +423,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -434,6 +453,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -454,6 +474,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -483,6 +504,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesByTo: FileRoutesByTo
@@ -500,6 +522,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -529,6 +552,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   id:
@@ -548,6 +572,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -577,6 +602,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/audits/$auditId'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesById: FileRoutesById
@@ -597,6 +623,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResearchMethodologyRoute: typeof ResearchMethodologyRoute
   ResourcesRoute: typeof ResourcesRoute
+  RevenueOpportunityCalculatorRoute: typeof RevenueOpportunityCalculatorRoute
   SolutionsRoute: typeof SolutionsRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
   StudioVisibilityReportRoute: typeof StudioVisibilityReportRoute
@@ -619,6 +646,7 @@ export interface RootRouteChildren {
   ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicRevenueScenarioRoute: typeof ApiPublicRevenueScenarioRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
 }
@@ -728,6 +756,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/revenue-opportunity-calculator': {
+      id: '/revenue-opportunity-calculator'
+      path: '/revenue-opportunity-calculator'
+      fullPath: '/revenue-opportunity-calculator'
+      preLoaderRoute: typeof RevenueOpportunityCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solutions': {
@@ -933,6 +968,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditsAuditIdRouteImport
       parentRoute: typeof AuthenticatedAuditsRoute
     }
+    '/api/public/revenue-scenario': {
+      id: '/api/public/revenue-scenario'
+      path: '/api/public/revenue-scenario'
+      fullPath: '/api/public/revenue-scenario'
+      preLoaderRoute: typeof ApiPublicRevenueScenarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
@@ -1015,6 +1057,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResearchMethodologyRoute: ResearchMethodologyRoute,
   ResourcesRoute: ResourcesRoute,
+  RevenueOpportunityCalculatorRoute: RevenueOpportunityCalculatorRoute,
   SolutionsRoute: SolutionsRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
   StudioVisibilityReportRoute: StudioVisibilityReportRoute,
@@ -1038,6 +1081,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicRevenueScenarioRoute: ApiPublicRevenueScenarioRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
 }
