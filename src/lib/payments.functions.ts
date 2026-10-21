@@ -64,7 +64,23 @@ export const verifyCheckoutSession = createServerFn({ method: "POST" })
       typescript: true,
     });
     const session = await stripe.checkout.sessions.retrieve(data.sessionId);
-    const paid = session.payment_status === "paid" || (session.mode === "subscription" && session.status === "complete");
+    const offer = getPublicOffer(session.metadata?.offer_slug || "");
+    // Stripe, rather than redirect query params or unchecked metadata, is authoritative.
+    // A completed session must contain exactly the published offer's price and quantity.
+    let expectedLineItems = false;
+    if (offer?.stripePriceId && session.status === "complete" && session.payment_status === "paid") {
+      const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 5 });
+      expectedLineItems = items.data.length === 1 &&
+        items.data[0]?.price?.id === offer.stripePriceId &&
+        items.data[0]?.quantity === 1;
+    }
+    const expectedAmount = offer?.slug === "studio-intelligence-audit" ? 39500 : null;
+    const paid = Boolean(
+      offer?.stripePriceId && expectedLineItems &&
+      session.status === "complete" && session.payment_status === "paid" &&
+      (expectedAmount === null || session.amount_total === expectedAmount) &&
+      session.currency?.toLowerCase() === "gbp"
+    );
 
     return {
       paid,
