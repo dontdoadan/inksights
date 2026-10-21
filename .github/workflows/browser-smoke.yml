@@ -1,0 +1,46 @@
+name: Public Browser Smoke Tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/routes/**"
+      - "src/components/**"
+      - "src/lib/**"
+      - "tests/browser/**"
+      - "playwright.config.cjs"
+      - ".github/workflows/browser-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install browser runner
+        run: npm install --no-save --legacy-peer-deps --no-audit --no-fund @playwright/test
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Test production public journeys on desktop and mobile
+        env:
+          E2E_BASE_URL: https://getinksights.co.uk
+        run: npx playwright test --config=playwright.config.cjs
+      - name: Upload traces and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-smoke-evidence
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
