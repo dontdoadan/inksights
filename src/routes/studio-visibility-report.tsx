@@ -128,7 +128,7 @@ function ReportRequest() {
     const form = new FormData(event.currentTarget);
     const payload = {
       studio_name: String(form.get("studio_name") || ""), contact_name: String(form.get("contact_name") || ""), email: String(form.get("email") || ""), website: String(form.get("website") || ""), area: String(form.get("area") || ""), artist_count: Number(form.get("artist_count") || 0),
-      services: String(form.get("services") || "").split(",").map(s => s.trim()).filter(Boolean).slice(0, 10), website_honeypot: String(form.get("website_honeypot") || ""),
+      services: String(form.get("services") || "").split(",").map(s => s.trim()).filter(Boolean).slice(0, 10), website_honeypot: String(form.get("website_honeypot") || ""), consent: form.get("consent") === "on",
     };
     try {
       const response = await fetch(REPORT_FUNCTION, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload) });
@@ -149,7 +149,7 @@ function ReportRequest() {
           </div>
           <label className="mt-5 block text-sm font-semibold text-ice">Main services / styles <span className="font-normal text-muted-foreground">(comma separated)</span><input name="services" className="mt-2 w-full rounded-xl border border-border bg-ink px-4 py-3 font-normal text-ice" placeholder="fine line, realism, blackwork" /></label>
           <div className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden"><input name="website_honeypot" tabIndex={-1} autoComplete="off" /></div>
-          <label className="mt-6 flex gap-3 text-sm text-muted-foreground"><input type="checkbox" required className="mt-1" /><span>I agree to INKSIGHTS using these details to generate the report and contact me about the result.</span></label>
+          <label className="mt-6 flex gap-3 text-sm text-muted-foreground"><input name="consent" type="checkbox" required className="mt-1" /><span>I agree to INKSIGHTS using these details to generate the report and contact me about the result.</span></label>
           <button disabled={loading} type="submit" className="mt-6 inline-flex min-h-12 items-center gap-2 rounded-full bg-mint px-7 py-3 font-bold text-ink-deep disabled:opacity-60">{loading ? "Generating…" : "Generate my report"}<ArrowRight className="h-4 w-4" /></button>
           {error && <p className="mt-4 text-sm font-semibold text-red-300">{error}</p>}
         </form>
