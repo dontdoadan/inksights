@@ -53,6 +53,7 @@ import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/t
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
+import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 
@@ -283,6 +284,12 @@ const AuthenticatedAuditsAuditIdRoute =
     path: '/$auditId',
     getParentRoute: () => AuthenticatedAuditsRoute,
   } as any)
+const ApiPublicPricingBenchmarkSubmitRoute =
+  ApiPublicPricingBenchmarkSubmitRouteImport.update({
+    id: '/api/public/pricing-benchmark-submit',
+    path: '/api/public/pricing-benchmark-submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe-webhook',
   path: '/api/public/stripe-webhook',
@@ -339,6 +346,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -385,6 +393,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -434,6 +443,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
 }
@@ -483,6 +493,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesByTo: FileRoutesByTo
@@ -529,6 +540,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   id:
@@ -577,6 +589,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/audits/$auditId'
+    | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
   fileRoutesById: FileRoutesById
@@ -619,6 +632,7 @@ export interface RootRouteChildren {
   ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
 }
@@ -933,6 +947,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditsAuditIdRouteImport
       parentRoute: typeof AuthenticatedAuditsRoute
     }
+    '/api/public/pricing-benchmark-submit': {
+      id: '/api/public/pricing-benchmark-submit'
+      path: '/api/public/pricing-benchmark-submit'
+      fullPath: '/api/public/pricing-benchmark-submit'
+      preLoaderRoute: typeof ApiPublicPricingBenchmarkSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
@@ -1038,6 +1059,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
 }
