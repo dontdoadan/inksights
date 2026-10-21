@@ -22,6 +22,7 @@ import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ResearchMethodologyRouteImport } from './routes/research-methodology'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
@@ -118,6 +119,11 @@ const PricingBenchmarkRoute = PricingBenchmarkRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchMethodologyRoute = ResearchMethodologyRouteImport.update({
+  id: '/research-methodology',
+  path: '/research-methodology',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResourcesRoute = ResourcesRouteImport.update({
@@ -309,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/offers': typeof OffersRouteWithChildren
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
+  '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
@@ -355,6 +362,7 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
+  '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
@@ -404,6 +412,7 @@ export interface FileRoutesById {
   '/offers': typeof OffersRouteWithChildren
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
+  '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
@@ -596,6 +605,7 @@ export interface RootRouteChildren {
   OffersRoute: typeof OffersRouteWithChildren
   PricingBenchmarkRoute: typeof PricingBenchmarkRoute
   PrivacyRoute: typeof PrivacyRoute
+  ResearchMethodologyRoute: typeof ResearchMethodologyRoute
   ResourcesRoute: typeof ResourcesRoute
   SolutionsRoute: typeof SolutionsRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
@@ -715,6 +725,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research-methodology': {
+      id: '/research-methodology'
+      path: '/research-methodology'
+      fullPath: '/research-methodology'
+      preLoaderRoute: typeof ResearchMethodologyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/resources': {
@@ -1014,6 +1031,7 @@ const rootRouteChildren: RootRouteChildren = {
   OffersRoute: OffersRouteWithChildren,
   PricingBenchmarkRoute: PricingBenchmarkRoute,
   PrivacyRoute: PrivacyRoute,
+  ResearchMethodologyRoute: ResearchMethodologyRoute,
   ResourcesRoute: ResourcesRoute,
   SolutionsRoute: SolutionsRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
