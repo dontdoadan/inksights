@@ -84,3 +84,20 @@ test("direct CRM transport: API errors expose only status, not private response 
   const fetcher=async()=>json(401,{message:"confidential customer detail"});
   await assert.rejects(syncHubSpotDirect(input(),{token:"fixture-secret",fetcher}),/^Error: hubspot_http_401$/);
 });
+
+test("direct CRM transport: transient read rate-limit is retried before writing",async()=>{
+  let attempts = 0;
+  const fetcher=async(url,init)=>{
+    const path=new URL(url).pathname;
+    if(path.includes("/contacts/") && init.method==="GET") {
+      attempts++;
+      return attempts === 1 ? json(429,{}) : json(200,{id:"17"});
+    }
+    if(path.endsWith("/deals/search"))return json(200,{results:[{id:"18"}]});
+    if(path.endsWith("/associations/default/deals/18"))return json(200,{results:[]});
+    throw new Error(path);
+  };
+  const result=await syncHubSpotDirect(input(),{token:"fixture-secret",fetcher});
+  assert.equal(attempts,2);
+  assert.equal(result.deal_id,"18");
+});
