@@ -291,11 +291,12 @@ const AuthenticatedAuditsAuditIdRoute =
     path: '/$auditId',
     getParentRoute: () => AuthenticatedAuditsRoute,
   } as any)
-const ApiPublicRevenueScenarioRoute = ApiPublicRevenueScenarioRouteImport.update({
-  id: '/api/public/revenue-scenario',
-  path: '/api/public/revenue-scenario',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const ApiPublicRevenueScenarioRoute =
+  ApiPublicRevenueScenarioRouteImport.update({
+    id: '/api/public/revenue-scenario',
+    path: '/api/public/revenue-scenario',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe-webhook',
   path: '/api/public/stripe-webhook',
