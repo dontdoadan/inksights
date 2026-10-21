@@ -1083,7 +1083,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
-  ApiPublicVisibilityScorecardSubmitRoute: ApiPublicVisibilityScorecardSubmitRoute,
+  ApiPublicVisibilityScorecardSubmitRoute:
+    ApiPublicVisibilityScorecardSubmitRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
