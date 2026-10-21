@@ -1,3 +1,4 @@
+import { syncHubSpotDirect } from "./hubspot-direct.mjs";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const SB = Deno.env.get("SUPABASE_URL") || "";
@@ -77,7 +78,9 @@ async function runtimeConfig() {
     { method: "GET" },
   ) as Array<{ config_key: string; config_value: string }>;
   const map = Object.fromEntries(rows.map((row) => [row.config_key, row.config_value]));
-  if (!map.make_hubspot_sync_url || !map.make_hubspot_sync_token) {
+  // A native HubSpot private-app credential allows direct sync when Make's
+  // monthly account-wide processing allowance is exhausted.
+  if ((!map.make_hubspot_sync_url || !map.make_hubspot_sync_token) && !Deno.env.get("HUBSPOT_PRIVATE_APP_TOKEN")) {
     throw new Error("HubSpot sync runtime configuration is incomplete.");
   }
   return {
@@ -201,10 +204,7 @@ Deno.serve(async (req: Request) => {
     const auditLabel = isFoundingStudio ? "Studio Intelligence Audit — Founding Studio (£395 waived)" : "Studio Intelligence Audit";
     const dealName = `${studioName} — ${topic === "studio-intelligence-audit" ? auditLabel : sourceType === "revenue_audit_lead" ? "Revenue Audit follow-up" : "Website enquiry"} — ${sourceId.slice(0, 8)}`;
 
-    const makeResponse = await fetch(config.url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    const syncPayload = {
         sync_token: config.token,
         sync_version: "v1",
         source_type: sourceType,
@@ -229,15 +229,27 @@ Deno.serve(async (req: Request) => {
         deal_amount: dealAmount,
         deal_pipeline: config.dealPipeline,
         deal_stage: dealStage,
-      }),
-    });
-
-    const responseText = await makeResponse.text();
+      };
     let makeResult: Record<string, unknown> = {};
-    try { makeResult = responseText ? JSON.parse(responseText) : {}; } catch { makeResult = {}; }
-
-    if (!makeResponse.ok || makeResult.ok !== true || !makeResult.contact_id || !makeResult.deal_id) {
-      throw new Error(`Make/HubSpot sync failed: ${makeResponse.status} ${responseText.slice(0, 300)}`);
+    const directToken = Deno.env.get("HUBSPOT_PRIVATE_APP_TOKEN");
+    if (directToken) {
+      // No secret or customer details are included in returned failures or logs.
+      makeResult = await syncHubSpotDirect(syncPayload, { token: directToken });
+    } else {
+      const makeResponse = await fetch(config.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(syncPayload),
+      });
+      const responseText = await makeResponse.text();
+      try { makeResult = responseText ? JSON.parse(responseText) as Record<string, unknown> : {}; }
+      catch { makeResult = {}; }
+      if (!makeResponse.ok || makeResult.ok !== true || !makeResult.contact_id || !makeResult.deal_id) {
+        throw new Error("Make/HubSpot sync failed with HTTP " + makeResponse.status);
+      }
+    }
+    if (makeResult.ok !== true || !makeResult.contact_id || !makeResult.deal_id) {
+      throw new Error("HubSpot transport did not confirm contact and deal identifiers.");
     }
 
     const syncedAt = new Date().toISOString();
