@@ -4,7 +4,7 @@ test("homepage navigation and free check route remain usable", async ({ page }) 
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
   expect(response.status()).toBe(200);
   await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
-  const growthLink = page.locator('a[href="/studio-growth-check"]').first();
+  const growthLink = page.locator('a[href="/studio-growth-check"]:visible').first();
   await expect(growthLink).toBeVisible();
   await growthLink.click();
   await expect(page).toHaveURL(/\/studio-growth-check(?:\?|$)/);
