@@ -127,7 +127,7 @@ function StudioGrowthToolkit(){
   async function submit(e:FormEvent<HTMLFormElement>){
     e.preventDefault();
     if(busy)return;
-    invalidate();
+    setSubmission(null);setError("");
     if(!acknowledged){setError("Acknowledge the assessment data notice before submitting.");return;}
     if(tool==="studio_growth_constraint"&&ratings.some(r=>r<1)){setError("Answer all twelve diagnostic questions.");return;}
     if((tool==="revenue_lift_90_day"||tool==="studio_revenue_scenario") && ECON.some(field=>
