@@ -26,6 +26,7 @@ import { Route as ResearchMethodologyRouteImport } from './routes/research-metho
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
+import { Route as StudioGrowthToolkitRouteImport } from './routes/studio-growth-toolkit'
 import { Route as StudioVisibilityReportRouteImport } from './routes/studio-visibility-report'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TattooStudioBookingRouteImport } from './routes/tattoo-studio-booking'
@@ -55,6 +56,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
 import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
+import { Route as ApiPublicStudioToolkitSubmitRouteImport } from './routes/api/public/studio-toolkit-submit'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 import { Route as ApiPublicVisibilityScorecardSubmitRouteImport } from './routes/api/public/visibility-scorecard-submit'
 
@@ -140,6 +142,11 @@ const SolutionsRoute = SolutionsRouteImport.update({
 const StudioGrowthCheckRoute = StudioGrowthCheckRouteImport.update({
   id: '/studio-growth-check',
   path: '/studio-growth-check',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioGrowthToolkitRoute = StudioGrowthToolkitRouteImport.update({
+  id: '/studio-growth-toolkit',
+  path: '/studio-growth-toolkit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudioVisibilityReportRoute = StudioVisibilityReportRouteImport.update({
@@ -296,6 +303,12 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   path: '/api/public/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStudioToolkitSubmitRoute =
+  ApiPublicStudioToolkitSubmitRouteImport.update({
+    id: '/api/public/studio-toolkit-submit',
+    path: '/api/public/studio-toolkit-submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicVisibilityReportRoute =
   ApiPublicVisibilityReportRouteImport.update({
     id: '/api/public/visibility-report',
@@ -326,6 +339,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
+  '/studio-growth-toolkit': typeof StudioGrowthToolkitRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
   '/tattoo-studio-booking': typeof TattooStudioBookingRoute
@@ -355,6 +369,7 @@ export interface FileRoutesByFullPath {
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-toolkit-submit': typeof ApiPublicStudioToolkitSubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -374,6 +389,7 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
+  '/studio-growth-toolkit': typeof StudioGrowthToolkitRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
   '/tattoo-studio-booking': typeof TattooStudioBookingRoute
@@ -403,6 +419,7 @@ export interface FileRoutesByTo {
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-toolkit-submit': typeof ApiPublicStudioToolkitSubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -425,6 +442,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
+  '/studio-growth-toolkit': typeof StudioGrowthToolkitRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
   '/tattoo-studio-booking': typeof TattooStudioBookingRoute
@@ -454,6 +472,7 @@ export interface FileRoutesById {
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-toolkit-submit': typeof ApiPublicStudioToolkitSubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -476,6 +495,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
+    | '/studio-growth-toolkit'
     | '/studio-visibility-report'
     | '/support'
     | '/tattoo-studio-booking'
@@ -505,6 +525,7 @@ export interface FileRouteTypes {
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-toolkit-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   fileRoutesByTo: FileRoutesByTo
@@ -524,6 +545,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
+    | '/studio-growth-toolkit'
     | '/studio-visibility-report'
     | '/support'
     | '/tattoo-studio-booking'
@@ -553,6 +575,7 @@ export interface FileRouteTypes {
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-toolkit-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   id:
@@ -574,6 +597,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
+    | '/studio-growth-toolkit'
     | '/studio-visibility-report'
     | '/support'
     | '/tattoo-studio-booking'
@@ -603,6 +627,7 @@ export interface FileRouteTypes {
     | '/_authenticated/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-toolkit-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   fileRoutesById: FileRoutesById
@@ -625,6 +650,7 @@ export interface RootRouteChildren {
   ResourcesRoute: typeof ResourcesRoute
   SolutionsRoute: typeof SolutionsRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
+  StudioGrowthToolkitRoute: typeof StudioGrowthToolkitRoute
   StudioVisibilityReportRoute: typeof StudioVisibilityReportRoute
   SupportRoute: typeof SupportRoute
   TattooStudioBookingRoute: typeof TattooStudioBookingRoute
@@ -647,6 +673,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
+  ApiPublicStudioToolkitSubmitRoute: typeof ApiPublicStudioToolkitSubmitRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
   ApiPublicVisibilityScorecardSubmitRoute: typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -770,6 +797,13 @@ declare module '@tanstack/react-router' {
       path: '/studio-growth-check'
       fullPath: '/studio-growth-check'
       preLoaderRoute: typeof StudioGrowthCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio-growth-toolkit': {
+      id: '/studio-growth-toolkit'
+      path: '/studio-growth-toolkit'
+      fullPath: '/studio-growth-toolkit'
+      preLoaderRoute: typeof StudioGrowthToolkitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/studio-visibility-report': {
@@ -975,6 +1009,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/studio-toolkit-submit': {
+      id: '/api/public/studio-toolkit-submit'
+      path: '/api/public/studio-toolkit-submit'
+      fullPath: '/api/public/studio-toolkit-submit'
+      preLoaderRoute: typeof ApiPublicStudioToolkitSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/visibility-report': {
       id: '/api/public/visibility-report'
       path: '/api/public/visibility-report'
@@ -1059,6 +1100,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesRoute: ResourcesRoute,
   SolutionsRoute: SolutionsRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
+  StudioGrowthToolkitRoute: StudioGrowthToolkitRoute,
   StudioVisibilityReportRoute: StudioVisibilityReportRoute,
   SupportRoute: SupportRoute,
   TattooStudioBookingRoute: TattooStudioBookingRoute,
@@ -1082,6 +1124,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
+  ApiPublicStudioToolkitSubmitRoute: ApiPublicStudioToolkitSubmitRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
   ApiPublicVisibilityScorecardSubmitRoute:
     ApiPublicVisibilityScorecardSubmitRoute,
