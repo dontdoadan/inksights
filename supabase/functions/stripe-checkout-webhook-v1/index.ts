@@ -121,38 +121,30 @@ function studioName(session: Record<string, any>) {
   );
 }
 
-async function upsertOrder(session: Record<string, any>, paid: boolean) {
-  const metadata = session.metadata && typeof session.metadata === "object" ? session.metadata : {};
-  const body = {
-    stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
-    stripe_session_id: clean(session.id, 120),
-    stripe_payment_intent_id: typeof session.payment_intent === "string" ? session.payment_intent : null,
-    stripe_subscription_id: typeof session.subscription === "string" ? session.subscription : null,
-    stripe_product_id: clean(metadata.product_id, 120) || null,
-    stripe_price_id: clean(metadata.price_id, 120) || AUDIT_PRICE_ID,
-    offer_slug: AUDIT_OFFER,
-    amount_total: Number.isFinite(session.amount_total) ? session.amount_total : null,
-    currency: clean(session.currency, 20).toLowerCase() || "gbp",
-    status: paid ? "paid" : "pending",
-    customer_email: clean(session.customer_details?.email || session.customer_email, 254).toLowerCase() || null,
-    metadata: {
-      ...metadata,
-      source: "stripe_payment_link",
-      payment_link: clean(session.payment_link, 120) || null,
-      payment_status: clean(session.payment_status, 40) || null,
-      checkout_status: clean(session.status, 40) || null,
-    },
-    list_value_minor: Number.isFinite(session.amount_total) ? session.amount_total : null,
-    waiver_amount_minor: 0,
-    // Initiated or delayed checkouts are not collected revenue.\n    amount_collected_minor: paid && Number.isFinite(session.amount_total) ? session.amount_total : 0,
-    access_type: "paid",
-    updated_at: new Date().toISOString(),
-  };
-  return rest("orders?on_conflict=stripe_session_id", {
+// Signed Stripe events are the sole input. This service-role-only RPC applies
+// the provider state and event receipt atomically under a per-session DB lock.
+async function recordCheckoutState(event: Record<string, any>, session: Record<string, any>) {
+  const result = await rest("rpc/record_stripe_checkout_state_v1", {
     method: "POST",
-    headers: { Prefer: "resolution=merge-duplicates,return=representation" },
-    body: JSON.stringify(body),
-  });
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({
+      p_event_id: clean(event.id, 120),
+      p_event_type: clean(event.type, 120),
+      p_session_id: clean(session.id, 150),
+      p_payment_link_id: clean(session.payment_link, 150),
+      p_session_status: clean(session.status, 50),
+      p_payment_status: clean(session.payment_status, 50),
+      p_amount_total: Number.isSafeInteger(session.amount_total) ? session.amount_total : null,
+      p_currency: clean(session.currency, 20).toLowerCase(),
+      p_customer_id: typeof session.customer === "string" ? session.customer : null,
+      p_payment_intent_id: typeof session.payment_intent === "string" ? session.payment_intent : null,
+      p_customer_email: clean(session.customer_details?.email || session.customer_email, 254).toLowerCase() || null,
+    }),
+  }) as Record<string, unknown>;
+  if (!result || !["pending", "paid"].includes(String(result.status))) {
+    throw new Error("Atomic order transition did not return an authoritative status.");
+  }
+  return result;
 }
 
 async function syncContactToHubSpot(contactId: string, auditId?: string) {
@@ -332,13 +324,17 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const metadataOffer = clean(session.metadata?.offer_slug || session.metadata?.offer, 100);
-    const isAuditCheckout = clean(session.payment_link, 120) === AUDIT_PAYMENT_LINK_ID || metadataOffer === "studio_intelligence_audit" || metadataOffer === AUDIT_OFFER;
-    if (!isAuditCheckout) return response({ received: true, skipped: "unrelated_checkout" }, 200);
+    // Only the approved signed Stripe Payment Link can produce an audit order.
+    // Metadata alone is never an authorised product identifier.
+    if (clean(session.payment_link, 120) !== AUDIT_PAYMENT_LINK_ID) {
+      return response({ received: true, skipped: "unrelated_checkout" }, 200);
+    }
 
-    // An async-success event still requires the authoritative session to report paid.\n    const paid = session.payment_status === "paid";
-    await upsertOrder(session, paid);
-
+    const transition = await recordCheckoutState(event, session);
+    // This is also essential for asynchronous payment methods: a completion
+    // event without payment proof must never produce a paid CRM stage.
+    const paid = transition.status === "paid" &&
+      session.status === "complete" && session.payment_status === "paid";
     let contactRequestId: string | null = null;
     if (paid) contactRequestId = await ensureContactAndCrm(session);
 
