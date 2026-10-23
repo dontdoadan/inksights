@@ -31,7 +31,7 @@ label.check{font-size:12px;display:flex;align-items:flex-start;gap:9px;margin-to
 <script>
 (function(){
 "use strict";
-var API="https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/public-studio-journey";
+var API="/api/public/studio-journey-submit";
 var TOKEN_KEY="inksights:journey:unverified-session";
 var VERSION="2026-10-tool-v1";
 var token="";try{token=sessionStorage.getItem(TOKEN_KEY)||""}catch{}
@@ -66,10 +66,11 @@ function growthScreen(){
  field("artists","Number of artists","number",1,100,s.artist_count||"",true)+
  field("month","Reporting month","month",null,null,m.month||new Date().toISOString().slice(0,7),true)+
  field("enquiries","Monthly enquiries","number",1,100000,m.enquiries||"",true)+
- field("bookings","Confirmed bookings","number",1,100000,m.bookings||"",true)+
+ field("bookings","Confirmed bookings","number",0,100000,m.bookings??"",true)+
  field("bookingValue","Average booked value (£)","number",1,50000,m.average_booking_gbp||"",true)+
  field("hours","Available artist hours","number",1,30000,m.available_hours||"",true)+
- field("bookedHours","Booked artist hours","number",0.25,30000,m.booked_hours||"",true)+'</div>'+
+ field("bookedHours","Booked artist hours","number",0,30000,m.booked_hours??"",true)+
+ field("sessionHours","Typical booking duration (hours)","number",0.25,16,m.avg_hours_per_booking||4,true)+'</div>'+
  '<label class="check"><input type="checkbox" name="notice" required>I acknowledge that INKSIGHTS will store these business figures to generate the free assessment. I have read the <a href="/privacy" target="_blank" rel="noopener">privacy notice</a>. This is separate from marketing consent.</label>'+
  '<div class="actions"><button class="btn" type="submit">Save Growth Check</button></div></form>';
 }
@@ -122,15 +123,22 @@ async function callAPI(data){
 }
 async function submit(event){
  event.preventDefault();if(busy)return;var step=STEPS[currentStep];var f=new FormData(event.currentTarget);var input={};
- if(step==="growth")input={dataNoticeAccepted:f.get("notice")==="on",consentVersion:VERSION,studio:{name:f.get("studio"),area:f.get("area"),website:f.get("website"),artistCount:Number(f.get("artists"))},figures:{month:f.get("month"),enquiries:Number(f.get("enquiries")),bookings:Number(f.get("bookings")),averageBookingGbp:Number(f.get("bookingValue")),availableHours:Number(f.get("hours")),bookedHours:Number(f.get("bookedHours"))}};
+ if(step==="growth")input={dataNoticeAccepted:f.get("notice")==="on",consentVersion:VERSION,studio:{name:f.get("studio"),area:f.get("area"),website:f.get("website"),artistCount:Number(f.get("artists"))},figures:{month:f.get("month"),enquiries:Number(f.get("enquiries")),bookings:Number(f.get("bookings")),averageBookingGbp:Number(f.get("bookingValue")),availableHours:Number(f.get("hours")),bookedHours:Number(f.get("bookedHours")),averageSessionHours:Number(f.get("sessionHours"))}};
  if(step==="revenue")input={targetConversionPct:Number(f.get("target")),targetBookingGbp:Number(f.get("targetValue"))};
  if(step==="visibility")["listingClaimed","bookingLinkWorks","mobileBookingClear","EnquiriesRespondedPromptly"].forEach(function(k){input[k]=f.get(k)==="yes"});
  busy=true;explain("");var button=event.currentTarget.querySelector('[type="submit"]');if(button){button.disabled=true;button.textContent="Saving…"}
  try{
-   var response=await callAPI({action:"submit",step:step,input:input,sessionToken:token||undefined,submissionKey:crypto.randomUUID()});
+   if(!token){var started=await callAPI({action:"start"});token=started.sessionToken;sessionStorage.setItem(TOKEN_KEY,token)}
+   var pendingKey=TOKEN_KEY+":pending:"+step;
+   var lastAttempt=null;try{lastAttempt=JSON.parse(sessionStorage.getItem(pendingKey)||"null")}catch{}
+   var fingerprint=JSON.stringify(input);
+   var submissionKey=lastAttempt?.payload===fingerprint?lastAttempt.key:crypto.randomUUID();
+   sessionStorage.setItem(pendingKey,JSON.stringify({key:submissionKey,payload:fingerprint}));
+   var response=await callAPI({action:"submit",step:step,input:input,sessionToken:token,submissionKey:submissionKey});
    token=response.sessionToken;try{sessionStorage.setItem(TOKEN_KEY,token)}catch{}
    await restore(true);
    if(!history[step] || history[step].submissionId!==response.submissionId)throw new Error("Could not verify the newly saved result. Please retry.");
+   sessionStorage.removeItem(pendingKey);
    showResult=true;render();
  }catch(err){explain(err instanceof Error?err.message:"Save failed. Your results have not been unlocked.");if(button){button.disabled=false;button.textContent="Retry save"}}
  finally{busy=false}
@@ -146,9 +154,12 @@ async function restore(strict){
  }
  render();
 }
-$("forget").onclick=function(){
- if(!confirm("Forget the local continuation token? This does not erase server-side submissions. Contact INKSIGHTS for a data request."))return;
- try{sessionStorage.removeItem(TOKEN_KEY)}catch{}token="";history={};currentStep=0;showResult=false;render();explain("");
+$("forget").onclick=async function(){
+ if(!confirm("Revoke this browser session? Stored records will be retained according to the privacy policy."))return;
+ try{if(token)await callAPI({action:"revoke",sessionToken:token});
+ sessionStorage.removeItem(TOKEN_KEY);STEPS.forEach(function(s){sessionStorage.removeItem(TOKEN_KEY+":pending:"+s)});
+ token="";history={};currentStep=0;showResult=false;render();explain("");}
+ catch(error){explain("Could not revoke server access. The session has NOT been forgotten; retry.");}
 };
 render();restore();
 })();
