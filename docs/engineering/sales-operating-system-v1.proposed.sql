@@ -19,13 +19,19 @@ CREATE TABLE IF NOT EXISTS public.sales_identity_links (
   verified_by text,
   verified_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE(provider, object_type, external_id),
+  -- A single HubSpot company can represent a legal entity with several sites;
+  -- do not require a company external_id to be globally unique across studios.
+  UNIQUE(studio_id, provider, object_type, external_id),
   CONSTRAINT verified_link_has_evidence CHECK (
     resolution_status <> 'verified' OR (verified_at IS NOT NULL AND verified_by IS NOT NULL)
   )
 );
 CREATE INDEX IF NOT EXISTS sales_identity_links_studio_idx
   ON public.sales_identity_links(studio_id,provider,object_type);
+-- Transactional references are uniquely attributable to one studio.
+CREATE UNIQUE INDEX IF NOT EXISTS sales_unique_transactional_external_id
+  ON public.sales_identity_links(provider,object_type,external_id)
+  WHERE object_type IN ('deal','session','subscription') AND resolution_status='verified';
 CREATE UNIQUE INDEX IF NOT EXISTS sales_one_hubspot_company_per_studio
   ON public.sales_identity_links(studio_id)
   WHERE provider='hubspot' AND object_type='company' AND resolution_status='verified';
