@@ -24,6 +24,7 @@ import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResearchMethodologyRouteImport } from './routes/research-methodology'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as RevenueOpportunityCalculatorRouteImport } from './routes/revenue-opportunity-calculator'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
 import { Route as StudioVisibilityReportRouteImport } from './routes/studio-visibility-report'
@@ -54,6 +55,7 @@ import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
 import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
+import { Route as ApiPublicRevenueScenarioRouteImport } from './routes/api/public/revenue-scenario'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 import { Route as ApiPublicVisibilityScorecardSubmitRouteImport } from './routes/api/public/visibility-scorecard-submit'
@@ -132,6 +134,12 @@ const ResourcesRoute = ResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RevenueOpportunityCalculatorRoute =
+  RevenueOpportunityCalculatorRouteImport.update({
+    id: '/revenue-opportunity-calculator',
+    path: '/revenue-opportunity-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
@@ -291,6 +299,12 @@ const ApiPublicPricingBenchmarkSubmitRoute =
     path: '/api/public/pricing-benchmark-submit',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicRevenueScenarioRoute =
+  ApiPublicRevenueScenarioRouteImport.update({
+    id: '/api/public/revenue-scenario',
+    path: '/api/public/revenue-scenario',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe-webhook',
   path: '/api/public/stripe-webhook',
@@ -324,6 +338,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -354,6 +369,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
@@ -372,6 +388,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -402,6 +419,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
@@ -423,6 +441,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -453,6 +472,7 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
@@ -474,6 +494,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -504,6 +525,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
@@ -522,6 +544,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -552,6 +575,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
@@ -572,6 +596,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -602,6 +627,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
@@ -623,6 +649,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResearchMethodologyRoute: typeof ResearchMethodologyRoute
   ResourcesRoute: typeof ResourcesRoute
+  RevenueOpportunityCalculatorRoute: typeof RevenueOpportunityCalculatorRoute
   SolutionsRoute: typeof SolutionsRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
   StudioVisibilityReportRoute: typeof StudioVisibilityReportRoute
@@ -646,6 +673,7 @@ export interface RootRouteChildren {
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
+  ApiPublicRevenueScenarioRoute: typeof ApiPublicRevenueScenarioRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
   ApiPublicVisibilityScorecardSubmitRoute: typeof ApiPublicVisibilityScorecardSubmitRoute
@@ -756,6 +784,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/revenue-opportunity-calculator': {
+      id: '/revenue-opportunity-calculator'
+      path: '/revenue-opportunity-calculator'
+      fullPath: '/revenue-opportunity-calculator'
+      preLoaderRoute: typeof RevenueOpportunityCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solutions': {
@@ -968,6 +1003,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPricingBenchmarkSubmitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/revenue-scenario': {
+      id: '/api/public/revenue-scenario'
+      path: '/api/public/revenue-scenario'
+      fullPath: '/api/public/revenue-scenario'
+      preLoaderRoute: typeof ApiPublicRevenueScenarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
@@ -1057,6 +1099,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResearchMethodologyRoute: ResearchMethodologyRoute,
   ResourcesRoute: ResourcesRoute,
+  RevenueOpportunityCalculatorRoute: RevenueOpportunityCalculatorRoute,
   SolutionsRoute: SolutionsRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
   StudioVisibilityReportRoute: StudioVisibilityReportRoute,
@@ -1081,6 +1124,7 @@ const rootRouteChildren: RootRouteChildren = {
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
+  ApiPublicRevenueScenarioRoute: ApiPublicRevenueScenarioRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
   ApiPublicVisibilityScorecardSubmitRoute:
