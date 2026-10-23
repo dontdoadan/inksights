@@ -48,6 +48,9 @@ function project(rows:Stored[]) {
   for(const item of rows){
     const step=item.normalized_inputs?.step;
     if(STAGES.includes(step) && item.tool_key === "unified_studio_journey_"+step){
+      // A changed baseline invalidates dependent scenarios; a changed finding invalidates the summary.
+      if(step==="growth"){delete history.revenue;delete history.visibility;delete history.summary;}
+      if(step==="revenue"||step==="visibility")delete history.summary;
       history[step]={normalized:item.normalized_inputs.answer,result:item.result_snapshot,
         submittedAt:item.submitted_at,submissionId:item.id};
     }
