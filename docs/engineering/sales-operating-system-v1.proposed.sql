@@ -60,6 +60,12 @@ CREATE TABLE IF NOT EXISTS public.sales_contact_permissions (
 CREATE INDEX IF NOT EXISTS sales_permissions_contact_idx
   ON public.sales_contact_permissions(hubspot_contact_id, assessed_at DESC);
 
+-- One form-originated purchase may create only one lead per Stripe Session.
+-- Prevent duplicate contacts if two signed Stripe webhooks race.
+CREATE UNIQUE INDEX IF NOT EXISTS public_contact_checkout_session_unique_v1
+  ON public.public_contact_requests ((metadata->>'stripe_session_id'))
+  WHERE source='stripe_checkout' AND metadata ? 'stripe_session_id' AND is_test=false;
+
 -- Immutable intent/event history. Refrain from embedding personal data or free-
 -- text AI claims in properties. A provider event is keyed for idempotency.
 CREATE TABLE IF NOT EXISTS public.sales_journey_events (
