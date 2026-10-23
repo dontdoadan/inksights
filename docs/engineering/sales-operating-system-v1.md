@@ -233,3 +233,103 @@ RISK = sources incomplete; first conversion performance still unproven.
 
 No bulk CRM writes, direct marketing sends, real payments, schema mutations,
 deployments or privilege changes were performed by this work.
+
+
+## Implementation checkpoint — 23 October 2026 (non-production)
+
+**Released? NO.** This branch is reviewable. No live Supabase migration,
+Stripe endpoint redeployment, HubSpot stage mutation, Make activation, GitHub
+merge or production Vercel deployment has been authorised.
+
+### P0 — Atomic payment update
+- Proposed service-only SQL: `docs/engineering/sales-payment-state-v1.proposed.sql`.
+- Atomic PostgreSQL per-session advisory transaction lock + provider event-id
+  receipt table + UPSERT that never turns paid back to pending.
+- Supabase webhook now calls the RPC; requires exact approved live Payment Link
+  and the Stripe-signed event, a completed session and paid provider status
+  before any CRM sync. A secondary, currently disabled Vercel webhook
+  retrieves Checkout Sessions from Stripe before marking anything paid.
+- Synthetic PostgreSQL 17 tests cover stale pending delivery, paid event
+  replay, zero collected cash, non-live checkout rejection, unauthorised
+  RPC caller and simultaneous paid/pending delivery.
+- Do not deploy the webhook ahead of the SQL RPC or before signed API
+  end-to-end replay tests and rollback validation.
+
+### P0 — Identity, privacy and duplicates
+- Additive identity/permission/event/order-link proposal in
+  `docs/engineering/sales-operating-system-v1.proposed.sql`.
+- One legal company may represent multiple physical locations, but one
+  transactional checkout Session is linked to only one reviewed site.
+- Unidentified inbound leads can create provisional `source_ref` journey
+  entries; do not infer a verified studio from email, website domain or
+  a Companies House number alone. Checkout sessions are unique lead keys.
+- Read-only live reconciliation: 349 candidate rows, 5 linked candidate
+  records, **zero candidate rows verified in the source status field**,
+  19 visibility registry rows, 9 operational studio rows, no orphan
+  operational IDs and no duplicate canonical name+postcode groups found.
+- SQL and test sources remain reviewed proposals, not applied to production.
+- Supabase branching metadata currently reports the existing main branch
+  `MIGRATIONS_FAILED`; correct migration history / branching before
+  treating Supabase-hosted preview as the signoff environment. GitHub CI
+  PostgreSQL is isolated synthetic staging, not a snapshot of the live DB.
+
+### P0 — Connected journey and delivery
+- Public form appends `lead_captured`, HubSpot synchroniser
+  appends `crm_synced` and the verified Stripe function appends
+  `order_paid_verified` by stable provider references.
+- `hubspot-sync-v1` is now guarded against treating a visitor choosing
+  an audit topic as a paid deal: it must read a verified paid Stripe
+  order before selecting the paid/booked stage.
+- Existing canonical Make scenario 7570494 has a healthy HubSpot connector
+  but is currently marked **paused**. Prior runs on 3 Oct passed.
+  [Make scenario](https://eu1.make.com/2718224/scenarios/7570494).
+  Reactivating is a separate production-impacting approval gate.
+- Delivery status SQL `docs/engineering/sales-delivery-v1.proposed.sql`
+  requires a linked paid order, QA-passed published report, actual report
+  access grant, and explicit acceptance evidence.
+- Current live Supabase reports: four published report versions, but
+  zero current `si_report_access` grants; therefore do not claim
+  customer delivery from publication alone.
+
+### P1 — Live-source dashboard
+- Service-role-only read model `sales_weekly_scorecard_v1` returns
+  12 London weeks with distinct direct, assisted, and unattributed
+  purchases and actual revenue, referral engagement, acquisition costs,
+  delivery hours and source-verified economics.
+- `src/routes/api/internal/sales-ops-weekly.ts` validates the Supabase
+  Auth token server-side and checks `platform_admins`; unauthorised
+  website visitors/studio users cannot read systemwide sales figures.
+- `src/routes/_authenticated/sales-ops.tsx` is the brand-consistent
+  administrative dashboard, with week and acquisition-path controls.
+- Missing denominators and unmeasured retention are NULL, not invented
+  rates. Amounts never use HubSpot proposal values as real revenue.
+
+### P1 — CI and preview verification
+- Reconciled the previously stale `src/routeTree.gen.ts` (Press and
+  London research routes, plus internal sales route).
+- Isolated PostgreSQL, Node contract, broader CI, and browser smoke
+  checks pass on validated feature commits. Always recheck the final
+  PR head before merge.
+- Vercel returned a READY deployment for earlier commit
+  `5974bce8e7d16c0dfb34bc877030d7d1980529a0` on this feature branch.
+  This is not evidence the final commit deployed.
+- Explicit latest preview request was rejected with
+  `402 api-deployments-free-per-day`: over 100 deployments in one day.
+  Do not bypass SSO or upgrade a paid tier without human approval.
+  Use existing protected preview after the free-plan limit clears.
+
+### Remaining release gates
+1. Confirm Supabase migration sequence and run the three proposed
+   SQL units on a compatible isolated Supabase project; RLS/advisor review.
+2. Verify accepted PM Stripe session signed webhook and replay to
+   confirmed order / safe CRM deal association, using separate test credentials.
+3. Reconcile buyer identity with trustworthy site proof; leave conflicts
+   for human review rather than name/email merges.
+4. Reactivate / validate Make HubSpot scenario only after explicit approval;
+   verify company, contact, deal associations and retry idempotency.
+5. Verify authenticated onboarding, QA/published report, access grant,
+   customer acceptance and follow-on programme with synthetic direct
+   and assisted journeys. Never count QA as revenue.
+6. Get an updated Vercel protected preview and check release CI on final head.
+7. Obtain explicit approval before schema/security changes, production
+   integrations, merge and deployment per `AGENTS.md`.
