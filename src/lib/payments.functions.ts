@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import Stripe from "stripe";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createHash } from "node:crypto";
 import { getPublicOffer } from "./offer-data";
 
@@ -28,8 +29,11 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         throw new Error("Invalid studio journey reference.");
       }
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      // Additive migration tables are not in the generated Database types yet.
+      // This remains a server-only administrative client; update generated types after migration.
+      const journeyDb = supabaseAdmin as unknown as SupabaseClient;
       const tokenHash = createHash("sha256").update(data.journeyToken).digest("hex");
-      const { data: linked, error: linkError } = await supabaseAdmin
+      const { data: linked, error: linkError } = await journeyDb
         .from("studio_journey_sessions")
         .select("id,expires_at,revoked_at")
         .eq("token_hash", tokenHash)
@@ -38,7 +42,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
           Date.parse(linked.expires_at) <= Date.now()) {
         throw new Error("Your studio intelligence session has expired. Reopen your assessment.");
       }
-      const { count, error: countError } = await supabaseAdmin
+      const { count, error: countError } = await journeyDb
         .from("studio_journey_steps")
         .select("submission_id", { count: "exact", head: true })
         .eq("session_id", linked.id).eq("stage", "growth");
