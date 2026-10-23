@@ -32,3 +32,7 @@ Status: DRAFT / NOT LIVE. Parent calculator release PR #138.
 
 ## Commercial stage plan
 A) release revenue scenario; B) read-only five studio map; C) claim review and owned public profiles; D) secure tenancy crosswalk between directory IDs and operational studios; E) attach saved auditable results and paid entitlements; F) privacy-safe booking enquiry attribution and aggregated benchmarks.
+
+## Owner profile editor implementation update — 2026-10-23
+
+A privileged owner profile read/write route and user interface are staged. Owner authorisation is checked server-side for each request against a reviewed verified claim; only description, twelve specialisms and a HTTPS booking link are editable. Append-only version snapshots are enforced by a proposed SQL trigger. Neither migration nor owner editor is live; production security/migration review and tests remain required.
