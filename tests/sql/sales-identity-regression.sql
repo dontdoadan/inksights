@@ -53,6 +53,14 @@ BEGIN
    VALUES(oid,b,true,'evt_fixture-paid','verified',now());
    RAISE EXCEPTION 'order assigned to two studio IDs';
  EXCEPTION WHEN unique_violation THEN NULL; END;
+ -- The same Stripe Checkout Session cannot create two buyer contacts.
+ INSERT INTO public.public_contact_requests(source,metadata)
+ VALUES ('stripe_checkout','{"stripe_session_id":"cs_live_DUPLICATE1"}'::jsonb);
+ BEGIN
+  INSERT INTO public.public_contact_requests(source,metadata)
+  VALUES ('stripe_checkout','{"stripe_session_id":"cs_live_DUPLICATE1"}'::jsonb);
+  RAISE EXCEPTION 'one payment created duplicate contact requests';
+ EXCEPTION WHEN unique_violation THEN NULL; END;
  IF has_table_privilege('anon','public.sales_contact_permissions','SELECT')
  THEN RAISE EXCEPTION 'anon can read permissions'; END IF;
  IF has_table_privilege('authenticated','public.sales_identity_links','SELECT')
