@@ -8,6 +8,8 @@ on:
       - 'tests/sql/sales-payment-*.sql'
       - 'tests/sql/sales-identity-*.sql'
       - 'docs/engineering/sales-operating-system-v1.proposed.sql'
+      - 'docs/engineering/sales-dashboard-v1.proposed.sql'
+      - 'tests/sql/sales-dashboard-regression.sql'
       - 'docs/engineering/sales-payment-state-v1.proposed.sql'
       - 'supabase/functions/stripe-checkout-webhook-v1/**'
       - 'supabase/functions/hubspot-sync-v1/**'
@@ -69,3 +71,7 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f docs/engineering/sales-operating-system-v1.proposed.sql
       - name: Verify site identity, order links, event dedupe and privilege boundaries
         run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-identity-regression.sql
+      - name: Stage service-only weekly scorecard
+        run: psql -X -v ON_ERROR_STOP=1 -f docs/engineering/sales-dashboard-v1.proposed.sql
+      - name: Verify source-linked direct and assisted conversion economics
+        run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-dashboard-regression.sql
