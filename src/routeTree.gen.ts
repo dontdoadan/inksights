@@ -19,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as GrowthModelRouteImport } from './routes/growth-model'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as MyStudioProfileRouteImport } from './routes/my-studio-profile'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as PressRouteImport } from './routes/press'
 import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark'
@@ -27,6 +28,7 @@ import { Route as ResearchMethodologyRouteImport } from './routes/research-metho
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as RevenueOpportunityCalculatorRouteImport } from './routes/revenue-opportunity-calculator'
 import { Route as SolutionsRouteImport } from './routes/solutions'
+import { Route as StudioClaimRouteImport } from './routes/studio-claim'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
 import { Route as StudioVisibilityReportRouteImport } from './routes/studio-visibility-report'
 import { Route as SupportRouteImport } from './routes/support'
@@ -40,11 +42,13 @@ import { Route as TattooStudioSeoRouteImport } from './routes/tattoo-studio-seo'
 import { Route as TattooStudioSoftwareRouteImport } from './routes/tattoo-studio-software'
 import { Route as TattooStudioVisibilityScorecardRouteImport } from './routes/tattoo-studio-visibility-scorecard'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as UkStudioMapRouteImport } from './routes/uk-studio-map'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAuditsRouteImport } from './routes/_authenticated/audits'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
+import { Route as ApiStudioProfileRouteImport } from './routes/api/studio-profile'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as GuidesFullSleeveCostUkRouteImport } from './routes/guides.full-sleeve-cost-uk'
 import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/guides.grey-line-healing-week-by-week'
@@ -59,6 +63,8 @@ import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authen
 import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
 import { Route as ApiPublicRevenueScenarioRouteImport } from './routes/api/public/revenue-scenario'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
+import { Route as ApiPublicStudioClaimRouteImport } from './routes/api/public/studio-claim'
+import { Route as ApiPublicStudioDirectoryRouteImport } from './routes/api/public/studio-directory'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 import { Route as ApiPublicVisibilityScorecardSubmitRouteImport } from './routes/api/public/visibility-scorecard-submit'
 
@@ -111,6 +117,11 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyStudioProfileRoute = MyStudioProfileRouteImport.update({
+  id: '/my-studio-profile',
+  path: '/my-studio-profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OffersRoute = OffersRouteImport.update({
   id: '/offers',
   path: '/offers',
@@ -150,6 +161,11 @@ const RevenueOpportunityCalculatorRoute =
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioClaimRoute = StudioClaimRouteImport.update({
+  id: '/studio-claim',
+  path: '/studio-claim',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudioGrowthCheckRoute = StudioGrowthCheckRouteImport.update({
@@ -219,6 +235,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UkStudioMapRoute = UkStudioMapRouteImport.update({
+  id: '/uk-studio-map',
+  path: '/uk-studio-map',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotmcpChar93ListToolsRoute =
   Char91DotmcpChar93ListToolsRouteImport.update({
     id: '/.mcp/list-tools',
@@ -245,6 +266,11 @@ const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
   id: '/workspace',
   path: '/workspace',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiStudioProfileRoute = ApiStudioProfileRouteImport.update({
+  id: '/api/studio-profile',
+  path: '/api/studio-profile',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/callback',
@@ -323,6 +349,17 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   path: '/api/public/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStudioClaimRoute = ApiPublicStudioClaimRouteImport.update({
+  id: '/api/public/studio-claim',
+  path: '/api/public/studio-claim',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicStudioDirectoryRoute =
+  ApiPublicStudioDirectoryRouteImport.update({
+    id: '/api/public/studio-directory',
+    path: '/api/public/studio-directory',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicVisibilityReportRoute =
   ApiPublicVisibilityReportRouteImport.update({
     id: '/api/public/visibility-report',
@@ -346,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/my-studio-profile': typeof MyStudioProfileRoute
   '/offers': typeof OffersRouteWithChildren
   '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
@@ -354,6 +392,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
+  '/studio-claim': typeof StudioClaimRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
@@ -367,11 +406,13 @@ export interface FileRoutesByFullPath {
   '/tattoo-studio-software': typeof TattooStudioSoftwareRoute
   '/tattoo-studio-visibility-scorecard': typeof TattooStudioVisibilityScorecardRoute
   '/terms': typeof TermsRoute
+  '/uk-studio-map': typeof UkStudioMapRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
+  '/api/studio-profile': typeof ApiStudioProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -386,6 +427,8 @@ export interface FileRoutesByFullPath {
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-claim': typeof ApiPublicStudioClaimRoute
+  '/api/public/studio-directory': typeof ApiPublicStudioDirectoryRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -399,6 +442,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/my-studio-profile': typeof MyStudioProfileRoute
   '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
@@ -406,6 +450,7 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
+  '/studio-claim': typeof StudioClaimRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
@@ -419,11 +464,13 @@ export interface FileRoutesByTo {
   '/tattoo-studio-software': typeof TattooStudioSoftwareRoute
   '/tattoo-studio-visibility-scorecard': typeof TattooStudioVisibilityScorecardRoute
   '/terms': typeof TermsRoute
+  '/uk-studio-map': typeof UkStudioMapRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
+  '/api/studio-profile': typeof ApiStudioProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -438,6 +485,8 @@ export interface FileRoutesByTo {
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-claim': typeof ApiPublicStudioClaimRoute
+  '/api/public/studio-directory': typeof ApiPublicStudioDirectoryRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -453,6 +502,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/my-studio-profile': typeof MyStudioProfileRoute
   '/offers': typeof OffersRouteWithChildren
   '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
@@ -461,6 +511,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
+  '/studio-claim': typeof StudioClaimRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
@@ -474,11 +525,13 @@ export interface FileRoutesById {
   '/tattoo-studio-software': typeof TattooStudioSoftwareRoute
   '/tattoo-studio-visibility-scorecard': typeof TattooStudioVisibilityScorecardRoute
   '/terms': typeof TermsRoute
+  '/uk-studio-map': typeof UkStudioMapRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
+  '/api/studio-profile': typeof ApiStudioProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -493,6 +546,8 @@ export interface FileRoutesById {
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-claim': typeof ApiPublicStudioClaimRoute
+  '/api/public/studio-directory': typeof ApiPublicStudioDirectoryRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -508,6 +563,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
+    | '/my-studio-profile'
     | '/offers'
     | '/press'
     | '/pricing-benchmark'
@@ -516,6 +572,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/revenue-opportunity-calculator'
     | '/solutions'
+    | '/studio-claim'
     | '/studio-growth-check'
     | '/studio-visibility-report'
     | '/support'
@@ -529,11 +586,13 @@ export interface FileRouteTypes {
     | '/tattoo-studio-software'
     | '/tattoo-studio-visibility-scorecard'
     | '/terms'
+    | '/uk-studio-map'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
     | '/workspace'
+    | '/api/studio-profile'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -548,6 +607,8 @@ export interface FileRouteTypes {
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-claim'
+    | '/api/public/studio-directory'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   fileRoutesByTo: FileRoutesByTo
@@ -561,6 +622,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
+    | '/my-studio-profile'
     | '/press'
     | '/pricing-benchmark'
     | '/privacy'
@@ -568,6 +630,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/revenue-opportunity-calculator'
     | '/solutions'
+    | '/studio-claim'
     | '/studio-growth-check'
     | '/studio-visibility-report'
     | '/support'
@@ -581,11 +644,13 @@ export interface FileRouteTypes {
     | '/tattoo-studio-software'
     | '/tattoo-studio-visibility-scorecard'
     | '/terms'
+    | '/uk-studio-map'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
     | '/workspace'
+    | '/api/studio-profile'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -600,6 +665,8 @@ export interface FileRouteTypes {
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-claim'
+    | '/api/public/studio-directory'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   id:
@@ -614,6 +681,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
+    | '/my-studio-profile'
     | '/offers'
     | '/press'
     | '/pricing-benchmark'
@@ -622,6 +690,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/revenue-opportunity-calculator'
     | '/solutions'
+    | '/studio-claim'
     | '/studio-growth-check'
     | '/studio-visibility-report'
     | '/support'
@@ -635,11 +704,13 @@ export interface FileRouteTypes {
     | '/tattoo-studio-software'
     | '/tattoo-studio-visibility-scorecard'
     | '/terms'
+    | '/uk-studio-map'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/audits'
     | '/_authenticated/dashboard'
     | '/_authenticated/workspace'
+    | '/api/studio-profile'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -654,6 +725,8 @@ export interface FileRouteTypes {
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-claim'
+    | '/api/public/studio-directory'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   fileRoutesById: FileRoutesById
@@ -669,6 +742,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   GrowthModelRoute: typeof GrowthModelRoute
   McpRoute: typeof McpRoute
+  MyStudioProfileRoute: typeof MyStudioProfileRoute
   OffersRoute: typeof OffersRouteWithChildren
   PressRoute: typeof PressRoute
   PricingBenchmarkRoute: typeof PricingBenchmarkRoute
@@ -677,6 +751,7 @@ export interface RootRouteChildren {
   ResourcesRoute: typeof ResourcesRoute
   RevenueOpportunityCalculatorRoute: typeof RevenueOpportunityCalculatorRoute
   SolutionsRoute: typeof SolutionsRoute
+  StudioClaimRoute: typeof StudioClaimRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
   StudioVisibilityReportRoute: typeof StudioVisibilityReportRoute
   SupportRoute: typeof SupportRoute
@@ -690,8 +765,10 @@ export interface RootRouteChildren {
   TattooStudioSoftwareRoute: typeof TattooStudioSoftwareRoute
   TattooStudioVisibilityScorecardRoute: typeof TattooStudioVisibilityScorecardRoute
   TermsRoute: typeof TermsRoute
+  UkStudioMapRoute: typeof UkStudioMapRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiStudioProfileRoute: typeof ApiStudioProfileRoute
   GuidesFullSleeveCostUkRoute: typeof GuidesFullSleeveCostUkRoute
   GuidesGreyLineHealingWeekByWeekRoute: typeof GuidesGreyLineHealingWeekByWeekRoute
   ReportTokenRoute: typeof ReportTokenRoute
@@ -702,6 +779,8 @@ export interface RootRouteChildren {
   ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
   ApiPublicRevenueScenarioRoute: typeof ApiPublicRevenueScenarioRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
+  ApiPublicStudioClaimRoute: typeof ApiPublicStudioClaimRoute
+  ApiPublicStudioDirectoryRoute: typeof ApiPublicStudioDirectoryRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
   ApiPublicVisibilityScorecardSubmitRoute: typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -778,6 +857,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my-studio-profile': {
+      id: '/my-studio-profile'
+      path: '/my-studio-profile'
+      fullPath: '/my-studio-profile'
+      preLoaderRoute: typeof MyStudioProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/offers': {
       id: '/offers'
       path: '/offers'
@@ -832,6 +918,13 @@ declare module '@tanstack/react-router' {
       path: '/solutions'
       fullPath: '/solutions'
       preLoaderRoute: typeof SolutionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio-claim': {
+      id: '/studio-claim'
+      path: '/studio-claim'
+      fullPath: '/studio-claim'
+      preLoaderRoute: typeof StudioClaimRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/studio-growth-check': {
@@ -925,6 +1018,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/uk-studio-map': {
+      id: '/uk-studio-map'
+      path: '/uk-studio-map'
+      fullPath: '/uk-studio-map'
+      preLoaderRoute: typeof UkStudioMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.mcp/list-tools': {
       id: '/.mcp/list-tools'
       path: '/.mcp/list-tools'
@@ -959,6 +1059,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/workspace'
       preLoaderRoute: typeof AuthenticatedWorkspaceRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/studio-profile': {
+      id: '/api/studio-profile'
+      path: '/api/studio-profile'
+      fullPath: '/api/studio-profile'
+      preLoaderRoute: typeof ApiStudioProfileRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/callback': {
       id: '/auth/callback'
@@ -1058,6 +1165,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/studio-claim': {
+      id: '/api/public/studio-claim'
+      path: '/api/public/studio-claim'
+      fullPath: '/api/public/studio-claim'
+      preLoaderRoute: typeof ApiPublicStudioClaimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/studio-directory': {
+      id: '/api/public/studio-directory'
+      path: '/api/public/studio-directory'
+      fullPath: '/api/public/studio-directory'
+      preLoaderRoute: typeof ApiPublicStudioDirectoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/visibility-report': {
       id: '/api/public/visibility-report'
       path: '/api/public/visibility-report'
@@ -1135,6 +1256,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   GrowthModelRoute: GrowthModelRoute,
   McpRoute: McpRoute,
+  MyStudioProfileRoute: MyStudioProfileRoute,
   OffersRoute: OffersRouteWithChildren,
   PressRoute: PressRoute,
   PricingBenchmarkRoute: PricingBenchmarkRoute,
@@ -1143,6 +1265,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesRoute: ResourcesRoute,
   RevenueOpportunityCalculatorRoute: RevenueOpportunityCalculatorRoute,
   SolutionsRoute: SolutionsRoute,
+  StudioClaimRoute: StudioClaimRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
   StudioVisibilityReportRoute: StudioVisibilityReportRoute,
   SupportRoute: SupportRoute,
@@ -1156,9 +1279,11 @@ const rootRouteChildren: RootRouteChildren = {
   TattooStudioSoftwareRoute: TattooStudioSoftwareRoute,
   TattooStudioVisibilityScorecardRoute: TattooStudioVisibilityScorecardRoute,
   TermsRoute: TermsRoute,
+  UkStudioMapRoute: UkStudioMapRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiStudioProfileRoute: ApiStudioProfileRoute,
   GuidesFullSleeveCostUkRoute: GuidesFullSleeveCostUkRoute,
   GuidesGreyLineHealingWeekByWeekRoute: GuidesGreyLineHealingWeekByWeekRoute,
   ReportTokenRoute: ReportTokenRoute,
@@ -1170,6 +1295,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicRevenueScenarioRoute: ApiPublicRevenueScenarioRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
+  ApiPublicStudioClaimRoute: ApiPublicStudioClaimRoute,
+  ApiPublicStudioDirectoryRoute: ApiPublicStudioDirectoryRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
   ApiPublicVisibilityScorecardSubmitRoute:
     ApiPublicVisibilityScorecardSubmitRoute,
