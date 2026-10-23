@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 const MAX_BYTES = 12_000;
 const UPSTREAM_TIMEOUT_MS = 12_000;
-const ACTIONS = new Set(["start","profile","submit","claim","mine","revoke"]);
+const ACTIONS = new Set(["start","profile","submit","claim","mine","linked_profile","revoke"]);
 
 // No service-role secret is used or returned by this route. Supabase Edge Function
 // owns validation and SQL writes. This proxy is same-origin even on protected previews.
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/api/public/studio-journey-submit")({
         const auth = request.headers.get("authorization");
         const authorizationHeaders: Record<string,string> = {};
         // Never forward a server secret: permit only end-user Bearer JWTs on claim/mine.
-        if ((action === "claim" || action === "mine") && auth && /^Bearer [A-Za-z0-9._-]{50,4096}$/.test(auth)) {
+        if ((action === "claim" || action === "mine" || action === "linked_profile") && auth && /^Bearer [A-Za-z0-9._-]{50,4096}$/.test(auth)) {
           authorizationHeaders["authorization"] = auth;
         }
         try {
