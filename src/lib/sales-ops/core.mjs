@@ -18,15 +18,28 @@ export function resolveStudioIdentity(existingStudios, signal) {
   const placeId = ident(signal.googlePlaceId);
   const domain = normalizeDomain(signal.website);
   const zip = postcode(signal.postcode);
-  const matched = existingStudios.filter((row) =>
-    (companyNo && ident(row.companiesHouseNumber) === companyNo) ||
-    (placeId && ident(row.googlePlaceId) === placeId) ||
-    (domain && zip && normalizeDomain(row.website) === domain && postcode(row.postcode) === zip)
-  );
+  // Company numbers identify legal entities, not individual branches/sites.
+  // Site resolution requires a provider Place ID or a second location key.
+  const matched = existingStudios.filter((row) => {
+    const rowZip = postcode(row.postcode);
+    const rowCompany = ident(row.companiesHouseNumber);
+    const rowPlace = ident(row.googlePlaceId);
+    if (placeId && rowPlace && rowPlace === placeId) return true;
+    if (companyNo && zip && rowCompany === companyNo && rowZip === zip) return true;
+    return Boolean(domain && zip && normalizeDomain(row.website) === domain && rowZip === zip);
+  });
   if (matched.length > 1) return { status: "review", reason: "conflicting_identifiers", studioId: null };
-  if (matched.length === 0) return { status: "review", reason: "no_verified_match", studioId: null };
-  if (!matched[0].id) return { status: "review", reason: "missing_canonical_id", studioId: null };
-  return { status: "matched", reason: "strong_identifier", studioId: matched[0].id };
+  if (matched.length === 0) return { status: "review", reason: "no_verified_site_match", studioId: null };
+  const match = matched[0];
+  if (!match.id) return { status: "review", reason: "missing_canonical_id", studioId: null };
+  // If two supplied authoritative identifiers disagree with a candidate,
+  // route to manual review; never silently pick one of them.
+  if ((placeId && match.googlePlaceId && ident(match.googlePlaceId) !== placeId) ||
+      (companyNo && match.companiesHouseNumber && ident(match.companiesHouseNumber) !== companyNo) ||
+      (zip && postcode(match.postcode) !== zip)) {
+    return { status: "review", reason: "conflicting_identifiers", studioId: null };
+  }
+  return { status: "matched", reason: "verified_site_identifier", studioId: match.id };
 }
 
 export function normalizeDomain(input) {
