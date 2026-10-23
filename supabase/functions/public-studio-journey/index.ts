@@ -97,7 +97,37 @@ Deno.serve(async(request:Request)=>{
         .eq("active",true).maybeSingle();
       if(memberError||!member)return respond(origin,403,{error:"Current studio membership required"});
       const history=await historyFor(db,linked.id);
-      return respond(origin,200,{history,studioId:linked.studio_id,memberAccess:true,evidence:"SELF_REPORTED"});
+      // Purchase status is returned only to the verified account user and their
+      // currently active studio membership. No purchaser email or card data leaks.
+      const {data:orders,error:orderError}=await db.from("orders")
+        .select("id,status,amount_total,currency,created_at")
+        .eq("offer_slug","studio-intelligence-audit")
+        .eq("metadata->>journey_session_id",linked.id)
+        .order("created_at",{ascending:false}).limit(5);
+      if(orderError)throw Error("purchase lookup failed");
+      const purchase=(orders||[]).find(o=>o.status==="paid"&&o.amount_total===39500&&o.currency==="gbp")||null;
+      const {data:grants,error:grantsError}=await db.from("si_report_access")
+        .select("report_id").eq("user_id",user.id).limit(100);
+      if(grantsError)throw Error("report access lookup failed");
+      let publishedReports:{reportId:string;auditId:string;version:number}[]=[];
+      const grantIds=(grants||[]).map(g=>g.report_id);
+      if(grantIds.length){
+        const {data:reports,error:reportError}=await db.from("report_versions")
+          .select("id,audit_id,version,status").in("id",grantIds).eq("status","published");
+        if(reportError)throw Error("report lookup failed");
+        const auditIds=[...new Set((reports||[]).map(r=>r.audit_id))];
+        if(auditIds.length){
+          const {data:audits,error:auditError}=await db.from("audits")
+            .select("id,studio_id").in("id",auditIds).eq("studio_id",linked.studio_id);
+          if(auditError)throw Error("report studio authorisation failed");
+          const allowed=new Set((audits||[]).map(a=>a.id));
+          publishedReports=(reports||[]).filter(r=>allowed.has(r.audit_id))
+            .map(r=>({reportId:r.id,auditId:r.audit_id,version:r.version}));
+        }
+      }
+      return respond(origin,200,{history,studioId:linked.studio_id,memberAccess:true,
+        purchase:purchase?{paid:true,orderId:purchase.id,amountPence:purchase.amount_total,currency:"gbp"}:{paid:false},
+        publishedReports,evidence:"SELF_REPORTED"});
     }
     const session=await resolveSession(db,body.sessionToken);
     if(!session)return respond(origin,401,{error:"Session invalid or expired"});
