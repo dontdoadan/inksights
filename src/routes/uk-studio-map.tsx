@@ -13,6 +13,22 @@ export type DirectoryStudio = {
 const styleUrl = "https://tiles.openfreemap.org/styles/liberty";
 const mapLibUrl = "https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.mjs";
 const mapCssUrl = "https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.css";
+type MapInstance = {
+  flyTo: (params: { center: [number,number]; zoom: number; essential: boolean }) => void;
+  addControl: (control: unknown, position: string) => void;
+  remove: () => void;
+};
+type MarkerInstance = {
+  setLngLat: (position: [number,number]) => MarkerInstance;
+  addTo: (map: MapInstance) => MarkerInstance;
+  getElement: () => HTMLElement;
+  remove: () => void;
+};
+type MapLib = {
+  Map: new (options: Record<string, unknown>) => MapInstance;
+  Marker: new (options: {color:string}) => MarkerInstance;
+  NavigationControl: new (options:{showCompass:boolean}) => unknown;
+};
 
 export const Route = createFileRoute("/uk-studio-map")({
   component: StudioDirectory,
@@ -27,7 +43,7 @@ export const Route = createFileRoute("/uk-studio-map")({
 
 function StudioDirectory() {
   const node = useRef<HTMLDivElement>(null);
-  const map = useRef<any>(null);
+  const map = useRef<MapInstance|null>(null);
   const [studios,setStudios] = useState<DirectoryStudio[]>([]);
   const [query,setQuery] = useState("");
   const [selected,setSelected] = useState<string | null>(null);
@@ -51,8 +67,8 @@ function StudioDirectory() {
   useEffect(() => {
     if (!node.current || !studios.length) return;
     let cancelled = false;
-    let current: any;
-    let markers: any[] = [];
+    let current: MapInstance|null=null;
+    const markers: MarkerInstance[] = [];
     const start = async () => {
       try {
         if (!document.querySelector('link[data-inksights-map-css]')) {
@@ -62,7 +78,7 @@ function StudioDirectory() {
         }
         const module = await import(/* @vite-ignore */ mapLibUrl);
         if (cancelled || !node.current) return;
-        const maplibre = module.default ?? module;
+        const maplibre = (module.default ?? module) as MapLib;
         current = new maplibre.Map({
           container: node.current, style: styleUrl, center: [-2.2,54.0], zoom:5.0,
           attributionControl: true, interactive: true,
