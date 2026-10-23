@@ -144,7 +144,7 @@ async function upsertOrder(session: Record<string, any>, paid: boolean) {
     },
     list_value_minor: Number.isFinite(session.amount_total) ? session.amount_total : null,
     waiver_amount_minor: 0,
-    amount_collected_minor: Number.isFinite(session.amount_total) ? session.amount_total : null,
+    // Initiated or delayed checkouts are not collected revenue.\n    amount_collected_minor: paid && Number.isFinite(session.amount_total) ? session.amount_total : 0,
     access_type: "paid",
     updated_at: new Date().toISOString(),
   };
@@ -336,7 +336,7 @@ Deno.serve(async (req: Request) => {
     const isAuditCheckout = clean(session.payment_link, 120) === AUDIT_PAYMENT_LINK_ID || metadataOffer === "studio_intelligence_audit" || metadataOffer === AUDIT_OFFER;
     if (!isAuditCheckout) return response({ received: true, skipped: "unrelated_checkout" }, 200);
 
-    const paid = event.type === "checkout.session.async_payment_succeeded" || session.payment_status === "paid";
+    // An async-success event still requires the authoritative session to report paid.\n    const paid = session.payment_status === "paid";
     await upsertOrder(session, paid);
 
     let contactRequestId: string | null = null;
