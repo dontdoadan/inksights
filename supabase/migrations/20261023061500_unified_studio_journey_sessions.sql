@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS public.studio_journey_sessions (
   created_at timestamptz NOT NULL DEFAULT now(),
   expires_at timestamptz NOT NULL DEFAULT (now() + interval '7 days'),
   revoked_at timestamptz,
-  claimed_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
-  studio_id uuid REFERENCES public.studios(id) ON DELETE SET NULL,
+  claimed_user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  studio_id uuid REFERENCES public.studios(id) ON DELETE CASCADE,
   claimed_at timestamptz,
   consent_version text NOT NULL,
   CONSTRAINT studio_journey_expiry_valid CHECK (expires_at > created_at),
@@ -34,6 +34,12 @@ CREATE TABLE IF NOT EXISTS public.studio_journey_steps (
 );
 CREATE INDEX IF NOT EXISTS studio_journey_steps_ordering
   ON public.studio_journey_steps (session_id, submitted_at, submission_id);
+
+-- Prevent simultaneous payment-webhook deliveries creating duplicate CRM intake
+-- for a single Stripe Checkout Session. Preflight duplicate check required before apply.
+CREATE UNIQUE INDEX IF NOT EXISTS public_contact_requests_stripe_session_unique
+  ON public.public_contact_requests ((metadata->>'stripe_session_id'))
+  WHERE metadata->>'stripe_session_id' IS NOT NULL;
 
 ALTER TABLE public.studio_journey_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.studio_journey_steps ENABLE ROW LEVEL SECURITY;
