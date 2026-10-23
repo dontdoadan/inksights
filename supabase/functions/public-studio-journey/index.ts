@@ -72,7 +72,7 @@ Deno.serve(async(request:Request)=>{
   try{const raw=await request.text();if(new TextEncoder().encode(raw).byteLength>MAX_BYTES)return respond(origin,413,{error:"Payload too large"});const parsed=JSON.parse(raw);if(!parsed||typeof parsed!=="object"||Array.isArray(parsed))throw Error();body=parsed;}
   catch{return respond(origin,400,{error:"Invalid JSON"});}
   const action=body.action;
-  if(!["start","profile","submit","claim","mine","revoke"].includes(String(action)))return respond(origin,422,{error:"Unknown action"});
+  if(!["start","profile","submit","claim","mine","linked_profile","revoke"].includes(String(action)))return respond(origin,422,{error:"Unknown action"});
   const url=Deno.env.get("SUPABASE_URL"),key=secretKey();
   if(!url||!key)return respond(origin,503,{error:"Assessment service unavailable"});
   const db=createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
@@ -93,6 +93,22 @@ Deno.serve(async(request:Request)=>{
         .eq("claimed_user_id",user.id).order("claimed_at",{ascending:false}).limit(40);
       if(error)throw Error("linked profile lookup failed");
       return respond(origin,200,{linkedProfiles:data||[]});
+    }
+    if(action==="linked_profile"){
+      const user=await userFrom(db,request);
+      if(!user)return respond(origin,401,{error:"Sign in to access this studio"});
+      if(typeof body.sessionId!=="string"||!UUID.test(body.sessionId))
+        return respond(origin,422,{error:"Invalid linked profile"});
+      const {data:linked,error:linkError}=await db.from("studio_journey_sessions")
+        .select("id,studio_id,claimed_user_id").eq("id",body.sessionId)
+        .eq("claimed_user_id",user.id).is("revoked_at",null).maybeSingle();
+      if(linkError||!linked?.studio_id)return respond(origin,404,{error:"Linked studio not found"});
+      const {data:member,error:memberError}=await db.from("studio_members")
+        .select("studio_id").eq("user_id",user.id).eq("studio_id",linked.studio_id)
+        .eq("active",true).maybeSingle();
+      if(memberError||!member)return respond(origin,403,{error:"Current studio membership required"});
+      const history=await historyFor(db,linked.id);
+      return respond(origin,200,{history,studioId:linked.studio_id,memberAccess:true,evidence:"SELF_REPORTED"});
     }
     const session=await resolveSession(db,body.sessionToken);
     if(!session)return respond(origin,401,{error:"Session invalid or expired"});
@@ -115,7 +131,7 @@ Deno.serve(async(request:Request)=>{
       if(session.claimed_user_id===user.id&&session.studio_id===body.studioId)return respond(origin,200,{linked:true,studioId:body.studioId,evidence:"SELF_REPORTED"});
       const {data:claimed,error:claimError}=await db.from("studio_journey_sessions")
         .update({claimed_user_id:user.id,studio_id:body.studioId,claimed_at:new Date().toISOString()})
-        .eq("id",session.id).is("claimed_user_id",null).select("studio_id").maybeSingle();
+        .eq("id",session.id).is("claimed_user_id",null).is("revoked_at",null).select("studio_id").maybeSingle();
       if(claimError)throw Error("claim failed");
       if(!claimed)return respond(origin,409,{error:"Session claimed by another request"});
       // Never overwrite existing studio name, canonical data, verified metrics or report permissions.
