@@ -1,0 +1,27 @@
+name: Industry Intelligence — research safety checks
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/industry-intelligence/**'
+      - '.github/workflows/industry-intelligence-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax-check research tooling
+        run: |
+          node --check scripts/industry-intelligence/qualify.mjs
+          node --check scripts/industry-intelligence/run.mjs
+      - name: Test qualification and CRM safety gates
+        run: node --test scripts/industry-intelligence/qualify.test.mjs
