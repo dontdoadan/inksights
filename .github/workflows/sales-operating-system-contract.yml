@@ -10,6 +10,8 @@ on:
       - 'docs/engineering/sales-operating-system-v1.proposed.sql'
       - 'docs/engineering/sales-dashboard-v1.proposed.sql'
       - 'tests/sql/sales-dashboard-regression.sql'
+      - 'tests/sql/sales-delivery-*.sql'
+      - 'docs/engineering/sales-delivery-v1.proposed.sql'
       - 'docs/engineering/sales-payment-state-v1.proposed.sql'
       - 'supabase/functions/stripe-checkout-webhook-v1/**'
       - 'supabase/functions/hubspot-sync-v1/**'
@@ -75,3 +77,9 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f docs/engineering/sales-dashboard-v1.proposed.sql
       - name: Verify source-linked direct and assisted conversion economics
         run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-dashboard-regression.sql
+      - name: Prepare report and client access fixtures
+        run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-delivery-bootstrap.sql
+      - name: Stage delivery-status gate
+        run: psql -X -v ON_ERROR_STOP=1 -f docs/engineering/sales-delivery-v1.proposed.sql
+      - name: Test complete paid audit to accepted report and denied access
+        run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-delivery-regression.sql
