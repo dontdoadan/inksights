@@ -6,6 +6,7 @@ on:
       - 'src/lib/sales-ops/**'
       - 'tests/sales-ops.test.mjs'
       - 'tests/sql/sales-payment-*.sql'
+      - 'tests/sql/sales-payment-concurrency.sh'
       - 'tests/sql/sales-identity-*.sql'
       - 'docs/engineering/sales-operating-system-v1.proposed.sql'
       - 'docs/engineering/sales-dashboard-v1.proposed.sql'
@@ -67,6 +68,8 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f docs/engineering/sales-payment-state-v1.proposed.sql
       - name: Verify stale webhook, replay, waiver and access invariants
         run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-payment-state-regression.sql
+      - name: Execute real concurrent paid/pending and replay races
+        run: bash tests/sql/sales-payment-concurrency.sh
       - name: Create isolated studio, candidate and report references
         run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-identity-bootstrap.sql
       - name: Stage additive sales identity schema
