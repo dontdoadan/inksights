@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 type SavedStage = { submissionId: string; submittedAt: string; result: Record<string,unknown>; normalized: Record<string,unknown> };
 type Profile = { id: string; studio_id: string; claimed_at: string; expires_at: string };
 type StudioOption = { id:string; name:string; role:string };
-type LinkedResponse = { history:Record<string,SavedStage>; studioId:string };
+type LinkedResponse = { history:Record<string,SavedStage>; studioId:string; purchase?:{paid:boolean;orderId?:string;amountPence?:number;currency?:string};publishedReports?:Array<{reportId:string;auditId:string;version:number}> };
 const TOKEN_KEY = "inksights:journey:unverified-session";
 const API = "/api/public/studio-journey-submit";
 const formatGbp = (v:unknown) => new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(typeof v==="number"?v:0);
@@ -117,6 +117,15 @@ function StudioIntelligenceProfile() {
             </div>
             <h3 className="mt-7 text-lg font-bold text-ice">Current indicative priority</h3>
             <p className="mt-2 text-sm text-muted-foreground">{String(detail.history.summary?.result?.priority||detail.history.growth?.result?.priority||"Further evidence required")}</p>
+            <div className="mt-6 rounded-2xl border border-border bg-ink-deep p-4">
+              <h3 className="text-sm font-black text-ice">Paid audit delivery</h3>
+              <p className="mt-2 text-xs text-muted-foreground">{detail.purchase?.paid
+                ? "The £395 payment has been recorded against this saved studio assessment. Report delivery remains subject to audit completion and publication."
+                : "No verified £395 audit payment is associated with this assessment."}</p>
+              {detail.publishedReports?.length ? <div className="mt-3 space-y-2">{detail.publishedReports.map(r=>
+                <Link key={r.reportId} to="/audits/$auditId" params={{auditId:r.auditId}} className="block rounded-xl border border-mint/30 px-3 py-2 text-sm font-bold text-mint hover:bg-mint/[0.06]">Open your published Studio Intelligence Audit v{r.version} →</Link>
+              )}</div> : <p className="mt-2 text-xs text-muted-foreground">No published audit has been granted to this account yet.</p>}
+            </div>
             <p className="mt-5 text-xs text-muted-foreground">All historical observations remain subject to independent verification. Your existing studio data and other studios’ private reports are not modified by linkage.</p>
           </section>}
         </section>
