@@ -272,7 +272,7 @@ Deno.serve(async (req: Request) => {
         method: "POST",
         headers: { Prefer: "resolution=ignore-duplicates,return=minimal" },
         body: JSON.stringify({
-          source_ref: `${sourceType}:${sourceId}`,
+          source_ref: sourceType === "public_contact_request" ? `contact:${sourceId}` : `revenue_audit_lead:${sourceId}`,
           event_kind: "crm_synced",
           source_system: "hubspot",
           source_event_id: String(makeResult.deal_id),
