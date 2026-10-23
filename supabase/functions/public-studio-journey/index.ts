@@ -1,6 +1,7 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.110.1";
 import { CONSENT_VERSION, VERSION, STAGES, evaluateStage } from "./journey-policy.mjs";
+import { projectJourneyHistory } from "./projection-policy.mjs";
 
 // Requires approved session-ledger migration; not an owner-verification mechanism by itself.
 const ORIGINS=new Set(["https://getinksights.co.uk","https://www.getinksights.co.uk","http://localhost:3000","http://localhost:5173"]);
@@ -27,25 +28,13 @@ async function rateLimit(request:Request,db:ReturnType<typeof createClient>){
   if(error)throw Error("rate-limit not available");
   return data===true;
 }
-type HistoryRow={stage:string;submitted_at:string;submission:{id:string;normalized_inputs:Obj;result_snapshot:Obj}|null};
-function project(rows:HistoryRow[]){
-  const h:Record<string,{normalized:Obj;result:Obj;submissionId:string;submittedAt:string}>={};
-  for(const row of rows){
-    const s=row.submission,k=row.stage;
-    if(!s||!STAGES.includes(k)||s.normalized_inputs?.step!==k||s.normalized_inputs?.calculation_version!==VERSION)continue;
-    if(k==="growth"){delete h.revenue;delete h.visibility;delete h.summary;}
-    if(k==="revenue"||k==="visibility")delete h.summary;
-    h[k]={normalized:s.normalized_inputs.answer as Obj,result:s.result_snapshot,submissionId:s.id,submittedAt:row.submitted_at};
-  }
-  return h;
-}
 async function historyFor(db:ReturnType<typeof createClient>,sessionId:string){
   const {data,error}=await db.from("studio_journey_steps")
     .select("stage,submitted_at,submission:public_tool_submissions!studio_journey_steps_submission_id_fkey(id,normalized_inputs,result_snapshot)")
     .eq("session_id",sessionId).order("submitted_at",{ascending:true}).order("submission_id",{ascending:true}).limit(MAX_STEPS+1);
   if(error)throw Error("history lookup failed");
   if((data?.length||0)>MAX_STEPS)throw Error("session history limit");
-  return project((data||[]) as unknown as HistoryRow[]);
+  return projectJourneyHistory(data||[]);
 }
 async function resolveSession(db:ReturnType<typeof createClient>,token:unknown){
   if(typeof token!=="string"||!TOKEN.test(token))return null;
