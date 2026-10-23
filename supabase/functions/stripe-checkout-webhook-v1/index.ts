@@ -246,6 +246,7 @@ async function ensureContactAndCrm(session: Record<string, any>) {
         platform_key: "inksights_b2b",
         metadata: {
           stripe_session_id: sessionId,
+          journey_session_id: /^[0-9a-f-]{36}$/i.test(String(session.metadata?.journey_session_id || "")) ? String(session.metadata.journey_session_id) : null,
           stripe_payment_link_id: clean(session.payment_link, 120) || null,
           stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
           payment_status: clean(session.payment_status, 40),
@@ -278,6 +279,7 @@ async function ensureContactAndCrm(session: Record<string, any>) {
         processing_status: "received",
         payload: {
           event_kind: "studio_intelligence_audit_paid",
+          journey_session_id: /^[0-9a-f-]{36}$/i.test(String(session.metadata?.journey_session_id || "")) ? String(session.metadata.journey_session_id) : null,
           offer: AUDIT_OFFER,
           payment_link: clean(session.payment_link, 120) || null,
           amount_total: Number.isFinite(session.amount_total) ? session.amount_total : null,
