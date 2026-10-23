@@ -23,6 +23,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     });
 
     let journeySessionId: string | null = null;
+    let journeyStudioName: string | null = null;
     if (data.journeyToken) {
       if (offer.slug !== "studio-intelligence-audit" ||
           !/^[A-Za-z0-9_-]{43}$/.test(data.journeyToken)) {
@@ -49,6 +50,14 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       if (countError || !count) {
         throw new Error("Save your Studio Growth Check before purchasing with linked history.");
       }
+      const { data: latestStep, error: stepError } = await journeyDb
+        .from("studio_journey_steps")
+        .select("submission:public_tool_submissions!studio_journey_steps_submission_id_fkey(studio_name)")
+        .eq("session_id", linked.id).eq("stage", "growth")
+        .order("submitted_at", { ascending: false }).limit(1).maybeSingle();
+      if (stepError || !latestStep) throw new Error("Unable to verify your saved studio identity.");
+      const submission = latestStep.submission as unknown as {studio_name?: string}|null;
+      journeyStudioName = typeof submission?.studio_name === "string" ? submission.studio_name.slice(0,120) : null;
       journeySessionId = linked.id;
     }
 
@@ -74,6 +83,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         ...(data.leadId ? { lead_id: data.leadId } : {}),
         ...(data.auditId ? { audit_id: data.auditId } : {}),
         ...(journeySessionId ? { journey_session_id: journeySessionId, journey_version: "2026-10-unified-journey-v1" } : {}),
+        ...(journeyStudioName ? { studio_name: journeyStudioName } : {}),
       },
       ...(data.email ? { customer_email: data.email } : {}),
     });
