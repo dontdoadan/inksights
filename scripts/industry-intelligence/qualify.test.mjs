@@ -48,3 +48,9 @@ test('CSV escapes quotes and does not open new records',()=>{
   assert.ok(csv.includes('""Beta""'));
   assert.equal(csv.trim().split('\n').length,2);
 });
+
+test('spreadsheet formula input is neutralised in CSV exports',()=>{
+  const row=qualify({...base,name:'=HYPERLINK("https://malicious.invalid")'});
+  const csv=csvSerialize([row]);
+  assert.ok(csv.includes('"\'=HYPERLINK'));
+});
