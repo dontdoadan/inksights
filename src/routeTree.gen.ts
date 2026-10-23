@@ -20,10 +20,12 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as GrowthModelRouteImport } from './routes/growth-model'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OffersRouteImport } from './routes/offers'
+import { Route as PressRouteImport } from './routes/press'
 import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResearchMethodologyRouteImport } from './routes/research-methodology'
 import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as RevenueOpportunityCalculatorRouteImport } from './routes/revenue-opportunity-calculator'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
 import { Route as StudioVisibilityReportRouteImport } from './routes/studio-visibility-report'
@@ -49,11 +51,13 @@ import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/gu
 import { Route as OffersIndexRouteImport } from './routes/offers.index'
 import { Route as OffersSlugRouteImport } from './routes/offers.$slug'
 import { Route as ReportTokenRouteImport } from './routes/report.$token'
+import { Route as ResearchGreaterLondonTattooPricing2026RouteImport } from './routes/research.greater-london-tattoo-pricing-2026'
 import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/tools.tattoo-pain-chart-reality-check'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
 import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
+import { Route as ApiPublicRevenueScenarioRouteImport } from './routes/api/public/revenue-scenario'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 import { Route as ApiPublicVisibilityScorecardSubmitRouteImport } from './routes/api/public/visibility-scorecard-submit'
@@ -112,6 +116,11 @@ const OffersRoute = OffersRouteImport.update({
   path: '/offers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PressRoute = PressRouteImport.update({
+  id: '/press',
+  path: '/press',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingBenchmarkRoute = PricingBenchmarkRouteImport.update({
   id: '/pricing-benchmark',
   path: '/pricing-benchmark',
@@ -132,6 +141,12 @@ const ResourcesRoute = ResourcesRouteImport.update({
   path: '/resources',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RevenueOpportunityCalculatorRoute =
+  RevenueOpportunityCalculatorRouteImport.update({
+    id: '/revenue-opportunity-calculator',
+    path: '/revenue-opportunity-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SolutionsRoute = SolutionsRouteImport.update({
   id: '/solutions',
   path: '/solutions',
@@ -262,6 +277,12 @@ const ReportTokenRoute = ReportTokenRouteImport.update({
   path: '/report/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResearchGreaterLondonTattooPricing2026Route =
+  ResearchGreaterLondonTattooPricing2026RouteImport.update({
+    id: '/research/greater-london-tattoo-pricing-2026',
+    path: '/research/greater-london-tattoo-pricing-2026',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ToolsTattooPainChartRealityCheckRoute =
   ToolsTattooPainChartRealityCheckRouteImport.update({
     id: '/tools/tattoo-pain-chart-reality-check',
@@ -289,6 +310,12 @@ const ApiPublicPricingBenchmarkSubmitRoute =
   ApiPublicPricingBenchmarkSubmitRouteImport.update({
     id: '/api/public/pricing-benchmark-submit',
     path: '/api/public/pricing-benchmark-submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicRevenueScenarioRoute =
+  ApiPublicRevenueScenarioRouteImport.update({
+    id: '/api/public/revenue-scenario',
+    path: '/api/public/revenue-scenario',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
@@ -320,10 +347,12 @@ export interface FileRoutesByFullPath {
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
   '/offers': typeof OffersRouteWithChildren
+  '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -348,12 +377,14 @@ export interface FileRoutesByFullPath {
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/report/$token': typeof ReportTokenRoute
+  '/research/greater-london-tattoo-pricing-2026': typeof ResearchGreaterLondonTattooPricing2026Route
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers/': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
@@ -368,10 +399,12 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -396,12 +429,14 @@ export interface FileRoutesByTo {
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/report/$token': typeof ReportTokenRoute
+  '/research/greater-london-tattoo-pricing-2026': typeof ResearchGreaterLondonTattooPricing2026Route
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
@@ -419,10 +454,12 @@ export interface FileRoutesById {
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
   '/offers': typeof OffersRouteWithChildren
+  '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
   '/resources': typeof ResourcesRoute
+  '/revenue-opportunity-calculator': typeof RevenueOpportunityCalculatorRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
@@ -447,12 +484,14 @@ export interface FileRoutesById {
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/report/$token': typeof ReportTokenRoute
+  '/research/greater-london-tattoo-pricing-2026': typeof ResearchGreaterLondonTattooPricing2026Route
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers/': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
+  '/api/public/revenue-scenario': typeof ApiPublicRevenueScenarioRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
@@ -470,10 +509,12 @@ export interface FileRouteTypes {
     | '/growth-model'
     | '/mcp'
     | '/offers'
+    | '/press'
     | '/pricing-benchmark'
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -498,12 +539,14 @@ export interface FileRouteTypes {
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/report/$token'
+    | '/research/greater-london-tattoo-pricing-2026'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
@@ -518,10 +561,12 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
+    | '/press'
     | '/pricing-benchmark'
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -546,12 +591,14 @@ export interface FileRouteTypes {
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/report/$token'
+    | '/research/greater-london-tattoo-pricing-2026'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
@@ -568,10 +615,12 @@ export interface FileRouteTypes {
     | '/growth-model'
     | '/mcp'
     | '/offers'
+    | '/press'
     | '/pricing-benchmark'
     | '/privacy'
     | '/research-methodology'
     | '/resources'
+    | '/revenue-opportunity-calculator'
     | '/solutions'
     | '/studio-growth-check'
     | '/studio-visibility-report'
@@ -596,12 +645,14 @@ export interface FileRouteTypes {
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/report/$token'
+    | '/research/greater-london-tattoo-pricing-2026'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
+    | '/api/public/revenue-scenario'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
@@ -619,10 +670,12 @@ export interface RootRouteChildren {
   GrowthModelRoute: typeof GrowthModelRoute
   McpRoute: typeof McpRoute
   OffersRoute: typeof OffersRouteWithChildren
+  PressRoute: typeof PressRoute
   PricingBenchmarkRoute: typeof PricingBenchmarkRoute
   PrivacyRoute: typeof PrivacyRoute
   ResearchMethodologyRoute: typeof ResearchMethodologyRoute
   ResourcesRoute: typeof ResourcesRoute
+  RevenueOpportunityCalculatorRoute: typeof RevenueOpportunityCalculatorRoute
   SolutionsRoute: typeof SolutionsRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
   StudioVisibilityReportRoute: typeof StudioVisibilityReportRoute
@@ -642,10 +695,12 @@ export interface RootRouteChildren {
   GuidesFullSleeveCostUkRoute: typeof GuidesFullSleeveCostUkRoute
   GuidesGreyLineHealingWeekByWeekRoute: typeof GuidesGreyLineHealingWeekByWeekRoute
   ReportTokenRoute: typeof ReportTokenRoute
+  ResearchGreaterLondonTattooPricing2026Route: typeof ResearchGreaterLondonTattooPricing2026Route
   ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
+  ApiPublicRevenueScenarioRoute: typeof ApiPublicRevenueScenarioRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
   ApiPublicVisibilityScorecardSubmitRoute: typeof ApiPublicVisibilityScorecardSubmitRoute
@@ -730,6 +785,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OffersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/press': {
+      id: '/press'
+      path: '/press'
+      fullPath: '/press'
+      preLoaderRoute: typeof PressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing-benchmark': {
       id: '/pricing-benchmark'
       path: '/pricing-benchmark'
@@ -756,6 +818,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources'
       preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/revenue-opportunity-calculator': {
+      id: '/revenue-opportunity-calculator'
+      path: '/revenue-opportunity-calculator'
+      fullPath: '/revenue-opportunity-calculator'
+      preLoaderRoute: typeof RevenueOpportunityCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solutions': {
@@ -933,6 +1002,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/research/greater-london-tattoo-pricing-2026': {
+      id: '/research/greater-london-tattoo-pricing-2026'
+      path: '/research/greater-london-tattoo-pricing-2026'
+      fullPath: '/research/greater-london-tattoo-pricing-2026'
+      preLoaderRoute: typeof ResearchGreaterLondonTattooPricing2026RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools/tattoo-pain-chart-reality-check': {
       id: '/tools/tattoo-pain-chart-reality-check'
       path: '/tools/tattoo-pain-chart-reality-check'
@@ -966,6 +1042,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/pricing-benchmark-submit'
       fullPath: '/api/public/pricing-benchmark-submit'
       preLoaderRoute: typeof ApiPublicPricingBenchmarkSubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/revenue-scenario': {
+      id: '/api/public/revenue-scenario'
+      path: '/api/public/revenue-scenario'
+      fullPath: '/api/public/revenue-scenario'
+      preLoaderRoute: typeof ApiPublicRevenueScenarioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/stripe-webhook': {
@@ -1053,10 +1136,12 @@ const rootRouteChildren: RootRouteChildren = {
   GrowthModelRoute: GrowthModelRoute,
   McpRoute: McpRoute,
   OffersRoute: OffersRouteWithChildren,
+  PressRoute: PressRoute,
   PricingBenchmarkRoute: PricingBenchmarkRoute,
   PrivacyRoute: PrivacyRoute,
   ResearchMethodologyRoute: ResearchMethodologyRoute,
   ResourcesRoute: ResourcesRoute,
+  RevenueOpportunityCalculatorRoute: RevenueOpportunityCalculatorRoute,
   SolutionsRoute: SolutionsRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
   StudioVisibilityReportRoute: StudioVisibilityReportRoute,
@@ -1077,10 +1162,13 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesFullSleeveCostUkRoute: GuidesFullSleeveCostUkRoute,
   GuidesGreyLineHealingWeekByWeekRoute: GuidesGreyLineHealingWeekByWeekRoute,
   ReportTokenRoute: ReportTokenRoute,
+  ResearchGreaterLondonTattooPricing2026Route:
+    ResearchGreaterLondonTattooPricing2026Route,
   ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
+  ApiPublicRevenueScenarioRoute: ApiPublicRevenueScenarioRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
   ApiPublicVisibilityScorecardSubmitRoute:
