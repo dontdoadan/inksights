@@ -1,0 +1,25 @@
+name: Sales Operating System Contract Tests
+
+on:
+  pull_request:
+    paths:
+      - 'src/lib/sales-ops/**'
+      - 'tests/sales-ops.test.mjs'
+      - '.github/workflows/sales-operating-system-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sales-contract:
+    name: Payment, identity and permission invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run isolated contract tests
+        run: node --test tests/sales-ops.test.mjs
