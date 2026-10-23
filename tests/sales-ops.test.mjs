@@ -30,7 +30,8 @@ test("normalises a HTTPS domain and discards tracking paths", () => {
 });
 test("resolves strong company number only", () => {
   const studios = [{ id: "studio-1", companiesHouseNumber: "01234567", website: "shop.co.uk", postcode: "CR0 1AA" }];
-  assert.equal(resolveStudioIdentity(studios, { companiesHouseNumber: "01234567" }).studioId, "studio-1");
+  assert.equal(resolveStudioIdentity(studios, { companiesHouseNumber: "01234567", postcode: "CR0 1AA" }).studioId, "studio-1");
+  assert.equal(resolveStudioIdentity(studios, { companiesHouseNumber: "01234567" }).status, "review");
   assert.equal(resolveStudioIdentity(studios, { name: "Studio" }).status, "review");
 });
 test("shared website alone does not merge branches", () => {
@@ -39,8 +40,8 @@ test("shared website alone does not merge branches", () => {
   assert.equal(resolveStudioIdentity(studios, { website: "group.co.uk", postcode: "CR0 1AA" }).studioId, "b");
 });
 test("conflicting strong identifiers produce human review", () => {
-  const studios = [{ id: "a", companiesHouseNumber: "00000001" }, { id: "b", googlePlaceId: "place-2" }];
-  assert.equal(resolveStudioIdentity(studios, { companiesHouseNumber: "00000001", googlePlaceId: "place-2" }).reason, "conflicting_identifiers");
+  const studios = [{ id: "a", companiesHouseNumber: "00000001", postcode:"CR0 1AA", googlePlaceId:"place-1" }, { id: "b", googlePlaceId: "place-2", postcode:"CR0 1AA" }];
+  assert.equal(resolveStudioIdentity(studios, { companiesHouseNumber: "00000001", postcode:"CR0 1AA", googlePlaceId: "place-2" }).reason, "conflicting_identifiers");
 });
 test("contact form acknowledgement never grants permission", () => {
   assert.equal(evaluateContactPermission({ channel:"email", sourceRecorded:true, privacyNoticeProvided:true, lawfulBasisAssessed:true, subscriberType:"unknown", formSubmitted:true }).permitted, false);
