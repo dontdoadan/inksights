@@ -5,6 +5,11 @@ on:
     paths:
       - 'src/lib/sales-ops/**'
       - 'tests/sales-ops.test.mjs'
+      - 'tests/sql/sales-payment-*.sql'
+      - 'docs/engineering/sales-payment-state-v1.proposed.sql'
+      - 'supabase/functions/stripe-checkout-webhook-v1/**'
+      - 'supabase/functions/hubspot-sync-v1/**'
+      - 'src/routes/api/public/stripe-webhook.ts'
       - '.github/workflows/sales-operating-system-contract.yml'
   workflow_dispatch:
 
@@ -13,13 +18,46 @@ permissions:
 
 jobs:
   sales-contract:
-    name: Payment, identity and permission invariants
+    name: Identity, consent, attribution and payment contracts
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Run isolated contract tests
-        run: node --test tests/sales-ops.test.mjs
+      - run: node --test tests/sales-ops.test.mjs
+
+  postgres-payment:
+    name: Postgres 17 atomic checkout and RLS regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: sales_ops_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 8
+    env:
+      PGPASSWORD: postgres
+      PGHOST: localhost
+      PGUSER: postgres
+      PGDATABASE: sales_ops_ci
+      PGPORT: 5432
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+      - name: Create minimal service role / canonical orders schema
+        run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-payment-bootstrap.sql
+      - name: Apply staged payment-state SQL proposal
+        run: psql -X -v ON_ERROR_STOP=1 -f docs/engineering/sales-payment-state-v1.proposed.sql
+      - name: Verify stale webhook, replay, waiver and access invariants
+        run: psql -X -v ON_ERROR_STOP=1 -f tests/sql/sales-payment-state-regression.sql
