@@ -57,6 +57,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
 import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
+import { Route as ApiPublicStudioJourneySubmitRouteImport } from './routes/api/public/studio-journey-submit'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 import { Route as ApiPublicVisibilityScorecardSubmitRouteImport } from './routes/api/public/visibility-scorecard-submit'
 
@@ -309,6 +310,12 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   path: '/api/public/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStudioJourneySubmitRoute =
+  ApiPublicStudioJourneySubmitRouteImport.update({
+    id: '/api/public/studio-journey-submit',
+    path: '/api/public/studio-journey-submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicVisibilityReportRoute =
   ApiPublicVisibilityReportRouteImport.update({
     id: '/api/public/visibility-report',
@@ -370,6 +377,7 @@ export interface FileRoutesByFullPath {
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-journey-submit': typeof ApiPublicStudioJourneySubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -420,6 +428,7 @@ export interface FileRoutesByTo {
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-journey-submit': typeof ApiPublicStudioJourneySubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -473,6 +482,7 @@ export interface FileRoutesById {
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-journey-submit': typeof ApiPublicStudioJourneySubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -526,6 +536,7 @@ export interface FileRouteTypes {
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-journey-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   fileRoutesByTo: FileRoutesByTo
@@ -576,6 +587,7 @@ export interface FileRouteTypes {
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-journey-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   id:
@@ -628,6 +640,7 @@ export interface FileRouteTypes {
     | '/_authenticated/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-journey-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   fileRoutesById: FileRoutesById
@@ -674,6 +687,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
+  ApiPublicStudioJourneySubmitRoute: typeof ApiPublicStudioJourneySubmitRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
   ApiPublicVisibilityScorecardSubmitRoute: typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -1016,6 +1030,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/studio-journey-submit': {
+      id: '/api/public/studio-journey-submit'
+      path: '/api/public/studio-journey-submit'
+      fullPath: '/api/public/studio-journey-submit'
+      preLoaderRoute: typeof ApiPublicStudioJourneySubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/visibility-report': {
       id: '/api/public/visibility-report'
       path: '/api/public/visibility-report'
@@ -1126,6 +1147,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
+  ApiPublicStudioJourneySubmitRoute: ApiPublicStudioJourneySubmitRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
   ApiPublicVisibilityScorecardSubmitRoute:
     ApiPublicVisibilityScorecardSubmitRoute,
