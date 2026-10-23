@@ -89,6 +89,7 @@ async function recordCompletedCheckout(session: Stripe.Checkout.Session, stripe:
     console.error("Checkout amount/price verification failed", session.id);
     throw new Error("Checkout verification failed");
   }
+  const verifiedPrice = items.data[0]?.price;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   const offerSlug = session.metadata?.offer_slug ?? "";
@@ -98,8 +99,10 @@ async function recordCompletedCheckout(session: Stripe.Checkout.Session, stripe:
     stripe_session_id: session.id,
     stripe_payment_intent_id: (session.payment_intent as string | undefined) ?? null,
     stripe_subscription_id: (session.subscription as string | undefined) ?? null,
-    stripe_product_id: null as string | null,
-    stripe_price_id: null as string | null,
+    stripe_product_id: typeof verifiedPrice?.product === "string"
+      ? verifiedPrice.product
+      : verifiedPrice?.product?.id ?? null,
+    stripe_price_id: verifiedPrice?.id ?? null,
     offer_slug: offerSlug,
     amount_total: session.amount_total ?? null,
     currency: session.currency ?? null,
