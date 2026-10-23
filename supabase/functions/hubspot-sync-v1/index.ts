@@ -189,15 +189,26 @@ Deno.serve(async (req: Request) => {
       : sourceType === "public_contact_request"
         ? "website_contact"
         : "revenue_audit_v1";
-    const collectedMinor = Number(record.metadata?.amount_collected_minor ?? record.metadata?.amount_total);
-    const dealAmount = topic === "studio-intelligence-audit"
-      ? isFoundingStudio
-        ? 0
-        : Number.isFinite(collectedMinor) && collectedMinor > 0
-          ? collectedMinor / 100
-          : 395
-      : 0;
-    const dealStage = topic === "studio-intelligence-audit" ? config.paidBookedStage : config.newLeadStage;
+    // Do not classify a lead as paid merely because it selected the audit topic.
+    // First verify a persisted order from the signed, atomic Stripe webhook path.
+    const checkoutSessionId = clean(record.metadata?.stripe_session_id, 160);
+    let verifiedPaidOrder: Record<string, any> | null = null;
+    if (sourceType === "public_contact_request" && record.source === "stripe_checkout" && checkoutSessionId.startsWith("cs_live_")) {
+      const paidRows = await rest(
+        `orders?stripe_session_id=eq.${encodeURIComponent(checkoutSessionId)}&offer_slug=eq.studio-intelligence-audit&status=eq.paid&currency=eq.gbp&select=id,amount_total,amount_collected_minor,stripe_session_id&limit=1`,
+        { method: "GET" },
+      ) as Array<Record<string, any>>;
+      verifiedPaidOrder = paidRows?.[0] ?? null;
+    }
+    const paidAuditVerified = verifiedPaidOrder !== null &&
+      Number.isSafeInteger(Number(verifiedPaidOrder.amount_collected_minor)) &&
+      Number(verifiedPaidOrder.amount_collected_minor) > 0;
+    const dealAmount = isFoundingStudio
+      ? 0
+      : paidAuditVerified
+        ? Number(verifiedPaidOrder!.amount_collected_minor) / 100
+        : 0;
+    const dealStage = (paidAuditVerified || isFoundingStudio) ? config.paidBookedStage : config.newLeadStage;
     const auditLabel = isFoundingStudio ? "Studio Intelligence Audit — Founding Studio (£395 waived)" : "Studio Intelligence Audit";
     const dealName = `${studioName} — ${topic === "studio-intelligence-audit" ? auditLabel : sourceType === "revenue_audit_lead" ? "Revenue Audit follow-up" : "Website enquiry"} — ${sourceId.slice(0, 8)}`;
 
@@ -229,6 +240,8 @@ Deno.serve(async (req: Request) => {
         deal_amount: dealAmount,
         deal_pipeline: config.dealPipeline,
         deal_stage: dealStage,
+        payment_verified: paidAuditVerified,
+        verified_stripe_session_id: paidAuditVerified ? checkoutSessionId : null,
       }),
     });
 
