@@ -336,7 +336,27 @@ Deno.serve(async (req: Request) => {
     const paid = transition.status === "paid" &&
       session.status === "complete" && session.payment_status === "paid";
     let contactRequestId: string | null = null;
-    if (paid) contactRequestId = await ensureContactAndCrm(session);
+    if (paid) {
+      // Required to make verified paid receipts reconstructible even before
+      // a buyer has claimed the canonical studio identity.
+      await rest("sales_journey_events", {
+        method: "POST",
+        headers: { Prefer: "resolution=ignore-duplicates,return=minimal" },
+        body: JSON.stringify({
+          source_ref: `stripe_session:${clean(session.id, 150)}`,
+          event_kind: "order_paid_verified",
+          source_system: "stripe",
+          source_event_id: clean(event.id, 120),
+          idempotency_key: `stripe_checkout_paid:${clean(session.id, 150)}`,
+          occurred_at: new Date(Number(event.created) * 1000 || Date.now()).toISOString(),
+          properties: {
+            order_id: String(transition.order_id),
+            offer_slug: AUDIT_OFFER,
+          },
+        }),
+      });
+      contactRequestId = await ensureContactAndCrm(session);
+    }
 
     return response({
       received: true,
