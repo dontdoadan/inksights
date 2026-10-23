@@ -4,7 +4,7 @@ import {evaluateStage,VERSION,CONSENT_VERSION,STAGES,sameReplay} from "../supaba
 const growthInput={
   dataNoticeAccepted:true,consentVersion:CONSENT_VERSION,
   studio:{name:"Example Studio",area:"London",website:"https://example.org",artistCount:5},
-  figures:{month:"2026-10",enquiries:100,bookings:20,averageBookingGbp:400,availableHours:400,bookedHours:200}
+  figures:{month:"2026-10",enquiries:100,bookings:20,averageBookingGbp:400,availableHours:400,bookedHours:200,averageSessionHours:10}
 };
 const growth=evaluateStage("growth",growthInput);
 const income=evaluateStage("revenue",{targetConversionPct:40,targetBookingGbp:400},{growth});
@@ -71,4 +71,18 @@ test("idempotent replay only accepts same session, stage, consent and answers",(
   assert.equal(sameReplay(row,{...context,journeyHash:"attacker"}),false);
   assert.equal(sameReplay(row,{...context,stage:"revenue"}),false);
   assert.equal(sameReplay(row,{...context,answer:{...answer,studio:{name:"different"}}}),false);
+});
+
+test("zero-booking studio can diagnose unfilled capacity without NaN",()=>{
+  const zero=evaluateStage("growth",{...growthInput,figures:{...growthInput.figures,bookings:0,bookedHours:0}});
+  assert.equal(zero.result.conversion_pct,0);
+  assert.equal(zero.result.utilisation_pct,0);
+  const scenario=evaluateStage("revenue",{targetConversionPct:20,targetBookingGbp:400},{growth:zero});
+  assert.equal(scenario.result.additional_bookings,20);
+  assert.equal(scenario.result.modelled_booked_value_gbp,8000);
+});
+test("invalid hours and contradictory zero-booking inputs rejected",()=>{
+  assert.throws(()=>evaluateStage("growth",{...growthInput,figures:{...growthInput.figures,averageSessionHours:0}}),/session hours/);
+  assert.throws(()=>evaluateStage("growth",{...growthInput,figures:{...growthInput.figures,bookings:0,bookedHours:20}}),/internally consistent/);
+  assert.throws(()=>evaluateStage("growth",{...growthInput,figures:{...growthInput.figures,bookings:5,bookedHours:0}}),/internally consistent/);
 });
