@@ -1,9 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import Stripe from "stripe";
+import { createHash } from "node:crypto";
 import { getPublicOffer } from "./offer-data";
 
 export const createCheckoutSession = createServerFn({ method: "POST" })
-  .validator((data: { slug: string; email?: string; leadId?: string; auditId?: string }) => data)
+  .validator((data: { slug: string; email?: string; leadId?: string; auditId?: string; journeyToken?: string }) => data)
   .handler(async ({ data }) => {
     const offer = getPublicOffer(data.slug);
     if (!offer || !offer.stripePriceId || !offer.stripeMode) {
@@ -19,6 +20,33 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
       apiVersion: "2026-08-26.dahlia",
       typescript: true,
     });
+
+    let journeySessionId: string | null = null;
+    if (data.journeyToken) {
+      if (offer.slug !== "studio-intelligence-audit" ||
+          !/^[A-Za-z0-9_-]{43}$/.test(data.journeyToken)) {
+        throw new Error("Invalid studio journey reference.");
+      }
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const tokenHash = createHash("sha256").update(data.journeyToken).digest("hex");
+      const { data: linked, error: linkError } = await supabaseAdmin
+        .from("studio_journey_sessions")
+        .select("id,expires_at,revoked_at")
+        .eq("token_hash", tokenHash)
+        .maybeSingle();
+      if (linkError || !linked || linked.revoked_at ||
+          Date.parse(linked.expires_at) <= Date.now()) {
+        throw new Error("Your studio intelligence session has expired. Reopen your assessment.");
+      }
+      const { count, error: countError } = await supabaseAdmin
+        .from("studio_journey_steps")
+        .select("submission_id", { count: "exact", head: true })
+        .eq("session_id", linked.id).eq("stage", "growth");
+      if (countError || !count) {
+        throw new Error("Save your Studio Growth Check before purchasing with linked history.");
+      }
+      journeySessionId = linked.id;
+    }
 
     const origin = process.env["VITE_APP_ORIGIN"] || "https://getinksights.co.uk";
     const successUrl = `${origin}/offers/${offer.slug}?checkout=success&session_id={CHECKOUT_SESSION_ID}`;
@@ -41,6 +69,7 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
         offer_name: offer.name,
         ...(data.leadId ? { lead_id: data.leadId } : {}),
         ...(data.auditId ? { audit_id: data.auditId } : {}),
+        ...(journeySessionId ? { journey_session_id: journeySessionId, journey_version: "2026-10-unified-journey-v1" } : {}),
       },
       ...(data.email ? { customer_email: data.email } : {}),
     });
