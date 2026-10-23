@@ -110,6 +110,6 @@ export function assessCandidates(candidates) {
 export function csvSerialize(rows) {
   const fields=['candidate_id','name','town','postcode','website','public_phone','source_key','source_url',
     'identity_status','artist_count','score','tier','review_gate','crm_eligible','identity_key','next_action','evidence_gaps'];
-  const esc=v=>'"'+String(v===null||v===undefined?'':Array.isArray(v)?v.join(' | '):v).replace(/"/g,'""')+'"';
+  const esc=v=>{const raw=String(v===null||v===undefined?'':Array.isArray(v)?v.join(' | '):v); const safe=/^[\\s]*[=+@-]/.test(raw) ? "'"+raw : raw; return '"'+safe.replace(/"/g,'""')+'"';};
   return [fields.map(esc).join(','), ...rows.map(r=>fields.map(f=>esc(r[f])).join(','))].join('\n')+'\n';
 }
