@@ -1,5 +1,6 @@
 -- Minimal production-compatible schema fixture for isolated CI PostgreSQL.
-CREATE ROLE service_role NOLOGIN;
+-- Supabase service_role bypasses RLS; mirror that role in isolated PostgreSQL.
+CREATE ROLE service_role NOLOGIN BYPASSRLS;
 CREATE ROLE authenticated NOLOGIN;
 CREATE ROLE anon NOLOGIN;
 GRANT USAGE ON SCHEMA public TO service_role, authenticated, anon;
