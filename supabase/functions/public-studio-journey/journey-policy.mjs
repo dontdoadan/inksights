@@ -47,11 +47,13 @@ export function evaluateStage(stage, input, history = {}) {
     const month = text(figures.month, 7, "reporting month");
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) fail("Reporting month must be YYYY-MM.");
     const enquiries = integer(figures.enquiries, "enquiries", 1, 100000);
-    const bookings = integer(figures.bookings, "bookings", 1, enquiries);
+    const bookings = integer(figures.bookings, "bookings", 0, enquiries);
     const averageValue = numeric(figures.averageBookingGbp, "booking value", 1, 50000);
     const available = numeric(figures.availableHours, "available hours", 1, 30000);
-    const booked = numeric(figures.bookedHours, "booked hours", 0.25, available);
-    const normalized = {studio:{name,area,website,artist_count:artists},figures:{month,enquiries,bookings,average_booking_gbp:averageValue,available_hours:available,booked_hours:booked}};
+    const booked = numeric(figures.bookedHours, "booked hours", 0, available);
+    const averageSessionHours = numeric(figures.averageSessionHours, "average session hours", 0.25, 16);
+    if ((bookings===0 && booked>0) || (bookings>0 && booked===0)) fail("Bookings and booked hours must be internally consistent.");
+    const normalized = {studio:{name,area,website,artist_count:artists},figures:{month,enquiries,bookings,average_booking_gbp:averageValue,available_hours:available,booked_hours:booked,avg_hours_per_booking:averageSessionHours}};
     const conversion = round(100 * bookings / enquiries);
     const utilization = round(100 * booked / available);
     return {normalized,result:{step:"growth",conversion_pct:conversion,utilisation_pct:utilization,booked_value_gbp:round(bookings*averageValue),priority:conversion < 35?"Investigate enquiry-to-booking conversion":utilization < 65?"Investigate unfilled artist capacity":"Validate current booking and retention constraints",evidence:"SELF_REPORTED",limitations:["Based on figures supplied by the visitor; not a verified business audit.","Booked value is not necessarily cash received in the same month."],calculation_version:VERSION}};
@@ -64,12 +66,12 @@ export function evaluateStage(stage, input, history = {}) {
     const b = growth.figures;
     const initialRate = 100*b.bookings/b.enquiries;
     if (target < initialRate - 0.00000001) fail("Target conversion cannot be below the current conversion baseline.");
-    const hoursPerBooking = b.booked_hours/b.bookings;
+    const hoursPerBooking = b.avg_hours_per_booking;
     const demandChange = Math.max(0,b.enquiries*target/100-b.bookings);
     const capacityAdditional = Math.max(0,(b.available_hours-b.booked_hours)/hoursPerBooking);
     const additionalBookings = Math.min(demandChange,capacityAdditional);
     const baseline=round(b.bookings*b.average_booking_gbp);
-    const potential=round(baseline + additionalBookings*targetValue + b.bookings*(targetValue-b.average_booking_gbp));
+    const potential=round((b.bookings + additionalBookings)*targetValue);
     return {normalized:{target_conversion_pct:target,target_booking_gbp:targetValue},result:{step:"revenue",baseline_booked_value_gbp:baseline,modelled_booked_value_gbp:potential,modelled_difference_gbp:round(potential-baseline),additional_bookings:round(additionalBookings),capacity_bound:capacityAdditional < demandChange,target_above_current:target>=initialRate,evidence:"MODELLED",limitations:["Scenario only: not recovered revenue, profit, cash, or a forecast.","Assumes representative demand, average session duration and sellable hours remain stable.","Do not add this opportunity to separate capacity or retention estimates."],calculation_version:VERSION}};
   }
   if (stage === "visibility") {
