@@ -59,6 +59,9 @@ jobs:
       - name: Test unified studio intelligence journey validation and calculations
         run: node --test tests/unified-journey-policy.test.mjs
 
+      - name: Test linked studio history projection and invalidation
+        run: node --test tests/unified-journey-projection.test.mjs
+
       - name: Build and generate route types
         run: npm run build
 
