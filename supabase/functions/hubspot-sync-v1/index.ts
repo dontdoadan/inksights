@@ -266,6 +266,30 @@ Deno.serve(async (req: Request) => {
       }),
     });
 
+    // Record only provider record references, never raw buyer data.
+    try {
+      await rest("sales_journey_events", {
+        method: "POST",
+        headers: { Prefer: "resolution=ignore-duplicates,return=minimal" },
+        body: JSON.stringify({
+          source_ref: `${sourceType}:${sourceId}`,
+          event_kind: "crm_synced",
+          source_system: "hubspot",
+          source_event_id: String(makeResult.deal_id),
+          idempotency_key: `hubspot_sync:${sourceType}:${sourceId}`,
+          occurred_at: syncedAt,
+          properties: {
+            hubspot_company_id: makeResult.company_id ? String(makeResult.company_id) : null,
+            hubspot_contact_id: String(makeResult.contact_id),
+            hubspot_deal_id: String(makeResult.deal_id),
+            verified_payment: paidAuditVerified,
+          },
+        }),
+      });
+    } catch (salesError) {
+      console.error("Sales CRM sync event capture deferred", salesError instanceof Error ? salesError.message : String(salesError));
+    }
+
     return new Response(JSON.stringify({
       ok: true,
       contact_id: makeResult.contact_id,
