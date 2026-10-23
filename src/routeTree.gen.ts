@@ -20,6 +20,7 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as GrowthModelRouteImport } from './routes/growth-model'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OffersRouteImport } from './routes/offers'
+import { Route as PressRouteImport } from './routes/press'
 import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResearchMethodologyRouteImport } from './routes/research-methodology'
@@ -42,6 +43,7 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAuditsRouteImport } from './routes/_authenticated/audits'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedStudioIntelligenceRouteImport } from './routes/_authenticated/studio-intelligence'
 import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as GuidesFullSleeveCostUkRouteImport } from './routes/guides.full-sleeve-cost-uk'
@@ -49,12 +51,14 @@ import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/gu
 import { Route as OffersIndexRouteImport } from './routes/offers.index'
 import { Route as OffersSlugRouteImport } from './routes/offers.$slug'
 import { Route as ReportTokenRouteImport } from './routes/report.$token'
+import { Route as ResearchGreaterLondonTattooPricing2026RouteImport } from './routes/research.greater-london-tattoo-pricing-2026'
 import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/tools.tattoo-pain-chart-reality-check'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
 import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
+import { Route as ApiPublicStudioJourneySubmitRouteImport } from './routes/api/public/studio-journey-submit'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
 import { Route as ApiPublicVisibilityScorecardSubmitRouteImport } from './routes/api/public/visibility-scorecard-submit'
 
@@ -110,6 +114,11 @@ const McpRoute = McpRouteImport.update({
 const OffersRoute = OffersRouteImport.update({
   id: '/offers',
   path: '/offers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PressRoute = PressRouteImport.update({
+  id: '/press',
+  path: '/press',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PricingBenchmarkRoute = PricingBenchmarkRouteImport.update({
@@ -226,6 +235,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedStudioIntelligenceRoute =
+  AuthenticatedStudioIntelligenceRouteImport.update({
+    id: '/studio-intelligence',
+    path: '/studio-intelligence',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
   id: '/workspace',
   path: '/workspace',
@@ -262,6 +277,12 @@ const ReportTokenRoute = ReportTokenRouteImport.update({
   path: '/report/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResearchGreaterLondonTattooPricing2026Route =
+  ResearchGreaterLondonTattooPricing2026RouteImport.update({
+    id: '/research/greater-london-tattoo-pricing-2026',
+    path: '/research/greater-london-tattoo-pricing-2026',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ToolsTattooPainChartRealityCheckRoute =
   ToolsTattooPainChartRealityCheckRouteImport.update({
     id: '/tools/tattoo-pain-chart-reality-check',
@@ -296,6 +317,12 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   path: '/api/public/stripe-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStudioJourneySubmitRoute =
+  ApiPublicStudioJourneySubmitRouteImport.update({
+    id: '/api/public/studio-journey-submit',
+    path: '/api/public/studio-journey-submit',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicVisibilityReportRoute =
   ApiPublicVisibilityReportRouteImport.update({
     id: '/api/public/visibility-report',
@@ -320,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
   '/offers': typeof OffersRouteWithChildren
+  '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
@@ -342,12 +370,14 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/studio-intelligence': typeof AuthenticatedStudioIntelligenceRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/report/$token': typeof ReportTokenRoute
+  '/research/greater-london-tattoo-pricing-2026': typeof ResearchGreaterLondonTattooPricing2026Route
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers/': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -355,6 +385,7 @@ export interface FileRoutesByFullPath {
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-journey-submit': typeof ApiPublicStudioJourneySubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -368,6 +399,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
@@ -390,12 +422,14 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/studio-intelligence': typeof AuthenticatedStudioIntelligenceRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/report/$token': typeof ReportTokenRoute
+  '/research/greater-london-tattoo-pricing-2026': typeof ResearchGreaterLondonTattooPricing2026Route
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -403,6 +437,7 @@ export interface FileRoutesByTo {
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-journey-submit': typeof ApiPublicStudioJourneySubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -419,6 +454,7 @@ export interface FileRoutesById {
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
   '/offers': typeof OffersRouteWithChildren
+  '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
   '/research-methodology': typeof ResearchMethodologyRoute
@@ -441,12 +477,14 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/studio-intelligence': typeof AuthenticatedStudioIntelligenceRoute
   '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
   '/offers/$slug': typeof OffersSlugRoute
   '/report/$token': typeof ReportTokenRoute
+  '/research/greater-london-tattoo-pricing-2026': typeof ResearchGreaterLondonTattooPricing2026Route
   '/tools/tattoo-pain-chart-reality-check': typeof ToolsTattooPainChartRealityCheckRoute
   '/offers/': typeof OffersIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -454,6 +492,7 @@ export interface FileRoutesById {
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/studio-journey-submit': typeof ApiPublicStudioJourneySubmitRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
   '/api/public/visibility-scorecard-submit': typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -470,6 +509,7 @@ export interface FileRouteTypes {
     | '/growth-model'
     | '/mcp'
     | '/offers'
+    | '/press'
     | '/pricing-benchmark'
     | '/privacy'
     | '/research-methodology'
@@ -492,12 +532,14 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
+    | '/studio-intelligence'
     | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/report/$token'
+    | '/research/greater-london-tattoo-pricing-2026'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers/'
     | '/.lovable/oauth/consent'
@@ -505,6 +547,7 @@ export interface FileRouteTypes {
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-journey-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   fileRoutesByTo: FileRoutesByTo
@@ -518,6 +561,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
+    | '/press'
     | '/pricing-benchmark'
     | '/privacy'
     | '/research-methodology'
@@ -540,12 +584,14 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
+    | '/studio-intelligence'
     | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/report/$token'
+    | '/research/greater-london-tattoo-pricing-2026'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers'
     | '/.lovable/oauth/consent'
@@ -553,6 +599,7 @@ export interface FileRouteTypes {
     | '/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-journey-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   id:
@@ -568,6 +615,7 @@ export interface FileRouteTypes {
     | '/growth-model'
     | '/mcp'
     | '/offers'
+    | '/press'
     | '/pricing-benchmark'
     | '/privacy'
     | '/research-methodology'
@@ -590,12 +638,14 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/audits'
     | '/_authenticated/dashboard'
+    | '/_authenticated/studio-intelligence'
     | '/_authenticated/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
     | '/offers/$slug'
     | '/report/$token'
+    | '/research/greater-london-tattoo-pricing-2026'
     | '/tools/tattoo-pain-chart-reality-check'
     | '/offers/'
     | '/.lovable/oauth/consent'
@@ -603,6 +653,7 @@ export interface FileRouteTypes {
     | '/_authenticated/audits/$auditId'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
+    | '/api/public/studio-journey-submit'
     | '/api/public/visibility-report'
     | '/api/public/visibility-scorecard-submit'
   fileRoutesById: FileRoutesById
@@ -619,6 +670,7 @@ export interface RootRouteChildren {
   GrowthModelRoute: typeof GrowthModelRoute
   McpRoute: typeof McpRoute
   OffersRoute: typeof OffersRouteWithChildren
+  PressRoute: typeof PressRoute
   PricingBenchmarkRoute: typeof PricingBenchmarkRoute
   PrivacyRoute: typeof PrivacyRoute
   ResearchMethodologyRoute: typeof ResearchMethodologyRoute
@@ -642,11 +694,13 @@ export interface RootRouteChildren {
   GuidesFullSleeveCostUkRoute: typeof GuidesFullSleeveCostUkRoute
   GuidesGreyLineHealingWeekByWeekRoute: typeof GuidesGreyLineHealingWeekByWeekRoute
   ReportTokenRoute: typeof ReportTokenRoute
+  ResearchGreaterLondonTattooPricing2026Route: typeof ResearchGreaterLondonTattooPricing2026Route
   ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
+  ApiPublicStudioJourneySubmitRoute: typeof ApiPublicStudioJourneySubmitRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
   ApiPublicVisibilityScorecardSubmitRoute: typeof ApiPublicVisibilityScorecardSubmitRoute
 }
@@ -728,6 +782,13 @@ declare module '@tanstack/react-router' {
       path: '/offers'
       fullPath: '/offers'
       preLoaderRoute: typeof OffersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/press': {
+      id: '/press'
+      path: '/press'
+      fullPath: '/press'
+      preLoaderRoute: typeof PressRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing-benchmark': {
@@ -884,6 +945,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/studio-intelligence': {
+      id: '/_authenticated/studio-intelligence'
+      path: '/studio-intelligence'
+      fullPath: '/studio-intelligence'
+      preLoaderRoute: typeof AuthenticatedStudioIntelligenceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/workspace': {
       id: '/_authenticated/workspace'
       path: '/workspace'
@@ -933,6 +1001,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/research/greater-london-tattoo-pricing-2026': {
+      id: '/research/greater-london-tattoo-pricing-2026'
+      path: '/research/greater-london-tattoo-pricing-2026'
+      fullPath: '/research/greater-london-tattoo-pricing-2026'
+      preLoaderRoute: typeof ResearchGreaterLondonTattooPricing2026RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools/tattoo-pain-chart-reality-check': {
       id: '/tools/tattoo-pain-chart-reality-check'
       path: '/tools/tattoo-pain-chart-reality-check'
@@ -975,6 +1050,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/studio-journey-submit': {
+      id: '/api/public/studio-journey-submit'
+      path: '/api/public/studio-journey-submit'
+      fullPath: '/api/public/studio-journey-submit'
+      preLoaderRoute: typeof ApiPublicStudioJourneySubmitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/visibility-report': {
       id: '/api/public/visibility-report'
       path: '/api/public/visibility-report'
@@ -1006,12 +1088,14 @@ const AuthenticatedAuditsRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditsRoute: typeof AuthenticatedAuditsRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedStudioIntelligenceRoute: typeof AuthenticatedStudioIntelligenceRoute
   AuthenticatedWorkspaceRoute: typeof AuthenticatedWorkspaceRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditsRoute: AuthenticatedAuditsRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedStudioIntelligenceRoute: AuthenticatedStudioIntelligenceRoute,
   AuthenticatedWorkspaceRoute: AuthenticatedWorkspaceRoute,
 }
 
@@ -1053,6 +1137,7 @@ const rootRouteChildren: RootRouteChildren = {
   GrowthModelRoute: GrowthModelRoute,
   McpRoute: McpRoute,
   OffersRoute: OffersRouteWithChildren,
+  PressRoute: PressRoute,
   PricingBenchmarkRoute: PricingBenchmarkRoute,
   PrivacyRoute: PrivacyRoute,
   ResearchMethodologyRoute: ResearchMethodologyRoute,
@@ -1077,11 +1162,14 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesFullSleeveCostUkRoute: GuidesFullSleeveCostUkRoute,
   GuidesGreyLineHealingWeekByWeekRoute: GuidesGreyLineHealingWeekByWeekRoute,
   ReportTokenRoute: ReportTokenRoute,
+  ResearchGreaterLondonTattooPricing2026Route:
+    ResearchGreaterLondonTattooPricing2026Route,
   ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
+  ApiPublicStudioJourneySubmitRoute: ApiPublicStudioJourneySubmitRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
   ApiPublicVisibilityScorecardSubmitRoute:
     ApiPublicVisibilityScorecardSubmitRoute,
