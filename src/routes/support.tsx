@@ -25,7 +25,7 @@ const faq = [
   {
     question: "How do I contact INKSIGHTS support?",
     answer:
-      "Use the secure contact form at getinksights.co.uk/contact. Include your studio name, the service involved and enough detail for INKSIGHTS to identify the issue. Do not send passwords, full card details, private API keys or verification codes.",
+      "Use the secure contact form at getinksights.co.uk/contact, or email contact@getinksights.co.uk. Include your studio name, the service involved and enough detail for INKSIGHTS to identify the issue. Do not send passwords, full card details, private API keys or verification codes.",
   },
   {
     question: "When does the 72-Hour Studio Visibility Fix delivery period begin?",
