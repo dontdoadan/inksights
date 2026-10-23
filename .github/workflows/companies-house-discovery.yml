@@ -1,0 +1,32 @@
+name: Companies House Discovery
+
+on:
+  pull_request:
+    paths:
+      - "scripts/companies-house/**"
+      - "tests/companies-house-discovery.test.mjs"
+      - ".github/workflows/companies-house-discovery.yml"
+  push:
+    branches:
+      - "feat/companies-house-discovery-v1-20261023"
+    paths:
+      - "scripts/companies-house/**"
+      - "tests/companies-house-discovery.test.mjs"
+      - ".github/workflows/companies-house-discovery.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run Companies House adapter tests
+        run: node --test tests/companies-house-discovery.test.mjs
+      - name: Verify no-credential dry-run
+        run: node scripts/companies-house/discover.mjs --query tattoo --limit 20 --dry-run
