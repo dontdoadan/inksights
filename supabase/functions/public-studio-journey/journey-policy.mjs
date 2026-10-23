@@ -63,6 +63,7 @@ export function evaluateStage(stage, input, history = {}) {
     const targetValue = numeric(input.targetBookingGbp, "target booking value", 1, 50000);
     const b = growth.figures;
     const initialRate = 100*b.bookings/b.enquiries;
+    if (target < initialRate - 0.00000001) fail("Target conversion cannot be below the current conversion baseline.");
     const hoursPerBooking = b.booked_hours/b.bookings;
     const demandChange = Math.max(0,b.enquiries*target/100-b.bookings);
     const capacityAdditional = Math.max(0,(b.available_hours-b.booked_hours)/hoursPerBooking);
@@ -87,10 +88,15 @@ export function evaluateStage(stage, input, history = {}) {
   const priority=visibility.reported_friction_count>0?"Inspect the reported booking-path defects":revenue.modelled_difference_gbp>0?"Verify the revenue scenario with booking records":"Validate the baseline and investigate the next constraint";
   return {normalized:{sources:["growth","revenue","visibility"]},result:{step:"summary",priority,plan:[{days:"1–30",action:"Confirm ownership, consent, baseline and supporting data sources"},{days:"31–60",action:"Investigate the primary constraint and test one measured intervention"},{days:"61–90",action:"Review outcomes, quantify attributable change and decide next action"}],evidence:"MODELLED",limitations:["This summary does not constitute the £395 paid Studio Intelligence Audit.","No studio ownership or verified audit evidence is established by this anonymous assessment."],calculation_version:VERSION}};
 }
+const canonical = (value) => {
+  if (Array.isArray(value)) return "["+value.map(canonical).join(",")+"]";
+  if (value && typeof value === "object") return "{"+Object.keys(value).sort().map(k=>JSON.stringify(k)+":"+canonical(value[k])).join(",")+"}";
+  return JSON.stringify(value);
+};
 export function sameReplay(existing, context) {
   return existing?.tool_key === "unified_studio_journey_" + context.stage &&
     existing?.tool_version === VERSION &&
     existing?.consent_version === CONSENT_VERSION &&
     existing?.normalized_inputs?.journey_hash === context.journeyHash &&
-    JSON.stringify(existing?.normalized_inputs?.answer) === JSON.stringify(context.answer);
+    canonical(existing?.normalized_inputs?.answer) === canonical(context.answer);
 }
