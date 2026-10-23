@@ -49,11 +49,11 @@ Do not commit exports containing business contacts, email addresses or full sour
 
 ## Qualification v1 (heuristic, not calibrated)
 
-- Exact artist count 3–8: +35; 2 or 9–12: +10; other verified counts: 0; unknown: 0.
+- Source-reported exact artist count 3–8: +20; 2 or 9–12: +6; other counts: 0; unknown: 0. Artist counts always require fresh official-source manual verification before CRM approval.
 - Listed studio website: +18 (URL existence alone does not confirm active operation).
 - Postcode: +8; town: +5; public phone listed: +3; Companies House number listed: +3.
 - Source-classification heuristic 2–12 points (first-party website generally stronger than chat-snapshot or directory).
-- Output score capped at 100. Tier A ≥70, B ≥40, C below 40.
+- Output score capped at 100. Tier A ≥70, B ≥40, C below 40. Scores are uncalibrated research heuristics, not buying propensity estimates.
 - Unknown values are never imputed, and a source-supplied approximate range such as "15+" cannot be treated as an exact count.
 - All candidates remain RESEARCH_ONLY (or POSSIBLE_DUPLICATE, EXCLUDED). **No automatic HubSpot eligibility**.
 
