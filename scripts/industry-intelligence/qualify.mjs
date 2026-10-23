@@ -4,7 +4,7 @@ export const VERSION = 'industry-intelligence-v1.0.0';
 
 const words = value => String(value ?? '').trim();
 export function normaliseName(value) {
-  return words(value).toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '')
+  return words(value).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
     .replace(/&/g, 'and').replace(/[^a-z0-9]/g, '');
 }
 export function normalisePostcode(value) {
@@ -13,9 +13,9 @@ export function normalisePostcode(value) {
 export function websiteDomain(value) {
   if (!words(value)) return null;
   try {
-    const url = new URL(/^https?:\\/\\//i.test(value) ? value : 'https://' + value);
+    const url = new URL(/^https?:\/\//i.test(value) ? value : 'https://' + value);
     if (!['https:', 'http:'].includes(url.protocol)) return null;
-    const host = url.hostname.toLowerCase().replace(/^www\\./, '');
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
     if (!host || ['facebook.com','instagram.com','tiktok.com','linktr.ee','booking.com','yell.com'].includes(host)) return null;
     return host;
   } catch { return null; }
@@ -32,13 +32,13 @@ export function artistCount(candidate) {
   const raw = candidate.payload?.artist_count ?? candidate.artist_count;
   if (raw === null || raw === undefined || words(raw) === '') return null;
   // A range such as '3-8' or '15+' is NOT an exact artist count.
-  if (!/^\\d{1,3}$/.test(words(raw))) return null;
+  if (!/^\d{1,3}$/.test(words(raw))) return null;
   const n = Number(raw);
   return n > 0 && n <= 200 ? n : null;
 }
 export function isExcluded(candidate) {
   const text = [candidate.name, candidate.website_url, candidate.source_url].map(words).join(' ').toLowerCase();
-  return /\\[test|\\[duplicate|\\[legacy|example\\.com|\\.invalid\\b/.test(text) ||
+  return /\[test|\[duplicate|\[legacy|example\.com|\.invalid\b/.test(text) ||
     ['excluded','inactive','duplicate','rejected'].includes(words(candidate.identity_status).toLowerCase());
 }
 const sourceWeights = { studio_website:12, owner_submission:12, companies_house:5, public_tattoo_directory:4, open_geodata:3, inksights_research_chat:2, booking_platform_listing:3 };
@@ -111,5 +111,5 @@ export function csvSerialize(rows) {
   const fields=['candidate_id','name','town','postcode','website','public_phone','source_key','source_url',
     'identity_status','artist_count','score','tier','review_gate','crm_eligible','identity_key','next_action','evidence_gaps'];
   const esc=v=>'"'+String(v===null||v===undefined?'':Array.isArray(v)?v.join(' | '):v).replace(/"/g,'""')+'"';
-  return [fields.map(esc).join(','), ...rows.map(r=>fields.map(f=>esc(r[f])).join(','))].join('\\n')+'\\n';
+  return [fields.map(esc).join(','), ...rows.map(r=>fields.map(f=>esc(r[f])).join(','))].join('\n')+'\n';
 }
