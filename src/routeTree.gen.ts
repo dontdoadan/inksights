@@ -19,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as GrowthModelRouteImport } from './routes/growth-model'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as MyStudioProfileRouteImport } from './routes/my-studio-profile'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as PressRouteImport } from './routes/press'
 import { Route as PricingBenchmarkRouteImport } from './routes/pricing-benchmark'
@@ -47,6 +48,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as AuthenticatedAuditsRouteImport } from './routes/_authenticated/audits'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
+import { Route as ApiStudioProfileRouteImport } from './routes/api/studio-profile'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as GuidesFullSleeveCostUkRouteImport } from './routes/guides.full-sleeve-cost-uk'
 import { Route as GuidesGreyLineHealingWeekByWeekRouteImport } from './routes/guides.grey-line-healing-week-by-week'
@@ -113,6 +115,11 @@ const GrowthModelRoute = GrowthModelRouteImport.update({
 const McpRoute = McpRouteImport.update({
   id: '/mcp',
   path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyStudioProfileRoute = MyStudioProfileRouteImport.update({
+  id: '/my-studio-profile',
+  path: '/my-studio-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OffersRoute = OffersRouteImport.update({
@@ -260,6 +267,11 @@ const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
   path: '/workspace',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiStudioProfileRoute = ApiStudioProfileRouteImport.update({
+  id: '/api/studio-profile',
+  path: '/api/studio-profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -371,6 +383,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/my-studio-profile': typeof MyStudioProfileRoute
   '/offers': typeof OffersRouteWithChildren
   '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
@@ -399,6 +412,7 @@ export interface FileRoutesByFullPath {
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
+  '/api/studio-profile': typeof ApiStudioProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -428,6 +442,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/my-studio-profile': typeof MyStudioProfileRoute
   '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
   '/privacy': typeof PrivacyRoute
@@ -455,6 +470,7 @@ export interface FileRoutesByTo {
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
+  '/api/studio-profile': typeof ApiStudioProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -486,6 +502,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/growth-model': typeof GrowthModelRoute
   '/mcp': typeof McpRoute
+  '/my-studio-profile': typeof MyStudioProfileRoute
   '/offers': typeof OffersRouteWithChildren
   '/press': typeof PressRoute
   '/pricing-benchmark': typeof PricingBenchmarkRoute
@@ -514,6 +531,7 @@ export interface FileRoutesById {
   '/_authenticated/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
+  '/api/studio-profile': typeof ApiStudioProfileRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
   '/guides/grey-line-healing-week-by-week': typeof GuidesGreyLineHealingWeekByWeekRoute
@@ -545,6 +563,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
+    | '/my-studio-profile'
     | '/offers'
     | '/press'
     | '/pricing-benchmark'
@@ -573,6 +592,7 @@ export interface FileRouteTypes {
     | '/audits'
     | '/dashboard'
     | '/workspace'
+    | '/api/studio-profile'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -602,6 +622,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
+    | '/my-studio-profile'
     | '/press'
     | '/pricing-benchmark'
     | '/privacy'
@@ -629,6 +650,7 @@ export interface FileRouteTypes {
     | '/audits'
     | '/dashboard'
     | '/workspace'
+    | '/api/studio-profile'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -659,6 +681,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/growth-model'
     | '/mcp'
+    | '/my-studio-profile'
     | '/offers'
     | '/press'
     | '/pricing-benchmark'
@@ -687,6 +710,7 @@ export interface FileRouteTypes {
     | '/_authenticated/audits'
     | '/_authenticated/dashboard'
     | '/_authenticated/workspace'
+    | '/api/studio-profile'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
     | '/guides/grey-line-healing-week-by-week'
@@ -718,6 +742,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   GrowthModelRoute: typeof GrowthModelRoute
   McpRoute: typeof McpRoute
+  MyStudioProfileRoute: typeof MyStudioProfileRoute
   OffersRoute: typeof OffersRouteWithChildren
   PressRoute: typeof PressRoute
   PricingBenchmarkRoute: typeof PricingBenchmarkRoute
@@ -743,6 +768,7 @@ export interface RootRouteChildren {
   UkStudioMapRoute: typeof UkStudioMapRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiStudioProfileRoute: typeof ApiStudioProfileRoute
   GuidesFullSleeveCostUkRoute: typeof GuidesFullSleeveCostUkRoute
   GuidesGreyLineHealingWeekByWeekRoute: typeof GuidesGreyLineHealingWeekByWeekRoute
   ReportTokenRoute: typeof ReportTokenRoute
@@ -829,6 +855,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp'
       fullPath: '/mcp'
       preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-studio-profile': {
+      id: '/my-studio-profile'
+      path: '/my-studio-profile'
+      fullPath: '/my-studio-profile'
+      preLoaderRoute: typeof MyStudioProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offers': {
@@ -1027,6 +1060,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWorkspaceRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/studio-profile': {
+      id: '/api/studio-profile'
+      path: '/api/studio-profile'
+      fullPath: '/api/studio-profile'
+      preLoaderRoute: typeof ApiStudioProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/callback'
@@ -1216,6 +1256,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   GrowthModelRoute: GrowthModelRoute,
   McpRoute: McpRoute,
+  MyStudioProfileRoute: MyStudioProfileRoute,
   OffersRoute: OffersRouteWithChildren,
   PressRoute: PressRoute,
   PricingBenchmarkRoute: PricingBenchmarkRoute,
@@ -1242,6 +1283,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiStudioProfileRoute: ApiStudioProfileRoute,
   GuidesFullSleeveCostUkRoute: GuidesFullSleeveCostUkRoute,
   GuidesGreyLineHealingWeekByWeekRoute: GuidesGreyLineHealingWeekByWeekRoute,
   ReportTokenRoute: ReportTokenRoute,
