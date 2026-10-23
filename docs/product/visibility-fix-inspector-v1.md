@@ -9,7 +9,7 @@
 1. Visitor explores five stages: search → profile → website → enquiry → booking.
 2. A pre-submission example shows illustrative scenarios with before/after visual treatment.
 3. Optional intake reuses the *existing* Supabase Edge Function \`studio-visibility-report-v2\`. There is no second ingestion schema or direct browser database write.
-4. The existing Edge Function validates consent, honeypot, origin, URL and public network target, rate limits requests, captures website observation and saves a visibility report. The search intelligence pipeline and existing human publication gate remain unchanged.
+4. The existing Edge Function validates consent, honeypot, origin, URL and public network target, rate limits requests, captures website observation and saves a visibility report. The search intelligence pipeline and existing publication gate remain unchanged.
 5. The Inspector reads the published report through the existing same-origin \`/api/public/visibility-report\` endpoint with its token; it does **not** read unapproved tables or bypass report publication.
 6. Once published, website metadata/status/robots/sitemap and scoped search provider observations enter stage-specific cards. The remaining profile/enquiry/booking stages explicitly read **not measured**.
 7. The Inspector retains the original report URL, offers a non-secret report reference for an enquiry, and links into the existing 72-Hour Visibility Fix contact flow and £395 Studio Intelligence Audit.
@@ -39,8 +39,8 @@ Browser intake with explicit consent
 - Report ID is a reference. The bearer report token stays inside the private URL and existing same-origin access route.
 - Noindex/nofollow/noarchive and no-referrer meta tags on the Inspector page.
 - The Inspector never renders studio/provider strings as raw HTML: dynamic text uses \`textContent\`.
-- Any form submission is stored by the existing consent-aware service and only published after source QA.
-- A 404 from the report API means *pending or unavailable*; the UI must never declare an unpublished report complete.
+- Any form submission is stored by the existing consent-aware service and made available only if the report status is published; publication does not independently prove approval is complete.
+- A 404 from the report API means *pending or unavailable*; the UI must never declare an unpublished report complete. The current publication RPC checks status='published' but does not enforce approval_required=false. The current production database includes published rows with approval_required=true; treat the QA flag as an outstanding consistency issue before external claims of human approval.
 
 ## Test coverage
 \`node --test tests/visibility-fix-inspector.test.mjs\`
@@ -52,7 +52,7 @@ Browser intake with explicit consent
 
 ## Known limitations / release blockers
 1. **Canonical studio identity:** Existing visibility Edge Function inserts a new \`visibility_studios\` row on each request. It does not currently reconcile reports to an existing verified studio profile. Avoid repeated real submissions until canonical identity/idempotency is implemented.
-2. **Publication latency:** The existing report starts in \`analysing\` and publication is subject to the existing search pipeline and QA. The public API returns report data only for \`published\` records. This tool does not bypass that rule; a visitor can retry later via the saved private link.
+2. **Publication latency:** The existing report starts in \`analysing\` and publication depends on the existing search pipeline and release process; the public RPC enforces status='published' only. The public API returns report data only for \`published\` records. This tool does not bypass that rule; a visitor can retry later via the saved private link.
 3. **Origin restriction:** The current Edge Function permits only the production apex and www origins. Preview-domain live submission is expected to be rejected. Validate preview with demo mode, then conduct controlled, permissioned production smoke tests after release approval.
 4. **Commercial workflow:** The Visibility Fix remains an enquiry-led/scoped service. Do not state that £249 Checkout, automatic fix delivery or Stripe-to-HubSpot reconciliation is operational until independently accepted.
 5. **Evidence gap:** Business profile, form delivery, booking and deposit checks need additional permissioned integrations or manual tests; the existing homepage snapshot is insufficient.
