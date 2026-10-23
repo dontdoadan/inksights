@@ -66,8 +66,11 @@ CREATE TABLE IF NOT EXISTS public.sales_journey_events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   studio_id uuid REFERENCES public.visibility_studios(id) ON DELETE RESTRICT,
   candidate_id uuid REFERENCES public.studio_candidates(id) ON DELETE RESTRICT,
+  -- Anonymous/inbound buyers remain provisional until a verified studio match.
+  -- Store only a random database/provider reference here, NEVER email/phone.
+  source_ref text CHECK (source_ref IS NULL OR length(source_ref) BETWEEN 1 AND 220),
   event_kind text NOT NULL CHECK (event_kind IN (
-    'identified','qualified','contact_permitted','outreach_prepared','outreach_sent',
+    'identified','lead_captured','crm_synced','qualified','contact_permitted','outreach_prepared','outreach_sent',
     'positive_qualified_engagement','engaged','discovery_completed',
     'qualified_conversation','offer_presented','checkout_started',
     'order_paid_verified','onboarding_started','audit_delivered',
@@ -83,12 +86,14 @@ CREATE TABLE IF NOT EXISTS public.sales_journey_events (
   is_test boolean NOT NULL DEFAULT false,
   occurred_at timestamptz NOT NULL,
   recorded_at timestamptz NOT NULL DEFAULT now(),
-  CHECK (studio_id IS NOT NULL OR candidate_id IS NOT NULL)
+  CHECK (studio_id IS NOT NULL OR candidate_id IS NOT NULL OR source_ref IS NOT NULL)
 );
 CREATE INDEX IF NOT EXISTS sales_journey_week_idx
   ON public.sales_journey_events(occurred_at DESC, event_kind) WHERE is_test=false;
 CREATE INDEX IF NOT EXISTS sales_journey_studio_idx
   ON public.sales_journey_events(studio_id, occurred_at DESC);
+CREATE INDEX IF NOT EXISTS sales_journey_source_ref_idx
+  ON public.sales_journey_events(source_ref, occurred_at DESC) WHERE source_ref IS NOT NULL;
 
 -- Orders are ONLY authoritative for money when Stripe has been verified
 -- server-side. Never infer payment from return-page views or CRM deal stages.
