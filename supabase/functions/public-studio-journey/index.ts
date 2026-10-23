@@ -79,7 +79,8 @@ Deno.serve(async(request:Request)=>{
     if(action==="mine"){
       const user=await userFrom(db,request);if(!user)return respond(origin,401,{error:"Sign in to view profiles"});
       const {data,error}=await db.from("studio_journey_sessions").select("id,studio_id,claimed_at,expires_at")
-        .eq("claimed_user_id",user.id).order("claimed_at",{ascending:false}).limit(40);
+        .eq("claimed_user_id",user.id).is("revoked_at",null).gt("expires_at",new Date().toISOString())
+        .order("claimed_at",{ascending:false}).limit(40);
       if(error)throw Error("linked profile lookup failed");
       return respond(origin,200,{linkedProfiles:data||[]});
     }
