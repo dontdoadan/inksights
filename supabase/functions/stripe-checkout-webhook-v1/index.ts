@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { assessAuditCheckout } from "./audit-payment-policy.mjs";
 
 const SB = Deno.env.get("SUPABASE_URL") || "";
 const WEBHOOK_CONFIG_KEY = "stripe_checkout_webhook_signing_secret_v1";
@@ -121,7 +122,7 @@ function studioName(session: Record<string, any>) {
   );
 }
 
-async function upsertOrder(session: Record<string, any>, paid: boolean) {
+async function upsertOrder(session: Record<string, any>) {
   const metadata = session.metadata && typeof session.metadata === "object" ? session.metadata : {};
   const body = {
     stripe_customer_id: typeof session.customer === "string" ? session.customer : null,
@@ -133,7 +134,7 @@ async function upsertOrder(session: Record<string, any>, paid: boolean) {
     offer_slug: AUDIT_OFFER,
     amount_total: Number.isFinite(session.amount_total) ? session.amount_total : null,
     currency: clean(session.currency, 20).toLowerCase() || "gbp",
-    status: paid ? "paid" : "pending",
+    status: "paid",
     customer_email: clean(session.customer_details?.email || session.customer_email, 254).toLowerCase() || null,
     metadata: {
       ...metadata,
@@ -334,21 +335,28 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const metadataOffer = clean(session.metadata?.offer_slug || session.metadata?.offer, 100);
-    const isAuditCheckout = clean(session.payment_link, 120) === AUDIT_PAYMENT_LINK_ID || metadataOffer === "studio_intelligence_audit" || metadataOffer === AUDIT_OFFER;
-    if (!isAuditCheckout) return response({ received: true, skipped: "unrelated_checkout" }, 200);
+    const classification = assessAuditCheckout(event, session);
+    if (classification.decision === "ignore") {
+      return response({ received: true, skipped: classification.reason }, 200);
+    }
+    if (classification.decision !== "accept") {
+      console.error("Audit checkout rejected by payment policy", { reason: classification.reason, session_id: clean(session.id, 120) });
+      // Non-2xx intentionally surfaces a mismatched signed payment to the Stripe delivery dashboard.
+      // Never create an order or grant access from an unverified payment.
+      return response({ error: "Audit checkout could not be verified" }, 422);
+    }
 
-    const paid = event.type === "checkout.session.async_payment_succeeded" || session.payment_status === "paid";
-    await upsertOrder(session, paid);
-
-    let contactRequestId: string | null = null;
-    if (paid) contactRequestId = await ensureContactAndCrm(session);
+    // Never upsert pending over paid. In-flight checkout starts are tracked by
+    // their own events; only verified paid events enter the orders ledger.
+    await upsertOrder(session);
+    const contactRequestId = await ensureContactAndCrm(session);
+    if (!contactRequestId) throw new Error("Verified paid checkout could not be associated with a contact");
 
     return response({
       received: true,
       event_id: clean(event.id, 120),
       session_id: clean(session.id, 120),
-      paid,
+      paid: true,
       contact_request_id: contactRequestId,
     });
   } catch (error) {
