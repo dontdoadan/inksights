@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0B1F3B">
+  <title>Visibility Fix Inspector | INKSIGHTS</title>
+  <meta name="description" content="Inspect the tattoo studio journey from search visibility to booking, with evidence-led findings and practical next actions.">
+  <style>
+    :root{color-scheme:dark;--navy:#0B1F3B;--ink:#0F172A;--white:#F8FAFC;--grey:#CBD5E1;--blue:#4EA8DE;--mint:#84E5C2;--orange:#F3B57F;--line:#354864;--muted:#A6B8CA}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--ink);color:var(--white);font:16px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    a{color:var(--mint)}button,input,select{font:inherit}
+    button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+    :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+    .wrap{max-width:1190px;margin:auto;padding:0 22px}
+    header{border-bottom:1px solid var(--line);background:var(--navy)}
+    .nav{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .nav img{width:150px;max-height:46px;object-fit:contain;object-position:left}
+    .nav a{font-weight:650;font-size:.87rem;text-decoration:none;white-space:nowrap}
+    .navlinks{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+    .navlinks a{color:var(--grey)}
+    .navlinks a:hover{color:var(--mint)}
+    .hero{padding:56px 0 40px;background:radial-gradient(ellipse at 92% 5%,#204e71 0,transparent 50%),var(--navy);border-bottom:1px solid var(--line)}
+    .eyebrow{font-size:.75rem;color:var(--mint);font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+    h1,h2,h3,p{margin-top:0}h1{font-size:clamp(2.3rem,5vw,4.7rem);line-height:1.04;letter-spacing:-.045em;margin:15px 0 20px;max-width:850px;font-weight:850}
+    .hero p{max-width:740px;color:var(--grey);font-size:1.06rem}
+    .flag{display:inline-flex;gap:9px;align-items:center;margin:12px 0 0;padding:7px 13px;border:1px solid #437382;border-radius:100px;background:#143b51;color:#bbf0e1;font-size:.76rem;font-weight:700}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;align-items:start;gap:22px;padding-top:34px;padding-bottom:75px}
+    .panel{border:1px solid var(--line);border-radius:22px;background:#14243c;padding:25px;min-width:0;box-shadow:0 18px 50px #00000018}
+    .panel+.panel{margin-top:20px}
+    h2{font-size:1.5rem;letter-spacing:-.02em;margin-bottom:9px}h3{font-size:1.1rem;margin-bottom:6px}
+    .sub{font-size:.91rem;color:var(--grey)}.small{font-size:.79rem;color:var(--muted)}.muted{color:var(--muted)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.between{justify-content:space-between}
+    .button{display:inline-flex;min-height:45px;align-items:center;justify-content:center;border-radius:50px;border:1px solid #526981;padding:11px 17px;background:transparent;color:var(--white);font-weight:700;text-decoration:none;font-size:.88rem;transition:background .15s,border-color .15s}
+    .button:hover:not(:disabled){border-color:var(--mint);background:#24415a}.button.primary{background:var(--mint);border-color:var(--mint);color:#082637}.button.primary:hover:not(:disabled){background:#c4f8e6}
+    .button.is-on{background:#275268;border-color:var(--blue);color:var(--white)}
+    label{display:block;font-size:.87rem;font-weight:650;margin-bottom:5px}
+    .fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field{min-width:0}
+    input[type=text],input[type=email],input[type=url],input[type=number]{width:100%;min-width:0;border:1px solid #5a6e84;background:#0E2037;color:var(--white);padding:12px;border-radius:10px}
+    input::placeholder{color:#8ba1b7}input[type=checkbox]{width:18px;height:18px;flex:none;accent-color:var(--mint);margin:2px 0 0}
+    .consent{display:flex;align-items:flex-start;gap:10px;margin:20px 0}
+    .consent label{font-weight:450;color:var(--grey);line-height:1.45}
+    .hidden{display:none!important}
+    .error{border-radius:9px;background:#4b2930;color:#ffd5d7;padding:12px 14px;font-size:.9rem;margin-top:13px}
+    .notice{border-radius:12px;background:#17354c;border:1px solid #395a75;padding:15px 17px;margin:15px 0;color:var(--grey);font-size:.88rem}
+    .steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:23px 0}
+    .step{border:1px solid #48617c;border-radius:14px;min-height:88px;color:var(--grey);background:#0e2038;padding:11px 5px;font-size:.78rem;font-weight:750}
+    .step span{display:block;font-size:1.2rem;font-weight:850;margin-bottom:6px;color:var(--blue)}
+    .step[aria-current=step]{background:#1d4960;color:white;border-color:var(--mint);box-shadow:inset 0 0 0 1px var(--mint)}
+    .step[aria-current=step] span{color:var(--mint)}
+    .status{display:inline-block;font-size:.72rem;letter-spacing:.04em;font-weight:800;padding:5px 9px;border-radius:100px;background:#3a4555;color:#e4ecf4}
+    .status.observed{background:#1f514a;color:#a7f7cd}.status.review{background:#584330;color:#ffdaa7}.status.unknown{background:#354158;color:#c4d4ea}
+    .issue{display:block;text-align:left;width:100%;padding:15px 17px;border-radius:13px;border:1px solid #3e5570;background:#10263e;color:#edf5fe;margin-bottom:9px}
+    .issue.selected{background:#1b3b51;border-color:var(--blue)}.issue:hover{border-color:var(--mint)}
+    .issue small{display:block;margin-top:3px;color:#b6c8d8;font-size:.77rem}
+    .inspector{display:grid;grid-template-columns:230px minmax(0,1fr);gap:17px}
+    .mock{border-radius:14px;background:#0b1b2d;border:1px solid #3b5671;padding:18px;margin:14px 0}
+    .mock .browser{font-size:.76rem;color:#98b3ca;border-bottom:1px solid #3c4b60;padding-bottom:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mock h3{margin:15px 0 8px;overflow-wrap:anywhere}
+    .mock p{color:#cad9e8;font-size:.92rem;overflow-wrap:anywhere}
+    .mock .preview{display:inline-block;padding:7px 10px;background:#314d62;color:#cdeef0;border-radius:7px;font-size:.74rem}
+    .insight{border-left:3px solid var(--blue);padding-left:14px;margin:15px 0}
+    .properties{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+    .property{background:#0d2037;border:1px solid #3e536e;border-radius:13px;padding:15px;min-width:0}
+    .property strong{display:block;font-size:.8rem;color:var(--mint);margin-bottom:5px}
+    .property p{margin:0;font-size:.88rem;color:var(--grey);overflow-wrap:anywhere}
+    .side{position:sticky;top:18px}.side .panel{padding:22px}.side ul{padding-left:20px;color:var(--grey);font-size:.88rem}
+    .side li{margin:0 0 12px}.reference{font-family:ui-monospace,monospace;color:var(--muted);font-size:.74rem;overflow-wrap:anywhere}
+    footer{border-top:1px solid var(--line);padding:24px 0;font-size:.8rem;color:var(--muted)}
+    #readout h3{font-size:1.15rem}.rule{border:0;border-top:1px solid #3d536c;margin:18px 0}
+    .progress{height:6px;background:#28435a;border-radius:12px;overflow:hidden;margin-top:12px}.progress div{height:100%;background:var(--blue);width:20%;transition:width .2s}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.side{position:static}.inspector{grid-template-columns:1fr}.properties{grid-template-columns:1fr}}
+    @media(max-width:600px){.nav{align-items:flex-start;padding:15px 0;flex-wrap:wrap}.navlinks{gap:12px}.hero{padding:39px 0}.panel{padding:18px}.fields{grid-template-columns:1fr}.steps{gap:5px}.step{font-size:.65rem;min-height:72px;padding:8px 1px}.step span{font-size:.97rem}.layout{padding-top:18px}.properties{gap:10px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header><div class="wrap nav">
+    <a href="/" aria-label="INKSIGHTS home"><img src="/brand/logo-v3/primary-dark.svg" alt="INKSIGHTS"></a>
+    <nav class="navlinks" aria-label="Main navigation"><a href="/resources">Studio tools</a><a href="/studio-visibility-report">Full report</a><a href="/offers/studio-intelligence-audit">£395 audit</a></nav>
+  </div></header>
+  <section class="hero"><div class="wrap">
+    <div class="eyebrow">INKSIGHTS / VISIBILITY INTELLIGENCE</div>
+    <h1>Find the friction between search and booking.</h1>
+    <p>Explore the five stages of a tattoo customer's journey. See which problems can be observed from a studio website, which need human checks, and what a controlled fix could look like.</p>
+    <div class="flag" id="mode-flag">DEMONSTRATION · EXAMPLE SCENARIOS</div>
+  </div></section>
+  <div class="wrap layout">
+    <main>
+      <section class="panel" id="intake">
+        <div class="row between"><div><div class="eyebrow">01 / START</div><h2>Inspect your studio</h2></div></div>
+        <p class="sub">You can explore the demonstration below without submitting anything. To see actual available evidence, submit your studio for the existing INKSIGHTS Visibility Report process. An approved report can then power this Inspector.</p>
+        <form id="studio-form" novalidate>
+          <div class="fields">
+            <div class="field"><label for="studio">Studio name</label><input id="studio" name="studio_name" type="text" maxlength="160" autocomplete="organization" required></div>
+            <div class="field"><label for="person">Your name</label><input id="person" name="contact_name" type="text" maxlength="120" autocomplete="name" required></div>
+            <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" maxlength="254" autocomplete="email" required></div>
+            <div class="field"><label for="website">Public studio website</label><input id="website" name="website" type="url" placeholder="https://studio.co.uk" required></div>
+            <div class="field"><label for="area">Town or city</label><input id="area" name="area" type="text" maxlength="120" required></div>
+            <div class="field"><label for="artists">Number of artists</label><input id="artists" name="artist_count" type="number" min="3" max="100" required></div>
+          </div>
+          <div class="hidden" aria-hidden="true"><label>Leave this empty<input name="website_honeypot" type="text" tabindex="-1" autocomplete="off"></label></div>
+          <div class="consent"><input id="consent" type="checkbox" required><label for="consent">I agree to INKSIGHTS using these details to generate my report and contact me about the result. <a href="/privacy">Privacy notice</a>.</label></div>
+          <div class="row"><button class="button primary" id="submit" type="submit">Submit studio for inspection</button><button class="button" id="demo-button" type="button">Explore example</button></div>
+          <div class="error hidden" id="form-error" role="alert"></div>
+          <div class="notice hidden" id="submission-notice" role="status"></div>
+        </form>
+      </section>
+      <section class="panel" id="readout">
+        <div class="row between"><div><div class="eyebrow">02 / EXPLORE</div><h2>Customer journey inspector</h2></div><span class="status unknown" id="source-status">Illustrative</span></div>
+        <p class="sub" id="studio-context">Example Studio · Sample scenarios only. No real business has been checked.</p>
+        <div class="steps" role="group" aria-label="Select journey stage" id="steps">
+          <button type="button" class="step" data-stage="0" aria-current="step"><span>01</span>Search</button>
+          <button type="button" class="step" data-stage="1"><span>02</span>Profile</button>
+          <button type="button" class="step" data-stage="2"><span>03</span>Website</button>
+          <button type="button" class="step" data-stage="3"><span>04</span>Enquiry</button>
+          <button type="button" class="step" data-stage="4"><span>05</span>Booking</button>
+        </div>
+        <div class="progress" aria-hidden="true"><div id="progress-bar"></div></div>
+        <div class="row between" style="margin:23px 0 16px"><div><h3 id="stage-name">Search discovery</h3><p class="small" id="stage-sub">Stage of the customer journey</p></div><div class="row"><button class="button" id="previous" type="button">Previous</button><button class="button" id="next" type="button">Next</button></div></div>
+        <div class="inspector">
+          <div id="issues" aria-label="Potential issues"></div>
+          <div>
+            <div class="row between"><span class="status unknown" id="finding-status">Example</span><div class="row" role="group" aria-label="Illustrative experience"><button class="button is-on" id="before" type="button" aria-pressed="true">Before</button><button class="button" id="after" type="button" aria-pressed="false">After</button></div></div>
+            <div class="mock"><div class="browser" id="browser-line">example-studio.co.uk · illustrative customer journey</div><h3 id="preview-title"></h3><p id="preview-description"></p><div class="preview" id="preview-state"></div></div>
+            <p class="small" id="evidence-label"></p>
+            <div class="insight"><h3 id="problem-title">What this means</h3><p class="sub" id="problem-description"></p></div>
+          </div>
+        </div>
+        <hr class="rule">
+        <div class="properties">
+          <div class="property"><strong>RECOMMENDED ACTION</strong><p id="recommendation"></p></div>
+          <div class="property"><strong>DELIVERY SCOPE</strong><p id="scope"></p></div>
+          <div class="property"><strong>REQUIRED ACCESS</strong><p id="access"></p></div>
+          <div class="property"><strong>HOW TO VERIFY</strong><p id="verification"></p></div>
+        </div>
+        <div class="notice" id="limitation">An illustrative fix shows the intended customer experience, not a confirmed implementation or measured financial uplift.</div>
+        <div class="row">
+          <a class="button hidden" id="full-report" rel="noreferrer" href="#">Open original evidence report</a>
+          <button class="button hidden" id="reload-report" type="button">Check report availability</button>
+          <button class="button hidden" id="copy-reference" type="button">Copy report reference</button>
+        </div>
+      </section>
+    </main>
+    <aside class="side">
+      <div class="panel">
+        <div class="eyebrow">HOW IT WORKS</div>
+        <h2 style="margin-top:12px">Evidence before action.</h2>
+        <ul>
+          <li><strong>Observe:</strong> check available website and sampled search data.</li>
+          <li><strong>Diagnose:</strong> separate measured defects from unknowns.</li>
+          <li><strong>Fix:</strong> agree a narrow, authorised correction.</li>
+          <li><strong>Verify:</strong> retest and record before/after evidence.</li>
+        </ul>
+        <p class="small">Business profiles, enquiry delivery, CRM and deposit flows cannot be validated from a homepage crawl alone.</p>
+      </div>
+      <div class="panel">
+        <div class="eyebrow">RECOMMENDED NEXT STEP</div>
+        <h3 style="margin-top:12px">72-Hour Visibility Fix</h3>
+        <p class="sub">Request a scoped correction for confirmed visibility or booking-path defects. Fixes depend on access, approvals and technical feasibility.</p>
+        <a class="button primary" href="/contact?topic=72-hour-visibility-fix" style="width:100%">Request a visibility fix</a>
+        <hr class="rule">
+        <h3>£395 Intelligence Audit</h3>
+        <p class="small">For a deeper diagnosis of bookings, capacity, revenue and the next commercial constraint.</p>
+        <a class="button" href="/offers/studio-intelligence-audit" style="width:100%">Explore £395 audit</a>
+      </div>
+      <div class="panel"><p class="small">This tool does not publish rankings, search demand or lost-revenue figures without verified data. No automatic fixes or payments are initiated.</p><div class="reference" id="reference-text"></div></div>
+    </aside>
+  </div>
+  <footer><div class="wrap">© INKSIGHTS · <a href="/research-methodology">Research methodology</a> · <a href="/privacy">Privacy</a> · <a href="/contact">Contact</a></div></footer>
+  <script>
+  (function () {
+    "use strict";
+    var REPORT_FUNCTION = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/studio-visibility-report-v2";
+    var NAMES = ["Search discovery", "Business profile", "Website experience", "Enquiry handling", "Booking and deposits"];
+    var SUMMARIES = ["What can be observed in a sampled search environment?", "Can a customer trust and use the studio listing?", "Can visitors understand the website and take the next step?", "Does the studio receive and acknowledge valid enquiries?", "Can an enquiry become a confirmed appointment?"];
+    var state = {stage:0, index:0, after:false, report:null, reportId:null, token:null, pending:false};
+    function el(id){return document.getElementById(id)}
+    function text(id,value){el(id).textContent=String(value==null?"":value)}
+    function show(id,visible){el(id).classList.toggle("hidden",!visible)}
+    function item(title,status,before,after,problem,fix,scope,access,test,evidence){
+      return {title:title,status:status,before:before,after:after,problem:problem,fix:fix,scope:scope,access:access,test:test,evidence:evidence||""};
+    }
+    var demo = [
+      [item("Search result is unclear","example","Tattoo Studio | Home","Custom Tattoo Studio in Croydon | Example Studio","Generic search messaging can make the studio hard to distinguish from other results.","Clarify page titles, relevant service information and the search-result description.","A website change may be possible within 72 hours. Google controls when it is indexed and how results appear.","Website edit access and approved studio details.","Verify published metadata and monitor organic search performance.","Illustrative, not observed")],
+      [item("No direct appointment link","example","Visit website to work out how to enquire","Request a consultation","A business profile without a working booking route adds avoidable steps.","Verify the official appointment URL and add it to the business profile.","Submission may be quick; external profile updates and approval can take longer.","Verified business-profile owner access.","Check the published listing and test the booking destination.","Illustrative, not observed")],
+      [item("Hidden booking call to action","example","Browse portfolio without a clear next step","Request a tattoo consultation","Interested customers might leave if they cannot find how to enquire.","Add a clear consultation link and test its destination.","Usually within 72 hours where the website is editable.","CMS or source-code permissions.","Test on mobile and desktop and count successful enquiry events.","Illustrative, not observed")],
+      [item("No acknowledgement after enquiry","example","Message sent with no confirmation","Enquiry received. Expect a reply within two working days.","Customers can feel uncertain about whether their enquiry reached the studio.","Display a success receipt and configure appropriate acknowledgement.","Conditional on form delivery and messaging access.","Form backend and authorised email integration.","Submit test enquiries, verify storage and check delivery failures.","Illustrative, not observed")],
+      [item("Unclear deposit instructions","example","Appointment requested; next steps unclear","Appointment request received; deposit instructions provided securely","Confusion around deposits can delay securing a booking.","Document terms and provide a verified payment route.","Simple instructions may fit 72 hours; secure payment integration is a separate scope.","Approved deposit terms, booking and payment permissions.","Test verified payment status, retries, cancellations and booking reconciliation.","Illustrative, not observed")]
+    ];
+    var limited = [
+      ["Search data review","A sampled provider's positions are not necessarily Google rankings.","Compare measured query observations to the studio website. Do not infer missing Google rankings.", "Requires search-source methodology and provider access.","Search observation provenance.","Inspect the retained provider and query sample."],
+      ["Business profile check","The current report cannot confirm the completeness of the Google Business Profile.","Review live listing, booking URL, categories, hours and relevant permissions.","Usually requires manual verification and profile-owner approval.","Verified profile access.","Document listing screenshots and test all destinations."],
+      ["Enquiry delivery check","A public homepage snapshot does not test successful lead persistence or email delivery.","Submit approved test enquiries and inspect the actual receiving system.","Conditional; may require a controlled backend test.","Form, CRM and email delivery access.","Reconcile test reference through storage and acknowledgement."],
+      ["Deposit and booking check","Public website inspection cannot prove that deposit payment or booking confirmation is reliable.","Run controlled booking and server-verified payment tests before asserting success.","Potentially outside a 72-hour visibility-only scope.","Booking system, payment sandbox and permission to test.","Verify signed payment events and linked booking records."]
+    ];
+    function realStages(data){
+      var observation = (Array.isArray(data.observations)?data.observations:[]).find(function(o){return o && o.observation_type==="website"});
+      var raw = observation && observation.raw_data || null;
+      var website = [];
+      function addSnapshot(name,ok,rawBefore,corrected,problem,action,method){
+        if(!raw) return;
+        website.push(item(name,ok?"observed":"review",rawBefore,corrected,problem,action,"Potentially within 72 hours with website access; confirm actual scope before committing.","CMS/source access and approved studio content.",method,"Source: "+(observation.source_provider||"studio_website")+" · "+(observation.observed_at||"date unconfirmed")));
+      }
+      if(raw){
+        addSnapshot("Homepage HTTP response",raw.http_status>=200&&raw.http_status<400,"Observed HTTP "+(raw.http_status==null?"unknown":raw.http_status),"Page returns a valid expected HTTP response.","A broken or unexpected server response can prevent customers from accessing the page.","Investigate the actual HTTP response and redirects.","Check response status and final URL from multiple test clients.");
+        addSnapshot("Page title",Boolean(raw.title),"No page title captured in the snapshot","Clear, specific homepage title","The crawler did not capture a title. Some sites may render it dynamically.","Verify the live document and set a descriptive title where necessary.","Inspect rendered and source titles on the published URL.");
+        addSnapshot("Meta description",Boolean(raw.meta_description),"No meta description captured in the snapshot","Relevant search-result description","The crawler did not capture a meta description; absence is not direct evidence of lost enquiries.","Check the rendered metadata and add useful approved copy.","Verify the published metadata. Search engines may choose another snippet.");
+        addSnapshot("Main heading",Array.isArray(raw.h1s)&&raw.h1s.length>0,"No H1 captured in the homepage snapshot","A clear homepage heading describing the studio","The observed HTML did not contain a recognisable H1 heading.","Review the page's actual heading hierarchy and improve where appropriate.","Inspect source and rendered H1 structure.");
+        addSnapshot("Canonical URL",Boolean(raw.canonical),"No canonical captured in the snapshot","A consistent canonical on the intended URL","An absent canonical is a review signal, not proof of an indexing problem.","Confirm indexing intent, host redirects and canonical implementation.","Test canonical URL and resulting HTTP response.");
+        website.push(item("robots.txt availability",raw.robots_available?"observed":"review",raw.robots_available?"robots.txt responded during the probe":"robots.txt was not confirmed available","Published crawler instructions where needed","A failed probe may reflect a genuine issue or crawler restrictions; it does not prove the website is blocked.","Inspect robots.txt behaviour and confirm whether it is actually needed.","Within 72 hours if hosting or routing changes are permitted.","Website hosting and deployment access.","Repeat GET/HEAD tests and inspect page-level indexing directives.","Source: website probe · "+(observation.observed_at||"unknown")));
+        website.push(item("Sitemap availability",raw.sitemap_available?"observed":"review",raw.sitemap_available?"sitemap.xml responded during the probe":"sitemap.xml was not confirmed available","Valid sitemap of canonical public URLs","Not confirming a sitemap is a review signal, not proof that search engines cannot discover pages.","Verify sitemap location, validity and whether submission is needed.","Within 72 hours with repository/CMS access.","Website publishing permissions and Search Console where available.","Validate sitemap URLs, XML syntax and status.","Source: website probe · "+(observation.observed_at||"unknown")));
+      }
+      if(!website.length) website.push(item("Website crawl not present","unknown","No website snapshot is available in this published report.","A future approved inspection can include a website snapshot.","We cannot classify on-page defects without observed evidence.","Request a new authorised crawl; keep this stage unscored.","Subject to provider permissions.","Website access and approved inspection scope.","Record the source and timestamp before issuing findings.","Not measured"));
+      var searches=Array.isArray(data.search_universe)?data.search_universe:[];
+      var provider=data.report&&data.report.current_visibility&&data.report.current_visibility.provider||"source not stated";
+      var observed=searches.filter(function(r){return Number.isFinite(r.provider_position)&&r.provider_position>0}).length;
+      var searchIssue=item("Sampled search environment","observed","The provider sample contains "+searches.length+" queries and "+observed+" studio-domain positions.","Measured, source-labelled visibility observations support a targeted review.","This dataset alone cannot establish total Google visibility or estimate lost revenue.","Review relevant queries, positions, provider and coverage before recommending changes.","Interpretation and recommendations depend on data quality and provider scope.","Source account and permission to access supporting provider evidence.","Re-run the same sample with matching geography/provider and record changes.","Provider: "+provider+" · not a Google ranking claim");
+      if(searches.length===0) searchIssue=item("Search rankings not measured","unknown","No query-level search positions available.","Collect a clearly defined and permissioned search sample.","We cannot infer Google rankings or search demand from missing data.","Plan a properly scoped search observation before prioritising SEO.","Dependent on access and chosen provider.","Source data permissions.","Record query, locale, provider, date and results.","Not measured");
+      function unknown(i){var a=limited[i];return item(a[0],"unknown",a[1],"A verified and working customer journey",a[1],a[2],a[3],a[4],a[5],"Not measured by this report");}
+      return [[searchIssue],[unknown(1)],website,[unknown(2)],[unknown(3)]];
+    }
+    function stages(){return state.report?realStages(state.report):demo}
+    function render(){
+      var rows=stages()[state.stage]||[];
+      if(state.index>=rows.length)state.index=0;
+      var issue=rows[state.index];if(!issue)return;
+      Array.from(document.querySelectorAll(".step")).forEach(function(b,i){b.setAttribute("aria-current",i===state.stage?"step":"false")});
+      el("progress-bar").style.width=((state.stage+1)*20)+"%";
+      text("stage-name",NAMES[state.stage]);text("stage-sub",SUMMARIES[state.stage]);
+      el("previous").disabled=state.stage===0;el("next").disabled=state.stage===4;
+      var container=el("issues");container.replaceChildren();
+      rows.forEach(function(row,i){var b=document.createElement("button");b.type="button";b.className="issue"+(i===state.index?" selected":"");b.textContent=row.title;var sub=document.createElement("small");sub.textContent=row.status==="observed"?"Source evidence available":row.status==="review"?"Requires verification":row.status==="unknown"?"Not measured":"Illustrative";b.appendChild(sub);b.setAttribute("aria-pressed",i===state.index?"true":"false");b.addEventListener("click",function(){state.index=i;state.after=false;render()});container.appendChild(b)});
+      var tag=el("finding-status");tag.className="status "+(issue.status==="observed"?"observed":issue.status==="review"?"review":"unknown");
+      tag.textContent=issue.status==="observed"?"Observed":issue.status==="review"?"Review required":issue.status==="unknown"?"Not measured":"Example";
+      text("preview-title",issue.title);text("preview-description",state.after?issue.after:issue.before);text("preview-state",state.after?"Illustrative corrected state":"Observed / illustrative starting state");
+      text("problem-title",state.after?"What an improvement could achieve":"What this means");
+      text("problem-description",state.after?"This is a target experience, not proof that the issue has been repaired. Verify the result after authorised implementation.":issue.problem);
+      text("recommendation",issue.fix);text("scope",issue.scope);text("access",issue.access);text("verification",issue.test);
+      text("evidence-label",issue.evidence);
+      text("browser-line",state.report?(state.report.studio&&state.report.studio.website_url||"Studio website")+" · evidence-led": "example-studio.co.uk · illustrative customer journey");
+      ["before","after"].forEach(function(id){var active=(id==="after")===state.after;el(id).classList.toggle("is-on",active);el(id).setAttribute("aria-pressed",String(active))});
+      text("limitation",state.report?"Only the stated website/search signals come from published observations. Other stages require access and testing. The AFTER view is a proposal, not a verified fix.":"Sample scenarios are hypothetical. No studio has been checked, no fixes made and no revenue improvement measured.");
+    }
+    function setDemo(){
+      state.report=null;state.reportId=null;state.token=null;state.pending=false;state.stage=0;state.index=0;state.after=false;
+      history.replaceState(null,"",location.pathname);
+      text("mode-flag","DEMONSTRATION · EXAMPLE SCENARIOS");
+      text("source-status","Illustrative");el("source-status").className="status unknown";
+      text("studio-context","Example Studio · Sample scenarios only. No real business has been checked.");
+      text("reference-text","");
+      ["full-report","reload-report","copy-reference"].forEach(function(id){show(id,false)});
+      show("submission-notice",false);show("form-error",false);render();
+    }
+    async function loadReport(){
+      if(!state.reportId||!state.token)return;
+      var notice=el("submission-notice");notice.textContent="Checking whether the report has been published and approved…";show("submission-notice",true);
+      try{
+        var response=await fetch("/api/public/visibility-report?reportId="+encodeURIComponent(state.reportId)+"&token="+encodeURIComponent(state.token),{cache:"no-store",credentials:"same-origin"});
+        if(!response.ok)throw new Error("The report is not published yet or the link is unavailable.");
+        var data=await response.json();
+        if(!data||!data.report||!data.studio||!Array.isArray(data.observations))throw new Error("Unexpected report format.");
+        state.report=data;state.pending=false;state.stage=0;state.index=0;state.after=false;
+        text("mode-flag","PUBLISHED REPORT · AVAILABLE OBSERVATIONS");
+        text("source-status","Published report");el("source-status").className="status observed";
+        text("studio-context",(data.studio.studio_name||"Studio")+" · "+(data.studio.town||"Location not supplied")+" · observed "+new Date(data.report.created_at).toLocaleDateString("en-GB"));
+        notice.textContent="Published evidence loaded. Non-website stages are marked unmeasured where the report lacks proof. No corrections have been applied.";
+        text("reference-text","Reference: "+state.reportId);
+        show("full-report",true);show("copy-reference",true);show("reload-report",false);
+        render();
+      }catch(err){
+        state.report=null;state.pending=true;
+        text("mode-flag","REPORT SUBMITTED · PUBLICATION PENDING");
+        text("source-status","Not yet available");el("source-status").className="status review";
+        notice.textContent="Submission reference saved. The report is not currently accessible as a published, approved report. Use 'Check report availability' later. The example Inspector below is not a real result.";
+        text("studio-context","Example journey shown while the submitted report is awaiting publication or unavailable.");
+        show("full-report",false);show("reload-report",true);show("copy-reference",true);
+        text("reference-text","Reference: "+state.reportId);
+        render();
+      }
+    }
+    async function submit(event){
+      event.preventDefault();
+      var form=el("studio-form"),error=el("form-error");show("form-error",false);
+      if(!form.reportValidity())return;
+      var fields=new FormData(form),btn=el("submit");btn.disabled=true;btn.textContent="Submitting inspection…";
+      var payload={studio_name:String(fields.get("studio_name")||""),contact_name:String(fields.get("contact_name")||""),email:String(fields.get("email")||""),website:String(fields.get("website")||""),area:String(fields.get("area")||""),artist_count:Number(fields.get("artist_count")),services:[],website_honeypot:String(fields.get("website_honeypot")||""),consent:el("consent").checked};
+      try{
+        var response=await fetch(REPORT_FUNCTION,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload),cache:"no-store"});
+        var body=await response.json();
+        if(!response.ok||!body.ok||typeof body.reportId!=="string"||typeof body.publicToken!=="string")throw new Error(body.error||"The report could not be submitted.");
+        state.reportId=body.reportId;state.token=body.publicToken;
+        history.replaceState(null,"",location.pathname+"?reportId="+encodeURIComponent(state.reportId)+"&token="+encodeURIComponent(state.token));
+        await loadReport();
+      }catch(err){error.textContent=err instanceof Error?err.message:"The submission failed. Please retry.";show("form-error",true)}
+      finally{btn.disabled=false;btn.textContent="Submit studio for inspection"}
+    }
+    document.querySelectorAll(".step").forEach(function(b){b.addEventListener("click",function(){state.stage=Number(b.dataset.stage);state.index=0;state.after=false;render()})});
+    el("previous").addEventListener("click",function(){if(state.stage>0){state.stage--;state.index=0;state.after=false;render()}});
+    el("next").addEventListener("click",function(){if(state.stage<4){state.stage++;state.index=0;state.after=false;render()}});
+    el("before").addEventListener("click",function(){state.after=false;render()});
+    el("after").addEventListener("click",function(){state.after=true;render()});
+    el("demo-button").addEventListener("click",setDemo);
+    el("studio-form").addEventListener("submit",submit);
+    el("reload-report").addEventListener("click",loadReport);
+    el("copy-reference").addEventListener("click",function(){if(state.reportId)navigator.clipboard.writeText(state.reportId).then(function(){el("copy-reference").textContent="Reference copied"}).catch(function(){el("copy-reference").textContent=state.reportId})});
+    var params=new URLSearchParams(location.search),id=params.get("reportId"),token=params.get("token");
+    if(id&&/^[0-9a-f-]{36}$/i.test(id)&&token&&/^[0-9a-z-]{16,256}$/i.test(token)){
+      state.reportId=id;state.token=token;
+      el("full-report").href="/studio-visibility-report?reportId="+encodeURIComponent(id)+"&token="+encodeURIComponent(token);
+      loadReport();
+    }else{setDemo()}
+    // Never emit tokens to third-party logging, analytics, or external URLs.
+  }());
+  </script>
+</body>
+</html>
