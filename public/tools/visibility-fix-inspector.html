@@ -92,7 +92,7 @@
     <main>
       <section class="panel" id="intake">
         <div class="row between"><div><div class="eyebrow">01 / START</div><h2>Inspect your studio</h2></div></div>
-        <p class="sub">You can explore the demonstration below without submitting anything. To see actual available evidence, submit your studio for the existing INKSIGHTS Visibility Report process. An approved report can then power this Inspector.</p>
+        <p class="sub">You can explore the demonstration below without submitting anything. To see actual available evidence, submit your studio for the existing INKSIGHTS Visibility Report process. A published report can then power this Inspector.</p>
         <form id="studio-form" novalidate>
           <div class="fields">
             <div class="field"><label for="studio">Studio name</label><input id="studio" name="studio_name" type="text" maxlength="160" autocomplete="organization" required></div>
@@ -257,7 +257,7 @@
     }
     async function loadReport(){
       if(!state.reportId||!state.token)return;
-      var notice=el("submission-notice");notice.textContent="Checking whether the report has been published and approved…";show("submission-notice",true);
+      var notice=el("submission-notice");notice.textContent="Checking whether the report has been published…";show("submission-notice",true);
       try{
         var response=await fetch("/api/public/visibility-report?reportId="+encodeURIComponent(state.reportId)+"&token="+encodeURIComponent(state.token),{cache:"no-store",credentials:"same-origin"});
         if(!response.ok)throw new Error("The report is not published yet or the link is unavailable.");
@@ -276,7 +276,7 @@
         state.report=null;state.pending=true;
         text("mode-flag","REPORT SUBMITTED · PUBLICATION PENDING");
         text("source-status","Not yet available");el("source-status").className="status review";
-        notice.textContent="Submission reference saved. The report is not currently accessible as a published, approved report. Use 'Check report availability' later. The example Inspector below is not a real result.";
+        notice.textContent="Submission reference saved. The report is not currently accessible as a published report. Use 'Check report availability' later. The example Inspector below is not a real result.";
         text("studio-context","Example journey shown while the submitted report is awaiting publication or unavailable.");
         show("full-report",false);show("reload-report",true);show("copy-reference",true);
         text("reference-text","Reference: "+state.reportId);
