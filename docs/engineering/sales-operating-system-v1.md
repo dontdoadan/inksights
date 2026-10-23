@@ -134,14 +134,21 @@ browser success-page navigation.
    and explicit customer interest; no automatic recurring subscription.
 
 ## Payment/code audit findings (requires patch before deployment)
-- Existing `stripe-checkout-webhook-v1` uses an upsert on
+- The **currently deployed** `stripe-checkout-webhook-v1` uses an upsert on
   `orders.stripe_session_id` that can set a previously paid session back to
-  pending after a delayed/duplicate unpaid event. Implement an atomic,
-  state-monotone RPC before switching on delivery automation.
-- Existing logic accepts `checkout.session.async_payment_succeeded` as paid
-  based on event type alone, without also requiring a paid session status.
+  pending after a delayed/duplicate unpaid event. This feature branch has NOT
+  solved that race; implement an atomic state-monotone RPC before fulfilment.
+- This branch now requires `session.payment_status === "paid"` even on an
+  asynchronous success event; previously event type alone was accepted. It
+  also records 0 as collected cash for pending sessions.
+- This branch also protects the *currently disabled* TanStack Stripe webhook
+  by retrieving the Checkout Session server-side and requiring it to be paid
+  and complete; neither webhook patch is deployed.
 - Existing paid order has no reliable `studio_id` linkage; raw email/domain
   matches are not authorization.
+- A Companies House number identifies a legal entity, not a physical location.
+  The resolver requires a Google Place ID or a company/domain key combined
+  with postcode, and flags inconsistent identifiers for human review.
 - Existing webhook skips non-live events intentionally; sandbox verification
   must use an isolated test handler and separate credentials.
 - Generated route-tree CI issue was previously reported in PR #137; treat any
