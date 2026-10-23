@@ -40,6 +40,8 @@ export const Route = createFileRoute("/api/public/studio-claim")({
       const {data:userData,error:userError}=await supabaseAdmin.auth.getUser(bearer);
       const user=userData?.user;
       if(userError||!user?.email||!user.email_confirmed_at) return response({error:"Verify your account email before requesting a studio claim."},401);
+      // This table is introduced by the reviewed migration; regenerate Database types after applying it.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const db=supabaseAdmin as any;
       const {data:studio,error:lookupError}=await db.from("studio_candidates")
         .select("id,name,payload").eq("id",v.candidateId).maybeSingle();
