@@ -52,8 +52,8 @@ export function qualify(candidate) {
   let score = 0;
   const count = artistCount(candidate);
   if (count !== null) {
-    if (count >= 3 && count <= 8) {score += 35; evidence.push('Exact artist count in ICP range');}
-    else if (count >= 2 && count <= 12) {score += 10; evidence.push('Exact artist count outside target range');}
+    if (count >= 3 && count <= 8) {score += 20; evidence.push('Source-reported exact artist count in ICP range; verify current roster');}
+    else if (count >= 2 && count <= 12) {score += 6; evidence.push('Source-reported artist count outside target range; verify current roster');}
     else evidence.push('Artist count outside target range');
   } else evidence.push('Artist count not verified');
   if (websiteDomain(candidate.website_url)) {score += 18; evidence.push('Studio website URL supplied; live status not rechecked');}
@@ -69,7 +69,7 @@ export function qualify(candidate) {
   const sourceUrl = candidate.source_url || '';
   const needs = [];
   if (!key) needs.push('Establish reliable location identity');
-  if (!count) needs.push('Verify current working artist count');
+  needs.push('Verify current working artist count against dated official source');
   if (!websiteDomain(candidate.website_url)) needs.push('Find official website');
   if (!sourceUrl) needs.push('Attach source reference');
   if (identity !== 'matched') needs.push('Resolve candidate against canonical studio');
