@@ -24,4 +24,4 @@ jobs:
           node --check scripts/industry-intelligence/qualify.mjs
           node --check scripts/industry-intelligence/run.mjs
       - name: Test qualification and CRM safety gates
-        run: node --test scripts/industry-intelligence/qualify.test.mjs
+        run: node --test scripts/industry-intelligence/*.test.mjs
