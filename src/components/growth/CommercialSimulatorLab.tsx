@@ -183,10 +183,10 @@ export function CommercialSimulatorLab() {
           <div className="rounded-3xl border border-border bg-ink p-6 md:p-8">
             <h3 className="font-display text-xl font-bold text-ice">Saved commercial breakdown</h3>
             {!saved?<p className="mt-3 text-sm text-muted-foreground">The full model output appears after successful validation and storage. If the service is unavailable, no report will be shown as saved.</p>:<>
-              <p className="mt-2 text-xs text-mint">Saved · {saved.studioLinked?"Linked to verified studio":"Unverified visitor scenario"}</p>
+              <p className="mt-2 text-xs text-mint">Saved · {saved.studioLinked?"Linked to authorised studio account":"Unverified visitor scenario"}</p>
               <dl className="mt-5 space-y-3">{Object.entries(saved.result).filter(([,v])=>typeof v==="number"||v===null).map(([key,v])=><div key={key} className="flex justify-between gap-3 border-b border-border pb-3 text-sm">
                 <dt className="text-muted-foreground">{labelFor(key)}</dt>
-                <dd className="text-right font-bold text-ice">{v===null?"Not measurable":key.endsWith("_gbp")?money(v):fmt(v as number)}</dd>
+                <dd className="text-right font-bold text-ice">{v===null?"Not measurable":key.endsWith("_gbp")?money(v as number):fmt(v as number)}</dd>
               </div>)}</dl>
               <p className="mt-4 break-all text-xs text-muted-foreground">Submission reference: {saved.submissionId}</p>
               <button type="button" className="mt-4 text-sm font-semibold text-mint underline" onClick={()=>window.print()}>Print this breakdown</button>
