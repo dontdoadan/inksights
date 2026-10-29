@@ -1,20 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 type Field = { label:string; value:number; min:number; max:number; step?:number };
 type Tool = { title:string; signal:string; fields:Record<string,Field> };
-const PERCENT={min:0,max:100,step:1};
-const MONEY={min:0,max:100000,step:10};
 const F=(label:string,value:number,min=0,max=100000,step=1):Field=>({label,value,min,max,step});
 const tools:Record<string,Tool>={
   campaign_economics:{title:"Campaign economics",signal:"Modelled campaign contribution",fields:{
     spend:F("Advertising spend (£)",500,0,1000000,50),
     impressions:F("Impressions",20000,0,100000000,1000),
-    ctr_pct:F("Click-through rate (%)",2,...[PERCENT.min,PERCENT.max,PERCENT.step]),
-    landing_conversion_pct:F("Landing page to enquiry (%)",8,...[PERCENT.min,PERCENT.max,PERCENT.step]),
-    enquiry_booking_pct:F("Enquiry to booking (%)",30,...[PERCENT.min,PERCENT.max,PERCENT.step]),
-    booking_value:F("Average booking value (£)",400,...[MONEY.min,MONEY.max,MONEY.step]),
-    variable_cost_pct:F("Variable costs (%)",35,...[PERCENT.min,PERCENT.max,PERCENT.step]),
+    ctr_pct:F("Click-through rate (%)",2,0,100,1),
+    landing_conversion_pct:F("Landing page to enquiry (%)",8,0,100,1),
+    enquiry_booking_pct:F("Enquiry to booking (%)",30,0,100,1),
+    booking_value:F("Average booking value (£)",400,0,100000,10),
+    variable_cost_pct:F("Variable costs (%)",35,0,100,1),
   }},
   lead_conversion:{title:"Lead conversion scenario",signal:"Modelled additional monthly revenue",fields:{
     monthly_enquiries:F("Monthly enquiries",100,0,1000000,10),
@@ -113,7 +111,7 @@ export function CommercialSimulatorLab() {
     &&(active!=="booking_leakage"||values.cancellation_pct+values.no_show_pct<=100);
   function resetSubmission(){setSaved(null);setError("");setSubmissionKey("");}
   function switchTool(key:string){setActive(key);setValues(getDefaults(key));resetSubmission();}
-  async function submit(e:React.FormEvent<HTMLFormElement>){
+  async function submit(e:FormEvent<HTMLFormElement>){
     e.preventDefault();
     if(!valid){setError("Check the numerical values before submitting.");return;}
     if(!accepted){setError("Please acknowledge the data notice.");return;}
@@ -179,7 +177,7 @@ export function CommercialSimulatorLab() {
           <div className="rounded-3xl border border-mint/30 bg-mint/5 p-6 md:p-8">
             <p className="text-xs font-bold uppercase tracking-widest text-mint">Live indicative preview</p>
             <p className="mt-3 text-sm text-muted-foreground">{spec.signal}</p>
-            <p className="mt-4 break-words font-display text-4xl font-black text-ice">{active==="revenue_target"?fmt(estimate):money(estimate)}</p>
+            <p className="mt-4 break-words font-display text-4xl font-black text-ice">{valid ? (active==="revenue_target"?fmt(estimate):money(estimate)) : "—"}</p>
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">Modelled outcome only. Assumes the entered rates and capacity are achievable. Not a guaranteed uplift.</p>
           </div>
           <div className="rounded-3xl border border-border bg-ink p-6 md:p-8">
