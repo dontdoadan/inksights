@@ -84,7 +84,7 @@ export function evaluate(toolKey, x) {
 
 export function validateScenario(data) {
   if (!data || typeof data !== "object" || Array.isArray(data)) return {ok:false,error:"Invalid submission"};
-  const spec=TOOLS[data.toolKey];
+  const spec=typeof data.toolKey==="string" && Object.hasOwn(TOOLS,data.toolKey) ? TOOLS[data.toolKey] : null;
   if (!spec) return {ok:false,error:"Unknown simulator"};
   if (typeof data.submissionKey!=="string" || !UUID.test(data.submissionKey)) return {ok:false,error:"Invalid submission key"};
   if (data.dataNoticeAccepted!==true || data.consentVersion!==CONSENT_VERSION) return {ok:false,error:"Data use acknowledgement required"};
