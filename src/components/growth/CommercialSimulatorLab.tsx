@@ -192,7 +192,7 @@ export function CommercialSimulatorLab() {
               <button type="button" className="mt-4 text-sm font-semibold text-mint underline" onClick={()=>window.print()}>Print this breakdown</button>
             </>}
           </div>
-          <a href="/studio-growth-check?source=commercial-simulator" className="block rounded-2xl border border-border bg-ink p-5 text-sm font-bold text-mint hover:border-mint">Request a free studio Growth Check →</a>
+          <a href={saved ? "/studio-growth-check?source=" + encodeURIComponent("commercial-simulator:" + saved.submissionId) : "/studio-growth-check?source=commercial-simulator"} className="block rounded-2xl border border-border bg-ink p-5 text-sm font-bold text-mint hover:border-mint">Request a free studio Growth Check →</a>
           <p className="text-xs text-muted-foreground">No CRM lead or contact consent is created by saving a scenario. The Growth Check has a separate contact and conversion process.</p>
         </aside>
       </div>
