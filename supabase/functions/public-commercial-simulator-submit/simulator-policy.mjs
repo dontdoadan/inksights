@@ -119,5 +119,5 @@ export function isSameScenario(previous, checked, studioId) {
     (previous.studio_id||null)===(studioId||null) &&
     (previous.studio_name||null)===checked.studioName &&
     (previous.studio_website||null)===checked.studioWebsite &&
-    JSON.stringify(previous.normalized_inputs)===JSON.stringify(checked.normalized));
+    Object.keys(checked.normalized).every(key=>previous.normalized_inputs?.[key]===checked.normalized[key]) && Object.keys(previous.normalized_inputs||{}).length===Object.keys(checked.normalized).length);
 }
