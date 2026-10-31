@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>Studio Intelligence — INKSIGHTS review build</title>
+<style>
+:root{--ink:#0A0F14;--panel:#101B23;--raised:#1F2937;--teal:#00E5D1;--copy:#F8FAFC;--muted:#94A3B8;--border:#344957;--error:#FFB89D;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 90% 0%,#103a37,var(--ink) 48%);font-family:Poppins,system-ui,sans-serif;color:var(--copy);line-height:1.55}button,input,select{font:inherit}a{color:var(--teal)}
+header{border-bottom:1px solid var(--border);padding:18px clamp(18px,5vw,70px);display:flex;align-items:center;justify-content:space-between;gap:16px}
+header img{width:164px;max-width:50vw;height:auto}header span{font-size:11px;letter-spacing:.11em;color:var(--muted)}
+header a{color:var(--teal);font-size:12px;font-weight:700}
+main{max-width:1160px;margin:auto;padding:35px 20px 80px}h1{font-size:clamp(29px,5vw,50px);letter-spacing:-.055em;line-height:1.12;margin:9px 0 14px;max-width:780px}p{margin:8px 0 18px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--teal);font-weight:700}.intro{color:var(--muted);max-width:720px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;align-items:start;gap:20px;margin-top:28px}.panel{background:var(--panel);border:1px solid var(--border);border-radius:22px;padding:clamp(18px,3vw,30px);min-width:0;margin-bottom:18px}
+.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:25px 0}.progress button{background:#172c33;border:1px solid var(--border);color:var(--muted);border-radius:14px;padding:12px 7px;font-weight:700;font-size:11px;text-align:center}.progress button[aria-current=step]{border-color:var(--teal);color:var(--teal);background:#103730}.progress button:disabled{opacity:.45;cursor:not-allowed}
+h2{margin:5px 0 10px;letter-spacing:-.035em;font-size:clamp(21px,3vw,27px)}.fieldgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field{display:block;color:#d8e5e8;font-size:13px;font-weight:600}.field input,.field select{display:block;width:100%;padding:13px;border:1px solid #486071;background:#0a1920;color:var(--copy);border-radius:11px;margin:6px 0 0;min-width:0}.field.wide{grid-column:1/-1}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{background:var(--teal);color:#082627;border:0;border-radius:12px;padding:13px 18px;font-weight:800;min-height:46px;cursor:pointer}.btn.ghost{border:1px solid var(--border);background:var(--raised);color:var(--copy);text-decoration:none}.btn:disabled{opacity:.55;cursor:not-allowed}
+.notice{border:1px solid #47636b;border-radius:12px;background:#172832;padding:13px;margin:20px 0;color:#c8d6dc;font-size:12px}.error{color:var(--error);font-weight:650;min-height:20px}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}.metric{padding:16px;background:#1A2A33;border-radius:13px}.metric strong{display:block;font-size:clamp(18px,3vw,29px);line-height:1.2;letter-spacing:-.045em}.metric span{font-size:11px;color:var(--muted)}.tag{display:inline-block;color:var(--teal);font-size:10px;letter-spacing:.09em;font-weight:700}
+.status{padding:12px;border-radius:12px;background:#17332f;color:#a9f2e7;font-size:12px;min-height:42px}aside ul{padding-left:16px;font-size:12px;color:#cbd5e1}aside li{margin:9px 0}
+label.check{font-size:12px;display:flex;align-items:flex-start;gap:9px;margin-top:15px;color:#cedbdd}label.check input{margin-top:4px}
+@media(max-width:840px){.layout{grid-template-columns:1fr}aside{order:-1}.progress button{font-size:9px;padding:11px 5px}}@media(max-width:450px){.fieldgrid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.progress{gap:4px}.panel{padding:18px}header span{font-size:9px}}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style></head><body>
+<header><img src="/brand/logo-v3/primary-dark.svg" alt="INKSIGHTS"><a href="/studio-intelligence">My studio profile</a><span>REVIEW BUILD · UNRELEASED</span></header>
+<main><div class="eyebrow">Studio intelligence · Progressive assessment</div>
+<h1>One studio profile.<br>Four connected insights.</h1><p class="intro">Build a self-reported baseline, test a capacity-bound revenue scenario, review the booking journey and save a prioritised assessment. Results are only shown after the server confirms each submission was stored.</p>
+<nav id="progress" class="progress" aria-label="Assessment steps"></nav>
+<div class="layout"><div><section class="panel" id="current"><p>Loading assessment…</p></section><div id="message" aria-live="polite" class="error"></div></div>
+<aside class="panel"><div class="eyebrow">Shared intelligence profile</div><h2 id="studioLabel">Unclaimed studio</h2>
+<div class="status" id="persistenceStatus">Your studio has not been saved.</div>
+<div id="profileMetrics"></div><div class="notice">Security: this anonymous session does not verify business ownership. No reports, contact details, or other studios' data are accessible from this assessment.</div>
+<button class="btn ghost" type="button" id="forget" style="width:100%">Forget this browser session</button></aside></div>
+</main>
+<script>
+(function(){
+"use strict";
+var API="/api/public/studio-journey-submit";
+var TOKEN_KEY="inksights:journey:unverified-session";
+var VERSION="2026-10-tool-v1";
+var token="";try{token=sessionStorage.getItem(TOKEN_KEY)||""}catch{}
+var history={},currentStep=0,busy=false,STEPS=["growth","revenue","visibility","summary"];
+var $=function(id){return document.getElementById(id)};
+var esc=function(x){return String(x==null?"":x).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]})};
+var gbp=function(v){return new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(Number(v)||0)};
+var pct=function(v){return Number(v).toFixed(1)+"%"};
+function field(name,label,type,min,max,value,required){return '<label class="field">'+esc(label)+'<input name="'+name+'" type="'+type+'" '+(min!=null?'min="'+min+'" ':'')+(max!=null?'max="'+max+'" ':'')+'value="'+esc(value==null?"":value)+'" '+(required?'required':'')+'></label>'}
+function nav(){
+ $("progress").innerHTML=STEPS.map(function(s,i){var available=i===0||!!history[STEPS[i-1]];return '<button type="button" data-step="'+i+'" '+(available?'':'disabled')+' '+(currentStep===i?'aria-current="step"':'')+'>'+(i+1)+' · '+["Growth Check","Revenue","Visibility","Audit plan"][i]+'</button>'}).join("");
+ $("progress").querySelectorAll("[data-step]").forEach(function(button){button.onclick=function(){currentStep=Number(button.dataset.step);render()}});
+}
+function profile(){
+ var g=history.growth, r=history.revenue, v=history.visibility;
+ $("studioLabel").textContent=g?.normalized?.studio?.name||"Unclaimed studio";
+ $("persistenceStatus").textContent=g?"Saved provisional profile · self-reported":"No server-confirmed profile yet";
+ var m=[];
+ if(g){m.push('<div class="metric"><strong>'+pct(g.result.conversion_pct)+'</strong><span>Enquiry conversion · self-reported</span></div>');
+ m.push('<div class="metric"><strong>'+pct(g.result.utilisation_pct)+'</strong><span>Booked hours · self-reported</span></div>')}
+ if(r)m.push('<div class="metric"><strong>'+gbp(r.result.modelled_difference_gbp)+'</strong><span>Scenario change · modelled</span></div>');
+ if(v)m.push('<div class="metric"><strong>'+Number(v.result.reported_friction_count)+'</strong><span>Reported visibility concerns</span></div>');
+ $("profileMetrics").innerHTML=m.length?'<div class="metrics">'+m.join("")+'</div>':'<p class="intro">Your data will appear here as you complete the stages.</p>';
+}
+function growthScreen(){
+ var g=history.growth?.normalized||{},s=g.studio||{},m=g.figures||{};
+ return '<div class="eyebrow">01 · Studio Growth Check</div><h2>Establish the baseline</h2><p class="intro">Use figures from the same representative month. Your answers are self-reported, not verified benchmarks.</p>'+
+ '<form id="stepForm"><div class="fieldgrid">'+
+ field("studio","Studio name","text",null,null,s.name||"",true)+
+ field("area","Town or city","text",null,null,s.area||"",true)+
+ field("website","Public website (optional)","url",null,null,s.website||"",false)+
+ field("artists","Number of artists","number",1,100,s.artist_count||"",true)+
+ field("month","Reporting month","month",null,null,m.month||new Date().toISOString().slice(0,7),true)+
+ field("enquiries","Monthly enquiries","number",1,100000,m.enquiries||"",true)+
+ field("bookings","Confirmed bookings","number",0,100000,m.bookings??"",true)+
+ field("bookingValue","Average booked value (£)","number",1,50000,m.average_booking_gbp||"",true)+
+ field("hours","Available artist hours","number",1,30000,m.available_hours||"",true)+
+ field("bookedHours","Booked artist hours","number",0,30000,m.booked_hours??"",true)+
+ field("sessionHours","Typical booking duration (hours)","number",0.25,16,m.avg_hours_per_booking||4,true)+'</div>'+
+ '<label class="check"><input type="checkbox" name="notice" required>I acknowledge that INKSIGHTS will store these business figures to generate the free assessment. I have read the <a href="/privacy" target="_blank" rel="noopener">privacy notice</a>. This is separate from marketing consent.</label>'+
+ '<div class="actions"><button class="btn" type="submit">Save Growth Check</button></div></form>';
+}
+function revenueScreen(){
+ var g=history.growth; if(!g)return '<p>Save the Growth Check first.</p>';
+ var baseline=g.normalized.figures;
+ var conversion=Math.ceil(100*baseline.bookings/baseline.enquiries);
+ return '<div class="eyebrow">02 · Revenue Leakage Simulator</div><h2>Test one improvement</h2><p class="intro">We cap any additional bookings by the unused artist hours in your saved baseline. Results are hypothetical, not recovered income.</p>'+
+ '<form id="stepForm"><div class="fieldgrid">'+
+ field("target","Target enquiry conversion (%)","number",conversion,100,history.revenue?.normalized.target_conversion_pct||Math.min(100,conversion+10),true)+
+ field("targetValue","Scenario booking value (£)","number",1,50000,history.revenue?.normalized.target_booking_gbp||baseline.average_booking_gbp,true)+'</div>'+
+ '<div class="actions"><button type="submit" class="btn">Save financial scenario</button></div></form>';
+}
+function visibilityScreen(){
+ var items=[["listingClaimed","Is your studio business listing claimed?"],["bookingLinkWorks","Does the public booking link work?"],["mobileBookingClear","Is mobile booking clear and easy?"],["EnquiriesRespondedPromptly","Are enquiries normally answered promptly?"]];
+ var prev=history.visibility?.normalized||{};
+ return '<div class="eyebrow">03 · Visibility Inspector</div><h2>Review the booking journey</h2><p class="intro">This is a questionnaire. INKSIGHTS has not crawled your website or independently verified search rankings.</p><form id="stepForm"><div class="fieldgrid">'+
+ items.map(function(x){return '<label class="field">'+esc(x[1])+'<select name="'+x[0]+'" required><option value="" '+(prev[x[0]]==null?'selected':'')+'>Select answer</option><option value="yes" '+(prev[x[0]]===true?'selected':'')+'>Yes</option><option value="no" '+(prev[x[0]]===false?'selected':'')+'>No</option></select></label>'}).join("")+
+ '</div><div class="actions"><button class="btn" type="submit">Save visibility assessment</button></div></form>';
+}
+function resultScreen(step){
+ var item=history[step];if(!item)return "";
+ var result=item.result||{};
+ var content='<div class="notice"><span class="tag">'+esc(result.evidence||"SELF_REPORTED")+'</span> · Saved submission '+esc(item.submissionId)+'</div>';
+ if(step==="growth")content+='<div class="metrics"><div class="metric"><strong>'+pct(result.conversion_pct)+'</strong><span>Enquiry conversion</span></div><div class="metric"><strong>'+pct(result.utilisation_pct)+'</strong><span>Artist utilisation</span></div></div><p><strong>First investigation:</strong> '+esc(result.priority)+'</p>';
+ if(step==="revenue")content+='<div class="metrics"><div class="metric"><strong>'+gbp(result.baseline_booked_value_gbp)+'</strong><span>Booking-value baseline</span></div><div class="metric"><strong>'+gbp(result.modelled_booked_value_gbp)+'</strong><span>Modelled scenario</span></div></div><p>Potential additional bookings within the stated available hours: '+esc(result.additional_bookings)+'</p>';
+ if(step==="visibility")content+='<p>Reported concerns: <strong>'+esc(result.reported_friction_count)+'</strong></p><ul>'+(result.reported_friction_points||[]).map(function(s){return "<li>"+esc(s)+"</li>"}).join("")+'</ul>';
+ if(step==="summary")content+='<h2>'+esc(result.priority)+'</h2><ol>'+(result.plan||[]).map(function(p){return "<li><strong>Days "+esc(p.days)+":</strong> "+esc(p.action)+"</li>"}).join("")+'</ol><div class="actions"><a class="btn ghost" href="/studio-intelligence">Connect to your verified studio account</a><a class="btn ghost" href="/offers/studio-intelligence-audit">Review the £395 Studio Intelligence Audit</a></div>';
+ content+='<p class="intro">'+(result.limitations||[]).map(esc).join(" ")+'</p>';
+ var next=STEPS.indexOf(step)+1;
+ content+='<div class="actions"><button type="button" class="btn ghost" id="editStage">Edit and save new version</button>'+(next<STEPS.length?'<button type="button" class="btn" id="nextStage">Next stage</button>':'')+'</div>';
+ return content;
+}
+var showResult=false;
+function render(){
+ nav();profile();
+ var panel=$("current");var stage=STEPS[currentStep],existing=history[stage];
+ if(showResult && existing)panel.innerHTML='<div class="eyebrow">'+esc(stage)+' · Saved result</div>'+resultScreen(stage);
+ else panel.innerHTML=[growthScreen,revenueScreen,visibilityScreen,function(){return '<div class="eyebrow">04 · Intelligence Audit Preview</div><h2>Build your 90-day priority</h2><p class="intro">This free indicative plan uses the three previously saved stages. It is not the paid audit.</p><form id="stepForm"><div class="actions"><button class="btn" type="submit">Save preliminary plan</button></div></form>'}][currentStep]();
+ var form=$("stepForm");if(form)form.onsubmit=submit;
+ var edit=$("editStage");if(edit)edit.onclick=function(){showResult=false;render()};
+ var next=$("nextStage");if(next)next.onclick=function(){currentStep=Math.min(currentStep+1,3);showResult=false;render()};
+}
+function explain(error){$("message").textContent=error||""}
+async function callAPI(data){
+ var response=await fetch(API,{method:"POST",mode:"cors",headers:{"content-type":"application/json"},body:JSON.stringify(data),signal:AbortSignal.timeout(15000)});
+ var body=await response.json();
+ if(!response.ok||body.error)throw new Error(body.error||"Assessment service unavailable");
+ return body;
+}
+async function submit(event){
+ event.preventDefault();if(busy)return;var step=STEPS[currentStep];var f=new FormData(event.currentTarget);var input={};
+ if(step==="growth")input={dataNoticeAccepted:f.get("notice")==="on",consentVersion:VERSION,studio:{name:f.get("studio"),area:f.get("area"),website:f.get("website"),artistCount:Number(f.get("artists"))},figures:{month:f.get("month"),enquiries:Number(f.get("enquiries")),bookings:Number(f.get("bookings")),averageBookingGbp:Number(f.get("bookingValue")),availableHours:Number(f.get("hours")),bookedHours:Number(f.get("bookedHours")),averageSessionHours:Number(f.get("sessionHours"))}};
+ if(step==="revenue")input={targetConversionPct:Number(f.get("target")),targetBookingGbp:Number(f.get("targetValue"))};
+ if(step==="visibility")["listingClaimed","bookingLinkWorks","mobileBookingClear","EnquiriesRespondedPromptly"].forEach(function(k){input[k]=f.get(k)==="yes"});
+ busy=true;explain("");var button=event.currentTarget.querySelector('[type="submit"]');if(button){button.disabled=true;button.textContent="Saving…"}
+ try{
+   if(!token){var started=await callAPI({action:"start"});token=started.sessionToken;sessionStorage.setItem(TOKEN_KEY,token)}
+   var pendingKey=TOKEN_KEY+":pending:"+step;
+   var lastAttempt=null;try{lastAttempt=JSON.parse(sessionStorage.getItem(pendingKey)||"null")}catch{}
+   var fingerprint=JSON.stringify(input);
+   var submissionKey=lastAttempt?.payload===fingerprint?lastAttempt.key:crypto.randomUUID();
+   sessionStorage.setItem(pendingKey,JSON.stringify({key:submissionKey,payload:fingerprint}));
+   var response=await callAPI({action:"submit",step:step,input:input,sessionToken:token,submissionKey:submissionKey});
+   // Persist the original 'start' token: the submit endpoint does not issue one.
+   if(response.sessionToken && response.sessionToken!==token)
+     throw new Error("Unexpected assessment session change.");
+   sessionStorage.setItem(TOKEN_KEY,token);
+   await restore(true);
+   if(!history[step] || history[step].submissionId!==response.submissionId)throw new Error("Could not verify the newly saved result. Please retry.");
+   sessionStorage.removeItem(pendingKey);
+   showResult=true;render();
+ }catch(err){explain(err instanceof Error?err.message:"Save failed. Your results have not been unlocked.");if(button){button.disabled=false;button.textContent="Retry save"}}
+ finally{busy=false}
+}
+async function restore(strict){
+ if(!token)return;
+ try{
+   var response=await callAPI({action:"profile",sessionToken:token});
+   history=response.history||{};var latest=STEPS.findLastIndex(function(k){return !!history[k]});currentStep=Math.max(0,latest);showResult=latest>=0;explain("");
+ }catch(err){
+   if(strict){history={};showResult=false;throw err;}
+   explain("Could not restore the last saved server profile. Retain this browser session and retry.");
+ }
+ render();
+}
+$("forget").onclick=async function(){
+ if(!confirm("Revoke this browser session? Stored records will be retained according to the privacy policy."))return;
+ try{if(token)await callAPI({action:"revoke",sessionToken:token});
+ sessionStorage.removeItem(TOKEN_KEY);STEPS.forEach(function(s){sessionStorage.removeItem(TOKEN_KEY+":pending:"+s)});
+ token="";history={};currentStep=0;showResult=false;render();explain("");}
+ catch(error){explain("Could not revoke server access. The session has NOT been forgotten; retry.");}
+};
+render();restore();
+})();
+</script></body></html>
