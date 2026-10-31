@@ -65,8 +65,8 @@ function ContactPage() {
     <PublicShell>
       <PageHero
         eyebrow="Contact INKSIGHTS"
-        title={<>Tell us what you want to improve.</>}
-        description={<>Ask about a service, an existing engagement or a tattoo-industry partnership. Studio owners with 3+ artists can start with the free Studio Growth Check. Smaller studios and other tattoo businesses can use this form to discuss fit.</>}
+        title={search.topic === "growth-check" ? <>You can start without all your figures.</> : <>Tell us what you want to improve.</>}
+        description={search.topic === "growth-check" ? <>Tell us about your studio and what you already know. You do not need to guess monthly figures. This enquiry will not generate a calculated Growth Check result.</> : <>Ask about a service, an existing engagement or a tattoo-industry partnership. Studio owners with 3+ artists can start with the free Studio Growth Check. Smaller studios and other tattoo businesses can use this form to discuss fit.</>}
       />
 
       <section>
@@ -137,7 +137,7 @@ function ContactPage() {
               >
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">Secure contact form</p>
-                  <h2 className="mt-2 font-display text-3xl font-black text-ice">What do you need help with?</h2>
+                  <h2 className="mt-2 font-display text-3xl font-black text-ice">{search.topic === "growth-check" ? "Tell us what you know about your studio." : "What do you need help with?"}</h2>
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field label="Name" required><input name="name" required autoComplete="name" className="form-control" /></Field>
@@ -165,7 +165,7 @@ function ContactPage() {
                   </Field>
                 </div>
                 <Field label="Message" required>
-                  <textarea name="message" required minLength={10} rows={7} className="form-control resize-y" placeholder="Include the studio, relevant links or references, what happened and the outcome you need. Do not include passwords, full card details, private API keys or verification codes." />
+                  <textarea name="message" required minLength={10} rows={7} className="form-control resize-y" placeholder={search.topic === "growth-check" ? "For example: We have five artists but don’t know how many enquiries become bookings. We want help working out where to start." : "Include the studio, relevant links or references, what happened and the outcome you need. Do not include passwords, full card details, private API keys or verification codes."} />
                 </Field>
                 <div className="hidden" aria-hidden="true">
                   <label>Company URL<input name="company_url" tabIndex={-1} autoComplete="off" /></label>
