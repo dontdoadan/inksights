@@ -60,7 +60,7 @@ function CookiesPage() {
       <p>This notice should be updated before any additional non-essential provider is activated. The consent interface is intended to reflect the technologies currently available.</p>
 
       <h2>Questions</h2>
-      <p>Email <a href="mailto:contact@getinksight.co.uk">contact@getinksight.co.uk</a> with questions about tracking or consent records.</p>
+      <p>Email <a href="mailto:contact@getinksights.co.uk">contact@getinksights.co.uk</a> with questions about tracking or consent records.</p>
     </LegalPage>
   );
 }

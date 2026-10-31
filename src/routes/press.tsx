@@ -137,7 +137,8 @@ function PressPage() {
             Use the INKSIGHTS contact form and identify the request as media, research or partnership. Requests for
             unpublished data are assessed against the research methodology and privacy constraints before anything is shared.
           </p>
-          <a href="/contact" className="mt-7 inline-flex rounded-full bg-mint px-6 py-3 font-bold text-ink-deep">Contact INKSIGHTS</a>
+          <p className="mt-4 text-sm text-muted-foreground">For research or data questions, email <a href="mailto:intelligence@getinksights.co.uk" className="font-bold text-mint hover:text-mint-soft">intelligence@getinksights.co.uk</a>. For other media requests, use the contact form.</p>
+          <a href="/contact?topic=media" className="mt-7 inline-flex rounded-full bg-mint px-6 py-3 font-bold text-ink-deep">Contact INKSIGHTS</a>
         </div>
       </section>
     </PublicShell>

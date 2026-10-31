@@ -84,7 +84,7 @@ function TermsPage() {
       <p>These website terms are governed by the laws of England and Wales, subject to any mandatory consumer or local rights that apply.</p>
 
       <h2>Contact</h2>
-      <p>Questions can be submitted through the <a href="/contact">secure INKSIGHTS contact form</a>.</p>
+      <p>Questions can be submitted through the <a href="/contact">secure INKSIGHTS contact form</a> or by emailing <a href="mailto:contact@getinksights.co.uk">contact@getinksights.co.uk</a>.</p>
     </LegalPage>
   );
 }

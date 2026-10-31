@@ -40,6 +40,7 @@ function Index() {
         logo: "https://getinksights.co.uk/brand/logo-v3/primary-dark.svg",
         description: "Growth intelligence and commercial systems designed specifically for UK tattoo studios.",
         areaServed: { "@type": "Country", name: "United Kingdom" },
+        contactPoint: [{ "@type": "ContactPoint", contactType: "customer support", email: "contact@getinksights.co.uk", availableLanguage: "English" }, { "@type": "ContactPoint", contactType: "sales", email: "commercial@getinksights.co.uk", availableLanguage: "English" }],
         knowsAbout: [
           "tattoo studio growth",
           "tattoo studio SEO",

@@ -45,7 +45,7 @@ function AccessibilityPage() {
       </ul>
 
       <h2>Alternative formats and support</h2>
-      <p>If a tool, article or form creates a barrier, email <a href="mailto:contact@getinksight.co.uk">contact@getinksight.co.uk</a>. Include the page address, device or assistive technology and the task you were trying to complete. INKSIGHTS will provide the information in a practical alternative format where possible.</p>
+      <p>If a tool, article or form creates a barrier, email <a href="mailto:contact@getinksights.co.uk">contact@getinksights.co.uk</a>. Include the page address, device or assistive technology and the task you were trying to complete. INKSIGHTS will provide the information in a practical alternative format where possible.</p>
 
       <h2>Technical approach</h2>
       <p>The public website uses semantic HTML, React and progressive browser features. Core information remains text-based and public pages do not require account creation.</p>

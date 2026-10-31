@@ -53,7 +53,7 @@ function ContactPage() {
 
     if (functionError || !data?.ok) {
       setStatus("error");
-      setError(functionError?.message || data?.error || "The message could not be recorded. Email dontdoadan@icloud.com instead.");
+      setError(functionError?.message || data?.error || "The message could not be recorded. Email contact@getinksights.co.uk instead.");
       trackWebsiteEvent("form_error", { form: "contact", reason: "submission_failed" });
       return;
     }
@@ -77,6 +77,24 @@ function ContactPage() {
               <h2 className="mt-5 font-display text-2xl font-black text-ice">A useful first conversation</h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Tell us about your business, the problem you can see and the outcome you want. We will review your enquiry and reply by email; sending this form creates no payment or booking.</p>
               <p className="mt-4 text-xs leading-relaxed text-muted-foreground">If the form is unavailable, the page will show a fallback contact route.</p>
+            </div>
+            <div className="rounded-2xl border border-mint/20 bg-ink p-6">
+              <Mail className="h-7 w-7 text-mint" />
+              <h2 className="mt-5 font-display text-2xl font-black text-ice">Email INKSIGHTS directly</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Use the address that best matches your question. The secure form is also available for every enquiry.</p>
+              <div className="mt-5 space-y-4 text-sm">
+                {[
+                  ["General enquiries and support", "contact@getinksights.co.uk"],
+                  ["Sales, services and proposals", "commercial@getinksights.co.uk"],
+                  ["Research, reports and intelligence", "intelligence@getinksights.co.uk"],
+                  ["Founder enquiries", "daniel@getinksights.co.uk"],
+                ].map(([label, email]) => (
+                  <div key={email} className="min-w-0">
+                    <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+                    <a className="block break-all font-semibold text-mint hover:text-mint-soft" href={`mailto:${email}`}>{email}</a>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="rounded-2xl border border-border bg-ink p-6">
               <MessageSquareText className="h-7 w-7 text-mint" />
