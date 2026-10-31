@@ -136,7 +136,10 @@ async function submit(event){
    var submissionKey=lastAttempt?.payload===fingerprint?lastAttempt.key:crypto.randomUUID();
    sessionStorage.setItem(pendingKey,JSON.stringify({key:submissionKey,payload:fingerprint}));
    var response=await callAPI({action:"submit",step:step,input:input,sessionToken:token,submissionKey:submissionKey});
-   token=response.sessionToken;try{sessionStorage.setItem(TOKEN_KEY,token)}catch{}
+   // Persist the original 'start' token: the submit endpoint does not issue one.
+   if(response.sessionToken && response.sessionToken!==token)
+     throw new Error("Unexpected assessment session change.");
+   sessionStorage.setItem(TOKEN_KEY,token);
    await restore(true);
    if(!history[step] || history[step].submissionId!==response.submissionId)throw new Error("Could not verify the newly saved result. Please retry.");
    sessionStorage.removeItem(pendingKey);
