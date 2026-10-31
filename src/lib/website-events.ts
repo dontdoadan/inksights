@@ -30,7 +30,7 @@ function sessionId() {
 function classifySearchReferrer(hostname: string | null) {
   if (!hostname) return null;
   const host = hostname.toLowerCase();
-  if (host === "google.com" || host.endsWith(".google.com")) return "google";
+  if (/^(?:[a-z0-9-]+\.)?google\.(?:com|co\.uk|[a-z]{2,3})$/i.test(host)) return "google";
   if (host === "bing.com" || host.endsWith(".bing.com")) return "bing";
   if (host === "duckduckgo.com" || host.endsWith(".duckduckgo.com")) return "duckduckgo";
   if (host === "search.yahoo.com" || host.endsWith(".search.yahoo.com")) return "yahoo";
@@ -81,7 +81,7 @@ function acquisitionProperties(): EventProperties {
     landing_path: safeAnalyticsPath(window.location.pathname),
     initial_referrer_host: referrerHost,
     search_engine: searchEngine,
-    is_organic_search: Boolean(searchEngine) && !params.get("gclid") && !params.get("gbraid") && !params.get("wbraid"),
+    is_organic_search: Boolean(searchEngine) && !params.get("gclid") && !params.get("gbraid") && !params.get("wbraid") && !/^(cpc|ppc|paid|paid_search|paidsearch|display|social_paid)$/i.test(params.get("utm_medium") || ""),
     utm_source: safeMarketingTag(params.get("utm_source")),
     utm_medium: safeMarketingTag(params.get("utm_medium")),
     utm_campaign: safeMarketingTag(params.get("utm_campaign")),
