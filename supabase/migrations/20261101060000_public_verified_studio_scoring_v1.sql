@@ -63,6 +63,91 @@ revoke all on function public.reconcile_reviewed_studio_submissions_v1(uuid)
 grant execute on function public.reconcile_reviewed_studio_submissions_v1(uuid)
   to service_role;
 
+-- Authenticated-ownership claim is performed only by a trusted Edge Function
+-- after Supabase Auth verifies the caller JWT. This RPC remains service-role-only.
+-- A capability proof (unpredictable submission ID + submission key) is required;
+-- a matching name/domain is never sufficient to attach another person's data.
+create unique index if not exists intelligence_tool_claim_evidence_unique_idx
+on public.intelligence_evidence(studio_id, source_type, source_ref)
+where source_type = 'public_tool_submission' and source_ref is not null;
+
+create or replace function public.claim_public_tool_submission_v1(
+  p_studio_id uuid,
+  p_user_id uuid,
+  p_submission_id uuid,
+  p_submission_key uuid
+) returns jsonb language plpgsql security invoker set search_path = ''
+as $
+declare
+  v_record public.public_tool_submissions%rowtype;
+  v_evidence_id uuid;
+begin
+  if p_studio_id is null or p_user_id is null or p_submission_id is null or p_submission_key is null then
+    raise exception 'missing studio, user or submission proof';
+  end if;
+  if not exists (
+    select 1 from public.studio_members sm
+    where sm.studio_id = p_studio_id and sm.user_id = p_user_id and sm.active
+  ) then
+    raise exception 'not a member of this canonical studio';
+  end if;
+
+  select * into v_record from public.public_tool_submissions
+  where id = p_submission_id and submission_key = p_submission_key
+  for update;
+  if not found then
+    raise exception 'submission proof invalid';
+  end if;
+  if v_record.quality_status = 'rejected' then
+    raise exception 'rejected submission cannot be claimed';
+  end if;
+  if v_record.canonical_studio_id is not null and v_record.canonical_studio_id <> p_studio_id then
+    raise exception 'this submission is already associated with another studio';
+  end if;
+
+  if v_record.canonical_studio_id is null then
+    update public.public_tool_submissions
+    set canonical_studio_id = p_studio_id
+    where id = p_submission_id;
+  end if;
+
+  -- This is evidence OF A SELF-REPORT, not verification of its truth.
+  insert into public.intelligence_evidence
+    (studio_id,evidence_type,classification,source_type,source_ref,claim,payload,observed_at)
+  values (p_studio_id,'tool_submission','observed',
+    'public_tool_submission',p_submission_id::text,
+    'Studio-linked tool submission; self-reported and unverified',
+    jsonb_build_object('tool_key',v_record.tool_key,
+      'quality_status','unverified_self_report',
+      'source_submission_id',v_record.id,
+      'normalized_inputs',v_record.normalized_inputs,
+      'tool_result',v_record.result_snapshot,
+      'consent_version',v_record.consent_version),
+    v_record.submitted_at)
+  on conflict (studio_id,source_type,source_ref)
+    where source_type = 'public_tool_submission' and source_ref is not null
+  do nothing
+  returning id into v_evidence_id;
+
+  if v_evidence_id is null then
+    select id into v_evidence_id from public.intelligence_evidence
+    where studio_id = p_studio_id and source_type = 'public_tool_submission'
+      and source_ref = p_submission_id::text;
+  end if;
+
+  return jsonb_build_object(
+    'studio_id',p_studio_id,
+    'submission_id',p_submission_id,
+    'evidence_id',v_evidence_id,
+    'verification_status','unverified'
+  );
+end;
+$;
+revoke all on function public.claim_public_tool_submission_v1(uuid,uuid,uuid,uuid)
+  from public,anon,authenticated;
+grant execute on function public.claim_public_tool_submission_v1(uuid,uuid,uuid,uuid)
+  to service_role;
+
 create table if not exists public.studio_profile_answers (
   studio_id uuid not null references public.visibility_studios(id) on delete cascade,
   field_key text not null check (field_key ~ '^[a-z][a-z0-9_]{2,79}$'),
@@ -458,6 +543,16 @@ on public.studio_scoring_snapshots for select to authenticated
 using (exists(select 1 from public.studio_members m
               where m.studio_id=studio_scoring_snapshots.studio_id
                 and m.user_id=(select auth.uid()) and m.active));
+grant select on public.public_tool_submissions to authenticated;
+create policy "claimed public submissions read by verified studio members"
+on public.public_tool_submissions for select to authenticated
+using (
+ canonical_studio_id is not null
+ and exists(select 1 from public.studio_members m
+   where m.studio_id = public_tool_submissions.canonical_studio_id
+   and m.user_id = (select auth.uid()) and m.active)
+);
+
 create policy "studio scoring models authenticated read"
 on public.studio_scoring_models for select to authenticated using (true);
 create policy "studio scoring dimensions authenticated read"
