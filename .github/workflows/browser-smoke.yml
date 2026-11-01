@@ -30,9 +30,21 @@ jobs:
         run: npm install --no-save --legacy-peer-deps --no-audit --no-fund @playwright/test
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Test production public journeys on desktop and mobile
+      - name: Start local branch preview for pull requests
+        if: github.event_name == 'pull_request'
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4173 > /tmp/inksights-preview.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/inksights-preview.log
+          exit 1
+      - name: Test public journeys on desktop and mobile
         env:
-          E2E_BASE_URL: https://getinksights.co.uk
+          E2E_BASE_URL: ${{ github.event_name == 'pull_request' && 'http://127.0.0.1:4173' || 'https://getinksights.co.uk' }}
         run: npx playwright test --config=playwright.config.cjs
       - name: Upload traces and screenshots
         if: always()
