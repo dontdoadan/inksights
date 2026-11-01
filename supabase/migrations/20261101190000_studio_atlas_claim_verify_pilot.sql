@@ -121,8 +121,18 @@ create policy "atlas_member_submits_draft" on public.atlas_profile_drafts
   );
 grant select,insert on public.atlas_profile_drafts to authenticated;
 
--- No direct anon/authenticated access to customer enquiry records.
+-- Only an active authorised studio member can read their own customer's enquiry.
+create policy "atlas_member_reads_studio_enquiries" on public.atlas_customer_enquiries
+  for select to authenticated using (
+    exists (
+      select 1 from public.studio_members sm
+      where sm.studio_id = atlas_customer_enquiries.studio_id
+        and sm.user_id = (select auth.uid()) and sm.active = true
+        and sm.role in ('owner','admin','manager')
+    )
+  );
 revoke all on public.atlas_customer_enquiries from anon, authenticated;
+grant select on public.atlas_customer_enquiries to authenticated;
 -- No authenticated write path to published profiles (service-side review only).
 revoke insert,update,delete on public.atlas_profiles from anon,authenticated;
 revoke update,delete on public.atlas_claim_requests from anon,authenticated;
