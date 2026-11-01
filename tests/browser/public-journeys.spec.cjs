@@ -55,3 +55,26 @@ test("reports portal serves its restricted sign-in landing page", async ({ page 
   expect(response.status()).toBe(200);
   await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
 });
+
+test("proposed Growth Check provides a shorter enquiry route without fabricated figures", async ({ page }) => {
+  test.skip(!process.env["E2E_BASE_URL"]?.includes("127.0.0.1"), "Validate proposed content on PR branch");
+  await page.goto("/studio-growth-check", { waitUntil: "domcontentloaded" });
+  const alternative = page.getByRole("link", { name: /tell us what you know instead/i });
+  await expect(alternative).toBeVisible();
+  await alternative.click();
+  await expect(page).toHaveURL(/\/contact\?topic=growth-check/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(/without all your figures/i);
+  await expect(page.getByRole("heading", { name: /tell us what you know about your studio/i })).toBeVisible();
+  const form = page.locator("form").first();
+  expect(await form.evaluate((element) => element.checkValidity())).toBe(false);
+});
+
+test("animated homepage components remain rendered in the proposed release", async ({ page }) => {
+  test.skip(!process.env["E2E_BASE_URL"]?.includes("127.0.0.1"), "Validate proposed motion components on PR branch");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  for (const selector of [".cinematic-hero", ".hero-signal-panel", ".signal-ticker", ".signal-observatory"]) {
+    await expect(page.locator(selector).first(), selector).toBeAttached();
+  }
+  const width = await page.evaluate(() => ({ content: document.documentElement.scrollWidth, viewport: innerWidth }));
+  expect(width.content).toBeLessThanOrEqual(width.viewport + 4);
+});
