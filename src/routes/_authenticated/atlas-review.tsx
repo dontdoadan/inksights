@@ -58,7 +58,7 @@ function AtlasReview(){
   finally{setBusy(false);}
  }
  return <main className="min-h-screen bg-[#071520] text-white">
- <header className="border-b border-white/10 bg-[#0B2030]"><div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5"><a href="/"><Logo/></a><a className="flex gap-2 text-sm text-[#5BE7F2]" href="/atlas"><ArrowLeft size={17}/>Studio workspace</a></div></header>
+ <header className="border-b border-white/10 bg-[#0B2030]"><div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5"><a href="/"><Logo/></a><div className="flex items-center gap-4"><a className="flex gap-2 text-sm text-[#5BE7F2]" href="/atlas-publication">Venue publication</a><a className="flex gap-2 text-sm text-[#5BE7F2]" href="/atlas"><ArrowLeft size={17}/>Studio workspace</a></div></div></header>
  <div className="mx-auto max-w-6xl space-y-8 px-5 py-12">
   <section><p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[.17em] text-[#5BE7F2]"><ShieldCheck size={16}/>Restricted administrator review</p><h1 className="font-display text-4xl font-bold">Studio ownership claims</h1><p className="mt-4 max-w-3xl text-sm leading-relaxed text-[#A9C4CE]">Claiming a studio does not establish ownership. Inspect the evidence, independently verify the trading business and the applicant's authority, then make a recorded decision. Approval grants studio membership but does not publish a map location.</p></section>
   {notice?<p role="status" className="rounded-xl border border-[#5BE7F2]/40 bg-[#103946] p-4 text-sm">{notice}</p>:null}
