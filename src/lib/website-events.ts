@@ -31,7 +31,7 @@ function sessionId() {
 function classifySearchReferrer(hostname: string | null) {
   if (!hostname) return null;
   const host = hostname.toLowerCase();
-  if (host === "google.com" || host.endsWith(".google.com")) return "google";
+  if (host === "google.com" || host.endsWith(".google.com") || host === "google.co.uk" || host.endsWith(".google.co.uk")) return "google";
   if (host === "bing.com" || host.endsWith(".bing.com")) return "bing";
   if (host === "duckduckgo.com" || host.endsWith(".duckduckgo.com")) return "duckduckgo";
   if (host === "search.yahoo.com" || host.endsWith(".search.yahoo.com")) return "yahoo";
