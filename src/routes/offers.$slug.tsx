@@ -354,6 +354,7 @@ function CheckoutButton({
         try {
           const { url } = await startCheckout({ data: { slug: offer.slug, leadId, auditId } });
           if (url) {
+            trackWebsiteEvent("checkout_started", { offer: offer.slug, checkout_method: "created_session" });
             window.location.href = url;
             return;
           }
