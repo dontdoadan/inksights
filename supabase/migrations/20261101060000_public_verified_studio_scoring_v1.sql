@@ -147,6 +147,39 @@ create table if not exists public.studio_scoring_metric_assessments (
   check (review_status <> 'accepted' or benchmark_state in ('EMPIRICAL','PUBLISHED_RUBRIC')),
   check (review_status <> 'accepted' or nullif(benchmark_ref,'') is not null)
 );
+-- Enforce evidence and score-rule ownership inside the database, not only in API code.
+create or replace function public.validate_studio_scoring_assessment_v1()
+returns trigger language plpgsql security invoker set search_path = ''
+as $
+declare
+  v_tier text;
+begin
+  select m.tier into v_tier
+  from public.studio_scoring_metric_rules r
+  join public.studio_scoring_models m on m.id = r.model_id
+  where r.id = new.rule_id and r.active;
+  if v_tier is null or v_tier <> new.source_tier then
+    raise exception 'scoring model tier mismatch or inactive rule';
+  end if;
+  if new.metric_value_id is not null
+     and not exists(select 1 from public.intelligence_metric_values v
+                    where v.id = new.metric_value_id and v.studio_id = new.studio_id) then
+    raise exception 'metric evidence must belong to the canonical studio';
+  end if;
+  if new.evidence_id is not null
+     and not exists(select 1 from public.intelligence_evidence e
+                    where e.id = new.evidence_id and e.studio_id = new.studio_id) then
+    raise exception 'source evidence must belong to the canonical studio';
+  end if;
+  return new;
+end;
+$;
+revoke all on function public.validate_studio_scoring_assessment_v1()
+  from public, anon, authenticated;
+create trigger trg_validate_studio_scoring_assessment_v1
+  before insert or update on public.studio_scoring_metric_assessments
+  for each row execute function public.validate_studio_scoring_assessment_v1();
+
 create index if not exists studio_scoring_assessments_latest_idx
   on public.studio_scoring_metric_assessments(studio_id, rule_id, observed_at desc, created_at desc);
 
@@ -206,6 +239,9 @@ begin
   where model_key = p_model_key and status = 'active'
   order by version desc limit 1;
   if not found then raise exception 'no active scoring model %',p_model_key; end if;
+  if (select sum(dimension_weight) from public.studio_scoring_dimensions where model_id = v_model.id) <> 100 then
+    raise exception 'scoring dimension weights must total 100';
+  end if;
 
   with rules as (
     select r.id, r.metric_weight, r.dimension_key, r.scoring_method,
