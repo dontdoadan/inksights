@@ -221,13 +221,38 @@ create table if not exists public.studio_profile_answer_history (
 create index if not exists studio_profile_answer_history_studio_idx
   on public.studio_profile_answer_history(studio_id,field_key,recorded_at desc);
 
+-- First-party monthly metric definitions are stored in the existing versioned
+-- intelligence dictionary, not a duplicate score-specific metric table.
+insert into public.intelligence_metric_definitions
+  (key,name,description,unit,classification,version,status)
+values
+  ('monthly_qualified_enquiries','Monthly qualified enquiries','Studio-reported qualified enquiries received during the measurement month.','enquiries','observed',1,'active'),
+  ('monthly_paid_bookings_from_month_enquiries','Converted monthly enquiry cohort','Qualified enquiries from the same cohort that became paid bookings.','bookings','observed',1,'active'),
+  ('monthly_sellable_artist_hours','Available tattoo artist hours','Studio-reported sellable hours for the specified month.','hours','observed',1,'active'),
+  ('monthly_billable_artist_hours','Billable tattoo artist hours','Studio-reported completed paid tattoo hours for the specified month.','hours','observed',1,'active'),
+  ('monthly_tattoo_revenue_gbp','Tattoo revenue by month','Studio-reported gross tattoo service revenue, excluding tips, during the month.','GBP','observed',1,'active')
+on conflict (key,version) do nothing;
+
+
 -- Private trigger executes with owner privileges only to preserve tamper-resistant change history.
 create schema if not exists inksights_internal;
 revoke all on schema inksights_internal from public, anon, authenticated;
 create or replace function inksights_internal.audit_studio_profile_answer_v1()
 returns trigger language plpgsql security definer set search_path = ''
-as $$
+as $
+declare
+  v_history_id bigint;
+  v_metric_id uuid;
+  v_metric_unit text;
 begin
+  if tg_op = 'UPDATE'
+    and old.value_json is not distinct from new.value_json
+    and old.measurement_start is not distinct from new.measurement_start
+    and old.measurement_end is not distinct from new.measurement_end
+    and old.verification_status is not distinct from new.verification_status
+    and old.source_type is not distinct from new.source_type then
+    return new;
+  end if;
   insert into public.studio_profile_answer_history
     (studio_id, field_key, previous_value, previous_period_start, previous_period_end,
      new_value, measurement_start, measurement_end, source_type,
@@ -240,10 +265,33 @@ begin
      case when tg_op = 'UPDATE' then old.measurement_end else null end,
      new.value_json, new.measurement_start, new.measurement_end,
      new.source_type, new.verification_status, new.source_ref, new.source_submission_id,
-     new.data_notice_version, new.notice_acknowledged_at);
+     new.data_notice_version, new.notice_acknowledged_at)
+  returning id into v_history_id;
+  -- Preserve every first-party monthly answer as an unverified metric event
+  -- with its own source, measurement period and originating history ID.
+  -- No score assessment is generated here.
+  if new.source_type = 'studio_reported' then
+    select id,unit into v_metric_id,v_metric_unit
+    from public.intelligence_metric_definitions
+    where key = new.field_key and version = 1 and status = 'active';
+    if v_metric_id is null then
+      raise exception 'unregistered studio metric definition';
+    end if;
+    insert into public.intelligence_metric_values
+      (studio_id,metric_definition_id,value_numeric,unit,classification,
+       confidence,observed_at,source_type,source_ref,lineage)
+    values
+      (new.studio_id,v_metric_id,(new.value_json #>> '{}')::numeric,
+       v_metric_unit,'observed',null,new.answered_at,
+       'studio_reported_profile','profile-answer-history:'||v_history_id::text,
+       jsonb_build_object('verification_status','unverified',
+         'origin','studio_profile_answers','field_key',new.field_key,
+         'period_start',new.measurement_start,'period_end',new.measurement_end,
+         'history_id',v_history_id,'data_notice_version',new.data_notice_version));
+  end if;
   return new;
 end;
-$$;
+$;
 revoke all on function inksights_internal.audit_studio_profile_answer_v1() from public, anon, authenticated;
 drop trigger if exists trg_audit_studio_profile_answer_v1 on public.studio_profile_answers;
 create trigger trg_audit_studio_profile_answer_v1
