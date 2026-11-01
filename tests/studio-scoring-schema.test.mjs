@@ -38,6 +38,8 @@ test("self-reports are unverified and previous periods are captured", () => {
   assert.match(sql, /inksights_internal\.audit_studio_profile_answer_v1/);
   assert.match(sql, /previous_period_start/);
   assert.match(sql, /old\.measurement_end/);
+  assert.match(sql, /data_notice_version = '2026-11-profile-v1'/);
+  assert.match(sql, /notice_acknowledged_at is not null/);
 });
 
 test("scoring is evidence gated and cannot manufacture a score from missing data", () => {
