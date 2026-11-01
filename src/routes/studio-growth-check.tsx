@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 
 import { getConsentedLeadAcquisitionContext, trackWebsiteEvent } from "@/lib/website-events";
+import { readConsent } from "@/lib/consent";
 
 const AUDIT_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/revenue-audit-v1";
 
@@ -71,6 +72,7 @@ function RevenueAuditPage() {
       no_show_rate: Number(form.get("no_show_rate") || 0),
       primary_problem: String(form.get("primary_problem") || ""),
       marketing_consent: form.get("marketing_consent") === "on",
+      analytics_consent: readConsent()?.analytics === true,
       consent: form.get("consent") === "on",
       website_honeypot: String(form.get("website_honeypot") || ""),
       source_context: {
