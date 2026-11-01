@@ -6,7 +6,7 @@ const topic: StudioTopic = {
   title: "Tattoo Studio Booking Systems: Reduce Booking Friction & No-Shows | INKSIGHTS",
   description: "Getting tattoo enquiries but not confirmed bookings? Find where your studio loses prospects between first message, quote, deposit and attended session.",
   eyebrow: "Tattoo studio booking guide · UK",
-  updated: "2026-10-08",
+  updated: "2026-11-01",
   intro: <>Tattoo bookings are projects, not just appointments. A useful booking system needs to capture enough information to qualify the request, protect artist time, collect the right deposit, manage exceptions and make the client's next step obvious.</>,
   sections: [
     {
