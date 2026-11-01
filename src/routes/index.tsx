@@ -21,10 +21,10 @@ export const Route = createFileRoute("/")({
 });
 
 const signals = [
-  [Search, "Visibility", "Find where local search, Maps and public profiles are failing to put the right studio in front of the right clients."],
-  [BarChart3, "Conversion", "Measure what happens between enquiry and booking instead of assuming more traffic is the answer."],
-  [Target, "Capacity", "See whether artist time, diary gaps, cancellations or pricing are restricting revenue output."],
-  [Users, "Retention", "Understand repeat projects, rebooking, referrals and client reactivation as measurable commercial levers."],
+  [Search, "Being found online", "Check whether people can easily find your studio on Google, Maps and other places they search."],
+  [BarChart3, "Turning enquiries into bookings", "See how many people enquire, how many book and where potential clients stop."],
+  [Target, "Filling available artist time", "Understand empty diary slots, cancellations and how much working time is booked."],
+  [Users, "Getting clients to return", "Look at repeat appointments, ongoing projects and people who book again."],
 ] as const;
 
 function Index() {
@@ -72,17 +72,17 @@ function Index() {
                   <Sparkles className="h-4 w-4" /> FOR UK TATTOO STUDIO OWNERS
                 </div>
                 <h1 className="mt-7 max-w-5xl text-balance font-display text-4xl font-bold leading-tight tracking-tight text-ice sm:text-5xl md:text-6xl xl:text-7xl">
-                  Know what is holding <span className="text-mint">your studio back.</span>
+                  Find what's holding <span className="text-mint">your tattoo studio back.</span>
                 </h1>
                 <p className="mt-7 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-                  Turn scattered enquiries, diary gaps and uncertain numbers into a clear next step. INKSIGHTS helps UK tattoo studios find the problem worth fixing first — and measure what changes.
+                  Understand why enquiries may not become bookings, where artist time goes unused, and which improvements are worth testing first. INKSIGHTS helps UK studio owners decide what to do next, using evidence rather than guesses.
                 </p>
                 <div className="mt-9 flex flex-wrap gap-3">
                   <PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton>
                   <SecondaryButton href="/offers/studio-intelligence-audit">Explore the £395 audit</SecondaryButton>
                 </div>
                 <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                  Built for established UK studios with 3+ artists. Start free with your own figures; choose paid help only when the next step is clear.
+                  For UK studios with 3+ artists. The free check uses your figures; you can also contact us if you do not have them ready. No purchase required.
                 </p>
               </div>
             </Reveal>
@@ -100,7 +100,7 @@ function Index() {
 
       <section className="brand-dark border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-24">
-          <Reveal><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">What INKSIGHTS measures</p><h2 className="mt-4 max-w-4xl text-balance font-display text-4xl font-black text-ice md:text-6xl">Your revenue is an output. We look at the system creating it.</h2></Reveal>
+          <Reveal><p className="text-xs font-bold uppercase tracking-[.18em] text-mint">What INKSIGHTS checks</p><h2 className="mt-4 max-w-4xl text-balance font-display text-4xl font-black text-ice md:text-6xl">More enquiries do not always mean more bookings. Find out where to focus.</h2></Reveal>
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {signals.map(([Icon, title, text], i) => <Reveal key={title} delay={i * 70} className="h-full"><TiltCard className="h-full"><Card className="h-full bg-ink-deep p-6"><Icon className="h-7 w-7 text-mint" /><h3 className="mt-6 font-display text-xl font-black text-ice">{title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p></Card></TiltCard></Reveal>)}
           </div>

@@ -343,9 +343,10 @@ function CheckoutButton({
       disabled={isLoading}
       onClick={async () => {
         setIsLoading(true);
-        trackWebsiteEvent("checkout_started", { offer: offer.slug });
+        trackWebsiteEvent("cta_clicked", { cta: "purchase_checkout", offer: offer.slug });
 
         if (offer.checkoutUrl) {
+          trackWebsiteEvent("checkout_started", { offer: offer.slug, checkout_method: "published_link" });
           window.location.href = offer.checkoutUrl;
           return;
         }
@@ -353,6 +354,7 @@ function CheckoutButton({
         try {
           const { url } = await startCheckout({ data: { slug: offer.slug, leadId, auditId } });
           if (url) {
+            trackWebsiteEvent("checkout_started", { offer: offer.slug, checkout_method: "created_session" });
             window.location.href = url;
             return;
           }
