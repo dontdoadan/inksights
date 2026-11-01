@@ -48,7 +48,11 @@ create table if not exists public.studio_profile_answer_history (
   studio_id uuid not null references public.visibility_studios(id) on delete cascade,
   field_key text not null,
   previous_value jsonb,
+  previous_period_start date,
+  previous_period_end date,
   new_value jsonb not null,
+  measurement_start date,
+  measurement_end date,
   source_type text not null,
   verification_status text not null,
   source_ref text,
@@ -66,11 +70,16 @@ returns trigger language plpgsql security definer set search_path = ''
 as $$
 begin
   insert into public.studio_profile_answer_history
-    (studio_id, field_key, previous_value, new_value, source_type,
+    (studio_id, field_key, previous_value, previous_period_start, previous_period_end,
+     new_value, measurement_start, measurement_end, source_type,
      verification_status, source_ref, source_submission_id)
   values
-    (new.studio_id, new.field_key, case when tg_op = 'UPDATE' then old.value_json else null end,
-     new.value_json, new.source_type, new.verification_status, new.source_ref, new.source_submission_id);
+    (new.studio_id, new.field_key,
+     case when tg_op = 'UPDATE' then old.value_json else null end,
+     case when tg_op = 'UPDATE' then old.measurement_start else null end,
+     case when tg_op = 'UPDATE' then old.measurement_end else null end,
+     new.value_json, new.measurement_start, new.measurement_end,
+     new.source_type, new.verification_status, new.source_ref, new.source_submission_id);
   return new;
 end;
 $$;
