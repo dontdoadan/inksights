@@ -18,7 +18,7 @@ const FALLBACK_LABELS = {
 };
 const QUESTIONS = [
   { key: "monthly_qualified_enquiries", label: "Qualified enquiries", hint: "Only genuine client enquiries", step: "1", max: 100000 },
-  { key: "monthly_paid_bookings_from_month_enquiries_from_month_enquiries", label: "Converted enquiries", hint: "Those same enquiries that resulted in a paid booking", step: "1", max: 100000 },
+  { key: "monthly_paid_bookings_from_month_enquiries", label: "Converted enquiries", hint: "Those same enquiries that resulted in a paid booking", step: "1", max: 100000 },
   { key: "monthly_sellable_artist_hours", label: "Available artist hours", hint: "Total hours offered for paid tattoo work", step: "0.5", max: 100000 },
   { key: "monthly_billable_artist_hours", label: "Booked billable hours", hint: "Actual paid tattooing time", step: "0.5", max: 100000 },
   { key: "monthly_tattoo_revenue_gbp", label: "Tattoo revenue (£)", hint: "Gross tattoo service revenue, not including tips", step: "0.01", max: 100000000 },
@@ -115,7 +115,7 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
       setSaveNotice("Enter non-negative figures within the stated ranges."); return;
     }
     const get = (key: FieldKey) => normalized.find((item) => item.key === key)?.value;
-    if (get("monthly_qualified_enquiries") !== undefined && get("monthly_paid_bookings_from_month_enquiries_from_month_enquiries") !== undefined &&
+    if (get("monthly_qualified_enquiries") !== undefined && get("monthly_paid_bookings_from_month_enquiries") !== undefined &&
       get("monthly_paid_bookings_from_month_enquiries")! > get("monthly_qualified_enquiries")!) {
       setSaveNotice("Converted enquiries cannot exceed their original qualified enquiry cohort."); return;
     }
