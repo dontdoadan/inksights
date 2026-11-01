@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, Clipboard, RotateCcw, ShieldCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { StudioSubmissionClaim } from "@/components/studio-intelligence/StudioSubmissionClaim";
 import { JsonLd, PageHero, PublicShell } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/tattoo-studio-visibility-scorecard";
@@ -263,6 +264,7 @@ function TattooStudioVisibilityScorecard() {
             </button>
             {submitError && <p role="alert" className="mt-3 text-sm text-amber-300">{submitError}</p>}
             {submissionId && <p role="status" className="mt-3 text-sm text-mint">Saved successfully. Your score is displayed above.</p>}
+                {submissionId && <StudioSubmissionClaim submissionId={submissionId} submissionKey={submissionKey.current} />}
             {handoff && <a href={handoff} className="mt-4 flex w-full justify-center rounded-full border border-mint px-5 py-3.5 text-center font-bold text-mint hover:bg-ink">
               Build my action plan →
             </a>}
