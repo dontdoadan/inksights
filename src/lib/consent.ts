@@ -1,3 +1,5 @@
+import { safeAnalyticsPath } from "./analytics-path";
+
 export type InksightConsent = {
   essential: true;
   analytics: boolean;
@@ -142,10 +144,12 @@ export function loadGoogleAnalytics() {
 export function trackGooglePageView(path: string) {
   if (typeof window === "undefined" || !readConsent()?.analytics) return;
   loadGoogleAnalytics();
+  const safePath = safeAnalyticsPath(path);
   (window as GoogleWindow).gtag?.("event", "page_view", {
     page_title: document.title,
-    page_location: window.location.href,
-    page_path: path,
+    // Never send checkout identifiers, invitation tokens, query parameters or fragments to GA4.
+    page_location: new URL(safePath, window.location.origin).toString(),
+    page_path: safePath,
   });
 }
 
