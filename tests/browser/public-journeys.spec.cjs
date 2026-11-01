@@ -72,7 +72,7 @@ test("proposed Growth Check provides a shorter enquiry route without fabricated 
 test("animated homepage components remain rendered in the proposed release", async ({ page }) => {
   test.skip(!process.env["E2E_BASE_URL"]?.includes("127.0.0.1"), "Validate proposed motion components on PR branch");
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  for (const selector of [".cinematic-hero", ".hero-signal-panel", ".signal-ticker", ".signal-observatory"]) {
+  for (const selector of [".cinematic-hero", ".hero-signal-panel", ".signal-ticker", ".signal-observatory-shell"]) {
     await expect(page.locator(selector).first(), selector).toBeAttached();
   }
   const width = await page.evaluate(() => ({ content: document.documentElement.scrollWidth, viewport: innerWidth }));
