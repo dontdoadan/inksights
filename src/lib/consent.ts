@@ -144,7 +144,7 @@ export function trackGooglePageView(path: string) {
   loadGoogleAnalytics();
   (window as GoogleWindow).gtag?.("event", "page_view", {
     page_title: document.title,
-    page_location: window.location.href,
+    page_location: new URL(path.split("?")[0], window.location.origin).href,
     page_path: path,
   });
 }
