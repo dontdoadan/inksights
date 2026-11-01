@@ -40,7 +40,34 @@ create table if not exists public.studio_profile_answers (
   check (measurement_end is null or measurement_start is not null),
   check (measurement_end is null or measurement_end >= measurement_start),
   check (jsonb_typeof(value_json) in ('string','number','boolean','object','array')),
-  check (octet_length(value_json::text) <= 8192)
+  check (octet_length(value_json::text) <= 8192),
+  -- Client validation is never sufficient: reject invalid self-reported
+  -- quantities even when the REST API is called outside the official form.
+  constraint studio_profile_self_report_numeric_check check (
+    source_type <> 'studio_reported' or (
+      jsonb_typeof(value_json) = 'number'
+      and field_key in (
+        'monthly_qualified_enquiries',
+        'monthly_paid_bookings_from_month_enquiries',
+        'monthly_sellable_artist_hours',
+        'monthly_billable_artist_hours',
+        'monthly_tattoo_revenue_gbp'
+      )
+      and (value_json #>> '{}')::numeric between 0 and
+        case when field_key='monthly_tattoo_revenue_gbp' then 100000000 else 100000 end
+      and (
+        (field_key in ('monthly_qualified_enquiries','monthly_paid_bookings_from_month_enquiries')
+          and mod((value_json #>> '{}')::numeric, 1) = 0)
+        or (field_key in ('monthly_sellable_artist_hours','monthly_billable_artist_hours')
+          and mod((value_json #>> '{}')::numeric * 2, 1) = 0)
+        or (field_key = 'monthly_tattoo_revenue_gbp'
+          and mod((value_json #>> '{}')::numeric * 100, 1) = 0)
+      )
+      and measurement_start is not null
+      and measurement_end is not null
+      and measurement_end >= measurement_start
+    )
+  )
 );
 comment on table public.studio_profile_answers is
   'Current canonical answers. Server-side authorised upserts enable progressive prefill; never infer authenticated ownership from a submitted studio name.';
