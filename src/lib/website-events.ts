@@ -43,10 +43,10 @@ function classifySearchReferrer(hostname: string | null) {
 function classifyAssistantReferrer(hostname: string | null) {
   if (!hostname) return null;
   const host = hostname.toLowerCase();
-  if (host === "chatgpt.com" || host === "chat.openai.com") return "chatgpt";
+  if (host === "chatgpt.com" || host === "www.chatgpt.com" || host === "chat.openai.com") return "chatgpt";
   if (host === "www.perplexity.ai" || host === "perplexity.ai") return "perplexity";
   if (host === "gemini.google.com") return "gemini";
-  if (host === "claude.ai") return "claude";
+  if (host === "claude.ai" || host === "www.claude.ai") return "claude";
   if (host === "copilot.microsoft.com") return "copilot";
   if (host === "poe.com") return "poe";
   if (host === "you.com" || host === "www.you.com") return "you";
@@ -60,7 +60,7 @@ function classifyAcquisitionChannel(
   params: URLSearchParams,
 ) {
   const medium = (params.get("utm_medium") || "").toLowerCase();
-  const hasAdClickId = ["gclid", "gbraid", "wbraid", "msclkid", "fbclid"].some((key) => params.has(key));
+  const hasAdClickId = ["gclid", "gbraid", "wbraid", "msclkid"].some((key) => params.has(key));
   const paidMedium = /^(cpc|ppc|paid|paid_search|paid_social|display|retargeting)$/.test(medium);
   if (hasAdClickId || paidMedium) return "paid";
   if (aiAssistant) return "ai_assistant_referral";
