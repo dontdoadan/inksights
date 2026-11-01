@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveSupabaseConfig } from "@/integrations/supabase/config.mjs";
 
 type ScoringModel = { id: string; model_key: "public_presence" | "verified_commercial"; name: string; version: number };
 type ScoreSnapshot = {
@@ -17,7 +18,7 @@ const FALLBACK_LABELS = {
 };
 const QUESTIONS = [
   { key: "monthly_qualified_enquiries", label: "Qualified enquiries", hint: "Only genuine client enquiries", step: "1", max: 100000 },
-  { key: "monthly_paid_bookings_from_month_enquiries", label: "Converted enquiries", hint: "Those same enquiries that resulted in a paid booking", step: "1", max: 100000 },
+  { key: "monthly_paid_bookings_from_month_enquiries_from_month_enquiries", label: "Converted enquiries", hint: "Those same enquiries that resulted in a paid booking", step: "1", max: 100000 },
   { key: "monthly_sellable_artist_hours", label: "Available artist hours", hint: "Total hours offered for paid tattoo work", step: "0.5", max: 100000 },
   { key: "monthly_billable_artist_hours", label: "Booked billable hours", hint: "Actual paid tattooing time", step: "0.5", max: 100000 },
   { key: "monthly_tattoo_revenue_gbp", label: "Tattoo revenue (£)", hint: "Gross tattoo service revenue, not including tips", step: "0.01", max: 100000000 },
@@ -25,9 +26,15 @@ const QUESTIONS = [
 type FieldKey = (typeof QUESTIONS)[number]["key"];
 type InputValues = Partial<Record<FieldKey, string>>;
 
+function publicConfig() {
+  const processEnv = typeof process !== "undefined" ? process.env : undefined;
+  return resolveSupabaseConfig(import.meta.env, processEnv);
+}
+
 async function tenantRead<T>(table: string, params: Record<string, string>, token: string): Promise<T[]> {
-  const result = await fetch(`${supabase.supabaseUrl}/rest/v1/${table}?${new URLSearchParams(params)}`, {
-    headers: { apikey: supabase.supabaseKey, Authorization: `Bearer ${token}`, Accept: "application/json" },
+  const { url, publishableKey } = publicConfig();
+  const result = await fetch(`${url}/rest/v1/${table}?${new URLSearchParams(params)}`, {
+    headers: { apikey: publishableKey, Authorization: `Bearer ${token}`, Accept: "application/json" },
     cache: "no-store",
   });
   if (!result.ok) throw new Error(`Scoring profile read failed (${result.status}).`);
@@ -108,8 +115,8 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
       setSaveNotice("Enter non-negative figures within the stated ranges."); return;
     }
     const get = (key: FieldKey) => normalized.find((item) => item.key === key)?.value;
-    if (get("monthly_qualified_enquiries") !== undefined && get("monthly_paid_bookings_from_month_enquiries") !== undefined &&
-      get("monthly_paid_bookings")! > get("monthly_qualified_enquiries")!) {
+    if (get("monthly_qualified_enquiries") !== undefined && get("monthly_paid_bookings_from_month_enquiries_from_month_enquiries") !== undefined &&
+      get("monthly_paid_bookings_from_month_enquiries")! > get("monthly_qualified_enquiries")!) {
       setSaveNotice("Converted enquiries cannot exceed their original qualified enquiry cohort."); return;
     }
     if (get("monthly_sellable_artist_hours") !== undefined && get("monthly_billable_artist_hours") !== undefined &&
@@ -140,10 +147,11 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
         answered_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }));
-      const response = await fetch(`${supabase.supabaseUrl}/rest/v1/studio_profile_answers?on_conflict=studio_id,field_key`, {
+      const { url, publishableKey } = publicConfig();
+      const response = await fetch(`${url}/rest/v1/studio_profile_answers?on_conflict=studio_id,field_key`, {
         method: "POST",
         headers: {
-          apikey: supabase.supabaseKey, Authorization: `Bearer ${session.access_token}`,
+          apikey: publishableKey, Authorization: `Bearer ${session.access_token}`,
           "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal",
         },
         body: JSON.stringify(rows),
