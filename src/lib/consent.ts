@@ -139,13 +139,25 @@ export function loadGoogleAnalytics() {
   document.head.appendChild(script);
 }
 
+function safePagePath(path: string) {
+  const pathname = path.split("?")[0].split("#")[0] || "/";
+  const protectedPrefixes = ["report", "reports", "invite", "invitations", "prospect", "founding-studio"];
+  if (protectedPrefixes.some((prefix) => pathname === `/${prefix}` || pathname.startsWith(`/${prefix}/`))) {
+    return "/private-flow";
+  }
+  return pathname.split("/").map((part) =>
+    part.length > 48 || /^[0-9a-f-]{32,}$/i.test(part) ? ":id" : part,
+  ).join("/");
+}
+
 export function trackGooglePageView(path: string) {
   if (typeof window === "undefined" || !readConsent()?.analytics) return;
   loadGoogleAnalytics();
+  const safePath = safePagePath(path);
   (window as GoogleWindow).gtag?.("event", "page_view", {
     page_title: document.title,
-    page_location: new URL(path.split("?")[0], window.location.origin).href,
-    page_path: path,
+    page_location: new URL(safePath, window.location.origin).href,
+    page_path: safePath,
   });
 }
 
