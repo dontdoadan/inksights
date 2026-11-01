@@ -20,6 +20,49 @@ alter table public.public_tool_submissions
 create index if not exists public_tool_submissions_canonical_idx
   on public.public_tool_submissions(canonical_studio_id, submitted_at desc);
 
+-- A reviewed identity link is the only basis for bringing existing anonymous
+-- tool submissions onto the canonical studio ID. This is deliberately NOT
+-- triggered by public intake, website text, matching names or email addresses.
+create or replace function public.reconcile_reviewed_studio_submissions_v1(
+  p_legacy_studio_id uuid
+) returns integer
+language plpgsql security invoker set search_path = ''
+as $
+declare
+  v_studio_id uuid;
+  v_conflicts integer;
+  v_count integer;
+begin
+  select canonical_studio_id into v_studio_id
+  from public.studio_legacy_identity_links
+  where legacy_studio_id = p_legacy_studio_id
+    and jsonb_typeof(review_evidence) = 'object'
+    and review_evidence <> '{}'::jsonb;
+  if v_studio_id is null then
+    raise exception 'no reviewed identity link with supporting evidence';
+  end if;
+
+  select count(*) into v_conflicts
+  from public.public_tool_submissions
+  where studio_id = p_legacy_studio_id
+    and canonical_studio_id is not null
+    and canonical_studio_id <> v_studio_id;
+  if v_conflicts > 0 then
+    raise exception 'conflicting canonical links require manual review: % rows',v_conflicts;
+  end if;
+
+  update public.public_tool_submissions
+  set canonical_studio_id = v_studio_id
+  where studio_id = p_legacy_studio_id and canonical_studio_id is null;
+  get diagnostics v_count = row_count;
+  return v_count;
+end;
+$;
+revoke all on function public.reconcile_reviewed_studio_submissions_v1(uuid)
+  from public, anon, authenticated;
+grant execute on function public.reconcile_reviewed_studio_submissions_v1(uuid)
+  to service_role;
+
 create table if not exists public.studio_profile_answers (
   studio_id uuid not null references public.visibility_studios(id) on delete cascade,
   field_key text not null check (field_key ~ '^[a-z][a-z0-9_]{2,79}$'),
