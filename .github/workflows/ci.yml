@@ -98,7 +98,7 @@ jobs:
         run: node --test tests/studio-scoring-schema.test.mjs
 
       - name: Typecheck authenticated studio tool claim function
-        run: deno check supabase/functions/studio-claim-tool-submission/index.ts
+        run: deno check --node-modules-dir=auto supabase/functions/studio-claim-tool-submission/index.ts
 
       - name: Test visibility scorecard validation and idempotency
         run: node --test tests/visibility-scorecard-policy.test.mjs
