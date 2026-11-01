@@ -94,6 +94,9 @@ jobs:
       - name: Test public pricing validation and idempotency policy
         run: node --test tests/pricing-submission-policy.test.mjs
 
+      - name: Test canonical scoring schema guardrails
+        run: node --test tests/studio-scoring-schema.test.mjs
+
       - name: Test visibility scorecard validation and idempotency
         run: node --test tests/visibility-scorecard-policy.test.mjs
 
