@@ -27,7 +27,7 @@ create or replace function public.reconcile_reviewed_studio_submissions_v1(
   p_legacy_studio_id uuid
 ) returns integer
 language plpgsql security invoker set search_path = ''
-as $
+as $$
 declare
   v_studio_id uuid;
   v_conflicts integer;
@@ -57,7 +57,7 @@ begin
   get diagnostics v_count = row_count;
   return v_count;
 end;
-$;
+$$;
 revoke all on function public.reconcile_reviewed_studio_submissions_v1(uuid)
   from public, anon, authenticated;
 grant execute on function public.reconcile_reviewed_studio_submissions_v1(uuid)
@@ -77,7 +77,7 @@ create or replace function public.claim_public_tool_submission_v1(
   p_submission_id uuid,
   p_submission_key uuid
 ) returns jsonb language plpgsql security invoker set search_path = ''
-as $
+as $$
 declare
   v_record public.public_tool_submissions%rowtype;
   v_evidence_id uuid;
@@ -142,7 +142,7 @@ begin
     'verification_status','unverified'
   );
 end;
-$;
+$$;
 revoke all on function public.claim_public_tool_submission_v1(uuid,uuid,uuid,uuid)
   from public,anon,authenticated;
 grant execute on function public.claim_public_tool_submission_v1(uuid,uuid,uuid,uuid)
@@ -239,7 +239,7 @@ create schema if not exists inksights_internal;
 revoke all on schema inksights_internal from public, anon, authenticated;
 create or replace function inksights_internal.audit_studio_profile_answer_v1()
 returns trigger language plpgsql security definer set search_path = ''
-as $
+as $$
 declare
   v_history_id bigint;
   v_metric_id uuid;
@@ -291,7 +291,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 revoke all on function inksights_internal.audit_studio_profile_answer_v1() from public, anon, authenticated;
 drop trigger if exists trg_audit_studio_profile_answer_v1 on public.studio_profile_answers;
 create trigger trg_audit_studio_profile_answer_v1
@@ -359,7 +359,7 @@ create table if not exists public.studio_scoring_metric_assessments (
 -- Enforce evidence and score-rule ownership inside the database, not only in API code.
 create or replace function public.validate_studio_scoring_assessment_v1()
 returns trigger language plpgsql security invoker set search_path = ''
-as $
+as $$
 declare
   v_tier text;
 begin
@@ -382,7 +382,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 revoke all on function public.validate_studio_scoring_assessment_v1()
   from public, anon, authenticated;
 create trigger trg_validate_studio_scoring_assessment_v1
