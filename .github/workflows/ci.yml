@@ -108,3 +108,37 @@ jobs:
 
       - name: Test Edge Function security boundaries
         run: deno test --allow-net=false supabase/functions/studio-visibility-report-v2/security_test.ts
+
+  scoring-sql-acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: scoring_qa_only
+          POSTGRES_DB: scoring_qa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d scoring_qa"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 6
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: scoring_qa_only
+      PGDATABASE: scoring_qa
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Prepare synthetic pre-existing schema
+        run: psql -v ON_ERROR_STOP=1 -f tests/studio-scoring-postgres-fixture.sql
+      - name: Execute the new scoring migration in disposable PostgreSQL 17
+        run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261101060000_public_verified_studio_scoring_v1.sql
+      - name: Verify permissions, missing-evidence scores and cross-studio isolation
+        run: psql -v ON_ERROR_STOP=1 -f tests/studio-scoring-staging-acceptance.sql
+
