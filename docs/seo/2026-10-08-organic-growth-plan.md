@@ -157,3 +157,73 @@ Guardrail metrics:
 The objective is not “publish more”. The objective is:
 
 **Find the highest-value search demand among the ICP → own the relevant intent with the strongest evidence page → connect that page into the commercial funnel → measure the outcome → compound the pages and external authority that prove they work.**
+
+
+## Update — 1 November 2026: pain-led organic acquisition, first release
+
+**This is an addendum to the existing strategy, not a second SEO roadmap.** Objective: acquire qualified UK multi-artist tattoo-studio owners via the actual operating problems they search for, convert through existing tools and the £395 Studio Intelligence Audit, and measure the outcome. The first release enriches existing Growth and Booking pages without creating new routes or editing the route tree.
+
+### Evidence boundaries
+
+- **Observed — existing INKSIGHTS site:** \`/tattoo-studio-growth\`, \`/tattoo-studio-booking\`, \`/tattoo-studio-revenue\`, \`/tattoo-studio-seo\`, \`/tattoo-studio-marketing\`, \`/tattoo-studio-client-retention\`, \`/tattoo-studio-management\`, \`/pricing-benchmark\`, \`/growth-model\`, \`/studio-growth-check\` and the £395 audit route exist; they are not new content opportunities by default.
+- **Observed — 31 October first-party events:** 277 consented events / 91 recorded session IDs, 263 page views, 6 checkout starts, 2 errors, 2 diagnostic completions; only 14 event records explicitly contain \`utm_source=chatgpt.com\` (12 session IDs), with no confirmed genuine AI-assisted conversion. One non-test audit lead had no UTM attribution. \`public.orders\` contained one £1 QA deposit but no verified £395 studio sale; payment truth must be confirmed in Stripe.
+- **Observed — public topical sources (not exact Google rank or volume):** https://millsidecreative.com/blog/more-leads-is-not-the-answer/ ; https://thestacc.com/blog/tattoo-shop-website-cro/ ; https://inkkiln.co.uk/guides/apprenticeships/booking-deposits-and-cancellations ; https://tattoobooking.co/guides/how-to-get-more-tattoo-clients . They demonstrate competing content addressing low booking conversion, client enquiry friction, deposits and diary issues. They do **not** establish search volume, keyword difficulty or lead conversion for INKSIGHTS.
+- **Google guidance:** https://developers.google.com/search/docs/fundamentals/creating-helpful-content and https://developers.google.com/search/docs/fundamentals/ai-optimization-guide . Prioritise experienced, original, specific explanations and evidence; no scaled near-duplicate city or synonym pages, no magical AI markup.
+- **Hypothesis:** pain-specific multi-artist-owner questions will qualify better than consumer-facing queries like \`tattoo price near me\`, \`best tattoo artist\`, or \`tattoo design ideas\`. Validate via GSC query impressions, search result intent, conversions and actual owner interviews.
+
+### Keyword intent map — discovery hypotheses, not proven search volumes
+
+| Priority | Owner's problem / sample search phrasings (validate wording in GSC) | Current canonical owner | Reader's next decision |
+| --- | --- | --- | --- |
+| A | tattoo studio not getting bookings; why is my tattoo studio quiet | \`/tattoo-studio-growth\` | Diagnose shortfall → free Studio Growth Check |
+| A | tattoo enquiries not converting; how to convert tattoo enquiries into bookings | \`/tattoo-studio-booking\` | Measure qualified enquiry → deposit rate |
+| A | tattoo studio booking conversion rate; tattoo studio enquiry follow-up | \`/tattoo-studio-booking\` | Diagnose lead handling → audit |
+| A | tattoo studio pricing benchmark UK; how much should my studio charge | \`/pricing-benchmark\` | Submit pricing → compare reference and demand |
+| A | tattoo studio business audit UK; audit tattoo studio revenue | \`/offers/studio-intelligence-audit\` | Understand outcomes/deliverables → purchase |
+| A | tattoo studio revenue calculator; tattoo studio revenue growth | \`/growth-model\` and supporting \`/tattoo-studio-revenue\` | Model scenario (not promised uplift) → diagnostic |
+| A | tattoo studio not appearing on Google; local SEO for tattoo studio UK | \`/tattoo-studio-seo\` | Practical checks → Visibility Scorecard |
+| B | tattoo studio cancellations and no shows; tattoo studio booking deposit policy | \`/tattoo-studio-booking\` | Protect capacity; verify any legal statements externally |
+| B | tattoo studio profit margin; tattoo studio empty chair costs; artist utilisation rate | \`/tattoo-studio-revenue\` | Separate revenue, utilisation and profit |
+| B | tattoo studio marketing ideas; get more tattoo clients UK | \`/tattoo-studio-marketing\` | Choose channel only after diagnosing conversion |
+| B | tattoo studio Google Business Profile help; tattoo studio SEO UK | \`/tattoo-studio-seo\` | Search presence checklist → scorecard |
+| B | tattoo studio management KPIs; how to manage multi artist tattoo studio | \`/tattoo-studio-management\` | Owner dashboard / audit |
+| B | tattoo studio booking software UK; tattoo studio CRM | \`/tattoo-studio-software\` | Compare workflows; avoid vendor genericity |
+| B | how to get repeat tattoo clients; tattoo client rebooking system | \`/tattoo-studio-client-retention\` | Retention diagnosis |
+| B | London tattoo studio hourly rates 2026; London tattoo studio pricing data | \`/research/greater-london-tattoo-pricing-2026\` | Research → benchmark; qualify consumer intent separately |
+| C | tattoo shop business plan; how to open a tattoo studio; how much does a tattoo shop make | Existing revenue/management only if useful; do NOT create new route without ICP evidence | Mostly early-stage/solo-market leakage |
+| C | best tattoo shop near me; tattoo designs; tattoo cost near me; healing advice | **Exclude from INKSIGHTS B2B SEO targets** | Consumer intent, not studio owners |
+
+**Prioritisation is editorial judgement**, not measured keyword demand or difficulty. A high-intent query with very little volume may still be worth owning because one qualified buyer is valuable, but no traffic or sales outcome is guaranteed.
+
+### First release: answer the pain on existing indexed URLs
+
+1. \`/tattoo-studio-growth\` — explain why empty diaries may stem from demand, deposit conversion, cancellations or unit economics; add 28-day baseline, real diagnostic decisions, and visible modelled-example caveat. Keep canonical URL and title ownership.
+2. \`/tattoo-studio-booking\` — explain qualified enquiry → quote → paid deposit → attended session; add conversion and revenue scenario, clearly modelled, not UK benchmark or guaranteed profit. Keep canonical and link to Studio Growth Check.
+3. Next candidate (separate, scoped change after GSC/QA): strengthen \`/pricing-benchmark\` with dataset provenance, sample limitations, applicable bands and result→audit handoff.
+4. Next candidate: audit purchase page should answer "what is examined, what happens after purchase, what decisions improve, who this is for, what proof exists" directly; no fabricated case studies or projected ROI.
+
+### User journey and decision events
+
+\`Google/AI/partner result (source uncertain until evidenced) → topic guide → appropriate existing tool → first-party saved result → optional contact qualification → HubSpot qualified opportunity → verified Stripe paid £395 checkout → delivery → measured outcomes\`.
+
+Owner-meaningful metrics, by week and 28-day cohort:
+- GSC UK **non-branded impressions, clicks, average position** (no external rank proxy substitute);
+- search landing sessions on A pages, separated from preview/QA and unknown consent coverage;
+- tool submissions successfully persisted, qualification rate, qualified leads by source and landing page;
+- verified £395 purchases and contribution margin by true source (unknown is allowed and cannot be coerced to Google/AI);
+- number of externally cited original research assets, and verified citations, not raw backlink count.
+Small-number results: show raw counts and denominator availability; never present a 100% conversion rate from 1 lead as proven performance.
+
+### Research and implementation validation
+
+- Use GSC to test whether phrasing actually gets UK impressions; no search-volume estimates unless a legitimate keyword-demand source becomes available.
+- Inspect search results for **owner-vs-consumer intent** before creating content; retail tattoo searches are not INKSIGHTS opportunities.
+- Review titles/snippets, clear H1, source and practitioner evidence, prominent answer to user question, relevant contextual internal links, consent-aware CTA.
+- Do not claim INKSIGHTS has a Google Business Profile, or create a listing without confirming real-world business eligibility (we are not a tattoo studio).
+- Google AI Overviews do not require additional special schema or an \`llms.txt\` file; improve crawlability and usefulness of indexed text.
+- Run TypeScript/build, route-tree consistency and preview/browser checks. **Do not merge or deploy production without release approval.**
+- Reference engineering attribution implementation: https://github.com/dontdoadan/inksights/issues/153 ; first-sale commercial objective: https://github.com/dontdoadan/inksights/issues/76 .
+
+### Scale rule
+
+Expand from these two strengthened pages only after they demonstrate real impressions or user engagement, and the existing £395 path is operational. Future original research should be designed to supply **new evidence** for the existing authority cluster (pricing, conversion, chair hours, retention, lead time), rather than increasing the number of similar SEO pages.

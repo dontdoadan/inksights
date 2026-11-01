@@ -79,12 +79,31 @@ Deno.serve(async (req: Request) => {
   const studioName = String(body.studio_name || "").trim();
   const teamSize = Math.round(num(body.team_size));
   const consent = body.consent === true;
-  const rawContext = body.source_context && typeof body.source_context === "object" ? body.source_context as Record<string, unknown> : {};
+  const rawContext = body.source_context && typeof body.source_context === "object" && !Array.isArray(body.source_context) ? body.source_context as Record<string, unknown> : {};
+  // Keep source-to-lead attribution only when the visitor permitted analytics.
+  // These bounded fields are browser-reported and must never be considered verified channel truth on their own.
+  const safeTag = (value: unknown, limit = 100) =>
+    typeof value === "string" && value.length <= limit && /^[a-z0-9 ._-]+$/i.test(value) ? value : null;
+  const possibleChannel = safeTag(rawContext.client_acquisition_channel, 40);
+  const permittedChannels = new Set(["paid", "ai_assistant_referral", "organic_search", "external_referral", "direct_unknown"]);
+  const host = safeTag(rawContext.client_first_referrer_host, 140);
+  const path = rawContext.client_first_landing_path;
+  const session = rawContext.client_analytics_session_id;
+  const linkedAcquisition = body.analytics_consent === true ? {
+    client_acquisition_channel: possibleChannel && permittedChannels.has(possibleChannel) ? possibleChannel : null,
+    client_first_landing_path: typeof path === "string" && path.length <= 160 && /^\/[a-z0-9/:-]*$/i.test(path) ? path : null,
+    client_first_referrer_host: host && /^[a-z0-9.-]+$/i.test(host) ? host : null,
+    client_first_utm_source: safeTag(rawContext.client_first_utm_source),
+    client_first_utm_medium: safeTag(rawContext.client_first_utm_medium),
+    client_first_utm_campaign: safeTag(rawContext.client_first_utm_campaign),
+    client_analytics_session_id: typeof session === "string" && /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(session) && session.length <= 36 ? session : null,
+  } : {};
   const sourceContext = {
     source: String(rawContext.source || "direct").slice(0, 80),
     visibility_score: rawContext.visibility_score == null ? null : String(rawContext.visibility_score).slice(0, 8),
     weakest_area: rawContext.weakest_area == null ? null : String(rawContext.weakest_area).slice(0, 120),
     visibility_gaps: rawContext.visibility_gaps == null ? null : String(rawContext.visibility_gaps).slice(0, 1500),
+    ...linkedAcquisition,
   };
   if (!name || name.length > 120 || !email || !/^\S+@\S+\.\S+$/.test(email) || !studioName || studioName.length > 180 || teamSize < 3 || teamSize > 100 || !consent) return respond({ ok: false, error: "Please complete the required fields. The Studio Growth Check is currently designed for studios with 3+ artists." }, 400);
   const testReason = explicitTestReason(name, studioName, sourceContext.source);

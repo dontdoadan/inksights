@@ -38,8 +38,8 @@ const BENCHMARKS: Record<Region, Benchmark[]> = {
 };
 
 const REGION_LABELS: Record<Region, string> = {
-  uk: "UK national reference",
-  london: "London / South East reference",
+  uk: "UK illustrative planning reference (not market median)",
+  london: "London illustrative planning reference (not market median)",
 };
 
 function currency(value: number) {
@@ -65,13 +65,13 @@ export const Route = createFileRoute("/pricing-benchmark")({
       {
         name: "description",
         content:
-          "Compare tattoo studio pricing with INKSIGHTS UK reference bands and combine price position with booking lead time before changing rates.",
+          "Compare your tattoo studio rates with clearly labelled planning references, inspect Greater London source evidence and assess booking demand before changing prices.",
       },
       { property: "og:title", content: "Tattoo Studio Pricing Benchmark | INKSIGHTS" },
       {
         property: "og:description",
         content:
-          "Benchmark tattoo studio rates against UK reference bands and interpret pricing alongside booking lead time.",
+          "Compare current rates with explicitly illustrative reference bands and review the evidence limitations before making a pricing decision.",
       },
       { property: "og:url", content: CANONICAL_URL },
     ],
@@ -163,10 +163,10 @@ function PricingBenchmark() {
 
   const leadTimeSignal =
     leadTimeNumber >= 6
-      ? { title: "Strong demand signal", text: "A 6+ week lead time can indicate pricing may be below what demand supports. Validate against actual utilisation and waitlist behaviour before changing rates." }
+      ? { title: "Review capacity and waitlist", text: "A lead time of six or more weeks may reflect demand, restricted artist availability or project mix. Verify utilisation, waitlist quality and margin before changing rates." }
       : leadTimeNumber >= 4
-        ? { title: "Balanced demand signal", text: "A 4–8 week lead time is a useful operating reference. Combine it with utilisation, conversion and margin before making a pricing decision." }
-        : { title: "Check perceived value", text: "A 2–4 week lead time can indicate weaker demand or a healthy short booking cycle. Do not reduce price without checking visibility, conversion and portfolio positioning." };
+        ? { title: "Review demand and booking capacity", text: "Four to five weeks booked ahead gives context but does not independently prove pricing power. Compare recent enquiries, deposit conversion and usable artist hours." }
+        : { title: "Investigate the booking pipeline", text: "A shorter lead time may reflect demand, booking preferences or spare capacity. Check qualified enquiries, deposits and artist specialisms before discounting work." };
 
   return (
     <PublicShell>
@@ -183,8 +183,20 @@ function PricingBenchmark() {
       <PageHero
         eyebrow="Studio economics"
         title={<>Benchmark your pricing.<br /><span className="text-mint">Then test the demand signal.</span></>}
-        description="A native INKSIGHTS pricing benchmark for UK tattoo studios. Compare your rates against reference bands, then interpret them alongside booking lead time instead of treating a market range as a recommended price."
+        description="Compare your studio’s current rates with illustrative planning bands, then check booking lead time, capacity and margin before deciding whether a pricing change is justified. These bands are not UK industry medians."
       />
+
+      <section className="border-b border-border bg-ink">
+        <div className="mx-auto max-w-7xl px-6 py-8">
+          <h2 className="text-lg font-bold text-ice">What evidence supports these prices?</h2>
+          <p className="mt-2 max-w-4xl text-sm leading-relaxed text-muted-foreground">
+            The comparison below uses versioned, illustrative planning bands, not statistically representative UK studio rates. Our separate
+            <a href="/research/greater-london-tattoo-pricing-2026" className="font-bold text-mint underline"> Greater London public-pricing research</a> reports
+            19 eligible observations across 15 studio identities, with sources and methodology. That pilot is not used to claim a national median.
+            Studio positioning, tattoo size, artist experience, demand, expenses and location all affect how prices should be interpreted.
+          </p>
+        </div>
+      </section>
 
       <section className="border-y border-border bg-ink-deep">
         <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
@@ -330,12 +342,15 @@ function PricingBenchmark() {
           </div>
 
           <div className="mt-10 rounded-2xl border border-border bg-ink-deep p-5 text-sm leading-relaxed text-muted-foreground">
-            <strong className="text-ice">Dataset {DATASET_VERSION}.</strong> Initial reference bands are a controlled baseline for the native INKSIGHTS tool. They are not presented as INKSIGHTS proprietary market observations. The benchmark should evolve into a versioned dataset with source provenance, sample size, geography, observation date, confidence and methodology before being used for stronger commercial claims.
+            <strong className="text-ice">Planning reference version {DATASET_VERSION}.</strong> These bands are illustrative and are not proprietary observed market distributions or validated UK quartiles. For independently inspectable public-source evidence, review the
+            <a href="/research/greater-london-tattoo-pricing-2026" className="font-semibold text-mint underline"> Greater London pricing research</a>.
+            Its 15-studio pilot should not be generalised to all UK studios. Submitted prices remain unverified self-reports and do not become accepted industry benchmark data without separate review.
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <PrimaryButton href="/studio-growth-check">Run the free Revenue Audit</PrimaryButton>
-            <SecondaryButton href="/offers">Explore INKSIGHTS solutions</SecondaryButton>
+            <PrimaryButton href="/studio-growth-check">Run the free Studio Growth Check</PrimaryButton>
+            <SecondaryButton href="/offers/studio-intelligence-audit">Explore the £395 Studio Intelligence Audit</SecondaryButton>
+            <SecondaryButton href="/research/greater-london-tattoo-pricing-2026">Inspect pricing research sources</SecondaryButton>
           </div>
         </div>
       </section>

@@ -94,6 +94,9 @@ jobs:
       - name: Test public pricing validation and idempotency policy
         run: node --test tests/pricing-submission-policy.test.mjs
 
+      - name: Test organic acquisition source and evidence policy
+        run: node --test tests/organic-acquisition-policy.test.mjs
+
       - name: Test visibility scorecard validation and idempotency
         run: node --test tests/visibility-scorecard-policy.test.mjs
 
