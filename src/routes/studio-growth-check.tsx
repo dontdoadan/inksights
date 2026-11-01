@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 
-import { trackWebsiteEvent } from "@/lib/website-events";
+import { getConsentedLeadAcquisitionContext, trackWebsiteEvent } from "@/lib/website-events";
 
 const AUDIT_URL = "https://ukaxsqwnkoqbbsufpzga.supabase.co/functions/v1/revenue-audit-v1";
 
@@ -74,6 +74,7 @@ function RevenueAuditPage() {
       consent: form.get("consent") === "on",
       website_honeypot: String(form.get("website_honeypot") || ""),
       source_context: {
+        ...getConsentedLeadAcquisitionContext(),
         source: search.source || "direct",
         visibility_score: search.score || null,
         weakest_area: search.weakest || null,
