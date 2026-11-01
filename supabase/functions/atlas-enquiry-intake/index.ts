@@ -88,9 +88,9 @@ Deno.serve(async (req: Request) => {
     });
     if (allowance !== true) return reply(origin, 429, { ok: false, error: "Too many enquiries. Try again later." });
 
-    const studio = await rest("atlas_profiles?select=id,studio_id,listing_status,premises_verified_at,published_at&id=eq." + encodeURIComponent(profileId) + "&limit=1");
+    const studio = await rest("atlas_profiles?select=id,studio_id,listing_status,premises_verified_at,premises_verified_until,owner_public_location_confirmed,published_at&id=eq." + encodeURIComponent(profileId) + "&limit=1");
     const profile = Array.isArray(studio) ? studio[0] : null;
-    if (!profile || profile.listing_status !== "published" || !profile.premises_verified_at || !profile.published_at)
+    if (!profile || profile.listing_status !== "published" || !profile.premises_verified_at || !profile.published_at || profile.owner_public_location_confirmed !== true || !profile.premises_verified_until || new Date(profile.premises_verified_until).getTime() <= Date.now())
       return reply(origin, 404, { ok: false, error: "This studio is not currently accepting Atlas enquiries." });
 
     const isTest = /\[qa test\]|\bqa e2e\b/i.test(customerName + " " + brief);
