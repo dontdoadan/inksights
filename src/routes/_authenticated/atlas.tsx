@@ -41,9 +41,18 @@ function OwnerAtlas() {
         if (!active) return;
         setClaims((claimRows || []) as Claim[]);
         const memberships = (membershipRows || []) as Member[];
-        setMembers(memberships);
         if (!memberships.length) return;
-        const ids = memberships.map(x=>x.studio_id);
+        const visibilityIds = memberships.map(x=>x.studio_id);
+        const { data: identityLinks, error: linkError } = await db.from("atlas_studio_links")
+          .select("studio_id,visibility_studio_id").in("visibility_studio_id",visibilityIds);
+        if (linkError) throw new Error("Could not validate linked studio identities.");
+        const mappedMembers = (identityLinks || []).map((link: {studio_id: string; visibility_studio_id: string}) => ({
+          studio_id: link.studio_id,
+          role: memberships.find(member=>member.studio_id===link.visibility_studio_id)?.role || "viewer",
+        })).filter((member: Member)=>member.role==="owner"||member.role==="admin");
+        setMembers(mappedMembers);
+        if (!mappedMembers.length) return;
+        const ids = mappedMembers.map((member: Member)=>member.studio_id);
         const [{data:studioRows}, {data:enquiryRows,error:inboxError}] = await Promise.all([
           supabase.from("studios").select("id,name").in("id",ids),
           db.from("atlas_customer_enquiries").select("id,studio_id,customer_name,customer_email,tattoo_brief,status,created_at").in("studio_id",ids).order("created_at",{ascending:false}).limit(100),
