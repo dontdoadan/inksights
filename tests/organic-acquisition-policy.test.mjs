@@ -7,6 +7,8 @@ import { readFileSync } from "node:fs";
 const source = readFileSync(new URL("../src/lib/website-events.ts", import.meta.url), "utf8");
 const pricing = readFileSync(new URL("../src/routes/pricing-benchmark.tsx", import.meta.url), "utf8");
 const offer = readFileSync(new URL("../src/routes/offers.$slug.tsx", import.meta.url), "utf8");
+const consent = readFileSync(new URL("../src/lib/consent.ts", import.meta.url), "utf8");
+const analyticsPath = readFileSync(new URL("../src/lib/analytics-path.ts", import.meta.url), "utf8");
 
 test("assistant discovery is based on real referrer hosts, not arbitrary UTM labels", () => {
   assert.match(source, /function classifyAssistantReferrer\(hostname: string \| null\)/);
@@ -38,4 +40,13 @@ test("paid audit content addresses evidenced owner pains without projecting reve
   assert.match(offer, /Are enquiries, bookings or artist hours slipping through the gaps/);
   assert.match(offer, /does not promise specific revenue, Google rankings or confirmed bookings/);
   assert.match(offer, /Payment verified/);
+});
+
+test("GA4 route reporting redacts private tokens and query parameters", () => {
+  assert.match(consent, /const safePath = safeAnalyticsPath\(path\)/);
+  assert.match(consent, /page_location: new URL\(safePath, window\.location\.origin\)\.toString\(\)/);
+  assert.doesNotMatch(consent, /page_location: window\.location\.href/);
+  assert.match(analyticsPath, /return "\/private-flow"/);
+  assert.match(analyticsPath, /pathname\.split\("\?"\)\[0\]\.split\("#"\)\[0\]/);
+  assert.match(source, /import \{ safeAnalyticsPath \} from "\.\/analytics-path"/);
 });
