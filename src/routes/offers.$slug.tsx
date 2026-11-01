@@ -343,7 +343,7 @@ function CheckoutButton({
       disabled={isLoading}
       onClick={async () => {
         setIsLoading(true);
-        trackWebsiteEvent("checkout_started", { offer: offer.slug });
+        trackWebsiteEvent("cta_clicked", { cta: "purchase_checkout", offer: offer.slug });
 
         if (offer.checkoutUrl) {
           window.location.href = offer.checkoutUrl;
