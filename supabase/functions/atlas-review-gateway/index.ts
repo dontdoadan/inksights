@@ -51,6 +51,31 @@ Deno.serve(async(req:Request)=>{
       const claims=await rest("atlas_claim_requests?select=id,user_id,studio_id,proposed_studio_name,proposed_town,proposed_website,authority_role,verification_method,evidence_note,status,created_at&status=in.(pending,needs_evidence)&order=created_at.asc&limit=75");
       return respond(origin,200,{ok:true,claims});
     }
+    if(body.action==="list_profiles") {
+      const [profiles,drafts]=await Promise.all([
+        rest("atlas_profiles?select=id,studio_id,name,town,listing_status,premises_verified_at,premises_verified_until,latitude,longitude,public_address&order=updated_at.desc&limit=100"),
+        rest("atlas_profile_drafts?select=id,studio_id,status,about,website_url,instagram_url,styles,proposed_public_address,created_at&status=eq.pending_review&limit=100"),
+      ]);
+      return respond(origin,200,{ok:true,profiles,drafts});
+    }
+    if(body.action==="publication") {
+      const profile=typeof body.profile_id==="string"?body.profile_id:"";
+      const decision=typeof body.decision==="string"?body.decision:"";
+      const note=typeof body.evidence_summary==="string"?body.evidence_summary.trim():"";
+      if(!UUID.test(profile)||!["publish","suspend","approve_draft","reject_draft"].includes(decision)||note.length<40||note.length>2000)
+        return respond(origin,400,{ok:false,error:"Profile, decision and at least 40 characters of review evidence are required."});
+      const source=typeof body.source_url==="string"&&body.source_url.startsWith("https://")?body.source_url:null;
+      const draft=typeof body.draft_id==="string"&&UUID.test(body.draft_id)?body.draft_id:null;
+      const latitude=typeof body.latitude==="number"&&Number.isFinite(body.latitude)?body.latitude:null;
+      const longitude=typeof body.longitude==="number"&&Number.isFinite(body.longitude)?body.longitude:null;
+      const address=typeof body.public_address==="string"?body.public_address.trim().slice(0,300):null;
+      const result=await rest("rpc/atlas_admin_review_publication",{method:"POST",body:JSON.stringify({
+        p_actor_id:user.id,p_profile_id:profile,p_action:decision,p_evidence_note:note,p_source_url:source,
+        p_latitude:latitude,p_longitude:longitude,p_public_address:address,
+        p_owner_public_location_confirmed:body.owner_public_location_confirmed===true,p_draft_id:draft,
+      })});
+      return respond(origin,200,{ok:true,result});
+    }
     if(body.action!=="review")return respond(origin,400,{ok:false,error:"Unsupported action"});
     const claimId=typeof body.claim_id==="string"?body.claim_id:"";
     const decision=typeof body.decision==="string"?body.decision:"";
