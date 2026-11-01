@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, Clock3, Info, PoundSterling, ShieldCheck, TrendingUp } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
+import { StudioSubmissionClaim } from "@/components/studio-intelligence/StudioSubmissionClaim";
 import {
   Card,
   JsonLd,
@@ -247,6 +248,7 @@ function PricingBenchmark() {
                 </button>
                 {submitError && <p role="alert" className="mt-3 text-sm text-amber-300">{submitError}</p>}
                 {submissionId && <p role="status" className="mt-3 text-sm text-mint">Submission saved. Your benchmark results are displayed below.</p>}
+                {submissionId && <StudioSubmissionClaim submissionId={submissionId} submissionKey={submissionKey.current} />}
               </div>
             </Card>
 
