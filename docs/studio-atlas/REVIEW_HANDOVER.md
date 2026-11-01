@@ -20,11 +20,13 @@ Date: 2026-11-01 · Branch: `feature/studio-atlas-claim-verify-pilot` · [Draft 
 3. `atlas-enquiry-intake` Edge Function: field validation, published-premises check, rate limiting, consent storage, private enquiry write. Does **not** send a studio email.
 4. `atlas-review-gateway` Edge Function: authenticated admin check, queue and review, calls service-only atomic reviewer RPC. Approval grants member access, creates verification event and an unpublished draft; it does **not** verify or publish a physical venue.
 5. Privilege tests: anonymous claim/draft/enquiry reads and inserts denied. Service-only reviewer RPC denies anon and authenticated execution.
+6. `atlas_publication_reviews` audit table and time-bounded, owner-authorised public location verification (12-month expiry). `atlas-enquiry-intake` rejects expired public records.
 
 ## UI routes implemented on branch
 - `/studio-atlas` — illustrated map-first directory, verified published records only; claim/add and enquiry workflows.
 - `/atlas` — authenticated member workspace, claim progress, member-owned enquiry inbox and proposed profile changes.
 - `/atlas-review` — administrator evidence/decision review console.
+- `/atlas-publication` — location publication, suspension and studio profile draft moderation with independent reviewer evidence.
 - `/privacy` — Studio Atlas-specific collection and customer-to-studio sharing language proposed in branch.
 
 ## Visual journey
@@ -41,13 +43,13 @@ Date: 2026-11-01 · Branch: `feature/studio-atlas-claim-verify-pilot` · [Draft 
 ```
 
 ## Release blockers (do not call this production-ready)
-- No independently verified trading-premises records populated in Atlas; 349 research candidates do not equal operating, verified premises.
+- No independently verified trading-premises records populated in Atlas; 349 research candidates do not equal operating, verified premises. The publication reviewer workflow is implemented but needs real verified source records.
 - A real studio profile cannot receive customer enquiries until premises verified and published; no safe bulk publication.
 - No guaranteed email or other external owner notification and delivery tracking; current visitor message states recording only.
 - No image/artist portfolio upload, content moderation, advertising or paid placements.
 - Human tests of claim approval, sole trader, competing duplicate claims, dispute, revocation and two-account cross-tenant restrictions still required.
 - Browser-based desktop/mobile visual, accessibility and click-through QA not completed.
-- Add expiry/re-verification, takedown/appeals, retention schedule and clear owner service-level agreements before public launch.
+- Venue verification expiry is implemented (12 months); scheduling re-verification, appeals/takedown, retention schedule and clear owner service-level agreements still need work.
 - Confirm legal/privacy copy with the production privacy reviewer.
 - Regressions to current INKSIGHTS Growth Check, £395 checkout, CRM, website/email/reporting not yet browser-tested.
 
@@ -56,7 +58,7 @@ Date: 2026-11-01 · Branch: `feature/studio-atlas-claim-verify-pilot` · [Draft 
 2. Create a test account and submit `Claim`; verify it is pending with no editing rights.
 3. Review account via `/atlas-review`; verify a single atomic member/identity/verif event.
 4. Verify owner can edit one studio, and cannot read any other studio's lead.
-5. Independently verify premises location before publishing a pin.
+5. Independently verify premises address and coordinates. Use `/atlas-publication` to log the evidence and confirm owner authorisation before publishing; reject expired or disputed premises.
 6. Submit a test visitor enquiry and ensure only the selected studio can see it. **Before public pilot, implement notification delivery and verify receipt.**
 7. Test negative paths: anonymous data access, missing consent, spam, repeated rate-limited requests, disputed claim, revoked member.
 8. Complete responsive/a11y tests and scan for production regressions.
