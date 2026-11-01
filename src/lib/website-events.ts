@@ -1,4 +1,5 @@
 import { readConsent, trackGoogleEvent, trackGooglePageView } from "./consent";
+import { safeAnalyticsPath } from "./analytics-path";
 
 export type WebsiteEventName =
   | "page_view"
@@ -70,18 +71,7 @@ function classifyAcquisitionChannel(
   return "external_referral";
 }
 
-// Analytics records only route patterns and bounded marketing tags: never full URLs or access tokens.
-function safeAnalyticsPath(pathname: string): string {
-  if (/^\/(?:founding-studio|invite|invitations|prospect|report|reports)(?:\/|$)/i.test(pathname)) {
-    return "/private-flow";
-  }
-  return pathname.split("/").map((part) =>
-    /^[0-9a-f]{32,}$/i.test(part) || /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(part) || part.length > 48
-      ? ":id"
-      : part,
-  ).join("/");
-}
-
+// Shared route redaction prevents private identifiers from reaching Supabase or GA4.
 function safeMarketingTag(value: string | null): string | null {
   if (!value || value.length > 100 || !/^[a-z0-9 ._-]+$/i.test(value)) return null;
   return value;
