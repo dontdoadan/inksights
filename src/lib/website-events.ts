@@ -119,6 +119,25 @@ function acquisitionProperties(): EventProperties {
   return acquisition;
 }
 
+/**
+ * Analytics consent is required before linking a visitor's pseudonymous
+ * session and bounded, first-touch marketing metadata to a submitted lead.
+ * These are browser-reported signals, not independently verified channel truth.
+ */
+export function getConsentedLeadAcquisitionContext() {
+  if (typeof window === "undefined" || !readConsent()?.analytics) return {};
+  const p = acquisitionProperties();
+  return {
+    client_acquisition_channel: p.acquisition_channel ?? null,
+    client_first_landing_path: p.landing_path ?? null,
+    client_first_referrer_host: p.initial_referrer_host ?? null,
+    client_first_utm_source: p.utm_source ?? null,
+    client_first_utm_medium: p.utm_medium ?? null,
+    client_first_utm_campaign: p.utm_campaign ?? null,
+    client_analytics_session_id: sessionId(),
+  };
+}
+
 function referrerHostForAnalytics(): string | null {
   try {
     return document.referrer ? new URL(document.referrer).hostname : null;
