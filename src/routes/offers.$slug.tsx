@@ -208,6 +208,43 @@ function OfferPage() {
 
       {offer.slug === "studio-intelligence-audit" ? (
         <section className="border-b border-border bg-ink-deep">
+          <div className="mx-auto max-w-7xl px-6 py-14 md:py-20">
+            <SectionHeading
+              eyebrow="When a tattoo studio needs a commercial diagnosis"
+              title="Are enquiries, bookings or artist hours slipping through the gaps?"
+              description="You do not need more generic marketing advice until you know which stage is constraining your studio. We investigate the available evidence, distinguish missing figures from measured problems and prioritise what the owner should address first."
+            />
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {[
+                ["Your diary has quiet periods", "Review whether local discovery, qualified demand, artist availability or scheduling is limiting booked work."],
+                ["Enquiries are not becoming deposits", "Inspect the website-to-enquiry route, qualification steps, booking information and the points where prospective clients can drop out."],
+                ["You are unsure whether to change prices", "Compare visible local positioning with your pricing context and identify what additional demand, utilisation or cost evidence is required."],
+                ["You cannot identify the main growth constraint", "Bring search, competition, booking and commercial observations together before investing in another tool or campaign."],
+              ].map(([problem, method]) => (
+                <div key={problem} className="rounded-2xl border border-border bg-ink p-6">
+                  <h3 className="font-display text-xl font-black text-ice">{problem}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{method}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-8 rounded-2xl border border-mint/25 bg-mint/5 p-6">
+              <h3 className="font-display text-xl font-black text-ice">What changes after this audit?</h3>
+              <p className="mt-3 max-w-4xl text-sm leading-relaxed text-muted-foreground">
+                You receive an evidence-led diagnosis, three prioritised opportunities and a 90-day action plan. You can act on the recommendations yourself
+                or request separately scoped implementation help. The audit does not promise specific revenue, Google rankings or confirmed bookings:
+                outcomes depend on the evidence, your decisions and the work subsequently carried out.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <a href="/studio-growth-check" className="inline-flex min-h-11 items-center rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">Not sure where to start? Run the free Growth Check</a>
+                <a href="/research-methodology" className="inline-flex min-h-11 items-center rounded-full border border-border px-5 py-3 text-sm font-bold text-ice hover:border-mint hover:text-mint">How our evidence is assessed</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {offer.slug === "studio-intelligence-audit" ? (
+        <section className="border-b border-border bg-ink-deep">
           <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
             <SectionHeading
               eyebrow="What you receive"
