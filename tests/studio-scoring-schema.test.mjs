@@ -58,3 +58,18 @@ test("scoring is evidence gated and cannot manufacture a score from missing data
   assert.match(sql, /revoke all on function public\.calculate_studio_score_v1\(uuid,text,date,date\)/);
   assert.match(sql, /grant execute on function public\.calculate_studio_score_v1\(uuid,text,date,date\) to service_role/);
 });
+
+test("migration functions use valid PL/pgSQL quoting and trusted-only receipt claims", () => {
+  assert.doesNotMatch(sql, /as \$(?!\$)/i, "Every function body must use a valid dollar-quoted delimiter");
+  const starts = (sql.match(/as \$\$/g) ?? []).length;
+  const ends = (sql.match(/\n\$\$;/g) ?? []).length;
+  assert.equal(starts, ends, "Each function body must have a closing $$ delimiter");
+  assert.ok(starts >= 4, "All scoring and claim procedures should be present");
+  assert.match(sql, /claim_public_tool_submission_v1/);
+  assert.match(sql, /submission_key = p_submission_key/);
+  assert.match(sql, /sm\.user_id = p_user_id and sm\.active/);
+  assert.match(sql, /quality_status','unverified_self_report'/);
+  assert.match(sql, /on conflict \(studio_id,source_type,source_ref\)/);
+  assert.match(sql, /grant execute on function public\.claim_public_tool_submission_v1\(uuid,uuid,uuid,uuid\)/);
+  assert.match(sql, /claimed public submissions read by verified studio members/);
+});
