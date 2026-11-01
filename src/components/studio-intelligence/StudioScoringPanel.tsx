@@ -42,6 +42,7 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
   const [reportingMonth, setReportingMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [state, setState] = useState<"loading" | "ready" | "unavailable">("loading");
   const [saving, setSaving] = useState(false);
+  const [noticeAccepted, setNoticeAccepted] = useState(false);
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
   useEffect(() => {
@@ -88,6 +89,9 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
     event.preventDefault();
     if (saving) return;
     setSaveNotice(null);
+    if (!noticeAccepted) {
+      setSaveNotice("Please acknowledge how studio measurements will be used before submitting."); return;
+    }
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(reportingMonth)) {
       setSaveNotice("Select a valid reporting month."); return;
     }
@@ -131,7 +135,9 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
       const rows = changes.map(({ key, value }) => ({
         studio_id: studioId, field_key: key, value_json: value,
         source_type: "studio_reported", verification_status: "unverified",
-        measurement_start: start, measurement_end: end, answered_at: new Date().toISOString(),
+        measurement_start: start, measurement_end: end,
+        data_notice_version: "2026-11-profile-v1", notice_acknowledged_at: new Date().toISOString(),
+        answered_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }));
       const response = await fetch(`${supabase.supabaseUrl}/rest/v1/studio_profile_answers?on_conflict=studio_id,field_key`, {
@@ -223,6 +229,14 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
             );
           })}
         </div>
+        <label className="mt-5 flex items-start gap-3 text-sm text-muted-foreground">
+          <input type="checkbox" checked={noticeAccepted} onChange={(event) => setNoticeAccepted(event.target.checked)}
+            className="mt-1 accent-emerald-300" />
+          <span>I understand that INKSIGHTS will store and analyse these studio measurements to produce business
+            intelligence and, subject to the stated privacy terms, de-identified aggregated benchmarks.
+            This does not provide marketing consent. Read the <a className="underline text-mint" href="/privacy">privacy notice</a>.
+          </span>
+        </label>
         {saveNotice ? <p role="status" className="mt-4 text-sm text-muted-foreground">{saveNotice}</p> : null}
         <button type="submit" disabled={saving}
           className="mt-5 rounded-full bg-mint px-6 py-3 text-sm font-bold text-ink-deep disabled:opacity-50">
