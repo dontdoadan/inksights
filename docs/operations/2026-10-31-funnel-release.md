@@ -34,20 +34,20 @@ The observed event totals are not deduplicated user counts, and start/completion
 | Event | Trigger | Interpretation | Source |
 |---|---|---|---|
 | `page_view` | Site route rendered with analytics consent | Consented route view, not all sessions | First-party and GA4 |
-| `cta_clicked` | Primary/secondary button clicked with analytics consent | Expressed navigation intent | First-party and GA4 |
+| `cta_clicked` | Primary/secondary CTA or checkout purchase CTA clicked with analytics consent | Expressed navigation/purchasing intent, not a verified checkout | First-party and GA4 |
 | `diagnostic_started` | First focus inside Growth Check | Started interacting with form | First-party |
 | `diagnostic_completed` | Valid server response after successfully saved result | Completed a calculation | First-party, corroborate with Supabase audit record |
 | `contact_started` | First focus in contact form | Started enquiry | First-party |
 | `contact_submitted` | Positive response from public-contact-intake endpoint | Stored contact enquiry | First-party, corroborate with Supabase request |
-| `checkout_started` | Currently checkout CTA clicked | Checkout *attempt* (needs refinement) | First-party |
+| `checkout_started` | A usable payment link or newly created session URL is available | Browser checkout handoff, not payment completion | First-party |
 | `payment_completed` | Client receives positive server-side checkout verification | Useful UX event only; may repeat on re-entry | Stripe webhook / verified order is authoritative |
 
 No personal identifiers, arbitrary message text or transaction token should be sent to analytics. Studio-level qualification must come from the allowed CRM records and consent status rather than inferring fit from a web visit.
 
-## Explicit outstanding safeguards (NOT complete)
+## Completed safeguards and remaining verification
 
-1. `src/routes/offers.$slug.tsx` fires `checkout_started` before a payment URL is ready. A proposed refinement could not be written during this pass, so do not calculate an initiated-checkout conversion rate from the current event. Leave payments unchanged until the separate payments review, then confirm purchase flow in an authorised test mode and verify Stripe webhook reconciliation.
-2. `src/lib/consent.ts` includes `window.location.href` in GA4 `page_location` when consent permits. A change to remove query parameters and any private path fragments was blocked during this pass. Treat this as a **privacy/measurement priority**. Avoid passing customer-identifying URLs to analytics and separately review existing settings and retention where appropriate. Do not infer the issue has been fixed.
+1. **Implemented on this PR:** `src/routes/offers.$slug.tsx` now records `cta_clicked` when the purchase button is pressed and `checkout_started` only when a published payment link or newly created checkout session URL exists. The £395 price, signed payment-verification logic and Stripe webhook are unchanged. Historical checkout-start measurements before release remain attempts; do not merge pre/post values without noting the changed definition.
+2. **Implemented on this PR:** GA4 `page_location` and `page_path` now use `safePagePath()` rather than the full browser URL, excluding query parameters, hashes, private report/invitation routes and long identifier segments. Consent gating is unchanged. Existing historical analytics retention and the actual outgoing telemetry still need privacy review after release.
 3. First-party analytics is opt-in. Google Search Console provides search clicks and impressions, but does not itself identify qualified visitors. A robust view of qualified organic leads requires compliant joining of recorded acquisition context to canonical lead/CRM data, and should not be inferred from session counts.
 4. No real-user usability study, mobile Core Web Vitals baseline, independently verified case study, or additional paid-customer test has been completed in this release. A clean preview build is not the same as demonstrated commercial effectiveness.
 
@@ -75,4 +75,4 @@ No personal identifiers, arbitrary message text or transaction token should be s
 
 ## Focused next step
 
-Resolve the two outstanding analytics/payment issues first, then measure the full funnel and interview 5 UK tattoo studio owners about comprehension and form completion. Only then consider broader navigation or SEO expansion.
+Validate updated analytics privacy and checkout-event behaviour in the preview and with tests, then run a controlled Stripe test-mode checkout and interview 5 UK tattoo studio owners about comprehension and form completion. Only after evidence supports it consider broader navigation or SEO expansion.
