@@ -9,6 +9,8 @@ const pricing = readFileSync(new URL("../src/routes/pricing-benchmark.tsx", impo
 const offer = readFileSync(new URL("../src/routes/offers.$slug.tsx", import.meta.url), "utf8");
 const consent = readFileSync(new URL("../src/lib/consent.ts", import.meta.url), "utf8");
 const analyticsPath = readFileSync(new URL("../src/lib/analytics-path.ts", import.meta.url), "utf8");
+const leadIntake = readFileSync(new URL("../supabase/functions/revenue-audit-v1/index.ts", import.meta.url), "utf8");
+const growthCheck = readFileSync(new URL("../src/routes/studio-growth-check.tsx", import.meta.url), "utf8");
 
 test("assistant discovery is based on real referrer hosts, not arbitrary UTM labels", () => {
   assert.match(source, /function classifyAssistantReferrer\(hostname: string \| null\)/);
@@ -49,4 +51,14 @@ test("GA4 route reporting redacts private tokens and query parameters", () => {
   assert.match(analyticsPath, /return "\/private-flow"/);
   assert.match(analyticsPath, /pathname\.split\("\?"\)\[0\]\.split\("#"\)\[0\]/);
   assert.match(source, /import \{ safeAnalyticsPath \} from "\.\/analytics-path"/);
+});
+
+test("lead source linkage is consent-gated, bounded and not mistaken for verified attribution", () => {
+  assert.match(growthCheck, /analytics_consent: readConsent\(\)\?\.analytics === true/);
+  assert.match(growthCheck, /getConsentedLeadAcquisitionContext\(\)/);
+  assert.match(source, /if \(typeof window === "undefined" \|\| !readConsent\(\)\?\.analytics\) return \{\}/);
+  assert.match(leadIntake, /body\.analytics_consent === true/);
+  assert.match(leadIntake, /client_analytics_session_id/);
+  assert.match(leadIntake, /permittedChannels/);
+  assert.match(leadIntake, /browser-reported and must never be considered verified channel truth/);
 });
