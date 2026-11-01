@@ -17,7 +17,7 @@ const FALLBACK_LABELS = {
 };
 const QUESTIONS = [
   { key: "monthly_qualified_enquiries", label: "Qualified enquiries", hint: "Only genuine client enquiries", step: "1", max: 100000 },
-  { key: "monthly_paid_bookings", label: "Paid bookings", hint: "Bookings with a paid deposit or confirmed payment", step: "1", max: 100000 },
+  { key: "monthly_paid_bookings_from_month_enquiries", label: "Converted enquiries", hint: "Those same enquiries that resulted in a paid booking", step: "1", max: 100000 },
   { key: "monthly_sellable_artist_hours", label: "Available artist hours", hint: "Total hours offered for paid tattoo work", step: "0.5", max: 100000 },
   { key: "monthly_billable_artist_hours", label: "Booked billable hours", hint: "Actual paid tattooing time", step: "0.5", max: 100000 },
   { key: "monthly_tattoo_revenue_gbp", label: "Tattoo revenue (£)", hint: "Gross tattoo service revenue, not including tips", step: "0.01", max: 100000000 },
@@ -104,9 +104,9 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
       setSaveNotice("Enter non-negative figures within the stated ranges."); return;
     }
     const get = (key: FieldKey) => normalized.find((item) => item.key === key)?.value;
-    if (get("monthly_qualified_enquiries") !== undefined && get("monthly_paid_bookings") !== undefined &&
+    if (get("monthly_qualified_enquiries") !== undefined && get("monthly_paid_bookings_from_month_enquiries") !== undefined &&
       get("monthly_paid_bookings")! > get("monthly_qualified_enquiries")!) {
-      setSaveNotice("Paid bookings cannot exceed qualified enquiries for the same period."); return;
+      setSaveNotice("Converted enquiries cannot exceed their original qualified enquiry cohort."); return;
     }
     if (get("monthly_sellable_artist_hours") !== undefined && get("monthly_billable_artist_hours") !== undefined &&
       get("monthly_billable_artist_hours")! > get("monthly_sellable_artist_hours")!) {
@@ -115,15 +115,15 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
     const [year, month] = reportingMonth.split("-").map(Number);
     const start = `${reportingMonth}-01`;
     const end = new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10);
-    const locked = normalized.filter(({ key }) =>
-      answers.some((answer) => answer.field_key === key && answer.verification_status !== "unverified"));
-    if (locked.length) {
-      setSaveNotice("Reviewed or disputed fields cannot be changed here. Contact INKSIGHTS to request a correction."); return;
-    }
     const changes = normalized.filter(({ key, value }) =>
       !answers.some((answer) => answer.field_key === key && answer.value_json === value &&
         answer.measurement_start === start));
     if (!changes.length) { setSaveNotice("These measurements are already saved."); return; }
+    const locked = changes.filter(({ key }) =>
+      answers.some((answer) => answer.field_key === key && answer.verification_status !== "unverified"));
+    if (locked.length) {
+      setSaveNotice("Reviewed or disputed fields cannot be changed here. Contact INKSIGHTS to request a correction."); return;
+    }
     setSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
