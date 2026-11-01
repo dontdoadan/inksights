@@ -7,6 +7,7 @@ type ScoreSnapshot = {
   id: string; model_id: string; score: number | null; coverage: number;
   evidence_quality: number | null; status: "scored" | "insufficient_data"; scored_at: string;
 };
+type ClaimedTool = { id: string; tool_key: string; submitted_at: string; quality_status: string; result_snapshot: Record<string, unknown> };
 type ProfileAnswer = {
   field_key: string; value_json: unknown; verification_status: "unverified" | "verified" | "disputed";
   measurement_start: string | null;
@@ -45,6 +46,7 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
   const [models, setModels] = useState<ScoringModel[]>([]);
   const [snapshots, setSnapshots] = useState<ScoreSnapshot[]>([]);
   const [answers, setAnswers] = useState<ProfileAnswer[]>([]);
+  const [toolResults, setToolResults] = useState<ClaimedTool[]>([]);
   const [inputs, setInputs] = useState<InputValues>({});
   const [reportingMonth, setReportingMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [state, setState] = useState<"loading" | "ready" | "unavailable">("loading");
@@ -59,7 +61,7 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) throw new Error("Authentication required");
-        const [modelRows, snapshotRows, savedAnswers] = await Promise.all([
+        const [modelRows, snapshotRows, savedAnswers, linkedTools] = await Promise.all([
           tenantRead<ScoringModel>("studio_scoring_models", {
             select: "id,model_key,name,version", status: "eq.active", order: "version.desc",
           }, session.access_token),
@@ -71,11 +73,16 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
             select: "field_key,value_json,verification_status,measurement_start",
             studio_id: `eq.${studioId}`,
           }, session.access_token),
+          tenantRead<ClaimedTool>("public_tool_submissions", {
+            select: "id,tool_key,submitted_at,quality_status,result_snapshot",
+            canonical_studio_id: `eq.${studioId}`, order: "submitted_at.desc", limit: "50",
+          }, session.access_token),
         ]);
         if (!active) return;
         setModels(modelRows);
         setSnapshots(snapshotRows);
         setAnswers(savedAnswers);
+        setToolResults(linkedTools);
         const initial: InputValues = {};
         for (const question of QUESTIONS) {
           const saved = savedAnswers.find((answer) => answer.field_key === question.key);
@@ -205,6 +212,21 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
             </div>
           );
         })}
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-border bg-ink-deep p-5 md:p-6">
+        <h3 className="text-lg font-bold text-ice">Saved public tool results</h3>
+        <p className="mt-2 text-sm text-muted-foreground">These submissions are associated with this canonical studio and can inform its intelligence history, but are not verified commercial measurements.</p>
+        {toolResults.length ? (
+          <ul className="mt-4 space-y-2">
+            {toolResults.map((tool) => (
+              <li key={tool.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border px-4 py-3">
+                <span className="text-sm font-semibold text-ice">{tool.tool_key.replaceAll("_", " ")}</span>
+                <span className="text-xs text-muted-foreground">{tool.quality_status.replaceAll("_", " ")} · {new Date(tool.submitted_at).toLocaleDateString("en-GB")}</span>
+              </li>
+            ))}
+          </ul>
+        ) : <p className="mt-4 text-sm text-muted-foreground">No public tool submissions are linked to this studio yet.</p>}
       </div>
       <form onSubmit={saveProfile} className="mt-7 rounded-2xl border border-border bg-ink-deep p-5 md:p-6">
         <h3 className="text-lg font-bold text-ice">Progressive studio profile</h3>
