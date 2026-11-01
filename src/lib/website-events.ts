@@ -38,6 +38,38 @@ function classifySearchReferrer(hostname: string | null) {
   return null;
 }
 
+// Only independently observed assistant referrer hosts count as AI referrals.
+// A UTM such as ?utm_source=chatgpt.com alone is not proof that an assistant sent a visitor.
+function classifyAssistantReferrer(hostname: string | null) {
+  if (!hostname) return null;
+  const host = hostname.toLowerCase();
+  if (host === "chatgpt.com" || host === "chat.openai.com") return "chatgpt";
+  if (host === "www.perplexity.ai" || host === "perplexity.ai") return "perplexity";
+  if (host === "gemini.google.com") return "gemini";
+  if (host === "claude.ai") return "claude";
+  if (host === "copilot.microsoft.com") return "copilot";
+  if (host === "poe.com") return "poe";
+  if (host === "you.com" || host === "www.you.com") return "you";
+  return null;
+}
+
+function classifyAcquisitionChannel(
+  hostname: string | null,
+  searchEngine: string | null,
+  aiAssistant: string | null,
+  params: URLSearchParams,
+) {
+  const medium = (params.get("utm_medium") || "").toLowerCase();
+  const hasAdClickId = ["gclid", "gbraid", "wbraid", "msclkid", "fbclid"].some((key) => params.has(key));
+  const paidMedium = /^(cpc|ppc|paid|paid_search|paid_social|display|retargeting)$/.test(medium);
+  if (hasAdClickId || paidMedium) return "paid";
+  if (aiAssistant) return "ai_assistant_referral";
+  if (searchEngine) return "organic_search";
+  const host = hostname?.toLowerCase() || "";
+  if (!host || host === "getinksights.co.uk" || host === "www.getinksights.co.uk" || host.endsWith(".vercel.app") || host === "localhost") return "direct_unknown";
+  return "external_referral";
+}
+
 // Analytics records only route patterns and bounded marketing tags: never full URLs or access tokens.
 function safeAnalyticsPath(pathname: string): string {
   if (/^\/(?:founding-studio|invite|invitations|prospect|report|reports)(?:\/|$)/i.test(pathname)) {
@@ -77,11 +109,15 @@ function acquisitionProperties(): EventProperties {
   }
 
   const searchEngine = classifySearchReferrer(referrerHost);
+  const aiAssistant = classifyAssistantReferrer(referrerHost);
+  const channel = classifyAcquisitionChannel(referrerHost, searchEngine, aiAssistant, params);
   const acquisition: EventProperties = {
     landing_path: safeAnalyticsPath(window.location.pathname),
     initial_referrer_host: referrerHost,
     search_engine: searchEngine,
-    is_organic_search: Boolean(searchEngine) && !params.get("gclid") && !params.get("gbraid") && !params.get("wbraid"),
+    ai_assistant_referrer: aiAssistant,
+    acquisition_channel: channel,
+    is_organic_search: channel === "organic_search",
     utm_source: safeMarketingTag(params.get("utm_source")),
     utm_medium: safeMarketingTag(params.get("utm_medium")),
     utm_campaign: safeMarketingTag(params.get("utm_campaign")),
