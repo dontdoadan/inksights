@@ -1,41 +1,67 @@
-# Studio Atlas pilot — review handover (2026-11-01)
+# Studio Atlas — technical review handover
+Date: 2026-11-01 · Branch: `feature/studio-atlas-claim-verify-pilot` · [Draft PR #156](https://github.com/dontdoadan/inksights/pull/156)
 
-Branch: feature/studio-atlas-claim-verify-pilot
-Status: Preview only; NOT approved for public launch.
+**Review status:** Internal technical preview ready for code review, not a customer-ready or production-launch release. The current map uses stylised illustrative cartography and remains subject to design QA.
 
-## Completed
-- Public /studio-atlas React directory and claim/add/enquiry screens.
-- Authenticated /atlas workspace for claim status, studio-member inbox and proposed profile updates.
-- Four new Supabase tables with Row Level Security and least-privilege grants.
-- New rate-limited atlas-enquiry-intake Edge Function; enquiries require an approved public profile.
-- Vercel preview build succeeded.
-- Database security follow-up removed anonymous grants from claim, draft and enquiry tables.
+## Connected systems
+- Production repository: `dontdoadan/inksights` — work isolated to feature branch.
+- Preview: existing `inksight-main` Vercel project, SSO protection may apply.
+- Data: existing Supabase UK project `ukaxsqwnkoqbbsufpzga`; no separate database.
+- Identity: existing `studios` (audit canonical) and `visibility_studios` (member/verification canonical) require explicit, evidence-reviewed `atlas_studio_links`; no fuzzy name-based linking.
 
-## Not yet complete
-- Reviewer-facing adjudication console and atomic claim approval.
-- Verified trading-premises data; no public Atlas profiles published yet.
-- Automated studio lead notifications and delivery tracking.
-- Portfolio media uploads and moderation.
-- Public directory UX/accessibility testing across devices and browsers.
-- Privacy notice updates, retention policies, and a full test of account isolation.
-- Advertising and sponsored listings (intentionally postponed until real lead demand is demonstrated).
+## Delivered and deployed backend
+1. Tables: `atlas_profiles`, `atlas_claim_requests`, `atlas_profile_drafts`, `atlas_customer_enquiries`, `atlas_studio_links`.
+2. Applied versioned migrations:
+   - `20261101184746_studio_atlas_claim_verify_pilot.sql`
+   - `20261101184852_harden_atlas_public_role_privileges.sql`
+   - `20261101185347_bridge_atlas_canonical_and_visibility_studio_identities.sql`
+   - `20261101185541_atomic_atlas_claim_review_service_only.sql`
+   - `20261101190028_allow_service_only_atlas_private_reviewer_access.sql`
+3. `atlas-enquiry-intake` Edge Function: field validation, published-premises check, rate limiting, consent storage, private enquiry write. Does **not** send a studio email.
+4. `atlas-review-gateway` Edge Function: authenticated admin check, queue and review, calls service-only atomic reviewer RPC. Approval grants member access, creates verification event and an unpublished draft; it does **not** verify or publish a physical venue.
+5. Privilege tests: anonymous claim/draft/enquiry reads and inserts denied. Service-only reviewer RPC denies anon and authenticated execution.
 
-## Reviewer checklist
-1. Inspect schema and RLS with an anonymous and authenticated account.
-2. Test claim for listed and new studio, with sole-trader support.
-3. Confirm human review verifies the physical trading premises independently from the applicant's authority.
-4. Ensure approval creates verified canonical membership and history, and rejection never grants permissions.
-5. Check that owners can only view their own enquiries.
-6. Confirm profile drafts do not instantly change the public directory.
-7. Test an enquiry from customer submission to studio notification and response.
-8. Verify privacy text, correction/takedown procedure and responsive usability.
-9. Validate 20–30 initial physical locations before public indexing.
-10. Test existing INKSIGHTS Growth Check, audit payment path, CRM, and reporting for regressions.
+## UI routes implemented on branch
+- `/studio-atlas` — illustrated map-first directory, verified published records only; claim/add and enquiry workflows.
+- `/atlas` — authenticated member workspace, claim progress, member-owned enquiry inbox and proposed profile changes.
+- `/atlas-review` — administrator evidence/decision review console.
+- `/privacy` — Studio Atlas-specific collection and customer-to-studio sharing language proposed in branch.
 
-## Workflow
-Visitor discovers studio -> submits enquiry -> stored privately -> authorised studio inbox.
-Studio owner submits claim -> identity, venue and authority review -> membership granted -> edits submitted -> public profile reviewed and published.
+## Visual journey
+```text
+  Public visitor                  Studio owner                        INKSIGHTS reviewer
+       |                               |                                      |
+  Verified listing ---------> [Claim / add request] -------> [Check premises and authority]
+       |                               |                                      |
+  Customer enquiry                   Pending <-------------- Approve / more evidence / reject
+       |                               |                                      |
+  Stored privately              Studio membership                Audit event + identity links
+       |                               |                                      |
+  Owner-only inbox <------------ Verified workspace --------> Submit profile draft for review
+```
 
-## Release gates
-Code review -> internal account-level pilot -> verified local-studio pilot -> public launch.
-No paid placement should launch before meaningful, measured consumer demand.
+## Release blockers (do not call this production-ready)
+- No independently verified trading-premises records populated in Atlas; 349 research candidates do not equal operating, verified premises.
+- A real studio profile cannot receive customer enquiries until premises verified and published; no safe bulk publication.
+- No guaranteed email or other external owner notification and delivery tracking; current visitor message states recording only.
+- No image/artist portfolio upload, content moderation, advertising or paid placements.
+- Human tests of claim approval, sole trader, competing duplicate claims, dispute, revocation and two-account cross-tenant restrictions still required.
+- Browser-based desktop/mobile visual, accessibility and click-through QA not completed.
+- Add expiry/re-verification, takedown/appeals, retention schedule and clear owner service-level agreements before public launch.
+- Confirm legal/privacy copy with the production privacy reviewer.
+- Regressions to current INKSIGHTS Growth Check, £395 checkout, CRM, website/email/reporting not yet browser-tested.
+
+## Mandatory go-live walkthrough
+1. Independently validate one physical tattoo premises and its manager.
+2. Create a test account and submit `Claim`; verify it is pending with no editing rights.
+3. Review account via `/atlas-review`; verify a single atomic member/identity/verif event.
+4. Verify owner can edit one studio, and cannot read any other studio's lead.
+5. Independently verify premises location before publishing a pin.
+6. Submit a test visitor enquiry and ensure only the selected studio can see it. **Before public pilot, implement notification delivery and verify receipt.**
+7. Test negative paths: anonymous data access, missing consent, spam, repeated rate-limited requests, disputed claim, revoked member.
+8. Complete responsive/a11y tests and scan for production regressions.
+9. Curate initial 20–30 true trading premises and offer verified owners to claim.
+10. Approve merger and production release separately from technical preview acceptance.
+
+## Product scope boundary
+Ad sales must wait until consumer traffic, enquiries and attributable lead delivery are demonstrated. INKSIGHTS' £395 Audit conversion path remains business P0.
