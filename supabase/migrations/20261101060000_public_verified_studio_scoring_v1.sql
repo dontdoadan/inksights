@@ -30,6 +30,8 @@ create table if not exists public.studio_profile_answers (
   confidence numeric check (confidence between 0 and 1),
   source_ref text,
   source_submission_id uuid references public.public_tool_submissions(id) on delete set null,
+  data_notice_version text,
+  notice_acknowledged_at timestamptz,
   measurement_start date,
   measurement_end date,
   answered_at timestamptz not null default now(),
@@ -57,6 +59,8 @@ create table if not exists public.studio_profile_answer_history (
   verification_status text not null,
   source_ref text,
   source_submission_id uuid,
+  data_notice_version text,
+  notice_acknowledged_at timestamptz,
   recorded_at timestamptz not null default now()
 );
 create index if not exists studio_profile_answer_history_studio_idx
@@ -72,14 +76,16 @@ begin
   insert into public.studio_profile_answer_history
     (studio_id, field_key, previous_value, previous_period_start, previous_period_end,
      new_value, measurement_start, measurement_end, source_type,
-     verification_status, source_ref, source_submission_id)
+     verification_status, source_ref, source_submission_id,
+     data_notice_version, notice_acknowledged_at)
   values
     (new.studio_id, new.field_key,
      case when tg_op = 'UPDATE' then old.value_json else null end,
      case when tg_op = 'UPDATE' then old.measurement_start else null end,
      case when tg_op = 'UPDATE' then old.measurement_end else null end,
      new.value_json, new.measurement_start, new.measurement_end,
-     new.source_type, new.verification_status, new.source_ref, new.source_submission_id);
+     new.source_type, new.verification_status, new.source_ref, new.source_submission_id,
+     new.data_notice_version, new.notice_acknowledged_at);
   return new;
 end;
 $$;
@@ -350,6 +356,7 @@ create policy "active member inserts own unverified answers"
 on public.studio_profile_answers for insert to authenticated
 with check (source_type = 'studio_reported' and verification_status = 'unverified'
   and source_ref is null and source_submission_id is null and confidence is null
+  and data_notice_version = '2026-11-profile-v1' and notice_acknowledged_at is not null
   and exists(select 1 from public.studio_members m
     where m.studio_id=studio_profile_answers.studio_id
       and m.user_id=(select auth.uid()) and m.active));
@@ -361,6 +368,7 @@ using (source_type = 'studio_reported' and verification_status = 'unverified'
       and m.user_id=(select auth.uid()) and m.active))
 with check (source_type = 'studio_reported' and verification_status = 'unverified'
   and source_ref is null and source_submission_id is null and confidence is null
+  and data_notice_version = '2026-11-profile-v1' and notice_acknowledged_at is not null
   and exists(select 1 from public.studio_members m
     where m.studio_id=studio_profile_answers.studio_id
       and m.user_id=(select auth.uid()) and m.active));
