@@ -346,6 +346,7 @@ function CheckoutButton({
         trackWebsiteEvent("cta_clicked", { cta: "purchase_checkout", offer: offer.slug });
 
         if (offer.checkoutUrl) {
+          trackWebsiteEvent("checkout_started", { offer: offer.slug, checkout_method: "published_link" });
           window.location.href = offer.checkoutUrl;
           return;
         }
