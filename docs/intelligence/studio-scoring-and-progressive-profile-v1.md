@@ -39,11 +39,11 @@ Weights are **product policy proposals**, not statistically validated drivers of
 
 ## Important limitations before production release
 
-1. **Legacy-to-canonical link:** Public pricing and visibility tools currently send anonymous submissions to their own functions. The new FK column enables the join but those functions do not yet reconcile studio identities. Build an explicit verified claim flow or high-confidence owner-approved linkage; no silent joins.
+1. **Legacy-to-canonical link:** A signed-in member can now claim a public pricing or visibility result with both its submission ID and unpredictable submission key, following server-side JWT and active-membership verification. This is implemented in the feature branch but not deployed. Anonymous visitors who have not authenticated remain unlinked; no name-only matching is allowed. Pre-existing legacy rows still require explicit reviewed identity links.
 2. **Model calibration:** 35 slots are seeded, but no score observations or benchmark distributions are generated. Create reviewer-approved rubrics or defensible empirical cohorts before producing scores.
-3. **Input-to-metric normalisation:** New authenticated answers must be reviewed/validated into the existing metric dictionary; self-reported entries must never be automatically treated as independently verified. The database enforces a five-field numeric self-report allowlist, reporting periods and the `2026-11-profile-v1` data-use acknowledgement.
-4. **Release:** Apply the migration *after* preview and SQL review, check Security and Performance Advisors, and deploy the workspace only after schema migration succeeds. The frontend displays an unavailable state if the migration is missing.
-5. **Privacy:** Confirm data-processing notice wording, retention schedule, deletion rights and purpose limitations before collecting studio financial data at scale. Tenant rows are private even if a model is called “Public Presence.”
+3. **Input-to-metric normalisation:** The profile trigger appends the five first-party monthly measures to the EXISTING intelligence metric dictionary and metric value history, with lineage marked `unverified`. Claimed public tools append an `intelligence_evidence` record with their unverified input/result. Neither flow creates accepted scoring assessments, validates accuracy, or infers financial performance.
+4. **Release:** Database development branching requires separate cost approval; an existing old branch reports `MIGRATIONS_FAILED`. A safe executable SQL staging run is therefore BLOCKED without an approved disposable database. Vercel also reports a preview build-rate limit. Never apply untested DDL in production just to bypass the staging gate. After a successful nonproduction run, deploy the `studio-claim-tool-submission` Edge Function and verify that its service-role credential is not exposed before merging the website.
+5. **Privacy:** Confirm data-processing notice wording, retention schedule, deletion rights and purpose limitations before collecting studio financial data at scale. Self-reported monthly figures require the `2026-11-profile-v1` acknowledgement; public tools maintain their existing notices. Tenant rows are private even if a model is called “Public Presence.”
 
 ## Database verification queries after migration (read-only)
 
@@ -87,3 +87,27 @@ where routine_schema='public' and routine_name='calculate_studio_score_v1';
 - [ ] Production advisors clear of *new* high-severity findings and GitHub CI and Vercel preview pass
 
 See `docs/intelligence/benchmark-cohort-specification-v1.md` for empirical-versus-directional benchmark governance.
+
+
+## Executable release acceptance (non-production only)
+
+1. Provision a disposable Supabase staging database through an explicitly approved and budgeted route, or use an existing healthy local PostgreSQL/Supabase development database. Do not reuse the old migration-failed branch and do not run an unreviewed migration against production.
+2. Apply the exact GitHub migration and record its migration version, checksum, applied timestamp and database project ref.
+3. Run `tests/studio-scoring-staging-acceptance.sql`: this rolls back fixture data and asserts a missing-evidence score stays null, both model weight sums equal 100, privileged functions are unavailable to public roles, and evidence from studio A cannot support an assessment of studio B.
+4. Run real JWT-based tests with two isolated staging users and studio memberships. Verify direct REST POST cannot forge a verified answer or read the other tenant's profile, tool submissions or snapshots. Verify a receipt with the wrong key or wrong membership cannot be claimed. Run a positive authorized claim with a fixture public submission; confirm that exactly one self-reported evidence record is created and that a replay is idempotent.
+5. Deploy the Edge Function to staging, verify cookie-free authenticated CORS, invalid JWT handling, receipt proof, and refusal to reassign a claim. Verify no service credentials appear in public JS bundles.
+6. In Vercel previews, test the real Pricing Benchmark and Visibility Scorecard public POST; then sign in and save to studio. Confirm the same studio profile shows both linked entries, with no verified performance score.
+7. Enter and then edit a monthly first-party metric. Confirm the current answer updates, both historical periods and values remain in `studio_profile_answer_history`, and `intelligence_metric_values` receives separate unverified events linked to their history IDs. Confirm no score is generated without a reviewer-approved metric assessment/benchmark.
+8. Regression-test the £395 Audit checkout and a signed Stripe webhook through the existing HubSpot/Supabase pipeline without creating a false paid lead. Verify reporting app tenant access and report download.
+9. Verify both Vercel preview deployments, CI, browser smoke tests, the migration hash, and Supabase Security/Performance Advisors. Only then mark PR ready, merge, migrate and deploy in the required order.
+10. Rollback: revert the application/Edge Function to its prior revision; do not immediately DROP historical data tables. Disable write entry points first, preserve profile/metric history and use a reviewed migration rollback only if strictly necessary.
+
+### Current known blockers (1 November 2026)
+
+- Supabase staging branching asks for explicit hourly-cost confirmation; no cost was authorised.
+- The existing development branch reports `MIGRATIONS_FAILED`.
+- Vercel preview deployments currently receive a plan build-rate-limit response, independently of code compilation.
+- No populated, calibrated public scoring cohort or independently verified commercial metric sample exists yet. Numerical scores must remain withheld.
+- A complete real payment-to-HubSpot-to-report test has not been performed for this PR.
+
+**Release status: DRAFT / NOT PRODUCTION READY.**
