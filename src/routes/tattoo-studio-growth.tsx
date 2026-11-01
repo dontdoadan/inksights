@@ -6,7 +6,7 @@ const topic: StudioTopic = {
   title: "How to Grow a Tattoo Studio in the UK | INKSIGHTS",
   description: "Tattoo studio bookings slowing down? Diagnose enquiry shortages, booking conversion, unused artist hours, pricing and client return before paying for more advertising.",
   eyebrow: "Tattoo studio growth guide · UK",
-  updated: "2026-10-08",
+  updated: "2026-11-01",
   intro: <>If your tattoo studio has quiet weeks, empty appointment slots or plenty of messages but too few confirmed bookings, the first task is to identify where demand or value is being lost. Growing a studio requires more than followers: measure the journey from local discovery through qualified enquiries, deposits, attended artist hours and returning clients before deciding where to invest.</>,
   sections: [
     {
