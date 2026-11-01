@@ -37,7 +37,8 @@ create table if not exists public.studio_profile_answers (
   primary key (studio_id, field_key),
   check (measurement_end is null or measurement_start is not null),
   check (measurement_end is null or measurement_end >= measurement_start),
-  check (jsonb_typeof(value_json) in ('string','number','boolean','object','array'))
+  check (jsonb_typeof(value_json) in ('string','number','boolean','object','array')),
+  check (octet_length(value_json::text) <= 8192)
 );
 comment on table public.studio_profile_answers is
   'Current canonical answers. Server-side authorised upserts enable progressive prefill; never infer authenticated ownership from a submitted studio name.';
@@ -57,8 +58,11 @@ create table if not exists public.studio_profile_answer_history (
 create index if not exists studio_profile_answer_history_studio_idx
   on public.studio_profile_answer_history(studio_id,field_key,recorded_at desc);
 
-create or replace function public.audit_studio_profile_answer_v1()
-returns trigger language plpgsql security invoker set search_path = ''
+-- Private trigger executes with owner privileges only to preserve tamper-resistant change history.
+create schema if not exists inksights_internal;
+revoke all on schema inksights_internal from public, anon, authenticated;
+create or replace function inksights_internal.audit_studio_profile_answer_v1()
+returns trigger language plpgsql security definer set search_path = ''
 as $$
 begin
   insert into public.studio_profile_answer_history
@@ -70,11 +74,11 @@ begin
   return new;
 end;
 $$;
-revoke all on function public.audit_studio_profile_answer_v1() from public, anon, authenticated;
+revoke all on function inksights_internal.audit_studio_profile_answer_v1() from public, anon, authenticated;
 drop trigger if exists trg_audit_studio_profile_answer_v1 on public.studio_profile_answers;
 create trigger trg_audit_studio_profile_answer_v1
   after insert or update on public.studio_profile_answers
-  for each row execute function public.audit_studio_profile_answer_v1();
+  for each row execute function inksights_internal.audit_studio_profile_answer_v1();
 
 create table if not exists public.studio_scoring_models (
   id uuid primary key default gen_random_uuid(),
@@ -284,7 +288,8 @@ grant all on public.studio_legacy_identity_links,public.studio_profile_answers,
   public.studio_scoring_dimensions,public.studio_scoring_metric_rules,
   public.studio_scoring_metric_assessments,public.studio_scoring_snapshots to service_role;
 grant usage,select on sequence public.studio_profile_answer_history_id_seq to service_role;
-grant select on public.studio_profile_answers,public.studio_profile_answer_history,
+grant select, insert, update on public.studio_profile_answers to authenticated;
+grant select on public.studio_profile_answer_history,
   public.studio_scoring_metric_assessments,public.studio_scoring_snapshots,
   public.studio_scoring_models,public.studio_scoring_dimensions,
   public.studio_scoring_metric_rules to authenticated;
@@ -294,6 +299,27 @@ on public.studio_profile_answers for select to authenticated
 using (exists(select 1 from public.studio_members m
               where m.studio_id=studio_profile_answers.studio_id
                 and m.user_id=(select auth.uid()) and m.active));
+-- Client writes are self-reports only. They cannot change verified/staff-reviewed rows,
+-- attach someone else's public submission or promote their own evidence to verified.
+create policy "active member inserts own unverified answers"
+on public.studio_profile_answers for insert to authenticated
+with check (source_type = 'studio_reported' and verification_status = 'unverified'
+  and source_ref is null and source_submission_id is null and confidence is null
+  and exists(select 1 from public.studio_members m
+    where m.studio_id=studio_profile_answers.studio_id
+      and m.user_id=(select auth.uid()) and m.active));
+create policy "active member updates own unverified answers"
+on public.studio_profile_answers for update to authenticated
+using (source_type = 'studio_reported' and verification_status = 'unverified'
+  and exists(select 1 from public.studio_members m
+    where m.studio_id=studio_profile_answers.studio_id
+      and m.user_id=(select auth.uid()) and m.active))
+with check (source_type = 'studio_reported' and verification_status = 'unverified'
+  and source_ref is null and source_submission_id is null and confidence is null
+  and exists(select 1 from public.studio_members m
+    where m.studio_id=studio_profile_answers.studio_id
+      and m.user_id=(select auth.uid()) and m.active));
+
 create policy "studio profile answer history read by active studio member"
 on public.studio_profile_answer_history for select to authenticated
 using (exists(select 1 from public.studio_members m
