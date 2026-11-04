@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BarChart3, Calculator, Database, Search, ShieldCheck, Workflow } from "lucide-react";
+import { BarChart3, Calculator, ClipboardList, Database, Search, ShieldCheck, Workflow } from "lucide-react";
 import { CtaSection, JsonLd, PageHero, PublicShell, SectionHeading } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/resources";
@@ -26,6 +26,13 @@ export const Route = createFileRoute("/resources")({
 });
 
 const diagnosticResources = [
+  {
+    icon: ClipboardList,
+    title: "Interactive Studio Growth Toolkit",
+    type: "Five connected assessments",
+    description: "Score growth constraints, model capacity-aware revenue, audit 27 operational controls and rank potential partners. Results are saved securely.",
+    href: "/studio-growth-toolkit",
+  },
   {
     icon: Search,
     title: "Free Studio Growth Check",
