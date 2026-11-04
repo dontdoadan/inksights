@@ -82,6 +82,9 @@ jobs:
           cat typecheck.log
           exit 1
 
+      - name: Test revenue scenario guardrails
+        run: node --experimental-strip-types --test tests/revenue-scenario.test.mjs
+
       - name: Test Supabase client config fallback
         run: node --test tests/supabase-config.test.mjs
 
