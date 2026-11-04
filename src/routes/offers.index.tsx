@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
-import { CtaSection, JsonLd, PageHero, PrimaryButton, PublicShell, SectionHeading } from "@/components/public-site";
+import { CtaSection, JsonLd, PageHero, PrimaryButton, PublicShell, SecondaryButton, SectionHeading } from "@/components/public-site";
 import { StudioJourney, StudioFaqs, IndustryEnquiry } from "@/components/studio-journey";
 import { publicOffers } from "@/lib/offer-data";
 
@@ -69,6 +69,7 @@ function OffersPage() {
         description={<>INKSIGHTS separates diagnosis, correction, implementation and monitoring so a studio does not buy a larger service than the current constraint requires.</>}
       >
         <PrimaryButton href="/studio-growth-check">Start the free Studio Growth Check</PrimaryButton>
+        <SecondaryButton href="/contact?topic=growth-check">Don't have monthly figures? Enquire instead</SecondaryButton>
       </PageHero>
 
       <StudioJourney />
@@ -107,7 +108,7 @@ function OffersPage() {
           <SectionHeading
             eyebrow="Routing principle"
             title="The correct answer can still be: do nothing yet."
-            description="Where a studio lacks implementation capacity, decision-maker access or a commercially material problem, the appropriate route is a more measurement or a smaller practical action."
+            description="Where a studio lacks implementation capacity, decision-maker access or a commercially material problem, the appropriate next step is to establish a better baseline or take a smaller practical action."
           />
         </div>
       </section>

@@ -129,6 +129,7 @@ function RevenueAuditPage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-mint/25 bg-mint/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-mint"><ShieldCheck className="h-4 w-4" /> Free Studio Growth Check</div>
             <h1 className="mt-6 text-balance font-display text-4xl font-black leading-[.95] tracking-tight text-ice md:text-6xl">Find where your studio could improve next.</h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">Enter your studio’s monthly figures to get an immediate opportunity estimate across capacity, enquiries, cancellations and repeat clients. This free check helps you choose what to investigate; it does not verify lost income or predict your results.</p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">Missing some monthly figures? <a className="font-bold text-mint underline-offset-4 hover:underline" href="/contact?topic=growth-check">Describe your studio and what you know instead →</a> You do not need to invent numbers to start a conversation.</p>
             {search.source === "visibility-scorecard" ? (
               <div className="mt-6 rounded-2xl border border-mint/25 bg-mint/5 p-5 text-sm leading-relaxed text-muted-foreground">
                 <b className="text-ice">Visibility Scorecard context carried forward.</b>{" "}
@@ -190,7 +191,7 @@ function RevenueAuditPage() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-mint">02 · Economics</p>
               <h2 className="mt-2 font-display text-2xl font-black text-ice">Use your average month.</h2>
-              <p className="mt-2 text-sm text-muted-foreground">Use the same representative month across all fields. Approximate figures produce approximate results. Do not enter zero for information you do not know; contact us if you need help establishing a baseline.</p>
+              <p className="mt-2 text-sm text-muted-foreground">Use the same representative month across all fields. Approximate figures produce approximate results. Do not enter zero for information you do not know. <a className="font-semibold text-mint underline-offset-4 hover:underline" href="/contact?topic=growth-check">If you cannot complete these fields, send an enquiry instead →</a></p>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <Field label="Monthly studio revenue (£)" name="monthly_revenue" type="number" min="1" placeholder="30000" required />
                 <Field label="Monthly enquiries" name="monthly_enquiries" type="number" min="1" placeholder="120" required />
