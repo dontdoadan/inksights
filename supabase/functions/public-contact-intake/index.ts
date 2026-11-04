@@ -148,6 +148,27 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    // Sales journey is append-only; a new lead is provisional until studio identity
+    // is verified. Integration_events above remains the safe legacy fallback.
+    try {
+      await rest("sales_journey_events", {
+        method: "POST",
+        headers: { Prefer: "resolution=ignore-duplicates,return=minimal" },
+        body: JSON.stringify({
+          source_ref: `contact:${contact.id}`,
+          event_kind: "lead_captured",
+          source_system: "website",
+          source_event_id: contact.id,
+          idempotency_key: `website_contact:${contact.id}`,
+          occurred_at: new Date().toISOString(),
+          is_test: isTest,
+          properties: { page_path: metadata.page_path, source: "website_contact" },
+        }),
+      });
+    } catch (salesError) {
+      console.error("Sales event capture deferred", salesError instanceof Error ? salesError.message : String(salesError));
+    }
+
     // CRM sync is server-to-server and non-blocking for the visitor. Explicit QA
     // records are persisted for verification but must never mutate production CRM.
     if (!isTest) {

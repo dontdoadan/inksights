@@ -43,6 +43,7 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAuditsRouteImport } from './routes/_authenticated/audits'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedSalesOpsRouteImport } from './routes/_authenticated/sales-ops'
 import { Route as AuthenticatedWorkspaceRouteImport } from './routes/_authenticated/workspace'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as GuidesFullSleeveCostUkRouteImport } from './routes/guides.full-sleeve-cost-uk'
@@ -55,6 +56,7 @@ import { Route as ToolsTattooPainChartRealityCheckRouteImport } from './routes/t
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAuditsAuditIdRouteImport } from './routes/_authenticated/audits.$auditId'
+import { Route as ApiInternalSalesOpsWeeklyRouteImport } from './routes/api/internal/sales-ops-weekly'
 import { Route as ApiPublicPricingBenchmarkSubmitRouteImport } from './routes/api/public/pricing-benchmark-submit'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 import { Route as ApiPublicVisibilityReportRouteImport } from './routes/api/public/visibility-report'
@@ -233,6 +235,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSalesOpsRoute = AuthenticatedSalesOpsRouteImport.update({
+  id: '/sales-ops',
+  path: '/sales-ops',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
   id: '/workspace',
   path: '/workspace',
@@ -298,6 +305,12 @@ const AuthenticatedAuditsAuditIdRoute =
     path: '/$auditId',
     getParentRoute: () => AuthenticatedAuditsRoute,
   } as any)
+const ApiInternalSalesOpsWeeklyRoute =
+  ApiInternalSalesOpsWeeklyRouteImport.update({
+    id: '/api/internal/sales-ops-weekly',
+    path: '/api/internal/sales-ops-weekly',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPricingBenchmarkSubmitRoute =
   ApiPublicPricingBenchmarkSubmitRouteImport.update({
     id: '/api/public/pricing-benchmark-submit',
@@ -356,6 +369,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/sales-ops': typeof AuthenticatedSalesOpsRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
@@ -368,6 +382,7 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/internal/sales-ops-weekly': typeof ApiInternalSalesOpsWeeklyRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
@@ -406,6 +421,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/sales-ops': typeof AuthenticatedSalesOpsRoute
   '/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
@@ -418,6 +434,7 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/internal/sales-ops-weekly': typeof ApiInternalSalesOpsWeeklyRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
@@ -459,6 +476,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/sales-ops': typeof AuthenticatedSalesOpsRoute
   '/_authenticated/workspace': typeof AuthenticatedWorkspaceRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/guides/full-sleeve-cost-uk': typeof GuidesFullSleeveCostUkRoute
@@ -471,6 +489,7 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/audits/$auditId': typeof AuthenticatedAuditsAuditIdRoute
+  '/api/internal/sales-ops-weekly': typeof ApiInternalSalesOpsWeeklyRoute
   '/api/public/pricing-benchmark-submit': typeof ApiPublicPricingBenchmarkSubmitRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
   '/api/public/visibility-report': typeof ApiPublicVisibilityReportRoute
@@ -512,6 +531,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
+    | '/sales-ops'
     | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
@@ -524,6 +544,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/internal/sales-ops-weekly'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
@@ -562,6 +583,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/audits'
     | '/dashboard'
+    | '/sales-ops'
     | '/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
@@ -574,6 +596,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/audits/$auditId'
+    | '/api/internal/sales-ops-weekly'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
@@ -614,6 +637,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/audits'
     | '/_authenticated/dashboard'
+    | '/_authenticated/sales-ops'
     | '/_authenticated/workspace'
     | '/auth/callback'
     | '/guides/full-sleeve-cost-uk'
@@ -626,6 +650,7 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/audits/$auditId'
+    | '/api/internal/sales-ops-weekly'
     | '/api/public/pricing-benchmark-submit'
     | '/api/public/stripe-webhook'
     | '/api/public/visibility-report'
@@ -672,6 +697,7 @@ export interface RootRouteChildren {
   ToolsTattooPainChartRealityCheckRoute: typeof ToolsTattooPainChartRealityCheckRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiInternalSalesOpsWeeklyRoute: typeof ApiInternalSalesOpsWeeklyRoute
   ApiPublicPricingBenchmarkSubmitRoute: typeof ApiPublicPricingBenchmarkSubmitRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
   ApiPublicVisibilityReportRoute: typeof ApiPublicVisibilityReportRoute
@@ -918,6 +944,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sales-ops': {
+      id: '/_authenticated/sales-ops'
+      path: '/sales-ops'
+      fullPath: '/sales-ops'
+      preLoaderRoute: typeof AuthenticatedSalesOpsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/workspace': {
       id: '/_authenticated/workspace'
       path: '/workspace'
@@ -1002,6 +1035,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditsAuditIdRouteImport
       parentRoute: typeof AuthenticatedAuditsRoute
     }
+    '/api/internal/sales-ops-weekly': {
+      id: '/api/internal/sales-ops-weekly'
+      path: '/api/internal/sales-ops-weekly'
+      fullPath: '/api/internal/sales-ops-weekly'
+      preLoaderRoute: typeof ApiInternalSalesOpsWeeklyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/pricing-benchmark-submit': {
       id: '/api/public/pricing-benchmark-submit'
       path: '/api/public/pricing-benchmark-submit'
@@ -1047,12 +1087,14 @@ const AuthenticatedAuditsRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditsRoute: typeof AuthenticatedAuditsRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedSalesOpsRoute: typeof AuthenticatedSalesOpsRoute
   AuthenticatedWorkspaceRoute: typeof AuthenticatedWorkspaceRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditsRoute: AuthenticatedAuditsRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedSalesOpsRoute: AuthenticatedSalesOpsRoute,
   AuthenticatedWorkspaceRoute: AuthenticatedWorkspaceRoute,
 }
 
@@ -1124,6 +1166,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsTattooPainChartRealityCheckRoute: ToolsTattooPainChartRealityCheckRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiInternalSalesOpsWeeklyRoute: ApiInternalSalesOpsWeeklyRoute,
   ApiPublicPricingBenchmarkSubmitRoute: ApiPublicPricingBenchmarkSubmitRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
   ApiPublicVisibilityReportRoute: ApiPublicVisibilityReportRoute,
