@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { CommercialSimulatorLab } from "@/components/growth/CommercialSimulatorLab";
 import {
   ArrowRight,
   BarChart3,
@@ -241,6 +242,8 @@ function GrowthModel() {
           </Card>
         </div>
       </section>
+
+      <CommercialSimulatorLab />
 
       <section className="border-y border-border bg-ink">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">

@@ -1,1 +1,5 @@
 project_id = "ukaxsqwnkoqbbsufpzga"
+
+# Public scenarios are validated and rate-limited inside the function.
+[functions.public-commercial-simulator-submit]
+verify_jwt = false
