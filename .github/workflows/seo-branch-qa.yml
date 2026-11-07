@@ -1,0 +1,50 @@
+name: SEO Branch Browser QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/routes/**"
+      - "tests/seo-preview/**"
+      - "playwright.seo-release.config.cjs"
+      - ".github/workflows/seo-branch-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout proposed branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --legacy-peer-deps --no-audit --no-fund @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Test proposed SEO content release on local branch server
+        run: npx playwright test --config=playwright.seo-release.config.cjs
+
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seo-branch-browser-evidence
+          path: |
+            playwright-seo-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
