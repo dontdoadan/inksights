@@ -51,11 +51,6 @@ const SITE_ENTITY_GRAPH = {
           url: "https://getinksights.co.uk/press",
           name: "INKSIGHTS Press, Media & Research Information",
         },
-        {
-          "@type": "Dataset",
-          url: "https://getinksights.co.uk/research/greater-london-tattoo-pricing-2026",
-          name: "Greater London Tattoo Pricing & Booking Policy Snapshot 2026",
-        },
       ],
     },
     {
