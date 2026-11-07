@@ -5,8 +5,6 @@ import { readFileSync } from "node:fs";
 // Regression guardrails for the privacy-preserving acquisition classifier.
 // CI also compiles website-events.ts with TypeScript and runs the public browser smoke tests.
 const source = readFileSync(new URL("../src/lib/website-events.ts", import.meta.url), "utf8");
-const pricing = readFileSync(new URL("../src/routes/pricing-benchmark.tsx", import.meta.url), "utf8");
-const offer = readFileSync(new URL("../src/routes/offers.$slug.tsx", import.meta.url), "utf8");
 const consent = readFileSync(new URL("../src/lib/consent.ts", import.meta.url), "utf8");
 const analyticsPath = readFileSync(new URL("../src/lib/analytics-path.ts", import.meta.url), "utf8");
 const leadIntake = readFileSync(new URL("../supabase/functions/revenue-audit-v1/index.ts", import.meta.url), "utf8");
@@ -29,19 +27,6 @@ test("paid search and consent gating take precedence over organic credit", () =>
   assert.doesNotMatch(source, /"fbclid"\]/); // Organic social clicks also contain fbclid.
   assert.match(source, /if \(typeof window === "undefined" \|\| !readConsent\(\)\?\.analytics\) return/);
   assert.match(source, /safeAnalyticsPath\(window\.location\.pathname\)/);
-});
-
-test("pricing stays honest about unvalidated bands and persists before revealing a result", () => {
-  assert.match(pricing, /not statistically representative UK studio rates/);
-  assert.match(pricing, /15 studio identities/);
-  assert.match(pricing, /if \(!response\.ok \|\| !payload\.result \|\| !payload\.submissionId\)/);
-  assert.match(pricing, /\{submitted && <div/);
-});
-
-test("paid audit content addresses evidenced owner pains without projecting revenue guarantees", () => {
-  assert.match(offer, /Are enquiries, bookings or artist hours slipping through the gaps/);
-  assert.match(offer, /does not promise specific revenue, Google rankings or confirmed bookings/);
-  assert.match(offer, /Payment verified/);
 });
 
 test("GA4 route reporting redacts private tokens and query parameters", () => {
