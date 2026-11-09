@@ -19,12 +19,12 @@ test.beforeAll(async () => {
 });
 test.afterAll(async () => { if(server)await new Promise(resolve=>server.close(resolve)); });
 
-function mockBackend(page,{failInitialSave=false}={}){
+async function mockBackend(page,{failInitialSave=false}={}){
   const token="J".repeat(43);
   const history={},seen=new Map();
   const events=[];
   let failNext=failInitialSave, seq=0;
-  page.route("**/api/public/studio-journey-submit",async route=>{
+  await page.route("**/api/public/studio-journey-submit",async route=>{
     const req=route.request();
     const body=JSON.parse(req.postData()||"{}");
     events.push({action:body.action,step:body.step,key:body.submissionKey,token:body.sessionToken});
@@ -63,10 +63,11 @@ async function enterGrowth(page){
   await page.locator('input[name="bookedHours"]').fill("200");
   await page.locator('input[name="sessionHours"]').fill("10");
   await page.locator('input[name="notice"]').check();
+  expect(await page.locator("#stepForm").evaluate(form=>form.checkValidity())).toBe(true);
 }
 
 test("full progressive journey, server-confirmed saves and return visit",async({page})=>{
-  const backend=mockBackend(page);
+  const backend=await mockBackend(page);
   await page.goto(origin+"/tools/studio-intelligence-journey-connected.html");
   await enterGrowth(page);
   await page.getByRole("button",{name:"Save Growth Check"}).click();
@@ -93,7 +94,7 @@ test("full progressive journey, server-confirmed saves and return visit",async({
   await page.getByRole("button",{name:"Next stage"}).click();
   await page.getByRole("button",{name:"Save preliminary plan"}).click();
   await expect(page.getByText(/Inspect the reported booking-path defects/)).toBeVisible();
-  await expect(page.getByRole("link",{name:/Explore the £395 Studio Intelligence Audit/})).toBeVisible();
+  await expect(page.getByRole("link",{name:/Review the £395 Studio Intelligence Audit/})).toBeVisible();
   expect(Object.keys(backend.history)).toHaveLength(4);
   const previousCount=backend.events.filter(e=>e.action==="submit").length;
   await page.reload();
@@ -106,7 +107,7 @@ test("full progressive journey, server-confirmed saves and return visit",async({
 });
 
 test("write failure blocks personalised result; retry reuses idempotency key",async({page})=>{
-  const backend=mockBackend(page,{failInitialSave:true});
+  const backend=await mockBackend(page,{failInitialSave:true});
   await page.goto(origin+"/tools/studio-intelligence-journey-connected.html");
   await enterGrowth(page);
   await page.getByRole("button",{name:"Save Growth Check"}).click();
