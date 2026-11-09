@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BarChart3, Clock3, Info, PoundSterling, ShieldCheck, TrendingUp } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { StudioSubmissionClaim } from "@/components/studio-intelligence/StudioSubmissionClaim";
+import { readPendingStudioReceipt, storePendingStudioReceipt } from "@/lib/studio-tool-receipt.mjs";
 import {
   Card,
   JsonLd,
@@ -90,6 +91,14 @@ function PricingBenchmark() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const submissionKey = useRef<string | null>(null);
+  useEffect(() => {
+    // An existing tab can finish claiming its prior saved submission after login.
+    const receipt = readPendingStudioReceipt("pricing_benchmark");
+    if (receipt) {
+      submissionKey.current = receipt.submissionKey;
+      setSubmissionId(receipt.submissionId);
+    }
+  }, []);
   const benchmarks = BENCHMARKS[region];
 
   function clearResult() {
@@ -141,6 +150,7 @@ function PricingBenchmark() {
       }
       setSubmitted({ prices: normalizedPrices, result: payload.result });
       setSubmissionId(payload.submissionId);
+      storePendingStudioReceipt("pricing_benchmark", payload.submissionId, key);
     } catch (error) {
       setSubmitted(null);
       setSubmitError(error instanceof Error ? error.message : "Submission failed. Please try again.");
@@ -247,8 +257,8 @@ function PricingBenchmark() {
                   {submitting ? "Saving your submission…" : "Submit data and view my benchmark"}
                 </button>
                 {submitError && <p role="alert" className="mt-3 text-sm text-amber-300">{submitError}</p>}
-                {submissionId && <p role="status" className="mt-3 text-sm text-mint">Submission saved. Your benchmark results are displayed below.</p>}
-                {submissionId && <StudioSubmissionClaim submissionId={submissionId} submissionKey={submissionKey.current} />}
+                {submissionId && <p role="status" className="mt-3 text-sm text-mint">{submitted ? "Submission saved. Your benchmark results are displayed below." : "Your previously saved submission can be linked to your studio below."}</p>}
+                {submissionId && <StudioSubmissionClaim toolKey="pricing_benchmark" submissionId={submissionId} submissionKey={submissionKey.current} />}
               </div>
             </Card>
 
