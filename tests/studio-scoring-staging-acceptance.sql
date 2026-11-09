@@ -19,6 +19,9 @@ declare
   v_submission_key uuid := gen_random_uuid();
   v_claim jsonb;
   v_link_count integer;
+  v_legacy uuid;
+  v_legacy_submission uuid;
+  v_reconciled integer;
 begin
   if to_regclass('public.studio_scoring_models') is null then
     raise exception 'Scoring migration has not been applied';
@@ -121,6 +124,43 @@ begin
   exception when others then v_rejected := true;
   end;
   if not v_rejected then raise exception 'Cross-studio membership claim was accepted'; end if;
+
+  -- Preserve Atlas as the sole reviewed legacy -> canonical mapping.
+  insert into public.studios(name) values ('Review QA legacy studio') returning id into v_legacy;
+  insert into public.public_tool_submissions
+    (tool_key,tool_version,submission_key,studio_id,normalized_inputs,result_snapshot,consent_version)
+  values ('pricing_benchmark','1',gen_random_uuid(),v_legacy,'{}'::jsonb,'{}'::jsonb,'2026-10-tool-v1')
+  returning id into v_legacy_submission;
+
+  v_rejected := false;
+  begin
+    perform public.reconcile_reviewed_studio_submissions_v1(v_legacy);
+  exception when others then v_rejected := true;
+  end;
+  if not v_rejected then raise exception 'Legacy row reconciled without approved Atlas identity'; end if;
+
+  insert into public.atlas_studio_links
+    (studio_id,visibility_studio_id,evidence,reviewer_id)
+  values (v_legacy,v_a,'{}'::jsonb,v_member);
+  v_rejected := false;
+  begin
+    perform public.reconcile_reviewed_studio_submissions_v1(v_legacy);
+  exception when others then v_rejected := true;
+  end;
+  if not v_rejected then raise exception 'Empty Atlas evidence was treated as reviewed'; end if;
+
+  update public.atlas_studio_links
+  set evidence='{"reviewed":true,"kind":"staging_qa"}'::jsonb
+  where studio_id=v_legacy;
+  v_reconciled := public.reconcile_reviewed_studio_submissions_v1(v_legacy);
+  if v_reconciled <> 1 then raise exception 'Approved Atlas reconciliation was not applied'; end if;
+  if (select canonical_studio_id from public.public_tool_submissions
+      where id=v_legacy_submission) <> v_a then
+    raise exception 'Legacy submission attached to wrong canonical studio';
+  end if;
+  if public.reconcile_reviewed_studio_submissions_v1(v_legacy) <> 0 then
+    raise exception 'Reviewed legacy reconciliation is not idempotent';
+  end if;
 
   -- Existing profile, history and first-party metric tables must move together.
   insert into public.studio_profile_answers
