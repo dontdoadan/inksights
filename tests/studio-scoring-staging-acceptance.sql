@@ -191,7 +191,24 @@ begin
      measurement_start,measurement_end,data_notice_version,notice_acknowledged_at)
   values (v_a,'monthly_tattoo_revenue_gbp','12000'::jsonb,
           'studio_reported','unverified','2026-09-01','2026-09-30',
-          '2026-11-profile-v1',now());
+          '2026-11-profile-v1','2000-01-01'::timestamptz);
+  if exists (
+    select 1 from public.studio_profile_answers
+    where studio_id=v_a and field_key='monthly_tattoo_revenue_gbp'
+      and (answered_at < now()-interval '5 minutes'
+        or notice_acknowledged_at < now()-interval '5 minutes')
+  ) then raise exception 'Browser-forged profile/notice timestamps survived server stamping'; end if;
+
+  v_rejected := false;
+  begin
+    insert into public.studio_profile_answers
+      (studio_id,field_key,value_json,source_type,verification_status,
+       measurement_start,measurement_end,data_notice_version,notice_acknowledged_at)
+    values(v_b,'monthly_qualified_enquiries','20'::jsonb,'studio_reported','unverified',
+           '2026-09-15','2026-09-30','2026-11-profile-v1',now());
+  exception when others then v_rejected := true;
+  end;
+  if not v_rejected then raise exception 'A partial month was accepted as a full monthly measure'; end if;
   update public.studio_profile_answers
   set value_json='13000'::jsonb,
       measurement_start='2026-10-01',measurement_end='2026-10-31',
