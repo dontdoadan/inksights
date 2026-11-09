@@ -85,3 +85,20 @@ create table public.intelligence_evidence (
   observed_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+-- Mirror existing production membership/visibility access controls for JWT/RLS tests.
+alter table public.studio_members enable row level security;
+create policy "studio members can read own memberships"
+on public.studio_members for select to authenticated
+using (user_id=(select auth.uid()));
+grant usage on schema auth to authenticated;
+grant select on public.studio_members to authenticated;
+
+alter table public.visibility_studios enable row level security;
+create policy "visibility studios tenant access" on public.visibility_studios
+for select to authenticated
+using (exists (
+ select 1 from public.studio_members sm
+ where sm.studio_id=visibility_studios.id and sm.user_id=(select auth.uid()) and sm.active
+));
+grant select on public.visibility_studios to authenticated;
