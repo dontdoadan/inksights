@@ -109,7 +109,7 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
         setHistory(savedHistory);
         const availableMonths = [...savedHistory.map((item) => item.measurement_start),
           ...savedAnswers.map((item) => item.measurement_start)].filter(
-          (period): period is string => typeof period === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(period),
+          (period): period is string => typeof period === "string" && /^\d{4}-\d{2}-\d{2}$/.test(period),
         );
         const latestMonth = availableMonths.map((period) => period.slice(0, 7)).sort().at(-1)
           ?? new Date().toISOString().slice(0, 7);
