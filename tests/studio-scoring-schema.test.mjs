@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const sql = readFileSync(
-  new URL("../supabase/migrations/20261101060000_public_verified_studio_scoring_v1.sql", import.meta.url),
+  new URL("../supabase/migrations/20261109000000_public_verified_studio_scoring_v1.sql", import.meta.url),
   "utf8",
 );
 const normal = sql.toLowerCase();
