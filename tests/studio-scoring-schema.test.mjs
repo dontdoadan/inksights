@@ -14,7 +14,9 @@ test("public and verified models coexist on canonical visibility_studios", () =>
   assert.match(sql, /references public\.visibility_studios\(id\)/i);
   assert.match(sql, /public_tool_submissions\s+add column if not exists canonical_studio_id/i);
   assert.doesNotMatch(normal, /create\s+table\s+public\.studios\s*\(/);
-  assert.match(normal, /create table if not exists public\.studio_legacy_identity_links/);
+  assert.match(normal, /from public\.atlas_studio_links/);
+  assert.doesNotMatch(normal, /create table if not exists public\.studio_legacy_identity_links/);
+  assert.match(normal, /reviewer_id is not null/);
   assert.match(sql, /reconcile_reviewed_studio_submissions_v1/);
   assert.match(sql, /no reviewed identity link with supporting evidence/);
   assert.match(sql, /conflicting canonical links require manual review/);
@@ -24,7 +26,7 @@ test("public and verified models coexist on canonical visibility_studios", () =>
 
 test("all new exposed data tables have RLS and no anonymous tenant read", () => {
   const tables = [
-    "studio_legacy_identity_links", "studio_profile_answers", "studio_profile_answer_history",
+    "studio_profile_answers", "studio_profile_answer_history",
     "studio_scoring_models", "studio_scoring_dimensions", "studio_scoring_metric_rules",
     "studio_scoring_metric_assessments", "studio_scoring_snapshots",
   ];
