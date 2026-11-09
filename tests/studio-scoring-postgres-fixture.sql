@@ -21,6 +21,17 @@ create table public.visibility_studios (
   website_url text,
   artist_count integer not null default 0
 );
+-- Existing Atlas studio bridge (already live), not a scoring-owned duplicate.
+create table public.atlas_studio_links (
+  studio_id uuid primary key references public.studios(id) on delete restrict,
+  visibility_studio_id uuid not null unique references public.visibility_studios(id) on delete restrict,
+  evidence jsonb not null default '{}'::jsonb,
+  reviewer_id uuid,
+  reviewed_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+alter table public.atlas_studio_links enable row level security;
+
 create table public.studio_members (
   studio_id uuid not null references public.visibility_studios(id),
   user_id uuid not null,
