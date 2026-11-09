@@ -41,7 +41,7 @@ var $=function(id){return document.getElementById(id)};
 var esc=function(x){return String(x==null?"":x).replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]})};
 var gbp=function(v){return new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP",maximumFractionDigits:0}).format(Number(v)||0)};
 var pct=function(v){return Number(v).toFixed(1)+"%"};
-function field(name,label,type,min,max,value,required){return '<label class="field">'+esc(label)+'<input name="'+name+'" type="'+type+'" '+(min!=null?'min="'+min+'" ':'')+(max!=null?'max="'+max+'" ':'')+'value="'+esc(value==null?"":value)+'" '+(required?'required':'')+'></label>'}
+function field(name,label,type,min,max,value,required){return '<label class="field">'+esc(label)+'<input name="'+name+'" type="'+type+'" '+(min!=null?'min="'+min+'" ':'')+(max!=null?'max="'+max+'" ':'')+(type==='number'?'step="any" ':'')+'value="'+esc(value==null?"":value)+'" '+(required?'required':'')+'></label>'}
 function nav(){
  $("progress").innerHTML=STEPS.map(function(s,i){var available=i===0||!!history[STEPS[i-1]];return '<button type="button" data-step="'+i+'" '+(available?'':'disabled')+' '+(currentStep===i?'aria-current="step"':'')+'>'+(i+1)+' · '+["Growth Check","Revenue","Visibility","Audit plan"][i]+'</button>'}).join("");
  $("progress").querySelectorAll("[data-step]").forEach(function(button){button.onclick=function(){currentStep=Number(button.dataset.step);render()}});
