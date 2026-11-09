@@ -213,8 +213,9 @@ begin
       insert into public.studio_identity_matches(
         candidate_id,studio_id,match_method,match_score,evidence,status,reviewed_by,reviewed_at
       ) values (
-        p_candidate_id,p_visibility_id,'manual_review',null,
+        p_candidate_id,p_visibility_id,'manual_review',1.0,
         jsonb_build_object('review_note',trim(p_reason),'evidence_url',p_evidence_url,
+                           'score_semantics','human_approved_identity_sentinel_not_probability',
                            'classification','human_approved_identity_not_verified_premises'),
         'accepted',p_reviewer_id,now()
       );
