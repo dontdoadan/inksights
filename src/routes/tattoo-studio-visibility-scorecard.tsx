@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Check, Clipboard, RotateCcw, ShieldCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { StudioSubmissionClaim } from "@/components/studio-intelligence/StudioSubmissionClaim";
+import { readPendingStudioReceipt, storePendingStudioReceipt } from "@/lib/studio-tool-receipt.mjs";
 import { JsonLd, PageHero, PublicShell } from "@/components/public-site";
 
 const CANONICAL_URL = "https://getinksights.co.uk/tattoo-studio-visibility-scorecard";
@@ -107,6 +108,14 @@ function TattooStudioVisibilityScorecard() {
   const submissionKey = useRef<string | null>(null);
 
   useEffect(() => {
+    const receipt = readPendingStudioReceipt("visibility_scorecard");
+    if (receipt) {
+      submissionKey.current = receipt.submissionKey;
+      setSubmissionId(receipt.submissionId);
+    }
+  }, []);
+
+  useEffect(() => {
     try {
       const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "{}") as Record<string, boolean>;
       setCompleted(saved);
@@ -159,6 +168,7 @@ function TattooStudioVisibilityScorecard() {
       }
       setSubmitted(payload.result);
       setSubmissionId(payload.submissionId);
+      storePendingStudioReceipt("visibility_scorecard", payload.submissionId, key);
     } catch (error) {
       setSubmitted(null);
       setSubmissionId(null);
@@ -263,8 +273,8 @@ function TattooStudioVisibilityScorecard() {
               {submitting ? "Saving your answers…" : "Submit answers and reveal my score"}
             </button>
             {submitError && <p role="alert" className="mt-3 text-sm text-amber-300">{submitError}</p>}
-            {submissionId && <p role="status" className="mt-3 text-sm text-mint">Saved successfully. Your score is displayed above.</p>}
-                {submissionId && <StudioSubmissionClaim submissionId={submissionId} submissionKey={submissionKey.current} />}
+            {submissionId && <p role="status" className="mt-3 text-sm text-mint">{submitted ? "Saved successfully. Your score is displayed above." : "Your previously saved submission can be linked to your studio below."}</p>}
+                {submissionId && <StudioSubmissionClaim toolKey="visibility_scorecard" submissionId={submissionId} submissionKey={submissionKey.current} />}
             {handoff && <a href={handoff} className="mt-4 flex w-full justify-center rounded-full border border-mint px-5 py-3.5 text-center font-bold text-mint hover:bg-ink">
               Build my action plan →
             </a>}
