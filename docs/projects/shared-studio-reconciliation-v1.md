@@ -68,6 +68,8 @@ Raw sources and observations
 
 These scores rank review priority and must never be presented as calibrated statistical confidence.
 
+For accepted manual links, the existing identity-matches table requires a non-null match_score. The reviewer operation stores 1.0 as an explicit human-approved categorical sentinel; evidence JSON labels this as not being a probability or an automatic venue verification.
+
 ## Implementation staged in this branch
 
 1. SQL migration adds two RLS-enabled tables and service-role-only functions. No direct public or authenticated client table grants.
