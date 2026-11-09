@@ -38,6 +38,11 @@ const statuses: { value: ReviewStatus; label: string }[] = [
 ];
 const format = (date: string) =>
   new Date(date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const safeEvidenceUrl = (value: string | null) => {
+  if (!value) return null;
+  try { const url = new URL(value); return url.protocol === "https:" ? url.href : null; }
+  catch { return null; }
+};
 
 export const Route = createFileRoute("/_authenticated/studio-reconciliation")({
   ssr: false,
@@ -282,9 +287,9 @@ function StudioReconciliation() {
                 <div><dt className="text-[#87aab8]">Source observed</dt><dd className="mt-1 text-sm">{format(selected.studio_candidates.observed_at)}</dd></div>
                 <div><dt className="text-[#87aab8]">Proposed visibility match</dt><dd className="mt-1 break-all font-mono text-[11px]">{selected.suggested_visibility_id || "No supported suggestion"}</dd></div>
                 <div><dt className="text-[#87aab8]">Proposed audit record</dt><dd className="mt-1 break-all font-mono text-[11px]">{selected.suggested_audit_id || "No supported suggestion"}</dd></div>
-                {selected.studio_candidates.source_url ? <div>
+                {safeEvidenceUrl(selected.studio_candidates.source_url) ? <div>
                   <dt className="text-[#87aab8]">Source</dt>
-                  <dd className="mt-1 break-words"><a href={selected.studio_candidates.source_url} target="_blank" rel="noreferrer" className="text-[#5be7f2] underline underline-offset-4">Open evidence source</a></dd>
+                  <dd className="mt-1 break-words"><a href={safeEvidenceUrl(selected.studio_candidates.source_url) || undefined} target="_blank" rel="noopener noreferrer" className="text-[#5be7f2] underline underline-offset-4">Open evidence source</a></dd>
                 </div> : null}
               </dl>
               <form onSubmit={submitReview} className="mt-5 grid gap-3">
