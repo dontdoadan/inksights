@@ -22,6 +22,9 @@ declare
   v_legacy uuid;
   v_legacy_submission uuid;
   v_reconciled integer;
+  v_other_member uuid := gen_random_uuid();
+  v_wrong_receipt uuid;
+  v_wrong_key uuid := gen_random_uuid();
 begin
   if to_regclass('public.studio_scoring_models') is null then
     raise exception 'Scoring migration has not been applied';
@@ -160,6 +163,26 @@ begin
   end if;
   if public.reconcile_reviewed_studio_submissions_v1(v_legacy) <> 0 then
     raise exception 'Reviewed legacy reconciliation is not idempotent';
+  end if;
+
+  -- A valid random receipt must not contradict a previously reviewed Atlas ID.
+  insert into public.studio_members(studio_id,user_id,role,active)
+  values(v_b,v_other_member,'owner',true);
+  insert into public.public_tool_submissions
+    (tool_key,tool_version,submission_key,studio_id,normalized_inputs,result_snapshot,consent_version)
+  values ('visibility_scorecard','1',v_wrong_key,v_legacy,'{}'::jsonb,'{}'::jsonb,'2026-10-tool-v1')
+  returning id into v_wrong_receipt;
+  v_rejected := false;
+  begin
+    perform public.claim_public_tool_submission_v1(v_b,v_other_member,v_wrong_receipt,v_wrong_key);
+  exception when others then v_rejected := true;
+  end;
+  if not v_rejected then
+    raise exception 'Public receipt claim overrode a reviewed Atlas canonical identity';
+  end if;
+  if exists (select 1 from public.public_tool_submissions
+      where id=v_wrong_receipt and canonical_studio_id is not null) then
+    raise exception 'Rejected identity conflict was nevertheless saved';
   end if;
 
   -- Existing profile, history and first-party metric tables must move together.
