@@ -25,6 +25,11 @@ declare
   v_other_member uuid := gen_random_uuid();
   v_wrong_receipt uuid;
   v_wrong_key uuid := gen_random_uuid();
+  v_verified_rule uuid;
+  v_unverified_metric uuid;
+  v_verified_metric uuid;
+  v_definition uuid;
+  v_tool_evidence uuid;
 begin
   if to_regclass('public.studio_scoring_models') is null then
     raise exception 'Scoring migration has not been applied';
@@ -227,7 +232,70 @@ begin
     raise exception 'Self-reported data incorrectly promoted to verified';
   end if;
 
-  raise notice 'PASS: model gating, roles, isolation, receipt claims, idempotency and historical metric ingestion';
+  -- Public score cannot promote the owner's self-assessed scorecard directly.
+  select id into v_tool_evidence from public.intelligence_evidence
+  where studio_id=v_a and source_type='public_tool_submission'
+    and source_ref=v_submission::text;
+  if v_tool_evidence is null then raise exception 'Required claimed tool fixture missing'; end if;
+  v_rejected := false;
+  begin
+    insert into public.studio_scoring_metric_assessments
+      (studio_id,rule_id,normalised_score,source_tier,review_status,
+       benchmark_state,benchmark_ref,evidence_id)
+    values(v_a,v_rule_id,90,'public','accepted','PUBLISHED_RUBRIC',
+           'staging-public-rubric',v_tool_evidence);
+  exception when others then v_rejected := true;
+  end;
+  if not v_rejected then
+    raise exception 'Accepted public score was derived from unverified self-report';
+  end if;
+
+  -- Verified commercial tier must not accept a merely reported monthly metric.
+  select r.id into v_verified_rule from public.studio_scoring_metric_rules r
+  join public.studio_scoring_models m on m.id=r.model_id
+  where m.model_key='verified_commercial' and r.scoring_method='empirical' limit 1;
+  if v_verified_rule is null then raise exception 'Verified scoring model lacks empirical rules'; end if;
+  select id,metric_definition_id into v_unverified_metric,v_definition
+  from public.intelligence_metric_values
+  where studio_id=v_a and source_type='studio_reported_profile'
+  order by created_at desc limit 1;
+  if v_unverified_metric is null then raise exception 'Expected unverified first-party metric not found'; end if;
+  v_rejected := false;
+  begin
+    insert into public.studio_scoring_metric_assessments
+      (studio_id,rule_id,normalised_score,source_tier,review_status,
+       benchmark_state,benchmark_ref,metric_value_id)
+    values(v_a,v_verified_rule,70,'verified','accepted','EMPIRICAL',
+           'staging-verified-cohort',v_unverified_metric);
+  exception when others then v_rejected := true;
+  end;
+  if not v_rejected then
+    raise exception 'Accepted verified score was derived from unverified owner figures';
+  end if;
+
+  -- Independently reviewed source provenance can be assessed, but a single
+  -- qualifying metric still cannot generate a complete commercial score.
+  insert into public.intelligence_metric_values
+    (studio_id,metric_definition_id,value_numeric,unit,classification,
+     source_type,source_ref,lineage,observed_at)
+  values(v_a,v_definition,13200,'GBP','observed',
+    'reviewed_integration','staging-fixture',
+    '{"verification_status":"verified","reviewed_by":"staging-qa"}'::jsonb,now())
+  returning id into v_verified_metric;
+  insert into public.studio_scoring_metric_assessments
+    (studio_id,rule_id,normalised_score,source_tier,review_status,
+     benchmark_state,benchmark_ref,metric_value_id)
+  values(v_a,v_verified_rule,70,'verified','accepted','EMPIRICAL',
+         'staging-verified-cohort',v_verified_metric);
+
+  v_snapshot_id := public.calculate_studio_score_v1(v_a,'verified_commercial',null,null);
+  select status,score into v_status,v_score
+  from public.studio_scoring_snapshots where id=v_snapshot_id;
+  if v_status <> 'insufficient_data' or v_score is not null then
+    raise exception 'Partial verified evidence improperly produced a commercial score';
+  end if;
+
+  raise notice 'PASS: identity, monthly history, RLS, reviewer provenance and low-coverage score suppression';
 end;
 $$;
 
