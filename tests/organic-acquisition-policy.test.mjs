@@ -47,3 +47,11 @@ test("lead source linkage is consent-gated, bounded and not mistaken for verifie
   assert.match(leadIntake, /permittedChannels/);
   assert.match(leadIntake, /browser-reported and must never be considered verified channel truth/);
 });
+
+test("Google tag uses the confirmed INKSIGHTS GA4 web-stream measurement ID", () => {
+  assert.match(consent, /export const GOOGLE_ANALYTICS_MEASUREMENT_ID = "G-V7SQ9SPYMH"/);
+  assert.match(consent, /export const GOOGLE_TAG_ID = GOOGLE_ANALYTICS_MEASUREMENT_ID/);
+  assert.doesNotMatch(consent, /G-03QJZLEPW0/);
+  assert.match(consent, /gtag\?\.\("config", GOOGLE_TAG_ID, \{ send_page_view: false \}\)/);
+  assert.match(consent, /gtag\/js\?id=\$\{encodeURIComponent\(GOOGLE_TAG_ID\)\}/);
+});
