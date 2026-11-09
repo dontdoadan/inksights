@@ -96,6 +96,8 @@ jobs:
 
       - name: Test canonical scoring schema guardrails
         run: node --test tests/studio-scoring-schema.test.mjs
+      - name: Test short-lived canonical studio receipt persistence
+        run: node --test tests/studio-tool-receipt.test.mjs
 
       - name: Typecheck authenticated studio tool claim function
         run: deno check --node-modules-dir=auto supabase/functions/studio-claim-tool-submission/index.ts
