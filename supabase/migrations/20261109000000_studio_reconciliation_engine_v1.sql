@@ -195,7 +195,8 @@ begin
     where candidate_id=p_candidate_id for update;
   if not found then raise exception 'Candidate is not in the review queue'; end if;
   if p_action='reopen' then
-    if v_case.review_status not in ('approved','rejected','needs_evidence') then raise exception 'Not a reviewed case'; end if;
+    if v_case.review_status not in ('rejected','needs_evidence')
+    then raise exception 'Approved identity links require a dedicated reversal workflow'; end if;
   elsif v_case.review_status in ('approved','rejected') then
     raise exception 'Already decided; reopen separately with evidence'; end if;
 
