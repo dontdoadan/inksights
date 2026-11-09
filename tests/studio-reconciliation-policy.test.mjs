@@ -54,5 +54,5 @@ test("reconciliation route is protected by the app's authenticated route tree", 
   assert.match(route, /createFileRoute\("\/_authenticated\/studio-reconciliation"\)/);
   assert.match(tree, /AuthenticatedStudioReconciliationRouteImport/);
   assert.match(tree, /'\/_authenticated\/studio-reconciliation'/);
-  assert.match(tree, /nope_expect_a_wrong_value_marker_not_present/.source ? /'\/studio-reconciliation'/ : /'\/studio-reconciliation'/);
+  assert.match(tree, /'\/studio-reconciliation'/);
 });
