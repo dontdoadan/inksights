@@ -234,11 +234,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedStudioReconciliationRoute = AuthenticatedStudioReconciliationRouteImport.update({
-  id: '/studio-reconciliation',
-  path: '/studio-reconciliation',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedStudioReconciliationRoute =
+  AuthenticatedStudioReconciliationRouteImport.update({
+    id: '/studio-reconciliation',
+    path: '/studio-reconciliation',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedWorkspaceRoute = AuthenticatedWorkspaceRouteImport.update({
   id: '/workspace',
   path: '/workspace',
@@ -1073,7 +1074,8 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditsRoute: AuthenticatedAuditsRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedStudioReconciliationRoute: AuthenticatedStudioReconciliationRoute,
+  AuthenticatedStudioReconciliationRoute:
+    AuthenticatedStudioReconciliationRoute,
   AuthenticatedWorkspaceRoute: AuthenticatedWorkspaceRoute,
 }
 
