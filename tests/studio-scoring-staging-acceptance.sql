@@ -1,4 +1,4 @@
--- Run on a non-production database only, AFTER migration 20261101060000.
+-- Run on a non-production database only, AFTER migration 20261109000000.
 -- This self-contained test rolls back its synthetic studio and evidence records.
 -- Do NOT run on production. No Stripe/HubSpot calls are made.
 begin;
