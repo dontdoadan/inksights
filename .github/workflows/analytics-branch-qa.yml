@@ -1,0 +1,46 @@
+name: Analytics Branch Browser QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/lib/**"
+      - "src/routes/**"
+      - "tests/analytics-preview/**"
+      - "playwright.analytics-release.config.cjs"
+      - ".github/workflows/analytics-branch-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout proposed branch
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+      - name: Install browser runner
+        run: |
+          npm install --no-save --legacy-peer-deps --no-audit --no-fund @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Test consent and GA4 destination locally, intercepting analytics traffic
+        run: npx playwright test --config=playwright.analytics-release.config.cjs
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-branch-browser-evidence
+          path: |
+            playwright-analytics-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14

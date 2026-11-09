@@ -1,3 +1,5 @@
+import { safeAnalyticsPath } from "./analytics-path";
+
 export type InksightConsent = {
   essential: true;
   analytics: boolean;
@@ -28,8 +30,10 @@ type GoogleWindow = Window & {
 
 export const CONSENT_STORAGE_KEY = "inksight-consent-v1";
 const META_PIXEL_ID = "1358457972311385";
-export const GOOGLE_TAG_ID = "G-03QJZLEPW0";
+// Verified against the INKSIGHTS Website GA4 web stream (stream ID 15850925016).
+// Keep one authoritative measurement destination for loader, config and events.
 export const GOOGLE_ANALYTICS_MEASUREMENT_ID = "G-V7SQ9SPYMH";
+export const GOOGLE_TAG_ID = GOOGLE_ANALYTICS_MEASUREMENT_ID;
 
 export function readConsent(): InksightConsent | null {
   if (typeof window === "undefined") return null;
@@ -142,10 +146,12 @@ export function loadGoogleAnalytics() {
 export function trackGooglePageView(path: string) {
   if (typeof window === "undefined" || !readConsent()?.analytics) return;
   loadGoogleAnalytics();
+  const safePath = safeAnalyticsPath(path);
   (window as GoogleWindow).gtag?.("event", "page_view", {
     page_title: document.title,
-    page_location: window.location.href,
-    page_path: path,
+    // Never send checkout identifiers, invitation tokens, query parameters or fragments to GA4.
+    page_location: new URL(safePath, window.location.origin).toString(),
+    page_path: safePath,
   });
 }
 
