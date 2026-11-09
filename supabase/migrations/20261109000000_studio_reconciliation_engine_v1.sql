@@ -99,9 +99,12 @@ begin
              and regexp_replace(upper(c.companies_house_number),'[^A-Z0-9]','','g')=
                regexp_replace(upper(coalesce(v.companies_house_number,'')),'[^A-Z0-9]','','g')
             then 'exact_company_number'
-          when c.chost<>'' and v.vhost<>'' and c.chost=v.vhost then 'same_website_host'
+          when c.chost<>'' and c.chost=v.vhost and c.cname<>'' and c.cname=v.vname
+            then 'same_website_and_name'
           when c.cname<>'' and c.cname=v.vname and c.cpostcode<>'' and c.cpostcode=v.vpostcode
             then 'same_name_postcode'
+          when c.chost<>'' and v.vhost<>'' and c.chost=v.vhost
+            then 'shared_website_host_only'
           when c.cname<>'' and c.cname=v.vname and coalesce(lower(trim(c.town)),'')<>''
                and lower(trim(c.town))=lower(trim(coalesce(v.town,'')))
             then 'same_name_town'
@@ -111,8 +114,9 @@ begin
              and regexp_replace(upper(c.companies_house_number),'[^A-Z0-9]','','g')=
                regexp_replace(upper(coalesce(v.companies_house_number,'')),'[^A-Z0-9]','','g')
             then 95
-          when c.chost<>'' and v.vhost<>'' and c.chost=v.vhost then 90
-          when c.cname<>'' and c.cname=v.vname and c.cpostcode<>'' and c.cpostcode=v.vpostcode then 80
+          when c.chost<>'' and c.chost=v.vhost and c.cname<>'' and c.cname=v.vname then 92
+          when c.cname<>'' and c.cname=v.vname and c.cpostcode<>'' and c.cpostcode=v.vpostcode then 85
+          when c.chost<>'' and v.vhost<>'' and c.chost=v.vhost then 50
           when c.cname<>'' and c.cname=v.vname and coalesce(lower(trim(c.town)),'')<>''
                and lower(trim(c.town))=lower(trim(coalesce(v.town,''))) then 60
           else 0 end as strength,
@@ -131,11 +135,13 @@ begin
     ) vis on true
     left join lateral (
       select a.id,
-        case when c.chost<>'' and a.ahost<>'' and c.chost=a.ahost then 'same_website_host'
+        case when c.chost<>'' and a.ahost<>'' and c.chost=a.ahost and c.cname<>'' and c.cname=a.aname then 'same_website_and_name'
+             when c.chost<>'' and a.ahost<>'' and c.chost=a.ahost then 'shared_website_host_only'
              when c.cname<>'' and c.cname=a.aname and c.town is not null and trim(c.town)<>''
                   and lower(trim(c.town))=lower(trim(coalesce(a.primary_location,''))) then 'same_name_location'
              else 'no_supported_match' end rule,
-        case when c.chost<>'' and a.ahost<>'' and c.chost=a.ahost then 90
+        case when c.chost<>'' and a.ahost<>'' and c.chost=a.ahost and c.cname<>'' and c.cname=a.aname then 92
+             when c.chost<>'' and a.ahost<>'' and c.chost=a.ahost then 50
              when c.cname<>'' and c.cname=a.aname and c.town is not null and trim(c.town)<>''
                   and lower(trim(c.town))=lower(trim(coalesce(a.primary_location,''))) then 65
              else 0 end strength
