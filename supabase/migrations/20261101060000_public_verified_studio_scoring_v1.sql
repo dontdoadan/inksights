@@ -2,17 +2,10 @@
 -- Additive migration. No existing studio, lead, submission or intelligence rows are rewritten.
 -- Canonical entity: public.visibility_studios(id). public.studios remains a legacy compatibility entity.
 
-create table if not exists public.studio_legacy_identity_links (
-  legacy_studio_id uuid primary key references public.studios(id) on delete restrict,
-  canonical_studio_id uuid not null references public.visibility_studios(id) on delete restrict,
-  match_method text not null check (match_method in ('manually_reviewed','verified_website_postcode','authenticated_claim')),
-  reviewed_by uuid,
-  review_evidence jsonb not null default '{}'::jsonb,
-  reviewed_at timestamptz not null default now(),
-  unique (legacy_studio_id, canonical_studio_id)
-);
-create index if not exists studio_legacy_identity_links_canonical_idx
-  on public.studio_legacy_identity_links(canonical_studio_id);
+-- Reuse the EXISTING, reviewer-controlled Atlas legacy bridge. Never create
+-- a competing studio identity mapping table. Supabase migration
+-- 20261101185347 created public.atlas_studio_links earlier in this environment.
+-- Legacy studio_id is public.studios; visibility_studio_id is canonical.
 
 -- Existing public tools point studio_id to *legacy* public.studios. Preserve it.
 alter table public.public_tool_submissions
@@ -33,11 +26,13 @@ declare
   v_conflicts integer;
   v_count integer;
 begin
-  select canonical_studio_id into v_studio_id
-  from public.studio_legacy_identity_links
-  where legacy_studio_id = p_legacy_studio_id
-    and jsonb_typeof(review_evidence) = 'object'
-    and review_evidence <> '{}'::jsonb;
+  select visibility_studio_id into v_studio_id
+  from public.atlas_studio_links
+  where studio_id = p_legacy_studio_id
+    and reviewer_id is not null
+    and reviewed_at is not null
+    and jsonb_typeof(evidence) = 'object'
+    and evidence <> '{}'::jsonb;
   if v_studio_id is null then
     raise exception 'no reviewed identity link with supporting evidence';
   end if;
@@ -529,7 +524,6 @@ revoke all on function public.calculate_studio_score_v1(uuid,text,date,date)
 grant execute on function public.calculate_studio_score_v1(uuid,text,date,date) to service_role;
 
 -- Every newly exposed table has RLS; browsers get read access only where authorised.
-alter table public.studio_legacy_identity_links enable row level security;
 alter table public.studio_profile_answers enable row level security;
 alter table public.studio_profile_answer_history enable row level security;
 alter table public.studio_scoring_models enable row level security;
@@ -538,7 +532,7 @@ alter table public.studio_scoring_metric_rules enable row level security;
 alter table public.studio_scoring_metric_assessments enable row level security;
 alter table public.studio_scoring_snapshots enable row level security;
 
-grant all on public.studio_legacy_identity_links,public.studio_profile_answers,
+grant all on public.studio_profile_answers,
   public.studio_profile_answer_history,public.studio_scoring_models,
   public.studio_scoring_dimensions,public.studio_scoring_metric_rules,
   public.studio_scoring_metric_assessments,public.studio_scoring_snapshots to service_role;
