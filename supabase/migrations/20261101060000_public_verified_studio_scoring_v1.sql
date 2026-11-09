@@ -198,7 +198,8 @@ create table if not exists public.studio_profile_answers (
       )
       and measurement_start is not null
       and measurement_end is not null
-      and measurement_end >= measurement_start
+      and measurement_start = date_trunc('month',measurement_start)::date
+      and measurement_end = (measurement_start + interval '1 month - 1 day')::date
     )
   )
 );
@@ -239,9 +240,31 @@ values
 on conflict (key,version) do nothing;
 
 
--- Private trigger executes with owner privileges only to preserve tamper-resistant change history.
+-- Self-reported operational events receive trusted server timestamps,
+-- not caller-supplied dates that can be forged through the REST API.
 create schema if not exists inksights_internal;
 revoke all on schema inksights_internal from public, anon, authenticated;
+create or replace function inksights_internal.stamp_studio_profile_answer_v1()
+returns trigger language plpgsql security invoker set search_path = ''
+as $
+begin
+  if new.source_type = 'studio_reported' then
+    if new.notice_acknowledged_at is null then
+      raise exception 'data-use notice acknowledgement required';
+    end if;
+    new.updated_at := clock_timestamp();
+    new.answered_at := new.updated_at;
+    new.notice_acknowledged_at := new.updated_at;
+  end if;
+  return new;
+end;
+$;
+revoke all on function inksights_internal.stamp_studio_profile_answer_v1() from public, anon, authenticated;
+create trigger trg_stamp_studio_profile_answer_v1
+  before insert or update on public.studio_profile_answers
+  for each row execute function inksights_internal.stamp_studio_profile_answer_v1();
+
+-- Private trigger executes with owner privileges only to preserve tamper-resistant change history.
 create or replace function inksights_internal.audit_studio_profile_answer_v1()
 returns trigger language plpgsql security definer set search_path = ''
 as $$
