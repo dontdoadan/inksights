@@ -198,7 +198,7 @@ create table if not exists public.studio_profile_answers (
       )
       and measurement_start is not null
       and measurement_end is not null
-      and measurement_start = date_trunc('month',measurement_start)::date
+      and extract(day from measurement_start) = 1
       and measurement_end = (measurement_start + interval '1 month - 1 day')::date
     )
   )
