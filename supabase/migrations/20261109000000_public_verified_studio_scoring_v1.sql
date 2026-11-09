@@ -408,6 +408,37 @@ begin
                     where e.id = new.evidence_id and e.studio_id = new.studio_id) then
     raise exception 'source evidence must belong to the canonical studio';
   end if;
+
+  if new.review_status = 'accepted' and new.source_tier = 'verified' then
+    -- A reviewer cannot accidentally convert anonymous or owner-submitted
+    -- data into verified commercial evidence merely by clicking "accepted".
+    if new.metric_value_id is null and new.evidence_id is null then
+      raise exception 'verified scoring requires independently reviewed source evidence';
+    end if;
+    if new.metric_value_id is not null and not exists (
+      select 1 from public.intelligence_metric_values v
+      where v.id = new.metric_value_id and v.studio_id = new.studio_id
+        and v.source_type not in ('studio_reported_profile','public_self_report')
+        and v.lineage->>'verification_status' = 'verified'
+    ) then
+      raise exception 'verified scoring cannot use unverified metric input';
+    end if;
+    if new.evidence_id is not null and not exists (
+      select 1 from public.intelligence_evidence e
+      where e.id = new.evidence_id and e.studio_id = new.studio_id
+        and e.source_type not in ('public_tool_submission','public_self_report','studio_reported_profile')
+        and e.payload->>'verification_status' = 'verified'
+    ) then
+      raise exception 'verified scoring cannot use unverified document evidence';
+    end if;
+  end if;
+  if new.review_status = 'accepted' and new.source_tier = 'public'
+     and new.evidence_id is not null and exists (
+       select 1 from public.intelligence_evidence e
+       where e.id = new.evidence_id and e.source_type = 'public_tool_submission'
+     ) then
+    raise exception 'self-reported tool evidence is not independent public evidence';
+  end if;
   return new;
 end;
 $$;
