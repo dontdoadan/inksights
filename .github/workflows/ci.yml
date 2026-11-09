@@ -141,4 +141,6 @@ jobs:
         run: psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261101060000_public_verified_studio_scoring_v1.sql
       - name: Verify permissions, missing-evidence scores and cross-studio isolation
         run: psql -v ON_ERROR_STOP=1 -f tests/studio-scoring-staging-acceptance.sql
+      - name: Verify tenant RLS with authenticated JWT role and viewer read-only restrictions
+        run: psql -v ON_ERROR_STOP=1 -f tests/studio-scoring-rls-acceptance.sql
 
