@@ -18,8 +18,8 @@ Weights are **product policy proposals**, not statistically validated drivers of
 ## Data lineage
 
 - `visibility_studios` represents the location-level canonical studio. `studio_members` is the sole current browser authorisation authority; public website visitors must never acquire membership by supplying a name, website or email.
-- `studio_legacy_identity_links` provides an explicit reviewed mapping from the older `studios` table to `visibility_studios`. Do not modify or delete existing IDs.
-- `public_tool_submissions.studio_id` is still the **legacy** studio FK; the new `canonical_studio_id` is separate. It remains null until server-side identity reconciliation is approved. Do not match a submitted studio name alone. The service-role-only `reconcile_reviewed_studio_submissions_v1(legacy_studio_id)` function checks for an explicit link with nonempty review evidence, refuses conflicting destinations and then attaches previously saved tool submissions to the canonical ID. It does not reclassify those submissions as verified operational evidence.
+- `atlas_studio_links` is the existing reviewed mapping from legacy `studios` to canonical `visibility_studios`, created by the Atlas identity programme. Scoring reuses it; no parallel identity-mapping table is created. Do not modify or delete existing studio IDs.
+- `public_tool_submissions.studio_id` is still the **legacy** studio FK; the new `canonical_studio_id` is separate. It remains null until authenticated receipt association or a reviewed Atlas identity link is present. Do not match a submitted studio name alone. The service-role-only `reconcile_reviewed_studio_submissions_v1(legacy_studio_id)` function checks for an existing reviewed Atlas link with an identified reviewer, review timestamp and nonempty evidence, refuses conflicting destinations and then attaches previously saved tool submissions to the canonical ID. It does not reclassify those submissions as verified operational evidence.
 - `studio_profile_answers` contains the most recent answer per studio and field; `studio_profile_answer_history` records revisions including previous/new periods. It is not itself the authoritative time-series fact table for trend statistics: validated monthly events and calculation runs must be persisted into existing metric/evidence tables by the scheduled normalisation process.
 - Authenticated studio owners can insert/update *their own* `studio_reported/unverified` answers. They cannot change a verified, staff-reviewed or disputed answer, forge a source link or promote self-reports into verified observations.
 - Server staff/service-role reconciliation may review answers, insert canonical `intelligence_metric_values`, and attach `intelligence_evidence` and `studio_scoring_metric_assessments`. These actions must preserve submission provenance, dates, verification method and currency.
@@ -39,7 +39,7 @@ Weights are **product policy proposals**, not statistically validated drivers of
 
 ## Important limitations before production release
 
-1. **Legacy-to-canonical link:** A signed-in member can now claim a public pricing or visibility result with both its submission ID and unpredictable submission key, following server-side JWT and active-membership verification. This is implemented in the feature branch but not deployed. Anonymous visitors who have not authenticated remain unlinked; no name-only matching is allowed. Pre-existing legacy rows still require explicit reviewed identity links.
+1. **Legacy-to-canonical link:** A signed-in member can now claim a public pricing or visibility result with both its submission ID and unpredictable submission key, following server-side JWT and active-membership verification. This is implemented in the feature branch but not deployed. Anonymous visitors who have not authenticated remain unlinked; no name-only matching is allowed. Pre-existing legacy rows still require existing, reviewer-approved Atlas identity links.
 2. **Model calibration:** 35 slots are seeded, but no score observations or benchmark distributions are generated. Create reviewer-approved rubrics or defensible empirical cohorts before producing scores.
 3. **Input-to-metric normalisation:** The profile trigger appends the five first-party monthly measures to the EXISTING intelligence metric dictionary and metric value history, with lineage marked `unverified`. Claimed public tools append an `intelligence_evidence` record with their unverified input/result. Neither flow creates accepted scoring assessments, validates accuracy, or infers financial performance.
 4. **Release:** Database development branching requires separate cost approval; an existing old branch reports `MIGRATIONS_FAILED`. A safe executable SQL staging run is therefore BLOCKED without an approved disposable database. Vercel also reports a preview build-rate limit. Never apply untested DDL in production just to bypass the staging gate. After a successful nonproduction run, deploy the `studio-claim-tool-submission` Edge Function and verify that its service-role credential is not exposed before merging the website.
@@ -67,7 +67,7 @@ from pg_class where relnamespace='public'::regnamespace
 and relname in ('studio_profile_answers','studio_profile_answer_history',
 'studio_scoring_models','studio_scoring_dimensions',
 'studio_scoring_metric_rules','studio_scoring_metric_assessments',
-'studio_scoring_snapshots','studio_legacy_identity_links');
+'studio_scoring_snapshots','atlas_studio_links');
 
 select routine_name from information_schema.routines
 where routine_schema='public' and routine_name='calculate_studio_score_v1';
@@ -111,3 +111,13 @@ See `docs/intelligence/benchmark-cohort-specification-v1.md` for empirical-versu
 - A complete real payment-to-HubSpot-to-report test has not been performed for this PR.
 
 **Release status: DRAFT / NOT PRODUCTION READY.**
+
+
+## Current integration reconciliation — 9 November 2026
+
+- Supabase already has the independently governed `public.atlas_studio_links` identity bridge (schema deployment `20261101185347`). This replaces the earlier proposal to introduce a second mapping table. The scoring migration references reviewed Atlas links and refuses empty evidence or absent reviewers.
+- This scoring migration must be applied to an environment that has the Atlas link migration first. The free PostgreSQL CI fixture includes the exact relevant Atlas bridge columns and asserts positive and negative reconciliation cases.
+- Viewer-only studio memberships may read their own studio intelligence but cannot mutate monthly financial figures or claim public receipts. SQL tenant tests exercise real PostgreSQL RLS roles using simulated JWT subjects.
+- Public-tool receipt proofs are kept only in per-tab session storage for up to 90 minutes, containing random UUIDs rather than prices, contact details or financial inputs. Stored proofs are removed on a successful claim or expiry.
+- Reporting-month changes prefill a month's own saved history, not numbers from another period.
+- Scoring remains withheld where valid review, cohort evidence or rule calibration is absent. Model definitions are not equivalent to empirical benchmarking.
