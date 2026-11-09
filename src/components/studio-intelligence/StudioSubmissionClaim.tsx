@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { clearPendingStudioReceipt } from "@/lib/studio-tool-receipt.mjs";
 
 type StudioChoice = { id: string; name: string };
 
-export function StudioSubmissionClaim({ submissionId, submissionKey }: {
+export function StudioSubmissionClaim({ submissionId, submissionKey, toolKey }: {
   submissionId: string;
   submissionKey: string | null;
+  toolKey: "pricing_benchmark" | "visibility_scorecard";
 }) {
   const [choices, setChoices] = useState<StudioChoice[]>([]);
   const [selectedId, setSelectedId] = useState("");
@@ -31,7 +33,7 @@ export function StudioSubmissionClaim({ submissionId, submissionKey }: {
       }
 
       const { data: memberships, error: membershipError } = await supabase
-        .from("studio_members").select("studio_id").eq("active", true);
+        .from("studio_members").select("studio_id").eq("active", true).in("role", ["owner", "admin", "member"]);
       if (membershipError || !memberships?.length) {
         setNotice("Your account has no verified studio membership yet. Claim or verify a studio in your workspace first.");
         return;
@@ -61,6 +63,7 @@ export function StudioSubmissionClaim({ submissionId, submissionKey }: {
         throw new Error("The result could not be linked. Your saved result remains available on this page.");
       }
       setSelectedId(studioId);
+      clearPendingStudioReceipt(toolKey);
       setStatus("saved");
       setNotice("Saved against your canonical studio profile as an unverified tool submission.");
     } catch (error) {
