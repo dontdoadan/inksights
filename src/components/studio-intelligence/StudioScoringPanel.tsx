@@ -8,6 +8,7 @@ type ScoreSnapshot = {
   evidence_quality: number | null; status: "scored" | "insufficient_data"; scored_at: string;
 };
 type ClaimedTool = { id: string; tool_key: string; submitted_at: string; quality_status: string; result_snapshot: Record<string, unknown> };
+type AnswerHistory = { field_key: string; new_value: unknown; measurement_start: string | null; recorded_at: string };
 type ProfileAnswer = {
   field_key: string; value_json: unknown; verification_status: "unverified" | "verified" | "disputed";
   measurement_start: string | null;
@@ -26,6 +27,23 @@ const QUESTIONS = [
 ] as const;
 type FieldKey = (typeof QUESTIONS)[number]["key"];
 type InputValues = Partial<Record<FieldKey, string>>;
+
+function valuesForReportingMonth(month: string, current: ProfileAnswer[], revisions: AnswerHistory[]): InputValues {
+  const firstDay = month + "-01";
+  const values: InputValues = {};
+  // Latest historical value for this reporting period. Do not automatically
+  // carry the previous month's financial measurements into a new month.
+  const forMonth = revisions.filter((revision) => revision.measurement_start === firstDay)
+    .sort((a, b) => b.recorded_at.localeCompare(a.recorded_at));
+  for (const question of QUESTIONS) {
+    const revision = forMonth.find((item) => item.field_key === question.key);
+    const saved = revision?.new_value ?? current.find(
+      (item) => item.field_key === question.key && item.measurement_start === firstDay,
+    )?.value_json;
+    if (typeof saved === "number" && Number.isFinite(saved)) values[question.key] = String(saved);
+  }
+  return values;
+}
 
 function publicConfig() {
   const processEnv = typeof process !== "undefined" ? process.env : undefined;
@@ -47,6 +65,7 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
   const [snapshots, setSnapshots] = useState<ScoreSnapshot[]>([]);
   const [answers, setAnswers] = useState<ProfileAnswer[]>([]);
   const [toolResults, setToolResults] = useState<ClaimedTool[]>([]);
+  const [history, setHistory] = useState<AnswerHistory[]>([]);
   const [inputs, setInputs] = useState<InputValues>({});
   const [reportingMonth, setReportingMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [state, setState] = useState<"loading" | "ready" | "unavailable">("loading");
@@ -61,7 +80,7 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) throw new Error("Authentication required");
-        const [modelRows, snapshotRows, savedAnswers, linkedTools] = await Promise.all([
+        const [modelRows, snapshotRows, savedAnswers, linkedTools, savedHistory] = await Promise.all([
           tenantRead<ScoringModel>("studio_scoring_models", {
             select: "id,model_key,name,version", status: "eq.active", order: "version.desc",
           }, session.access_token),
@@ -77,20 +96,25 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
             select: "id,tool_key,submitted_at,quality_status,result_snapshot",
             canonical_studio_id: `eq.${studioId}`, order: "submitted_at.desc", limit: "50",
           }, session.access_token),
+          tenantRead<AnswerHistory>("studio_profile_answer_history", {
+            select: "field_key,new_value,measurement_start,recorded_at",
+            studio_id: `eq.${studioId}`, order: "recorded_at.desc", limit: "250",
+          }, session.access_token),
         ]);
         if (!active) return;
         setModels(modelRows);
         setSnapshots(snapshotRows);
         setAnswers(savedAnswers);
         setToolResults(linkedTools);
-        const initial: InputValues = {};
-        for (const question of QUESTIONS) {
-          const saved = savedAnswers.find((answer) => answer.field_key === question.key);
-          if (saved && typeof saved.value_json === "number") initial[question.key] = String(saved.value_json);
-        }
-        setInputs(initial);
-        const latestPeriod = savedAnswers.find((answer) => QUESTIONS.some((q) => q.key === answer.field_key))?.measurement_start;
-        if (latestPeriod) setReportingMonth(latestPeriod.slice(0, 7));
+        setHistory(savedHistory);
+        const availableMonths = [...savedHistory.map((item) => item.measurement_start),
+          ...savedAnswers.map((item) => item.measurement_start)].filter(
+          (period): period is string => typeof period === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(period),
+        );
+        const latestMonth = availableMonths.map((period) => period.slice(0, 7)).sort().at(-1)
+          ?? new Date().toISOString().slice(0, 7);
+        setReportingMonth(latestMonth);
+        setInputs(valuesForReportingMonth(latestMonth, savedAnswers, savedHistory));
         setState("ready");
       } catch {
         if (active) setState("unavailable");
@@ -133,9 +157,9 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
     const [year, month] = reportingMonth.split("-").map(Number);
     const start = `${reportingMonth}-01`;
     const end = new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10);
+    const previouslySaved = valuesForReportingMonth(reportingMonth, answers, history);
     const changes = normalized.filter(({ key, value }) =>
-      !answers.some((answer) => answer.field_key === key && answer.value_json === value &&
-        answer.measurement_start === start));
+      previouslySaved[key] === undefined || Number(previouslySaved[key]) !== value);
     if (!changes.length) { setSaveNotice("These measurements are already saved."); return; }
     const locked = changes.filter(({ key }) =>
       answers.some((answer) => answer.field_key === key && answer.verification_status !== "unverified"));
@@ -164,10 +188,18 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
         body: JSON.stringify(rows),
       });
       if (!response.ok) throw new Error("Unable to save. Ensure your studio membership is active and no reviewed fields have changed.");
-      const saved = await tenantRead<ProfileAnswer>("studio_profile_answers", {
-        select: "field_key,value_json,verification_status,measurement_start", studio_id: `eq.${studioId}`,
-      }, session.access_token);
+      const [saved, recentHistory] = await Promise.all([
+        tenantRead<ProfileAnswer>("studio_profile_answers", {
+          select: "field_key,value_json,verification_status,measurement_start", studio_id: `eq.${studioId}`,
+        }, session.access_token),
+        tenantRead<AnswerHistory>("studio_profile_answer_history", {
+          select: "field_key,new_value,measurement_start,recorded_at",
+          studio_id: `eq.${studioId}`, order: "recorded_at.desc", limit: "250",
+        }, session.access_token),
+      ]);
       setAnswers(saved);
+      setHistory(recentHistory);
+      setInputs(valuesForReportingMonth(reportingMonth, saved, recentHistory));
       setSaveNotice("Measurements saved to this studio's canonical profile as unverified self-reported data.");
     } catch (error) {
       setSaveNotice(error instanceof Error ? error.message : "Profile save failed.");
@@ -236,7 +268,7 @@ export function StudioScoringPanel({ studioId }: { studioId: string }) {
         </p>
         <div className="mt-5">
           <label htmlFor="profile-reporting-month" className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Reporting month</label>
-          <input id="profile-reporting-month" type="month" value={reportingMonth} onChange={(e) => setReportingMonth(e.target.value)}
+          <input id="profile-reporting-month" type="month" value={reportingMonth} onChange={(e) => { setReportingMonth(e.target.value); setInputs(valuesForReportingMonth(e.target.value, answers, history)); setSaveNotice(null); }}
             className="mt-2 rounded-lg border border-border bg-ink px-3 py-2 text-ice"/>
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
