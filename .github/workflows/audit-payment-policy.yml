@@ -1,0 +1,23 @@
+name: Audit payment policy contracts
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/stripe-checkout-webhook-v1/**'
+      - 'tests/audit-payment-policy.test.mjs'
+      - '.github/workflows/audit-payment-policy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  payment-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify fail-closed payment policy
+        run: node --test tests/audit-payment-policy.test.mjs

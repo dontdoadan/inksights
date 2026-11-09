@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { assessAuditCheckout, AUDIT_PAYMENT_LINK_ID } from '../supabase/functions/stripe-checkout-webhook-v1/audit-payment-policy.mjs';
+const event = { livemode: true, type: 'checkout.session.completed' };
+const session = { id:'cs_live_test', object:'checkout.session', mode:'payment', status:'complete', payment_status:'paid', payment_link:AUDIT_PAYMENT_LINK_ID, currency:'gbp', amount_total:39500 };
+const decide=(e={},s={})=>assessAuditCheckout({...event,...e},{...session,...s});
+test('valid paid £395 payment-link event is accepted after upstream signature verification',()=>assert.equal(decide().decision,'accept'));
+test('delayed payment not confirmed is ignored',()=>assert.deepEqual(decide({}, {payment_status:'unpaid'}), { decision:'ignore', reason:'payment_not_confirmed'}));
+test('async event type alone cannot imply paid status',()=>assert.equal(decide({type:'checkout.session.async_payment_succeeded'},{payment_status:'unpaid'}).decision,'ignore'));
+test('wrong payment-link origin is rejected when audit is claimed',()=>assert.equal(decide({}, {payment_link:null,metadata:{offer_slug:'studio-intelligence-audit'}}).decision,'reject'));
+test('unrelated checkout event ignored',()=>assert.equal(decide({}, {payment_link:'plink_other', metadata:{}}).decision,'ignore'));
+test('wrong amount is rejected',()=>assert.equal(decide({}, {amount_total:100}).decision,'reject'));
+test('wrong currency is rejected',()=>assert.equal(decide({}, {currency:'usd'}).decision,'reject'));
+test('incomplete session ignored',()=>assert.equal(decide({}, {status:'open'}).decision,'ignore'));
+test('non-live event ignored',()=>assert.equal(decide({livemode:false}).decision,'ignore'));
+test('wrong payment mode rejected',()=>assert.equal(decide({}, {mode:'subscription'}).decision,'reject'));
+test('malformed checkout rejected',()=>assert.equal(assessAuditCheckout(event, null).decision,'reject'));
