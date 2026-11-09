@@ -97,6 +97,17 @@ begin
   if v_record.quality_status = 'rejected' then
     raise exception 'rejected submission cannot be claimed';
   end if;
+  -- An existing staff-reviewed Atlas identity takes precedence over
+  -- a visitor's possession of a public-tool receipt. Avoid contradictory IDs.
+  if v_record.studio_id is not null and exists (
+    select 1 from public.atlas_studio_links l
+    where l.studio_id = v_record.studio_id
+      and l.visibility_studio_id <> p_studio_id
+      and l.reviewer_id is not null and l.reviewed_at is not null
+      and jsonb_typeof(l.evidence) = 'object' and l.evidence <> '{}'::jsonb
+  ) then
+    raise exception 'submission conflicts with its reviewed Atlas studio identity';
+  end if;
   if v_record.canonical_studio_id is not null and v_record.canonical_studio_id <> p_studio_id then
     raise exception 'this submission is already associated with another studio';
   end if;
@@ -116,8 +127,6 @@ begin
     jsonb_build_object('tool_key',v_record.tool_key,
       'quality_status','unverified_self_report',
       'source_submission_id',v_record.id,
-      'normalized_inputs',v_record.normalized_inputs,
-      'tool_result',v_record.result_snapshot,
       'consent_version',v_record.consent_version),
     v_record.submitted_at)
   on conflict (studio_id,source_type,source_ref)
