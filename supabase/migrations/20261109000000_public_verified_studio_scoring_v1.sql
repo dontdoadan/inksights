@@ -246,7 +246,7 @@ create schema if not exists inksights_internal;
 revoke all on schema inksights_internal from public, anon, authenticated;
 create or replace function inksights_internal.stamp_studio_profile_answer_v1()
 returns trigger language plpgsql security invoker set search_path = ''
-as $
+as $$
 begin
   if new.source_type = 'studio_reported' then
     if new.notice_acknowledged_at is null then
@@ -258,7 +258,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 revoke all on function inksights_internal.stamp_studio_profile_answer_v1() from public, anon, authenticated;
 create trigger trg_stamp_studio_profile_answer_v1
   before insert or update on public.studio_profile_answers
