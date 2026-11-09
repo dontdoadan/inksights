@@ -88,6 +88,7 @@ begin
   if not exists (
     select 1 from public.studio_members sm
     where sm.studio_id = p_studio_id and sm.user_id = p_user_id and sm.active
+      and sm.role in ('owner','admin','member')
   ) then
     raise exception 'not a member of this canonical studio';
   end if;
@@ -562,19 +563,22 @@ with check (source_type = 'studio_reported' and verification_status = 'unverifie
   and data_notice_version = '2026-11-profile-v1' and notice_acknowledged_at is not null
   and exists(select 1 from public.studio_members m
     where m.studio_id=studio_profile_answers.studio_id
-      and m.user_id=(select auth.uid()) and m.active));
+      and m.user_id=(select auth.uid()) and m.active
+      and m.role in ('owner','admin','member')));
 create policy "active member updates own unverified answers"
 on public.studio_profile_answers for update to authenticated
 using (source_type = 'studio_reported' and verification_status = 'unverified'
   and exists(select 1 from public.studio_members m
     where m.studio_id=studio_profile_answers.studio_id
-      and m.user_id=(select auth.uid()) and m.active))
+      and m.user_id=(select auth.uid()) and m.active
+      and m.role in ('owner','admin','member')))
 with check (source_type = 'studio_reported' and verification_status = 'unverified'
   and source_ref is null and source_submission_id is null and confidence is null
   and data_notice_version = '2026-11-profile-v1' and notice_acknowledged_at is not null
   and exists(select 1 from public.studio_members m
     where m.studio_id=studio_profile_answers.studio_id
-      and m.user_id=(select auth.uid()) and m.active));
+      and m.user_id=(select auth.uid()) and m.active
+      and m.role in ('owner','admin','member')));
 
 create policy "studio profile answer history read by active studio member"
 on public.studio_profile_answer_history for select to authenticated
