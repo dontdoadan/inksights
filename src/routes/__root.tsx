@@ -8,6 +8,7 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { CONSENT_STORAGE_KEY, GOOGLE_TAG_ID, readConsent, trackMetaPageView } from "@/lib/consent";
 import { trackWebsiteEvent } from "@/lib/website-events";
 import { SiteEffects } from "@/components/site-effects";
+import { ZohoSalesIQ } from "@/components/zoho-salesiq";
 
 const SITE_ENTITY_GRAPH = {
   "@context": "https://schema.org",
@@ -121,6 +122,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         {children}
         <SiteEffects />
+        <ZohoSalesIQ />
         <CookieConsent />
         <Toaster position="top-center" richColors />
         <Scripts />

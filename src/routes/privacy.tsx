@@ -54,7 +54,10 @@ function PrivacyPage() {
       <p>The Studio Growth Check uses assessment answers to calculate scores such as urgency, readiness and commercial fit. The result routes people to a relevant offer, booking request or nurture path. It does not make a legal, employment, credit, medical or similarly significant decision.</p>
 
       <h2>Who may process the information?</h2>
-      <p>INKSIGHTS uses service providers for website hosting, databases, CRM, source control, automation, email, calendar and advertising measurement. Current systems may include Supabase, GitHub, HubSpot, Google services, n8n and Meta where enabled. Providers receive only the information needed for their role and are subject to their own security and data-processing terms.</p>
+      <p>INKSIGHTS uses service providers for website hosting, databases, CRM, source control, automation, email, calendar and advertising measurement. Current systems may include Supabase, GitHub, HubSpot, Google services, Zoho SalesIQ, n8n and Meta where enabled. Providers receive only the information needed for their role and are subject to their own security and data-processing terms.</p>
+
+      <h2>Optional visitor tracking and live chat</h2>
+      <p>With analytics consent, the website loads Zoho SalesIQ from its EU widget endpoint to provide website visitor intelligence and live chat. Zoho may process IP address, device and browser data, pages visited, referral information, identifying cookies and information a visitor voluntarily provides in a chat. Consent can be withdrawn through cookie preferences. We do not intentionally pass form contents or private client records to SalesIQ through its visitor-identification API.</p>
 
       <h2>International transfers</h2>
       <p>Some technology providers may process information outside the United Kingdom. Where this occurs, INKSIGHTS will rely on an appropriate transfer mechanism or the provider's applicable safeguards.</p>

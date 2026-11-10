@@ -8,7 +8,7 @@ export const Route = createFileRoute("/cookies")({
   head: () => ({
     meta: [
       { title: "Cookie Notice | INKSIGHTS" },
-      { name: "description", content: "How INKSIGHTS uses essential browser storage, Google Analytics 4 and optional marketing tracking." },
+      { name: "description", content: "How INKSIGHTS uses essential browser storage, Google Analytics 4, Zoho SalesIQ and optional marketing tracking." },
       { property: "og:url", content: CANONICAL_URL },
     ],
     links: [{ rel: "canonical", href: CANONICAL_URL }],
@@ -31,7 +31,7 @@ function CookiesPage() {
           <thead><tr><th>Category</th><th>Current use</th><th>Choice</th></tr></thead>
           <tbody>
             <tr><td><strong>Essential</strong></td><td>Stores the cookie preference, supports security, authentication where used and may preserve form progress.</td><td>Always active because the requested service cannot operate reliably without it.</td></tr>
-            <tr><td><strong>Analytics</strong></td><td>Loads Google Analytics 4 (measurement ID <code>G-V7SQ9SPYMH</code>) after analytics consent and also permits first-party measurement of page views and key conversion events.</td><td>Optional and off until accepted.</td></tr>
+            <tr><td><strong>Analytics</strong></td><td>Loads Google Analytics 4 (measurement ID <code>G-V7SQ9SPYMH</code>), first-party measurement and Zoho SalesIQ visitor tracking and live chat after analytics consent.</td><td>Optional and off until accepted.</td></tr>
             <tr><td><strong>Marketing</strong></td><td>Loads Meta Pixel after consent to record page views and selected conversion events such as assessment completion or booking request.</td><td>Optional and off until accepted.</td></tr>
           </tbody>
         </table>
@@ -45,6 +45,10 @@ function CookiesPage() {
       <p>When enabled, the site can send page-view and interaction events such as diagnostic, contact and checkout events. The implementation does not intentionally send form contents, email addresses, phone numbers or other direct contact details to Google Analytics.</p>
       <p>If analytics consent is withdrawn, INKSIGHTS updates the Google consent state to deny analytics storage for subsequent measurement.</p>
 
+      <h2>Zoho SalesIQ visitor tracking and live chat</h2>
+      <p>Zoho SalesIQ is an optional visitor intelligence and live-chat service. After you select analytics consent, its EU widget can process technical visitor data, pages visited, referral information, chat messages you choose to submit and cookies for recognising visits. The widget is not loaded when analytics consent is absent or rejected.</p>
+      <p>Zoho describes the cookies used by SalesIQ in its <a href="https://www.zoho.com/salesiq/cookies-policy.html" target="_blank" rel="noopener noreferrer">SalesIQ cookie policy</a>. If you withdraw analytics consent, INKSIGHTS instructs SalesIQ to stop tracking and reloads the page without the widget. Previously recorded events cannot be recalled by withdrawing consent. To remove cookies already stored on your device, clear site data in your browser.</p>
+
       <h2>Meta Pixel</h2>
       <p>Meta Pixel is not inserted into the page source until marketing consent is selected. Once enabled, it may process browser and event information to measure the journey from a Meta advertisement or social interaction to a website action.</p>
       <p>Rejecting marketing cookies prevents the pixel from loading through the INKSIGHTS consent system. Previously transmitted information cannot be recalled from Meta by changing the local preference.</p>
@@ -57,7 +61,7 @@ function CookiesPage() {
       <p>Browsers allow you to block or remove cookies and local storage. Blocking essential storage may prevent saved progress, login or preference features from working correctly.</p>
 
       <h2>Updates</h2>
-      <p>This notice should be updated before any additional non-essential provider is activated. The consent interface is intended to reflect the technologies currently available.</p>
+      <p>This notice should be updated before any further non-essential provider is activated. The consent interface is intended to reflect the technologies currently available.</p>
 
       <h2>Questions</h2>
       <p>Email <a href="mailto:contact@getinksights.co.uk">contact@getinksights.co.uk</a> with questions about tracking or consent records.</p>
