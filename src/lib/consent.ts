@@ -28,8 +28,9 @@ type GoogleWindow = Window & {
 
 export const CONSENT_STORAGE_KEY = "inksight-consent-v1";
 const META_PIXEL_ID = "1358457972311385";
-export const GOOGLE_TAG_ID = "G-03QJZLEPW0";
+// Confirmed INKSIGHTS Website GA4 stream (ID 15850925016); keep a single tag destination.
 export const GOOGLE_ANALYTICS_MEASUREMENT_ID = "G-V7SQ9SPYMH";
+export const GOOGLE_TAG_ID = GOOGLE_ANALYTICS_MEASUREMENT_ID;
 
 export function readConsent(): InksightConsent | null {
   if (typeof window === "undefined") return null;

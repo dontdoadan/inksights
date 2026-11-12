@@ -1,0 +1,45 @@
+name: GA4 Measurement ID Branch QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/lib/consent.ts"
+      - "tests/ga4-tag/**"
+      - "playwright.ga4-only.config.cjs"
+      - ".github/workflows/ga4-measurement-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact proposed code
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps --no-audit --no-fund
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --legacy-peer-deps --no-audit --no-fund @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Test GA4 destination and consent locally (no external analytics)
+        run: npx playwright test --config=playwright.ga4-only.config.cjs
+      - name: Upload QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ga4-measurement-browser-evidence
+          path: |
+            playwright-ga4-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
