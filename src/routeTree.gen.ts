@@ -27,6 +27,7 @@ import { Route as ResearchMethodologyRouteImport } from './routes/research-metho
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SolutionsRouteImport } from './routes/solutions'
 import { Route as StudioGrowthCheckRouteImport } from './routes/studio-growth-check'
+import { Route as StudioOpportunityReceiptRouteImport } from './routes/studio-opportunity-receipt'
 import { Route as StudioVisibilityReportRouteImport } from './routes/studio-visibility-report'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TattooStudioBookingRouteImport } from './routes/tattoo-studio-booking'
@@ -149,6 +150,12 @@ const StudioGrowthCheckRoute = StudioGrowthCheckRouteImport.update({
   path: '/studio-growth-check',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudioOpportunityReceiptRoute =
+  StudioOpportunityReceiptRouteImport.update({
+    id: '/studio-opportunity-receipt',
+    path: '/studio-opportunity-receipt',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const StudioVisibilityReportRoute = StudioVisibilityReportRouteImport.update({
   id: '/studio-visibility-report',
   path: '/studio-visibility-report',
@@ -340,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
+  '/studio-opportunity-receipt': typeof StudioOpportunityReceiptRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
   '/tattoo-studio-booking': typeof TattooStudioBookingRoute
@@ -390,6 +398,7 @@ export interface FileRoutesByTo {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
+  '/studio-opportunity-receipt': typeof StudioOpportunityReceiptRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
   '/tattoo-studio-booking': typeof TattooStudioBookingRoute
@@ -443,6 +452,7 @@ export interface FileRoutesById {
   '/resources': typeof ResourcesRoute
   '/solutions': typeof SolutionsRoute
   '/studio-growth-check': typeof StudioGrowthCheckRoute
+  '/studio-opportunity-receipt': typeof StudioOpportunityReceiptRoute
   '/studio-visibility-report': typeof StudioVisibilityReportRoute
   '/support': typeof SupportRoute
   '/tattoo-studio-booking': typeof TattooStudioBookingRoute
@@ -496,6 +506,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
+    | '/studio-opportunity-receipt'
     | '/studio-visibility-report'
     | '/support'
     | '/tattoo-studio-booking'
@@ -546,6 +557,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
+    | '/studio-opportunity-receipt'
     | '/studio-visibility-report'
     | '/support'
     | '/tattoo-studio-booking'
@@ -598,6 +610,7 @@ export interface FileRouteTypes {
     | '/resources'
     | '/solutions'
     | '/studio-growth-check'
+    | '/studio-opportunity-receipt'
     | '/studio-visibility-report'
     | '/support'
     | '/tattoo-studio-booking'
@@ -651,6 +664,7 @@ export interface RootRouteChildren {
   ResourcesRoute: typeof ResourcesRoute
   SolutionsRoute: typeof SolutionsRoute
   StudioGrowthCheckRoute: typeof StudioGrowthCheckRoute
+  StudioOpportunityReceiptRoute: typeof StudioOpportunityReceiptRoute
   StudioVisibilityReportRoute: typeof StudioVisibilityReportRoute
   SupportRoute: typeof SupportRoute
   TattooStudioBookingRoute: typeof TattooStudioBookingRoute
@@ -804,6 +818,13 @@ declare module '@tanstack/react-router' {
       path: '/studio-growth-check'
       fullPath: '/studio-growth-check'
       preLoaderRoute: typeof StudioGrowthCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio-opportunity-receipt': {
+      id: '/studio-opportunity-receipt'
+      path: '/studio-opportunity-receipt'
+      fullPath: '/studio-opportunity-receipt'
+      preLoaderRoute: typeof StudioOpportunityReceiptRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/studio-visibility-report': {
@@ -1101,6 +1122,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResourcesRoute: ResourcesRoute,
   SolutionsRoute: SolutionsRoute,
   StudioGrowthCheckRoute: StudioGrowthCheckRoute,
+  StudioOpportunityReceiptRoute: StudioOpportunityReceiptRoute,
   StudioVisibilityReportRoute: StudioVisibilityReportRoute,
   SupportRoute: SupportRoute,
   TattooStudioBookingRoute: TattooStudioBookingRoute,
