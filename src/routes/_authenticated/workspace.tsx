@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { StudioScoringPanel } from "@/components/studio-intelligence/StudioScoringPanel";
 
 type Studio = {
   id: string;
@@ -380,6 +381,8 @@ function Workspace() {
           <MetricCard label="Active interventions" value={workspaceCase.interventions.filter((item) => item.status !== "complete").length} note="approved actions in motion" />
           <MetricCard label="Measured outcomes" value={workspaceCase.outcomes.length} note="never inferred or fabricated" emphasis={workspaceCase.outcomes.length > 0} />
         </section>
+
+        {mode === "live" && !loading ? <StudioScoringPanel studioId={workspaceCase.studio.id} /> : null}
 
         <section className="mt-10 rounded-3xl border border-border/60 bg-ink p-7 md:p-9">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

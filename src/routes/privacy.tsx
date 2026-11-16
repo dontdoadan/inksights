@@ -30,6 +30,7 @@ function PrivacyPage() {
         <li>Contact details such as name, email address and telephone number.</li>
         <li>Studio information such as business name, location, website, team size and commercial stage.</li>
         <li>Assessment answers, stated problems, desired outcomes, implementation readiness and booking preferences.</li>
+        <li>Studio operating measurements including reported enquiries, paid bookings, artist capacity, tattoo service revenue, reporting periods and subsequent corrections.</li>
         <li>Messages, support requests, feedback and records of business communication.</li>
         <li>Technical and attribution information such as page path, referrer, campaign parameters, browser information and security fingerprints.</li>
         <li>Consent choices and the date those choices were recorded.</li>
@@ -49,6 +50,8 @@ function PrivacyPage() {
       </div>
 
       <p>When you submit information to a pricing or commercial calculator, INKSIGHTS stores the submitted values and returned result to provide the tool, maintain an audit trail and improve future analysis. Self-reported responses remain labelled unverified; aggregate research must not misrepresent them as independently verified market observations. Tool submissions do not automatically subscribe users to marketing.</p>
+      <p>When you sign in and explicitly attach a previously submitted tool result to an INKSIGHTS studio account, we verify your active studio membership and possession of the submission receipt. We keep that result associated with the same studio profile for reference and follow-up analysis. A studio's previously recorded monthly figures and subsequent revisions may be retained as a dated measurement history, with their reported or verified status and source identified. Linking a result or submitting operating figures does not establish that those figures are independently verified.</p>
+      <p>Studio scoring distinguishes publicly observable presence from independently reviewed commercial performance. We do not publish a numerical commercial score when the required supporting evidence is unavailable. Where de-identified data is used for aggregated research, INKSIGHTS must apply appropriate cohort-size, confidentiality and data-quality safeguards.</p>
 
       <h2>Automated qualification</h2>
       <p>The Studio Growth Check uses assessment answers to calculate scores such as urgency, readiness and commercial fit. The result routes people to a relevant offer, booking request or nurture path. It does not make a legal, employment, credit, medical or similarly significant decision.</p>
