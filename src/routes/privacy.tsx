@@ -50,6 +50,11 @@ function PrivacyPage() {
 
       <p>When you submit information to a pricing or commercial calculator, INKSIGHTS stores the submitted values and returned result to provide the tool, maintain an audit trail and improve future analysis. Self-reported responses remain labelled unverified; aggregate research must not misrepresent them as independently verified market observations. Tool submissions do not automatically subscribe users to marketing.</p>
 
+      <h2>Studio Atlas listings, ownership claims and customer enquiries</h2>
+      <p>Studio Atlas allows tattoo studios to request an unlisted or existing business profile, supply evidence of their authority to manage it, and request publication of business details. Claim evidence, review records and account permissions are accessible only to authorised people working on verification and studio management. Studio trading premises and ownership claims are independently reviewed before a listing is described as verified.</p>
+      <p>When a visitor chooses to contact a particular studio through Atlas, we collect their name, email, tattoo enquiry and acknowledgment of the privacy notice. We store the enquiry in a protected inbox associated with that selected studio. It is accessible to authorised account members for that studio and is intended solely to facilitate the requested contact and response. The studio may have separate obligations for information it handles after receiving an enquiry. Enquiry submissions do not automatically enrol anyone in INKSIGHTS marketing.</p>
+      <p>Studio Atlas supports corrections and challenges to business-profile information. To request correction, removal, or information about retention of a submitted claim or tattoo enquiry, contact INKSIGHTS through the channels above. INKSIGHTS reviews the need to retain these records, including for disputes, security and service obligations.</p>
+
       <h2>Automated qualification</h2>
       <p>The Studio Growth Check uses assessment answers to calculate scores such as urgency, readiness and commercial fit. The result routes people to a relevant offer, booking request or nurture path. It does not make a legal, employment, credit, medical or similarly significant decision.</p>
 
