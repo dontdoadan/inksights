@@ -1,6 +1,7 @@
 import { FoundingStudioInvitesPanel } from "@/components/founding-studio-invites-panel";
 import { PlatformAdminPanel } from "@/components/platform-admin-panel";
 import { Logo } from "@/components/public-site";
+import { RevenueRecoveryPanel } from "@/components/revenue-recovery-panel";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -113,6 +114,8 @@ function Dashboard() {
             Manage your growth-model scenarios, audit submissions, and studio profile.
           </p>
         </section>
+
+        <RevenueRecoveryPanel />
 
         {loading ? (
           <p className="text-muted-foreground">Loading…</p>
