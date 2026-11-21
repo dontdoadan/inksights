@@ -53,9 +53,9 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json() as Record<string, unknown>;
     const studioId = clean(body.studio_id, 80);
-    const category = clean(body.category, 40);
-    if (!studioId || !["inactive_project", "unconverted_enquiry", "inactive_client"].includes(category)) {
-      return json({ ok: false, error: "A valid studio and recovery category are required." }, 400, origin);
+    const opportunityId = clean(body.opportunity_id, 80);
+    if (!studioId || !opportunityId) {
+      return json({ ok: false, error: "A valid studio and opportunity are required." }, 400, origin);
     }
     const service = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -70,14 +70,41 @@ Deno.serve(async (req: Request) => {
     if (membershipError || !membership || !["owner", "admin", "member"].includes(membership.role)) {
       return json({ ok: false, error: "You do not have permission to draft recovery messages for this studio." }, 403, origin);
     }
+    const { data: opportunity, error: opportunityError } = await service
+      .from("recovery_opportunities")
+      .select("id,studio_id,record_id,category,status,estimated_value_pence,evidence,recommendation")
+      .eq("id", opportunityId).eq("studio_id", studioId).maybeSingle();
+    if (opportunityError || !opportunity) return json({ ok: false, error: "Recovery opportunity not found." }, 404, origin);
+    if (["dismissed", "paid"].includes(opportunity.status)) return json({ ok: false, error: "This opportunity is no longer eligible for contact." }, 409, origin);
+    const { data: sourceRecord, error: sourceError } = await service
+      .from("recovery_records")
+      .select("id,studio_id,record_type,client_name,client_email,client_phone,data")
+      .eq("id", opportunity.record_id).eq("studio_id", studioId).maybeSingle();
+    if (sourceError || !sourceRecord) return json({ ok: false, error: "Source record not found." }, 404, origin);
+    const evidence = (opportunity.evidence ?? {}) as Record<string, unknown>;
+    const sourceData = (sourceRecord.data ?? {}) as Record<string, unknown>;
+    if (evidence.contact_allowed !== true || evidence.contact_available !== true || sourceData.do_not_contact === true) {
+      return json({ ok: false, error: "Documented contact permission and a usable contact detail are required." }, 403, origin);
+    }
+    const category = String(opportunity.category);
+    if (!["inactive_project", "unconverted_enquiry", "inactive_client"].includes(category)) {
+      return json({ ok: false, error: "Unsupported recovery category." }, 400, origin);
+    }
+    if (category === "inactive_client" && !(
+      sourceData.marketing_consent === true &&
+      Boolean(sourceData.marketing_consent_at) &&
+      Boolean(sourceData.marketing_consent_source)
+    )) {
+      return json({ ok: false, error: "Reactivation requires traceable marketing consent." }, 403, origin);
+    }
     if (!OPENAI_API_KEY) return json({ ok: false, error: "AI drafting is not configured yet. Add OPENAI_API_KEY to the Supabase function secrets." }, 503, origin);
 
     const context = {
-      client_first_name: clean(body.client_first_name, 80),
-      project_name: clean(body.project_name, 120),
-      evidence_summary: clean(body.evidence_summary, 700),
-      recommended_action: clean(body.recommended_action, 500),
-      estimated_value_gbp: Number.isFinite(Number(body.estimated_value_gbp)) ? Math.max(0, Math.min(100000, Number(body.estimated_value_gbp))) : null,
+      client_first_name: clean(sourceRecord.client_name, 80).split(" ")[0],
+      project_name: clean(sourceData.project_name, 120),
+      evidence_summary: clean(JSON.stringify(evidence), 700),
+      recommended_action: clean(opportunity.recommendation, 500),
+      estimated_value_gbp: Math.max(0, Math.min(100000, Number(opportunity.estimated_value_pence ?? 0) / 100)),
     };
     if (!context.client_first_name || !context.evidence_summary || !context.recommended_action) {
       return json({ ok: false, error: "Insufficient evidence to draft a personalised message." }, 400, origin);
