@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Stripe from "stripe";
+import { getPublicOffer } from "@/lib/offer-data";
 
 export const Route = createFileRoute("/api/public/stripe-webhook")({
   server: {
@@ -54,9 +55,12 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
           }
         }
 
-        if (event.type === "checkout.session.completed") {
+        if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
           const session = event.data.object as Stripe.Checkout.Session;
-          await recordCompletedCheckout(session);
+          // Checkout completion is not proof of collected funds for delayed payment methods.
+          if (session.status === "complete" && session.payment_status === "paid") {
+            await recordCompletedCheckout(session, stripe);
+          }
         }
 
         return new Response(JSON.stringify({ received: true }), {
@@ -68,7 +72,24 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
   },
 });
 
-async function recordCompletedCheckout(session: Stripe.Checkout.Session) {
+async function recordCompletedCheckout(session: Stripe.Checkout.Session, stripe: Stripe) {
+  const offer = getPublicOffer(session.metadata?.offer_slug ?? "");
+  if (!offer?.stripePriceId) {
+    // Payment-link traffic without the approved offer slug is handled by its
+    // existing Stripe/Supabase intake path, not silently classified here.
+    console.warn("Skipping unrecognised checkout offer", session.id);
+    return;
+  }
+  const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 3 });
+  const correctItem = items.data.length === 1 &&
+    items.data[0]?.price?.id === offer.stripePriceId &&
+    items.data[0]?.quantity === 1;
+  const correctAuditAmount = offer.slug !== "studio-intelligence-audit" || session.amount_total === 39500;
+  if (!correctItem || !correctAuditAmount || session.currency?.toLowerCase() !== "gbp") {
+    console.error("Checkout amount/price verification failed", session.id);
+    throw new Error("Checkout verification failed");
+  }
+  const verifiedPrice = items.data[0]?.price;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
   const offerSlug = session.metadata?.offer_slug ?? "";
@@ -78,8 +99,10 @@ async function recordCompletedCheckout(session: Stripe.Checkout.Session) {
     stripe_session_id: session.id,
     stripe_payment_intent_id: (session.payment_intent as string | undefined) ?? null,
     stripe_subscription_id: (session.subscription as string | undefined) ?? null,
-    stripe_product_id: null as string | null,
-    stripe_price_id: null as string | null,
+    stripe_product_id: typeof verifiedPrice?.product === "string"
+      ? verifiedPrice.product
+      : verifiedPrice?.product?.id ?? null,
+    stripe_price_id: verifiedPrice?.id ?? null,
     offer_slug: offerSlug,
     amount_total: session.amount_total ?? null,
     currency: session.currency ?? null,

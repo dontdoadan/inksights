@@ -345,13 +345,19 @@ function CheckoutButton({
         setIsLoading(true);
         trackWebsiteEvent("checkout_started", { offer: offer.slug });
 
-        if (offer.checkoutUrl) {
+        // Ordinary buyers retain the existing approved payment link. Visitors who
+        // saved the connected journey use a server-validated Checkout Session so
+        // their assessment identifier survives payment without exposing the token.
+        const journeyToken = offer.slug === "studio-intelligence-audit"
+          ? window.sessionStorage.getItem("inksights:journey:unverified-session") || undefined
+          : undefined;
+        if (offer.checkoutUrl && !journeyToken) {
           window.location.href = offer.checkoutUrl;
           return;
         }
 
         try {
-          const { url } = await startCheckout({ data: { slug: offer.slug, leadId, auditId } });
+          const { url } = await startCheckout({ data: { slug: offer.slug, leadId, auditId, journeyToken } });
           if (url) {
             window.location.href = url;
             return;
