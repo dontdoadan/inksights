@@ -82,6 +82,9 @@ jobs:
           cat typecheck.log
           exit 1
 
+      - name: Test Commercial Simulator models and validation
+        run: node --test tests/commercial-simulator-policy.test.mjs
+
       - name: Test Supabase client config fallback
         run: node --test tests/supabase-config.test.mjs
 
