@@ -21,7 +21,7 @@ type Studio = { id: string; name: string };
 type Membership = { studio_id: string; role: string };
 type RecoveryRecord = {
   id: string; studio_id: string; record_type: RecoveryRecordType; occurred_at: string | null;
-  amount_pence: number | null; data: Record<string, any>; client_name: string;
+  amount_pence: number | null; data: Record<string, unknown>; client_name: string;
   client_email: string | null; client_phone: string | null;
 };
 type Opportunity = {
@@ -292,7 +292,7 @@ function RevenueRecovery() {
   function downloadTemplate(type: RecoveryRecordType) {
     const templates: Record<RecoveryRecordType, string> = {
       clients: "name,email,phone,last_booking_date,average_booking_value_gbp,marketing_consent,do_not_contact\nAlex Example,alex@example.com,07123456789,2025-01-15,250,yes,no",
-      projects: "client_name,email,phone,project_name,status,last_session_date,remaining_sessions,total_sessions,project_value_gbp,next_session_booked,contact_permission,do_not_contact\nAlex Example,alex@example.com,07123456789,Full sleeve,in progress,2025-08-01,3,6,1800,no,yes,no",
+      projects: "client_name,email,phone,project_name,status,last_session_date,remaining_sessions,total_sessions,project_value_gbp,remaining_value_gbp,next_session_booked,contact_permission,do_not_contact\nAlex Example,alex@example.com,07123456789,Full sleeve,in progress,2025-08-01,3,6,1800,no,yes,no",
       enquiries: "name,email,phone,enquiry_date,status,quoted_value_gbp,contact_permission,marketing_consent,do_not_contact\nAlex Example,alex@example.com,07123456789,2026-10-01,awaiting response,450,yes,no,no",
     };
     const blob = new Blob([templates[type]], { type: "text/csv;charset=utf-8" });
