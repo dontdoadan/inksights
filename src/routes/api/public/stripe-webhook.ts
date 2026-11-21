@@ -54,9 +54,21 @@ export const Route = createFileRoute("/api/public/stripe-webhook")({
           }
         }
 
-        if (event.type === "checkout.session.completed") {
-          const session = event.data.object as Stripe.Checkout.Session;
-          await recordCompletedCheckout(session);
+        // This route is currently disabled at the Stripe webhook endpoint.
+        // Keep it safe if re-enabled: never trust a completion event alone as
+        // confirmation of payment, and never ingest test-mode payments as live.
+        if (event.livemode === true && (
+          event.type === "checkout.session.completed" ||
+          event.type === "checkout.session.async_payment_succeeded"
+        )) {
+          const eventSession = event.data.object as Stripe.Checkout.Session;
+          if (!eventSession.id?.startsWith("cs_")) {
+            return new Response("Invalid checkout session.", { status: 400 });
+          }
+          const verifiedSession = await stripe.checkout.sessions.retrieve(eventSession.id);
+          if (verifiedSession.status === "complete" && verifiedSession.payment_status === "paid") {
+            await recordCompletedCheckout(verifiedSession);
+          }
         }
 
         return new Response(JSON.stringify({ received: true }), {
