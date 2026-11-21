@@ -12,8 +12,8 @@ Ship one narrow, measurable workflow to 3–5 pilot studios before adding live i
 - [x] Confirm existing studio identity and membership foundations.
 - [x] Confirm existing revenue audit, evidence, recommendations and mail outbox assets.
 - [x] Identify database schema/RLS changes as an explicit approval gate.
-- [ ] Review exact RLS policies and grants for new tenancy design.
-- [ ] Reconcile repository migration history with live database before any migration.
+- [x] Review exact RLS policies and grants for new tenancy design.
+- [x] Reconcile repository migration history with live database before migration.
 
 ## Workstream 1 — Product and data contract
 - [x] Shared architecture specification.
@@ -23,25 +23,26 @@ Ship one narrow, measurable workflow to 3–5 pilot studios before adding live i
 - [ ] Confirm retention, privacy notice, processor terms and lawful-basis model.
 - [ ] Agree pilot thresholds (7/45/180-day rules) with studio owners.
 
-## Workstream 2 — Database foundation (approval required)
-- [ ] Create generic workspace/product tables.
-- [ ] Add workspace membership and role policies.
-- [ ] Add import job and row staging tables.
-- [ ] Add Revenue Recovery canonical domain tables.
-- [ ] Add append-only audit and usage events.
-- [ ] Add constraints, indexes, grants and RLS.
-- [ ] Run Supabase security/performance advisors and cross-tenant tests.
-- [ ] Generate checked-in migration using the repository's Supabase CLI workflow.
-- **Gate:** no live DDL or RLS mutation until explicit user approval of the reviewed migration and policies.
+## Workstream 2 — Database foundation (applied)
+- [x] Create generic workspace/product tables.
+- [x] Add workspace membership and role policies.
+- [x] Add import job and mapped-row staging tables.
+- [x] Add Revenue Recovery canonical domain tables.
+- [x] Add append-only audit and usage events.
+- [x] Add constraints, indexes, grants and RLS.
+- [x] Run Supabase security/performance advisors and transactional cross-tenant tests.
+- [x] Commit migration files matching the applied Supabase migration versions.
+- [x] Apply live schema after explicit user approval.
+- **Gate passed:** schema and RLS changes approved by user and applied; no production app deployment or external actions approved.
 
-## Workstream 3 — Domain engine
-- [ ] Pure TypeScript canonical types and validation schemas.
+## Workstream 3 — Domain engine (initial engine implemented; import pipeline outstanding)
+- [x] Initial pure TypeScript canonical types and rule-engine input/output contracts.
 - [ ] Deterministic CSV parser/mapping pipeline.
 - [ ] Normalisation and duplicate detection.
-- [ ] Detection rules and rule versioning.
-- [ ] Non-overlapping value calculation.
-- [ ] Transparent priority and confidence scoring.
-- [ ] Unit tests with fixtures and edge cases.
+- [x] Initial detection rules and rule versioning.
+- [x] Initial non-overlapping value calculation.
+- [x] Transparent priority and confidence scoring.
+- [x] Unit tests with fixtures and edge cases added; CI execution pending.
 
 ## Workstream 4 — Application UX
 - [ ] Authenticated Revenue Recovery product area.
@@ -115,5 +116,23 @@ Do not use total modelled opportunity as a headline recovery result. The north-s
 - Feature branch only until reviewed.
 - Preview deployment only; production remains unchanged.
 - No merge to `main` without explicit approval.
-- No live schema/RLS changes without explicit approval.
+- Live schema/RLS changes applied only after explicit user approval.
 - No outbound messages or customer-impacting actions in the MVP.
+
+
+## Implementation status — 2026-11-21
+
+### Completed
+- Shared architecture, product technical specification and implementation plan committed.
+- Three Supabase migrations applied and recorded: `20261121071600_create_business_tool_factory_revenue_recovery`, `20261121071648_add_business_tool_factory_foreign_key_indexes`, `20261121071751_restrict_factory_import_row_updates`.
+- 18 tables created with RLS enabled; 39 policies across 16 tables.
+- No anonymous access; no client-side delete; audit and usage tables are service-only.
+- Foreign-key indexes added after advisor review.
+- Transactional two-workspace RLS test passed and rolled back.
+- Deterministic engine, product registry and initial unit tests committed.
+
+### Outstanding P0
+Finish CI validation, then build workspace bootstrap, CSV import/mapping/validation and the authenticated recovery queue. Do not add live integrations or sending until this path is proven with anonymised studio exports.
+
+### Validation caveat
+The remote migrations are recorded and matching SQL files are checked into this branch. A local Supabase CLI reset/diff has not been run in this execution environment; perform that before merging to `main`.
