@@ -12,13 +12,14 @@ create table if not exists public.recovery_imports (
   inserted_count integer not null default 0 check (inserted_count >= 0),
   duplicate_count integer not null default 0 check (duplicate_count >= 0),
   created_at timestamptz not null default now(),
-  unique (studio_id, import_hash)
+  unique (studio_id, import_hash),
+  unique (studio_id, id)
 );
 
 create table if not exists public.recovery_records (
   id uuid primary key default gen_random_uuid(),
   studio_id uuid not null references public.studios(id) on delete cascade,
-  import_id uuid not null references public.recovery_imports(id) on delete cascade,
+  import_id uuid not null,
   record_type text not null check (record_type in ('clients','projects','enquiries')),
   dedupe_key text not null check (char_length(dedupe_key) = 64),
   client_name text,
@@ -28,7 +29,9 @@ create table if not exists public.recovery_records (
   amount_pence bigint check (amount_pence is null or amount_pence >= 0),
   data jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
-  unique (studio_id, record_type, dedupe_key)
+  unique (studio_id, record_type, dedupe_key),
+  unique (studio_id, id),
+  foreign key (studio_id, import_id) references public.recovery_imports(studio_id, id) on delete cascade
 );
 
 create index if not exists recovery_records_studio_type_date_idx
@@ -39,7 +42,7 @@ create index if not exists recovery_records_studio_email_idx
 create table if not exists public.recovery_opportunities (
   id uuid primary key default gen_random_uuid(),
   studio_id uuid not null references public.studios(id) on delete cascade,
-  record_id uuid not null references public.recovery_records(id) on delete cascade,
+  record_id uuid not null,
   category text not null check (category in ('inactive_project','unconverted_enquiry','inactive_client')),
   priority text not null default 'medium' check (priority in ('high','medium','low')),
   status text not null default 'identified' check (status in ('identified','reviewed','approved','contacted','booked','paid','dismissed')),
@@ -56,7 +59,9 @@ create table if not exists public.recovery_opportunities (
   recovered_amount_pence bigint not null default 0 check (recovered_amount_pence >= 0),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (studio_id, category, record_id)
+  unique (studio_id, category, record_id),
+  unique (studio_id, id),
+  foreign key (studio_id, record_id) references public.recovery_records(studio_id, id) on delete cascade
 );
 
 create index if not exists recovery_opportunities_studio_status_idx
@@ -67,12 +72,14 @@ create index if not exists recovery_opportunities_studio_value_idx
 create table if not exists public.recovery_activities (
   id uuid primary key default gen_random_uuid(),
   studio_id uuid not null references public.studios(id) on delete cascade,
-  opportunity_id uuid references public.recovery_opportunities(id) on delete set null,
-  import_id uuid references public.recovery_imports(id) on delete set null,
+  opportunity_id uuid,
+  import_id uuid,
   actor_user_id uuid references auth.users(id) on delete set null,
   action text not null check (char_length(action) between 1 and 80),
   details jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  foreign key (studio_id, opportunity_id) references public.recovery_opportunities(studio_id, id) on delete set null,
+  foreign key (studio_id, import_id) references public.recovery_imports(studio_id, id) on delete set null
 );
 
 create index if not exists recovery_activities_studio_created_idx
