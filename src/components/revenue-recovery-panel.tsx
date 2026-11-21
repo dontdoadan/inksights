@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { AlertCircle, ArrowDownToLine, CheckCircle2, Database, FileSpreadsheet, LoaderCircle, RefreshCw, ShieldCheck, UploadCloud } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { AlertCircle, CheckCircle2, Database, FileSpreadsheet, LoaderCircle, RefreshCw, ShieldCheck, UploadCloud } from "lucide-react";
 import {
   autoMapClientHeaders,
   parseCsv,
@@ -42,10 +42,6 @@ function formatMoney(minor: number | null) {
   return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(minor / 100);
 }
 
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString("en-GB");
-}
-
 async function sha256(value: string) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -75,7 +71,7 @@ export function RevenueRecoveryPanel() {
     setOpportunities(rows);
   }
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
@@ -92,18 +88,18 @@ export function RevenueRecoveryPanel() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     void load();
-  }, []);
+  }, [load]);
 
-  async function handleCreateWorkspace(event: React.FormEvent<HTMLFormElement>) {
+  async function handleCreateWorkspace(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setError("");
     try {
-      const created = await createBusinessWorkspace({
+      await createBusinessWorkspace({
         data: { displayName: workspaceName, businessType: "tattoo_studio" },
       });
       setWorkspaceName("");
@@ -116,7 +112,7 @@ export function RevenueRecoveryPanel() {
     }
   }
 
-  async function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFile(event: ChangeEvent<HTMLInputElement>) {
     const selected = event.currentTarget.files?.[0] ?? null;
     setFile(selected);
     setParsed(null);
