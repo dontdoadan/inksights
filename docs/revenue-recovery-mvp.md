@@ -34,17 +34,17 @@ The app provides downloadable templates. Supported header aliases are intentiona
 
 ### Clients
 
-`name,email,phone,last_booking_date,average_booking_value_gbp,marketing_consent,do_not_contact`
+`name,email,phone,last_booking_date,average_booking_value_gbp,marketing_consent,marketing_consent_at,marketing_consent_source,do_not_contact`
 
 ### Projects
 
-`client_name,email,phone,project_name,status,last_session_date,remaining_sessions,total_sessions,project_value_gbp,next_session_booked,contact_permission,do_not_contact`
+`client_name,email,phone,project_name,status,last_session_date,remaining_sessions,total_sessions,project_value_gbp,remaining_value_gbp,next_session_booked,contact_permission,contact_permission_at,contact_permission_source,marketing_consent,marketing_consent_at,marketing_consent_source,do_not_contact`
 
 ### Enquiries
 
-`name,email,phone,enquiry_date,status,quoted_value_gbp,contact_permission,marketing_consent,do_not_contact`
+`name,email,phone,enquiry_date,status,quoted_value_gbp,contact_permission,contact_permission_at,contact_permission_source,marketing_consent,marketing_consent_at,marketing_consent_source,do_not_contact`
 
-Dates should be ISO format (`YYYY-MM-DD`). Monetary columns are GBP. Consent values should be explicit yes/no values. Import only data the studio is authorised to process. Do not import health-screening, special-category or payment-card data.
+Dates should be ISO format (`YYYY-MM-DD`). Monetary columns are GBP. Consent values should be explicit yes/no values. A message can only be drafted when the relevant permission has a recorded date and source; a boolean alone is insufficient. Import only data the studio is authorised to process. Do not import health-screening, special-category or payment-card data.
 
 ## Detection rules (initial defaults)
 
@@ -52,7 +52,7 @@ Dates should be ISO format (`YYYY-MM-DD`). Monetary columns are GBP. Consent val
 | --- | --- | --- |
 | Inactive project | Last session at least 45 days ago; remaining sessions > 0; next session not booked; status not completed/cancelled | Explicit remaining value where supplied; otherwise recorded project value multiplied by remaining / total sessions where both are supplied; £0 if the remaining value cannot be derived |
 | Unconverted enquiry | At least 3 days old; status not booked/converted/lost/closed/spam | Recorded quoted value; £0 if missing |
-| Inactive client | At least 180 days since last booking; explicit marketing consent; no opt-out | Recorded average booking value; £0 if missing |
+| Inactive client | At least 180 days since last booking; explicit marketing consent with date and source; no opt-out | Recorded average booking value; £0 if missing |
 
 Priority is a transparent age-based heuristic, not a prediction of recovery probability. Confidence is a rule-based evidence score, not a calibrated statistical probability. These thresholds should be tuned from observed pilot outcomes.
 
