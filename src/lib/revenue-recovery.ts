@@ -51,7 +51,7 @@ export function parseCsv(input: string): string[][] {
 
 const clean = (value: unknown) => String(value ?? "").trim();
 const headerKey = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
-const truthy = (value: unknown) => ["yes", "true", "1", "y", "consented", "allowed"].includes(clean(value).toLowerCase());
+const truthy = (value: unknown) => ["yes", "true", "1", "y", "consented", "allowed", "unsubscribed", "opted out", "opted-out"].includes(clean(value).toLowerCase());
 const falsey = (value: unknown) => ["no", "false", "0", "n", "not consented", "do not contact", "dnc"].includes(clean(value).toLowerCase());
 
 function get(row: Record<string, string>, aliases: string[]): string {
