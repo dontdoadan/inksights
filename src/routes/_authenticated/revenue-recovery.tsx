@@ -371,7 +371,7 @@ function RevenueRecovery() {
                   <span className="mt-1 text-xs text-muted-foreground">Maximum 10,000 rows per file · CSV only</span>
                   <input type="file" accept=".csv,text/csv" className="sr-only" disabled={busy || !canManage} onChange={(e) => { const file = e.target.files?.[0]; if (file) void importFile(file); e.currentTarget.value = ""; }}/>
                 </label>
-                <div className="mt-4 flex items-start gap-2 text-xs leading-5 text-muted-foreground"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-mint"/> Only import information you are authorised to process. Do not upload tattoo health-screening data, medical information or payment-card details. Reactivation messages require recorded marketing permission; other contact requires a documented contact basis.</div>
+                <div className="mt-4 flex items-start gap-2 text-xs leading-5 text-muted-foreground"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-mint"/> Only import information you are authorised to process. Do not upload tattoo health-screening data, medical information or payment-card details. Reactivation requires marketing consent plus its date and source; project/enquiry follow-up requires contact permission plus its date and source (or documented marketing consent).</div>
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-ink-elev/30 p-5 md:p-6">
