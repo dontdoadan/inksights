@@ -35,6 +35,14 @@ const diagnosticResources = [
     href: "/studio-growth-check",
   },
   {
+    icon: Search,
+    title: "Visibility Fix Inspector",
+    type: "Interactive inspection",
+    description:
+      "Follow the customer journey from search to booking. Explore example issues or load a published, evidence-led studio visibility report.",
+    href: "/tools/visibility-fix-inspector.html",
+  },
+  {
     icon: ShieldCheck,
     title: "Tattoo Studio SEO & Visibility Scorecard",
     type: "15-point diagnostic",
