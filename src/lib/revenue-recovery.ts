@@ -157,10 +157,10 @@ const daysAgo = (date: string | null) => {
 };
 const gbp = (pence: number) => (pence / 100).toLocaleString("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 });
 
-export function buildRecoveryCandidates(records: Array<Record<string, any>>): RecoveryOpportunityCandidate[] {
+export function buildRecoveryCandidates(records: Array<{ id: string; record_type: string; occurred_at: string | null; amount_pence: number | null; data: Record<string, unknown>; client_email: string | null; client_phone: string | null }>): RecoveryOpportunityCandidate[] {
   const candidates: RecoveryOpportunityCandidate[] = [];
   for (const record of records) {
-    const data = (record.data ?? {}) as Record<string, any>;
+    const data = record.data ?? {};
     const age = daysAgo(record.occurred_at ?? null);
     const hasContact = Boolean(record.client_email || record.client_phone);
     const blocked = data.do_not_contact === true;
