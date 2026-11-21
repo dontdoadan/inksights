@@ -2,7 +2,7 @@
 
 **Product:** AI Business Tool Factory / Studio Revenue Recovery  
 **Version:** 0.1.0  
-**Status:** DRAFT — implementation baseline  
+**Status:** IMPLEMENTATION BASELINE — shared database foundation applied; application MVP in progress  
 **Date:** 2026-11-21
 
 ## 1. Product objective
@@ -68,16 +68,15 @@ Core job: “Show me which revenue opportunities I should act on next, why they 
 
 ## 5. Canonical data contract
 
-Import schema is versioned and independent of the source platform. Raw rows remain in a restricted staging area until validation and mapping are complete.
+Import schema is versioned and independent of the source platform. The applied schema stores mapped, normalised row payloads in a restricted staging table; it does not store original raw row payloads or source file bytes.
 
 ### Client
 - external_client_id (optional)
 - client_name (required for display; pseudonymous ID preferred where possible)
-- email (optional)
-- phone (optional)
+- contact route available (boolean)
+- external contact reference retained in source system; email and phone are not stored in the current schema
 - last_completed_booking_at (optional)
 - total_completed_sessions (optional)
-- lifetime_spend_minor (optional, GBP pence)
 - marketing_permission_state (unknown / permitted / not_permitted / suppressed)
 - source_system and source_record_id
 
@@ -172,7 +171,7 @@ Do not rank unknown amounts above evidence-backed exact liabilities merely becau
 Shared tables are specified in `docs/architecture/ai-business-tool-factory-shared-architecture.md`.
 
 Revenue Recovery domain tables (proposed):
-- `rr_clients`: canonical client identity within workspace; source identifiers and normalised matching keys.
+- `rr_clients`: workspace-scoped client reference, source identifiers, display name, last completed booking, completed-session count, future booking date and permission state. Direct email/phone fields are intentionally absent.
 - `rr_projects`: multi-session projects and contract/session progress.
 - `rr_bookings`: appointment/session facts and statuses.
 - `rr_enquiries`: inbound enquiry and conversion state.
@@ -267,3 +266,35 @@ Every endpoint validates tenant membership server-side, uses schema validation, 
 8. No external message is sent by any MVP action.
 9. A studio member cannot read another workspace's records by changing IDs.
 10. Recovered revenue is reported only after an outcome is recorded with evidence; modelled opportunity is not counted as recovered revenue.
+
+
+## 15. Applied implementation baseline — 2026-11-21
+
+### Supabase tables now present
+
+Shared platform: `bt_workspaces`, `bt_workspace_members`, `bt_workspace_products`, `bt_import_jobs`, `bt_import_rows`, `bt_workflow_runs`, `bt_approvals`, `bt_audit_events`, `bt_usage_events`.
+
+Revenue Recovery: `rr_clients`, `rr_enquiries`, `rr_projects`, `rr_bookings`, `rr_payments`, `rr_capacity_periods`, `rr_opportunities`, `rr_actions`, `rr_outcomes`.
+
+All 18 tables have RLS enabled. Workspace-owned records are scoped by `workspace_id`. Membership and product activation are provisioned server-side. The client can read its own active membership and workspace/product data only where an active membership exists. Managers/owners/admins can create and update the operational rows allowed by policy; analysts are read-only. Approvals and outcomes are append-only from the client. Audit and usage tables are service-only.
+
+### Implemented in code
+
+- Product registry: `src/lib/tool-factory/product-registry.ts`.
+- Deterministic rule engine: `src/lib/tool-factory/revenue-recovery-engine.ts`.
+- Engine tests: `tests/revenue-recovery-engine.test.mjs`.
+- CI step added to run the engine tests.
+
+### Not yet implemented
+
+- CSV parser, field-mapping wizard and confirmation UX.
+- Authenticated workspace provisioning and first-user bootstrap.
+- Persistence adapter connecting the pure rule engine to Supabase.
+- Revenue Recovery dashboard and opportunity detail views.
+- AI explanation/draft endpoint and digest-bound approval UI.
+- Outcome capture UI, private file storage and retention jobs.
+- Stripe product entitlements or booking-platform connectors.
+
+### Current data minimisation
+
+The applied client table does not persist email addresses or phone numbers. It records a source reference, display name, contact-route flag and marketing-permission state. The import validator must enforce an allowlist before writing `mapped_payload`; the JSON column itself is not a substitute for application-level validation. The MVP still does not send communications.
