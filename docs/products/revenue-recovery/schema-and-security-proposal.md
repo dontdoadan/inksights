@@ -1,196 +1,125 @@
-# Business Tool Factory — Database and Security Proposal
+# Business Tool Factory — Applied Database and Security Record
 
-**Status:** DRAFT FOR REVIEW — NOT APPLIED  
-**Database:** Existing Supabase project `INKSIGHTS`  
+**Status:** APPLIED — implementation baseline  
+**Database:** Existing INKSIGHTS Supabase project  
 **Date:** 2026-11-21
 
-## 1. Decision required
+## 1. Implementation summary
 
-This proposal introduces a generic workspace layer and a namespaced Revenue Recovery domain in the existing database. It does not modify existing tables or repurpose the public Revenue Audit lead tables.
+The approved generic workspace model and Revenue Recovery domain have been applied to the existing INKSIGHTS Supabase project. Existing Golden Audit, Revenue Audit, CRM, mail and intelligence tables were not repurposed or altered.
 
-No SQL in this document has been applied to the live database. Applying the schema, grants, functions or RLS policies requires explicit approval after review.
+Applied migrations:
 
-## 2. Existing structures to reuse
+| Supabase version | Migration |
+|---|---|
+| 20261121071600 | create_business_tool_factory_revenue_recovery |
+| 20261121071648 | add_business_tool_factory_foreign_key_indexes |
+| 20261121071751 | restrict_factory_import_row_updates |
 
-- `public.studios` — canonical studio/business identity.
-- `public.studio_members` — existing studio membership. Its `studio_id` references `visibility_studios`; the live schema also links `studios.id` to `visibility_studios.id`. The identity mapping must be verified during workspace provisioning.
-- `public.clients` and `public.client_aliases` — existing Golden Audit client normalisation assets. Do not use these as the sole operational Revenue Recovery store without a separate scope and data-purpose review.
-- `public.transactions` — existing transaction facts; read access is tenant-scoped through `app_private.can_read_studio(studio_id)`.
-- `public.integration_events` — existing integration event ledger, currently RLS-enabled with no authenticated policy (service-only access pattern).
-- `public.intelligence_evidence`, `public.intelligence_findings`, `public.intelligence_recommendations`, `public.intelligence_economic_opportunities` — reusable intelligence concepts, but not substitutes for product-owned operational records.
-- `public.inksights_mail_outbox` and `public.inksights_mail_suppressions` — existing INKSIGHTS outbound governance. Do not write to this ledger from Revenue Recovery until its current RLS, eligibility and consent contracts are reviewed. MVP does not send.
+Matching SQL migration files are committed under `supabase/migrations/` on the feature branch.
 
-## 3. Proposed shared tables
+## 2. Tables created
 
-All tenant-owned tables carry `workspace_id` and RLS. All monetary columns are integer minor units; initial currency is GBP.
+### Shared platform
 
-### `bt_workspaces`
-- `id uuid primary key default gen_random_uuid()`
-- `display_name text not null`
-- `business_type text not null`
-- `source_studio_id uuid null unique references public.studios(id)`
-- `timezone text not null default 'Europe/London'`
-- `currency_code text not null default 'GBP'`
-- `status text not null default 'active'`
-- `created_by uuid references auth.users(id)`
-- `created_at / updated_at timestamptz not null default now()`
+| Table | Purpose |
+|---|---|
+| `bt_workspaces` | Tenant and workspace boundary; optional source studio ID is an unlinked reference until identity provisioning is implemented |
+| `bt_workspace_members` | Workspace user membership and role |
+| `bt_workspace_products` | Product activation, version and settings |
+| `bt_import_jobs` | Import metadata, checksum, mapping version and row counts |
+| `bt_import_rows` | Mapped and validated row staging; no raw source-file bytes |
+| `bt_workflow_runs` | Idempotent, versioned workflow execution |
+| `bt_approvals` | Append-only decisions bound to a draft digest |
+| `bt_audit_events` | Service-only append-only audit ledger |
+| `bt_usage_events` | Service-only usage/metering ledger |
 
-### `bt_workspace_members`
-- `id uuid primary key default gen_random_uuid()`
-- `workspace_id uuid not null references bt_workspaces(id)`
-- `user_id uuid not null references auth.users(id)`
-- `role text not null check (role in ('owner','admin','manager','analyst'))`
-- `active boolean not null default true`
-- `created_at timestamptz not null default now()`
-- Unique constraint on `(workspace_id, user_id)`.
+### Revenue Recovery
 
-### `bt_workspace_products`
-- `workspace_id uuid not null references bt_workspaces(id)`
-- `product_key text not null`
-- `product_version text not null`
-- `status text not null check (status in ('enabled','disabled','trial'))`
-- `settings jsonb not null default '{}'`
-- `created_at / updated_at timestamptz not null default now()`
-- Primary key on `(workspace_id, product_key)`.
+| Table | Purpose |
+|---|---|
+| `rr_clients` | Workspace-scoped client references, display name, booking recency and contact-permission state |
+| `rr_enquiries` | Enquiry status, age and quoted value |
+| `rr_projects` | Multi-session project status, session progress and contract values |
+| `rr_bookings` | Appointment/session status and deposit/balance facts |
+| `rr_payments` | Imported payment facts; not a payment processor ledger |
+| `rr_capacity_periods` | Available/booked hours and studio-provided hourly value |
+| `rr_opportunities` | Rule-versioned findings, evidence, value classification, confidence and priority |
+| `rr_actions` | Editable recommendations and draft communication metadata |
+| `rr_outcomes` | Append-only reported/verified outcome records |
 
-### `bt_import_jobs`
-- `id uuid primary key default gen_random_uuid()`
-- `workspace_id uuid not null references bt_workspaces(id)`
-- `product_key text not null`
-- `source_system text not null`
-- `source_filename text`
-- `content_sha256 text not null`
-- `mapping_version text not null`
-- `status text not null`
-- `rows_total / rows_valid / rows_invalid / rows_duplicate integer not null default 0`
-- `created_by uuid references auth.users(id)`
-- `completed_at / created_at timestamptz`
-- Unique idempotency constraint on `(workspace_id, product_key, content_sha256)`.
+All monetary values are integer minor units. The initial currency defaults to GBP. Workspace-owned records carry `workspace_id`. Composite foreign keys prevent child records from linking to a parent record in a different workspace.
 
-### `bt_import_rows`
-- `id uuid primary key default gen_random_uuid()`
-- `workspace_id uuid not null references bt_workspaces(id)`
-- `import_job_id uuid not null references bt_import_jobs(id) on delete cascade`
-- `row_number integer not null`
-- `raw_payload jsonb not null`
-- `mapped_payload jsonb`
-- `row_status text not null`
-- `validation_errors jsonb not null default '[]'`
-- `source_record_id text`
-- `row_hash text not null`
-- Unique constraint on `(import_job_id, row_number)`.
+## 3. Data minimisation and boundaries
 
-### `bt_workflow_runs`
-- `id uuid primary key default gen_random_uuid()`
-- `workspace_id uuid not null references bt_workspaces(id)`
-- `product_key text not null`
-- `workflow_key text not null`
-- `workflow_version text not null`
-- `idempotency_key text not null`
-- `status text not null`
-- `input_ref jsonb not null default '{}'`
-- `result_summary jsonb not null default '{}'`
-- `started_at / completed_at / created_at timestamptz`
-- Unique constraint on `(workspace_id, product_key, idempotency_key)`.
+- `rr_clients` does not contain email or phone columns. It stores a source-system reference, optional display name, booking facts, a contact-route flag and marketing-permission state.
+- `bt_import_rows` stores mapped JSON only. The application must enforce an explicit allowlist before writing this JSON; database JSONB typing does not validate the business schema.
+- No source CSV bytes, payment credentials, card data, authentication secrets or unrelated client notes are stored by this migration.
+- `rr_payments` is an imported record of payment facts, not a payment execution interface.
+- No private Storage bucket or upload URL policy has been created yet.
+- No workspace, member, product activation, client or booking rows have been seeded. The schema is ready; workspace bootstrap is a remaining backend task.
 
-### `bt_approvals`
-- `id uuid primary key default gen_random_uuid()`
-- `workspace_id uuid not null references bt_workspaces(id)`
-- `product_key text not null`
-- `target_type text not null`
-- `target_id uuid not null`
-- `draft_digest text not null`
-- `decision text not null check (decision in ('approved','rejected','revoked'))`
-- `actor_id uuid not null references auth.users(id)`
-- `created_at timestamptz not null default now()`
-- Approval must bind to the exact content digest; edits invalidate prior approval.
+## 4. RLS and grants as applied
 
-### `bt_audit_events` and `bt_usage_events`
-Append-only, service-write tables for actor/action provenance, workflow usage, metering and billing reconciliation. Keep RLS enabled with no client write policies; access through trusted server-side services only. Audit payloads must avoid unnecessary PII.
+RLS is enabled on all 18 new tables.
 
-## 4. Proposed Revenue Recovery tables
+There are 39 workspace-aware policies across 16 tables. Two tables intentionally have no client policies:
 
-### `rr_clients`
-Workspace-scoped canonical client references. Store source identifiers, display name, optional normalised email/phone, last completed booking date, completed-session count and marketing permission state. Avoid storing unrelated client notes.
+- `bt_audit_events`
+- `bt_usage_events`
 
-### `rr_enquiries`
-Source-system enquiry ID, optional client link, created date, status, quoted amount in pence, contact-route flag and source lineage.
+These are service-only tables with no `anon` or `authenticated` table privileges.
 
-### `rr_projects`
-Source-system project ID, optional client link, project status, agreed value, paid value, planned/completed sessions, last activity and next session.
+Policy design:
 
-### `rr_bookings`
-Source-system booking ID, optional client/project link, scheduled date, status, booking amount, deposit due/paid, balance due/paid and source lineage.
+- Workspace, membership and product configuration are provisioned by trusted server-side code.
+- Authenticated users can read only their own active membership row.
+- Workspace and product reads require an active membership.
+- Import, workflow and Revenue Recovery data reads require active workspace membership.
+- Owner/admin/manager roles can perform the allowed insert/update operations.
+- Analysts are read-only.
+- Approvals and outcomes are append-only from authenticated clients.
+- No authenticated client receives DELETE privileges on the new tables.
+- `bt_import_rows` updates are explicitly revoked from authenticated clients; trusted server-side normalisation owns row-status transitions.
+- No new `SECURITY DEFINER` helper was introduced. RLS policies query the caller's own membership row, which is visible under the membership table's self-read policy.
+- Authorization does not rely on user-editable JWT metadata.
 
-### `rr_payments`
-Imported payment facts only: source payment ID, optional booking/project link, amount in pence, payment type, payment status, paid date and source lineage. This is not a payment processor ledger.
+## 5. Verification performed
 
-### `rr_capacity_periods`
-Source period, start/end, available hours, booked hours and studio-provided realised hourly value.
+- Confirmed all 18 tables exist and RLS is enabled.
+- Confirmed 39 policies across 16 tables.
+- Confirmed no anonymous SELECT privileges on the new tables.
+- Confirmed audit and usage tables are inaccessible to authenticated clients and accessible to the trusted service role.
+- Confirmed client-side DELETE is not granted.
+- Confirmed foreign-key advisor findings for the new tables were cleared after adding indexes.
+- Ran a transactional test with two existing user IDs, two workspaces and two roles. Each user saw only their own workspace and client. An owner insert succeeded; an analyst insert was denied. The transaction was rolled back, leaving no test records.
 
-### `rr_opportunities`
-Rule version, deterministic opportunity key, source record/group, category, explanation, recommendation, low/base/high amount in pence, classification, confidence, priority, evidence JSON, actionability and status. Unique constraint on `(workspace_id, rule_version, opportunity_key)`.
+### Advisor context
 
-### `rr_actions`
-Opportunity link, action type, draft subject/body, draft digest, status, created-by and timestamps. Approval references live in `bt_approvals`. No send status or outbound execution is enabled in MVP.
+The project still has pre-existing security advisor warnings, including public/authenticated execution of some SECURITY DEFINER functions and leaked-password protection being disabled. The post-migration RLS-without-policy advisor count is 58; two of these are the intentionally service-only audit and usage tables introduced here. Existing findings must be handled as a separate security workstream rather than weakened or broadly papered over.
 
-### `rr_outcomes`
-Manually recorded outcome type, related opportunity/action, amount in pence, evidence reference, classification (reported/verified), recorded-by and timestamp. Only verified, evidence-backed outcomes count as recovered revenue.
+Performance advisor warnings for unused indexes are expected on newly created empty tables. Do not drop them until real workload evidence exists.
 
-## 5. RLS and role policy design
+## 6. Remaining security and backend work
 
-RLS must be enabled on every exposed Factory and Revenue Recovery table.
+1. Implement trusted workspace provisioning and first-owner bootstrap.
+2. Map the optional `source_studio_id` to the canonical INKSIGHTS studio identity after verifying the intended record.
+3. Add product activation seeding through the trusted backend.
+4. Implement the CSV allowlist, validation, idempotency and row normalisation service.
+5. Define private Storage and retention only when file upload UX is ready.
+6. Add API-level tenant checks in addition to database RLS.
+7. Add audit events for import, analysis, draft changes, approval and outcome capture.
+8. Run a local Supabase CLI reset/diff from the checked-in migrations before merging to `main`.
+9. Do not enable sending, booking writes, payment actions or CRM write-back as part of this schema milestone.
 
-Roles:
-- **owner:** full workspace and product administration.
-- **admin:** member, product and data administration.
-- **manager:** import, analyse, draft and approve actions.
-- **analyst:** read-only access to product data and reports.
+## 7. Release status
 
-Proposed helper:
-- Add a narrowly scoped function `app_private.bt_can_access_workspace(workspace_id uuid, allowed_roles text[] default null)`.
-- The function checks `auth.uid()`, active membership and optional role membership.
-- If `SECURITY DEFINER` is required to avoid recursive membership-table RLS, it must remain in the non-exposed `app_private` schema, use a fixed safe search path and fully qualified table/function names, explicitly check `auth.uid()`, revoke default execution from `PUBLIC` and `anon`, and grant only the required execution role.
-- No authorization may rely on `raw_user_meta_data` or client-supplied workspace IDs alone.
+- Live schema and RLS: applied.
+- Feature branch migration files: committed.
+- Draft pull request: remains open.
+- Production app: unchanged.
+- Customer data import: not started.
+- Outbound communication: disabled.
+- Stripe billing entitlements: not configured.
 
-Policy matrix:
-- Workspace and product configuration: member SELECT; owner/admin write.
-- Memberships: self SELECT; owner/admin manage.
-- Imports and canonical Revenue Recovery records: all active members SELECT; owner/admin/manager write.
-- Approvals: manager/admin/owner can create/revoke through server-validated workflow; analyst read-only.
-- Audit and usage events: service-only writes; member read only if a product-facing audit view is explicitly approved.
-- Storage bucket: private, workspace-scoped object paths and short-lived signed URLs.
-
-RLS policy predicates must be tested for cross-workspace ID substitution, inactive memberships, role escalation, UPDATE with both USING and WITH CHECK, and anonymous access.
-
-## 6. Required migration order
-
-1. Create generic workspace and membership tables.
-2. Add private workspace authorization helper and grants.
-3. Add workspace RLS and policies.
-4. Add product activation, import and workflow tables.
-5. Add Revenue Recovery domain tables and indexes.
-6. Add storage policies only if a private import bucket is approved.
-7. Run advisors and tenant-isolation tests.
-8. Generate the committed migration with the Supabase CLI workflow required by the repository.
-9. Apply only after explicit approval and verify with read-back queries.
-
-## 7. Known security observations from the live audit
-
-- Existing core tables `studios`, `clients` and `transactions` have tenant-scoped read policies.
-- `studio_members` has a self-membership read policy.
-- Existing mail and integration event tables have RLS enabled but no authenticated policy; this is consistent with a service-only pattern and must not be weakened.
-- Supabase security advisors currently report 56 RLS-enabled tables without policies. This includes existing service-only tables; it is an audit item requiring classification, not a reason to add broad permissive policies.
-- Existing `app_private` schema contains `can_read_studio`, `si_admin`, `si_command` and `si_guard_report`; the proposed helper name is distinct.
-
-## 8. Approval checklist
-
-- [ ] Approve generic workspace model and studio identity mapping.
-- [ ] Approve role model and membership bootstrap process.
-- [ ] Approve private helper function and grants.
-- [ ] Approve table definitions, retention and data minimisation.
-- [ ] Approve RLS policy matrix and storage approach.
-- [ ] Approve creation of the migration through the repository's Supabase CLI workflow.
-- [ ] Approve applying the migration to the live INKSIGHTS Supabase project.
-
-Until these items are approved, the proposal remains documentation only.
+This document is the as-built record and supersedes the earlier pre-approval proposal.
