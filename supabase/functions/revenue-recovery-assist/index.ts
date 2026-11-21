@@ -83,18 +83,17 @@ Deno.serve(async (req: Request) => {
     if (sourceError || !sourceRecord) return json({ ok: false, error: "Source record not found." }, 404, origin);
     const evidence = (opportunity.evidence ?? {}) as Record<string, unknown>;
     const sourceData = (sourceRecord.data ?? {}) as Record<string, unknown>;
-    if (evidence.contact_allowed !== true || evidence.contact_available !== true || sourceData.do_not_contact === true) {
+    const hasContact = Boolean(sourceRecord.client_email || sourceRecord.client_phone);
+    const documentedMarketingConsent = sourceData.marketing_consent === true && Boolean(sourceData.marketing_consent_at) && Boolean(sourceData.marketing_consent_source);
+    const documentedContactPermission = sourceData.contact_permission === true && Boolean(sourceData.contact_permission_at) && Boolean(sourceData.contact_permission_source);
+    if (!hasContact || sourceData.do_not_contact === true || (!documentedContactPermission && !documentedMarketingConsent)) {
       return json({ ok: false, error: "Documented contact permission and a usable contact detail are required." }, 403, origin);
     }
     const category = String(opportunity.category);
     if (!["inactive_project", "unconverted_enquiry", "inactive_client"].includes(category)) {
       return json({ ok: false, error: "Unsupported recovery category." }, 400, origin);
     }
-    if (category === "inactive_client" && !(
-      sourceData.marketing_consent === true &&
-      Boolean(sourceData.marketing_consent_at) &&
-      Boolean(sourceData.marketing_consent_source)
-    )) {
+    if (category === "inactive_client" && !documentedMarketingConsent) {
       return json({ ok: false, error: "Reactivation requires traceable marketing consent." }, 403, origin);
     }
     if (!OPENAI_API_KEY) return json({ ok: false, error: "AI drafting is not configured yet. Add OPENAI_API_KEY to the Supabase function secrets." }, 503, origin);
