@@ -240,11 +240,11 @@ export function analyseRevenueRecovery(
     const client = clients.find((candidate) => candidate.id === enquiry.clientId);
     const permission = client?.marketingPermissionState ?? "unknown";
     const actionability =
-      enquiry.hasContactRoute && permission === "permitted"
-        ? "actionable"
-        : enquiry.hasContactRoute
-          ? "review_required"
-          : "not_actionable";
+      !enquiry.hasContactRoute || permission === "not_permitted" || permission === "suppressed"
+        ? "not_actionable"
+        : permission === "permitted"
+          ? "actionable"
+          : "review_required";
     const confidence = quoted != null ? 0.9 : 0.65;
 
     opportunities.push(
@@ -322,7 +322,12 @@ export function analyseRevenueRecovery(
             ...(remaining == null ? ["Agreed value or paid amount missing; financial value unknown."] : ["Remaining value = agreed value minus paid value."]),
           ],
           detectedAt: asOf,
-          actionability: project.hasContactRoute ? (permission === "permitted" ? "actionable" : "review_required") : "not_actionable",
+          actionability:
+            !project.hasContactRoute || permission === "not_permitted" || permission === "suppressed"
+              ? "not_actionable"
+              : permission === "permitted"
+                ? "actionable"
+                : "review_required",
           marketingPermissionState: permission,
         },
         {
