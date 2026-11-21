@@ -213,14 +213,8 @@ function RevenueRecovery() {
     setDrafting(opportunity.id); setError("");
     try {
       const { data, error: invokeError } = await supabase.functions.invoke("revenue-recovery-assist", {
-        body: {
-          studio_id: studioId, category: opportunity.category,
-          client_first_name: record.client_name.split(/\s+/)[0],
-          project_name: record.data.project_name ?? "",
-          evidence_summary: JSON.stringify(opportunity.evidence),
-          recommended_action: opportunity.recommendation,
-          estimated_value_gbp: opportunity.estimated_value_pence / 100,
-        },
+        body: { studio_id: studioId, opportunity_id: opportunity.id },
+
       });
       if (invokeError || !data?.ok) throw new Error(data?.error ?? invokeError?.message ?? "AI drafting unavailable.");
       const draft = { subject: String(data.subject), message: String(data.message) };
