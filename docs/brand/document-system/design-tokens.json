@@ -1,0 +1,156 @@
+{
+  "id": "inksights/document-system/v1.0",
+  "status": "DERIVED-PRINT",
+  "effectiveDate": "2026-10-22",
+  "authority": {
+    "website": "https://getinksights.co.uk",
+    "current": "docs/brand/CURRENT.md",
+    "manifest": "docs/brand/brand-manifest.json",
+    "styles": "src/styles.css",
+    "logoDark": "public/brand/logo-v3/primary-dark.svg",
+    "logoLight": "public/brand/logo-v3/primary-light.svg",
+    "precedence": "production-brand-authority-over-derived-pdf-layout"
+  },
+  "unit": "pt",
+  "page": {
+    "format": "A4",
+    "width": 595.28,
+    "height": 841.89,
+    "contentLeft": 49,
+    "contentRight": 546,
+    "contentWidth": 497,
+    "contentStartY": 175,
+    "contentEndY": 780,
+    "headerBottomY": 75,
+    "headingTopY": 99,
+    "strapTopY": 138,
+    "footerRuleY": 784,
+    "footerTextTopY": 795,
+    "pageBadge": {
+      "x": 502,
+      "y": 791,
+      "width": 42,
+      "height": 22
+    }
+  },
+  "spacing": {
+    "micro": 4,
+    "xs": 8,
+    "sm": 12,
+    "md": 16,
+    "lg": 24,
+    "xl": 32,
+    "xxl": 48
+  },
+  "cover": {
+    "titleLeft": 40,
+    "titleTop": 151,
+    "titleMaxWidth": 263,
+    "photoLeft": 312,
+    "photoTop": 91,
+    "photoWidth": 283,
+    "photoHeight": 364
+  },
+  "components": {
+    "card": {
+      "radius": 11,
+      "stroke": 0.75,
+      "paddingX": 15,
+      "paddingY": 12,
+      "minGap": 12
+    },
+    "callout": {
+      "radius": 12,
+      "accentBar": 4,
+      "textInset": 16,
+      "titleInsetY": 12,
+      "bodyInsetY": 32
+    },
+    "table": {
+      "headerHeight": 42,
+      "defaultRowHeight": 48,
+      "innerGutter": 9
+    },
+    "field": {
+      "outerHeight": 27,
+      "radius": 7,
+      "borderWidth": 0.85,
+      "minGap": 8,
+      "annotationInset": 3
+    },
+    "closing": {
+      "ctaTop": 719,
+      "ctaHeight": 50
+    }
+  },
+  "palette": {
+    "dark": {
+      "background": "#0A0F14",
+      "surface": "#101B23",
+      "raised": "#1F2937",
+      "signal": "#00E5D1",
+      "softSignal": "#70F4E6",
+      "muted": "#94A3B8",
+      "border": "#344957",
+      "text": "#F8FAFC"
+    },
+    "light": {
+      "background": "#FFFFFF",
+      "surface": "#F8FAFC",
+      "raised": "#EAF0F2",
+      "text": "#0A0F14",
+      "accentText": "#00665F",
+      "muted": "#475569",
+      "border": "#D4DEE3"
+    }
+  },
+  "typography": {
+    "brand": "Poppins",
+    "weights": [
+      400,
+      500,
+      600,
+      700
+    ],
+    "fallback": [
+      "system-ui",
+      "sans-serif"
+    ],
+    "headingPt": 22.5,
+    "bodyPt": 9.5,
+    "eyebrowPt": 7.4,
+    "footerPt": 7,
+    "bodyLineHeight": 1.4
+  },
+  "templates": [
+    "cover-dark-photo",
+    "worksheet-light",
+    "data-table-light",
+    "checklist-light",
+    "results-light",
+    "closing-dark"
+  ],
+  "evidenceLabels": [
+    "VERIFIED",
+    "OBSERVED",
+    "CALCULATED",
+    "MODELLED",
+    "HYPOTHESIS"
+  ],
+  "qualityGates": [
+    "A4 all pages",
+    "same shared header/footer",
+    "body inside safe area",
+    "no text clipping or field collision",
+    "all field names unique",
+    "fields editable and persisting",
+    "all pages rendered and reviewed",
+    "font/logo provenance recorded",
+    "hyperlinks tested"
+  ],
+  "knownLimitations": [
+    "Existing v2 files embed DejaVu Sans substitute; next-generation output should embed canonical Poppins",
+    "Three compact result fields in resource 03 have 17pt inner PDF annotations within 23pt visible controls",
+    "Existing PDFs do not compute scores or arithmetic automatically"
+  ]
+}

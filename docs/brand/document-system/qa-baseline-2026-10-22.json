@@ -1,0 +1,59 @@
+{
+  "standard": "INKSIGHTS Document System v1.0",
+  "date": "2026-10-22",
+  "source": "five v2 studio growth toolkit PDFs",
+  "checked_files": 5,
+  "pages": 31,
+  "fields": 154,
+  "errors": 0,
+  "warnings": 0,
+  "documents": [
+    {
+      "file": "01_INKSIGHTS_Studio_Growth_Constraint_Diagnostic.pdf",
+      "pages": 7,
+      "fields": 27,
+      "errors": 0
+    },
+    {
+      "file": "02_INKSIGHTS_90_Day_Revenue_Lift_Assessment.pdf",
+      "pages": 5,
+      "fields": 26,
+      "errors": 0
+    },
+    {
+      "file": "03_INKSIGHTS_Studio_Revenue_Scenario_Calculator.pdf",
+      "pages": 6,
+      "fields": 30,
+      "errors": 0
+    },
+    {
+      "file": "04_INKSIGHTS_27_Point_Revenue_Leakage_Audit.pdf",
+      "pages": 7,
+      "fields": 42,
+      "errors": 0
+    },
+    {
+      "file": "05_INKSIGHTS_Studio_Partnership_Opportunity_Planner.pdf",
+      "pages": 6,
+      "fields": 29,
+      "errors": 0
+    }
+  ],
+  "checks": [
+    "A4 page dimensions",
+    "body copy horizontal margins",
+    "text outside page bounds",
+    "text/field overlap",
+    "AcroForm field count",
+    "cover/workbook/closing structure",
+    "shared worksheet header/footer",
+    "working hyperlink count",
+    "form save/reopen persistence one field per document"
+  ],
+  "notes": [
+    "Resource 03 compact inner fields were increased from 17pt to 19pt within unchanged 23pt visual controls in standardised v2.1 deliverable.",
+    "Visual review from all-pages contact sheet; not a comprehensive accessibility certification.",
+    "Existing v2 files embed DejaVu Sans rather than production Poppins.",
+    "PDF arithmetic/scoring is not automatic."
+  ]
+}
