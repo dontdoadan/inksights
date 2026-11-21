@@ -257,7 +257,7 @@ function RevenueRecovery() {
 
   async function copyApproved(opportunity: Opportunity) {
     if (!opportunity.draft_message) return;
-    const content = [opportunity.draft_subject, opportunity.draft_message].filter(Boolean).join("\\n\\n");
+    const content = [opportunity.draft_subject, opportunity.draft_message].filter(Boolean).join("\n\n");
     await navigator.clipboard.writeText(content);
     setNotice("Approved message copied. It has not been sent.");
   }
