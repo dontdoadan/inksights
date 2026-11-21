@@ -208,7 +208,7 @@ function RevenueRecovery() {
     finally { setBusy(false); }
   }
 
-  async function generateDraft(opportunity: Opportunity, record: RecoveryRecord) {
+  async function generateDraft(opportunity: Opportunity) {
     if (opportunity.evidence.contact_allowed !== true) return;
     setDrafting(opportunity.id); setError("");
     try {
@@ -434,7 +434,7 @@ function RevenueRecovery() {
                         )}
                         <div className="mt-4 flex flex-wrap items-center gap-2">
                           {!draft && !["dismissed", "paid"].includes(opportunity.status) && (
-                            <button onClick={() => void generateDraft(opportunity, record)} disabled={!canManage || !contactAllowed || drafting === opportunity.id || busy} title={!contactAllowed ? "Contact permission is not recorded for this record." : "Generate a personalised AI draft"} className="inline-flex items-center gap-2 rounded-full border border-mint/50 px-4 py-2 text-xs font-bold text-mint hover:bg-mint/10 disabled:cursor-not-allowed disabled:opacity-40">
+                            <button onClick={() => void generateDraft(opportunity)} disabled={!canManage || !contactAllowed || drafting === opportunity.id || busy} title={!contactAllowed ? "Contact permission is not recorded for this record." : "Generate a personalised AI draft"} className="inline-flex items-center gap-2 rounded-full border border-mint/50 px-4 py-2 text-xs font-bold text-mint hover:bg-mint/10 disabled:cursor-not-allowed disabled:opacity-40">
                               {drafting === opportunity.id ? <LoaderCircle size={14} className="animate-spin"/> : <Sparkles size={14}/>} Generate AI draft
                             </button>
                           )}
