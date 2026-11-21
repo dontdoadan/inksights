@@ -118,6 +118,7 @@ export function normalizeCsvRows(input: string, type: RecoveryRecordType): Norma
       const remaining = Number(get(source, ["remaining_sessions", "sessions_remaining", "sessions_left"]));
       const total = Number(get(source, ["total_sessions", "sessions_total", "planned_sessions"]));
       const projectValue = parseMoney(get(source, ["project_value_gbp", "project_value", "total_project_value", "quoted_value_gbp", "quoted_value"]));
+      const remainingValue = parseMoney(get(source, ["remaining_value_gbp", "remaining_value", "outstanding_value_gbp"]));
       const status = get(source, ["status", "project_status", "booking_status"]).toLowerCase();
       const nextBookedRaw = get(source, ["next_session_booked", "next_session_scheduled", "next_appointment_booked"]);
       const projectName = get(source, ["project_name", "project", "tattoo_project", "description"]) || "Tattoo project";
@@ -127,7 +128,7 @@ export function normalizeCsvRows(input: string, type: RecoveryRecordType): Norma
         data: { ...common, project_name: projectName, status, last_session_date: lastSession,
           remaining_sessions: Number.isFinite(remaining) ? Math.max(0, Math.trunc(remaining)) : null,
           total_sessions: Number.isFinite(total) ? Math.max(0, Math.trunc(total)) : null,
-          project_value_pence: projectValue, next_session_booked: truthy(nextBookedRaw) },
+          project_value_pence: projectValue, remaining_value_pence: remainingValue, next_session_booked: truthy(nextBookedRaw) },
         dedupe_source: [email || name.toLowerCase(), projectName.toLowerCase()].join("|"),
       };
     }
@@ -173,11 +174,12 @@ export function buildRecoveryCandidates(records: Array<{ id: string; record_type
       if (age === null || age < 45 || remaining <= 0 || nextBooked || ["completed", "cancelled", "closed", "finished"].includes(status)) continue;
       const total = Number(data.total_sessions ?? 0);
       const totalValue = Number(data.project_value_pence ?? record.amount_pence ?? 0);
-      const estimate = total > 0 && totalValue > 0 ? Math.round(totalValue * Math.min(1, remaining / total)) : totalValue;
+      const remainingValue = Number(data.remaining_value_pence ?? 0);
+      const estimate = remainingValue > 0 ? remainingValue : total > 0 && totalValue > 0 ? Math.round(totalValue * Math.min(1, remaining / total)) : 0;
       candidates.push({
         record_id: record.id, category: "inactive_project", priority: age >= 90 ? "high" : "medium",
         estimated_value_pence: Math.max(0, estimate), confidence_score: totalValue > 0 && total > 0 ? 0.88 : 0.58,
-        evidence: { inactive_days: age, remaining_sessions: remaining, total_sessions: total || null, project_value_pence: totalValue || null, contact_available: hasContact, contact_allowed: contactAllowed && !blocked },
+        evidence: { inactive_days: age, remaining_sessions: remaining, total_sessions: total || null, project_value_pence: totalValue || null, remaining_value_pence: remainingValue || null, contact_available: hasContact, contact_allowed: contactAllowed && !blocked },
         recommendation: `Contact the client about continuing their ${String(data.project_name ?? "tattoo")} project. There are ${remaining} session(s) recorded as remaining and no next session booked.`,
       });
     }
