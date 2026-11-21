@@ -10,6 +10,7 @@ export type ClientCsvField =
 export type ClientCsvMapping = Record<ClientCsvField, string | null>;
 
 export type ClientCsvRow = {
+  source_row_number: number;
   source_record_id: string;
   display_name: string | null;
   last_completed_booking_at: string | null;
@@ -171,6 +172,7 @@ export function validateClientCsv(
       }
 
       validRows.push({
+        source_row_number: rowNumber,
         source_record_id: sourceRecordId,
         display_name: get("displayName") || null,
         last_completed_booking_at: parseIsoDate(get("lastCompletedBookingAt"), "last completed booking date", rowNumber),
