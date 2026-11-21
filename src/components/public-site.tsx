@@ -30,6 +30,7 @@ const menuGroups = [
     links: [
       ["/resources", "Resource library", "Browse all free studio tools"],
       ["/studio-growth-check", "Free Studio Growth Check", "Find the strongest commercial pressure"],
+      ["/studio-growth-toolkit", "Studio Growth Toolkit", "Five connected assessments and revenue models"],
       ["/tattoo-studio-visibility-scorecard", "Visibility Scorecard", "Check local search and booking visibility"],
       ["/pricing-benchmark", "Pricing Benchmark", "Compare rates with UK reference bands"],
       ["/growth-model", "Revenue Growth Model", "Model volume, value and frequency"],
