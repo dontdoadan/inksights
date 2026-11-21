@@ -187,7 +187,26 @@ Plan limits should be based on active clients/records, monthly analysis runs and
 
 - **ADR-001:** Shared platform, separate product modules; accepted.
 - **ADR-002:** Extend existing INKSIGHTS Supabase/Vercel/GitHub; accepted.
-- **ADR-003:** Generic Factory workspace with optional studio identity link; proposed, pending schema approval.
+- **ADR-003:** Generic Factory workspace with optional studio identity link; accepted and applied in Supabase migration `20261121071600`.
 - **ADR-004:** Deterministic revenue calculations; AI for explanation and drafting only; accepted.
 - **ADR-005:** Draft-first communications with explicit approval; accepted.
-- **ADR-006:** New namespaced tables rather than overloading public revenue-audit lead tables; proposed.
+- **ADR-006:** New namespaced tables rather than overloading public revenue-audit lead tables; accepted and applied.
+
+
+## 13. Implementation baseline — 2026-11-21
+
+The first shared database foundation is now applied to the existing INKSIGHTS Supabase project.
+
+- 18 new tables: 9 shared Factory tables and 9 Revenue Recovery tables.
+- RLS enabled on all 18 tables.
+- 39 workspace-aware policies across 16 tables. Two append-only service tables (`bt_audit_events`, `bt_usage_events`) intentionally have no client policies or client grants.
+- No anonymous table privileges. Client-side deletes are not granted.
+- Workspace membership is provisioned by trusted server-side code; authenticated users can read only their own active membership row.
+- RLS predicates use that caller-visible membership row; no new SECURITY DEFINER helper was introduced.
+- Import row updates are revoked from authenticated clients; trusted server-side normalisation owns row-state transitions.
+- Foreign-key indexes were added following the first performance-advisor pass.
+- A transactional two-workspace isolation test passed; test fixtures were rolled back.
+- No workspace records, customer records, CSVs or live integrations have been created/configured yet.
+- Private import-file storage, retention automation, workspace provisioning endpoint and billing entitlements remain future implementation work.
+
+The live database migration versions are recorded in `supabase_migrations.schema_migrations`; matching migration files are checked into the feature branch. The remote schema has not yet been recreated from a local Supabase CLI reset in this environment.
