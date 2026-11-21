@@ -100,11 +100,10 @@ Deno.serve(async (req: Request) => {
     if (!OPENAI_API_KEY) return json({ ok: false, error: "AI drafting is not configured yet. Add OPENAI_API_KEY to the Supabase function secrets." }, 503, origin);
 
     const context = {
-      client_first_name: clean(sourceRecord.client_name, 80).split(" ")[0],
+      client_first_name: (() => { const first = clean(sourceRecord.client_name, 80).split(" ")[0]; return first.includes("@") ? "there" : first; })(),
       project_name: clean(sourceData.project_name, 120),
       evidence_summary: clean(JSON.stringify(evidence), 700),
       recommended_action: clean(opportunity.recommendation, 500),
-      estimated_value_gbp: Math.max(0, Math.min(100000, Number(opportunity.estimated_value_pence ?? 0) / 100)),
     };
     if (!context.client_first_name || !context.evidence_summary || !context.recommended_action) {
       return json({ ok: false, error: "Insufficient evidence to draft a personalised message." }, 400, origin);
