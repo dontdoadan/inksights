@@ -96,6 +96,7 @@ function Dashboard() {
             <Link to="/growth-model" className="text-muted-foreground hover:text-mint">Growth Model</Link>
             <Link to="/audits" className="text-muted-foreground hover:text-mint">Audits</Link>
             <Link to="/workspace" className="text-muted-foreground hover:text-mint">Workspace</Link>
+            <Link to="/revenue-recovery" className="text-muted-foreground hover:text-mint">Revenue Recovery</Link>
             <span className="text-muted-foreground hidden md:inline">{email}</span>
             <button onClick={handleSignOut} className="rounded-full border border-border px-4 py-1.5 hover:border-mint hover:text-mint transition-colors">
               Sign out
