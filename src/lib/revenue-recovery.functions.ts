@@ -1,15 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { TOOL_PRODUCTS } from "@/lib/tool-factory/product-registry";
+import { analyseRevenueRecovery } from "@/lib/tool-factory/revenue-recovery-engine";
 import type { ClientCsvRow } from "@/lib/tool-factory/csv-import";
-
-type WorkspaceRow = {
-  id: string;
-  display_name: string;
-  business_type: string;
-  currency_code: string;
-  status: string;
-};
 
 async function getAdmin() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -193,6 +186,7 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
       }
       seen.add(client.source_record_id);
       if (client.display_name && client.display_name.length > 180) throw new Error("Client display names must be 180 characters or fewer.");
+      if (client.display_name && (/@/.test(client.display_name) || /\\+?\\d[\\d\\s().-]{7,}\\d/.test(client.display_name))) throw new Error("Do not map email addresses or phone numbers into the display-name field.");
       if (client.last_completed_booking_at && !Number.isFinite(Date.parse(client.last_completed_booking_at))) throw new Error("Invalid last booking date.");
       if (client.future_booking_at && !Number.isFinite(Date.parse(client.future_booking_at))) throw new Error("Invalid future booking date.");
       if (!Number.isInteger(client.completed_sessions) || client.completed_sessions < 0) {
