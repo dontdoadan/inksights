@@ -324,3 +324,225 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
     if (auditError) console.error("Revenue Recovery import audit event failed", { code: auditError.code });
     return { importJobId, status: "imported", rowsImported: data.clients.length, rowsRejected: data.rowsInvalid, auditLogged: !auditError };
   });
+
+
+export const runRevenueRecoveryAnalysis = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: { workspaceId: string }) => {
+    if (!/^[0-9a-f-]{36}$/i.test(data.workspaceId)) throw new Error("Invalid workspace.");
+    return data;
+  })
+  .handler(async ({ data, context }) => {
+    const userId = context.userId as string;
+    const admin = await getAdmin();
+    await requireWorkspaceRole(admin, data.workspaceId, userId, ["owner", "admin", "manager"]);
+
+    const [clientResult, enquiryResult, projectResult, bookingResult, capacityResult] = await Promise.all([
+      admin.from("rr_clients").select("id,source_system,source_record_id,last_completed_booking_at,completed_sessions,future_booking_at,marketing_permission_state,has_contact_route").eq("workspace_id", data.workspaceId),
+      admin.from("rr_enquiries").select("id,source_system,source_record_id,client_id,created_at_source,status,quoted_value_minor,has_contact_route").eq("workspace_id", data.workspaceId),
+      admin.from("rr_projects").select("id,source_system,source_record_id,client_id,status,agreed_value_minor,paid_value_minor,sessions_planned,sessions_completed,last_activity_at,next_session_at,has_contact_route").eq("workspace_id", data.workspaceId),
+      admin.from("rr_bookings").select("id,source_system,source_record_id,client_id,project_id,deposit_due_minor,deposit_paid_minor,balance_due_minor,balance_paid_minor").eq("workspace_id", data.workspaceId),
+      admin.from("rr_capacity_periods").select("id,source_system,source_record_id,period_start,period_end,available_hours,booked_hours,realised_hourly_value_minor").eq("workspace_id", data.workspaceId),
+    ]);
+
+    const queryErrors = [clientResult.error, enquiryResult.error, projectResult.error, bookingResult.error, capacityResult.error].filter(Boolean);
+    if (queryErrors.length) throw new Error("Unable to load the workspace dataset for analysis.");
+
+    const clients = clientResult.data ?? [];
+    const clientById = new Map(clients.map((client) => [client.id, client]));
+    const enquiries = enquiryResult.data ?? [];
+    const projects = projectResult.data ?? [];
+    const bookings = bookingResult.data ?? [];
+    const capacityPeriods = capacityResult.data ?? [];
+
+    const input = {
+      clients: clients.map((client) => ({
+        id: client.id,
+        sourceSystem: client.source_system,
+        sourceRecordId: client.source_record_id,
+        lastCompletedBookingAt: client.last_completed_booking_at,
+        completedSessions: client.completed_sessions,
+        futureBookingAt: client.future_booking_at,
+        marketingPermissionState: client.marketing_permission_state as "unknown" | "permitted" | "not_permitted" | "suppressed",
+      })),
+      enquiries: enquiries.map((enquiry) => ({
+        id: enquiry.id,
+        sourceSystem: enquiry.source_system,
+        sourceRecordId: enquiry.source_record_id,
+        clientId: enquiry.client_id,
+        createdAt: enquiry.created_at_source,
+        status: enquiry.status as "new" | "replied" | "quoted" | "booked" | "declined" | "closed" | "unknown",
+        quotedValueMinor: enquiry.quoted_value_minor,
+        hasContactRoute: enquiry.has_contact_route,
+      })),
+      projects: projects.map((project) => ({
+        id: project.id,
+        sourceSystem: project.source_system,
+        sourceRecordId: project.source_record_id,
+        clientId: project.client_id,
+        status: project.status as "active" | "paused" | "completed" | "cancelled" | "unknown",
+        agreedValueMinor: project.agreed_value_minor,
+        paidValueMinor: project.paid_value_minor,
+        sessionsPlanned: project.sessions_planned,
+        sessionsCompleted: project.sessions_completed,
+        lastActivityAt: project.last_activity_at,
+        nextSessionAt: project.next_session_at,
+        hasContactRoute: project.has_contact_route,
+      })),
+      balances: bookings.map((booking) => {
+        const amountDueMinor = (booking.deposit_due_minor ?? 0) + (booking.balance_due_minor ?? 0);
+        const amountPaidMinor = (booking.deposit_paid_minor ?? 0) + (booking.balance_paid_minor ?? 0);
+        return {
+          id: booking.id,
+          sourceSystem: booking.source_system,
+          sourceRecordId: booking.source_record_id,
+          clientId: booking.client_id,
+          projectId: booking.project_id,
+          bookingId: booking.id,
+          amountDueMinor,
+          amountPaidMinor,
+          status: amountDueMinor > amountPaidMinor ? "open" as const : "paid" as const,
+          hasContactRoute: clientById.get(booking.client_id ?? "")?.has_contact_route ?? false,
+        };
+      }),
+      capacityPeriods: capacityPeriods.map((period) => ({
+        id: period.id,
+        sourceSystem: period.source_system,
+        sourceRecordId: period.source_record_id,
+        periodStart: period.period_start,
+        periodEnd: period.period_end,
+        availableHours: Number(period.available_hours),
+        bookedHours: Number(period.booked_hours),
+        realisedHourlyValueMinor: period.realised_hourly_value_minor,
+      })),
+    };
+
+    const analysedAt = new Date().toISOString();
+    const analysis = analyseRevenueRecovery(input, { asOf: analysedAt });
+    const datasetDigest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(JSON.stringify(input)),
+    );
+    const datasetHash = Array.from(new Uint8Array(datasetDigest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    const idempotencyKey = `analysis:${analysis.ruleVersion}:${datasetHash}`;
+
+    const { data: priorRun, error: priorError } = await admin
+      .from("bt_workflow_runs")
+      .select("id,status,result_summary")
+      .eq("workspace_id", data.workspaceId)
+      .eq("product_key", TOOL_PRODUCTS.revenueRecovery.key)
+      .eq("idempotency_key", idempotencyKey)
+      .maybeSingle();
+    if (priorError) throw new Error("Unable to check previous analysis runs.");
+    if (priorRun?.status === "succeeded") {
+      return { workflowRunId: priorRun.id, status: "already_analysed", summary: priorRun.result_summary };
+    }
+
+    let workflowRunId = priorRun?.id;
+    if (workflowRunId) {
+      const { error } = await admin.from("bt_workflow_runs").update({
+        status: "running",
+        started_at: analysedAt,
+        completed_at: null,
+      }).eq("id", workflowRunId).eq("workspace_id", data.workspaceId);
+      if (error) throw new Error("Unable to resume the previous analysis.");
+    } else {
+      const { data: run, error } = await admin.from("bt_workflow_runs").insert({
+        workspace_id: data.workspaceId,
+        product_key: TOOL_PRODUCTS.revenueRecovery.key,
+        workflow_key: "revenue_recovery_analysis",
+        workflow_version: analysis.ruleVersion,
+        idempotency_key: idempotencyKey,
+        status: "running",
+        input_ref: {
+          dataset_hash: datasetHash,
+          clients: clients.length,
+          enquiries: enquiries.length,
+          projects: projects.length,
+          bookings: bookings.length,
+          capacity_periods: capacityPeriods.length,
+        },
+        started_at: analysedAt,
+      }).select("id").single();
+      if (error || !run) throw new Error("Unable to create the analysis run.");
+      workflowRunId = run.id;
+    }
+
+    const { data: previousOpportunities, error: previousError } = await admin
+      .from("rr_opportunities")
+      .select("opportunity_key,status")
+      .eq("workspace_id", data.workspaceId)
+      .eq("rule_version", analysis.ruleVersion);
+    if (previousError) throw new Error("Unable to preserve existing opportunity decisions.");
+    const statusByKey = new Map((previousOpportunities ?? []).map((item) => [item.opportunity_key, item.status]));
+
+    const opportunityRows = analysis.opportunities.map((opportunity) => ({
+      workspace_id: data.workspaceId,
+      product_key: TOOL_PRODUCTS.revenueRecovery.key,
+      rule_version: analysis.ruleVersion,
+      opportunity_key: opportunity.key,
+      opportunity_type: opportunity.type,
+      source_system: opportunity.source.sourceSystem,
+      source_record_id: opportunity.source.sourceRecordId,
+      source_group_key: opportunity.sourceGroupKey,
+      title: opportunity.title,
+      explanation: opportunity.explanation,
+      recommended_action: opportunity.recommendedAction,
+      value_low_minor: opportunity.valueLowMinor,
+      value_base_minor: opportunity.valueBaseMinor,
+      value_high_minor: opportunity.valueHighMinor,
+      value_classification: opportunity.valueClassification,
+      confidence: opportunity.confidence,
+      priority_score: opportunity.priority,
+      evidence: opportunity.evidence as unknown as import("@/integrations/supabase/types").Json,
+      actionability: opportunity.actionability,
+      status: statusByKey.get(opportunity.key) ?? "open",
+      detected_at: analysedAt,
+      updated_at: analysedAt,
+    }));
+
+    try {
+      if (opportunityRows.length) {
+        const { error } = await admin.from("rr_opportunities").upsert(opportunityRows, {
+          onConflict: "workspace_id,rule_version,opportunity_key",
+        });
+        if (error) throw error;
+      }
+
+      const summary = {
+        opportunity_count: analysis.totals.opportunityCount,
+        evidence_backed_base_minor: analysis.totals.evidenceBackedBaseMinor,
+        modelled_base_minor: analysis.totals.modelledBaseMinor,
+        high_range_minor: analysis.totals.highRangeMinor,
+        rule_version: analysis.ruleVersion,
+        analysed_at: analysedAt,
+      };
+      const { error: runError } = await admin.from("bt_workflow_runs").update({
+        status: "succeeded",
+        result_summary: summary,
+        completed_at: new Date().toISOString(),
+      }).eq("id", workflowRunId).eq("workspace_id", data.workspaceId);
+      if (runError) throw runError;
+
+      const { error: auditError } = await admin.from("bt_audit_events").insert({
+        workspace_id: data.workspaceId,
+        product_key: TOOL_PRODUCTS.revenueRecovery.key,
+        actor_id: userId,
+        actor_type: "user",
+        event_key: "revenue_recovery_analysis_completed",
+        target_type: "workflow_run",
+        target_id: workflowRunId,
+        event_data: summary,
+      });
+      if (auditError) console.error("Revenue Recovery analysis audit event failed", { code: auditError.code });
+
+      return { workflowRunId, status: "analysed", summary, auditLogged: !auditError };
+    } catch (error) {
+      await admin.from("bt_workflow_runs").update({
+        status: "failed",
+        completed_at: new Date().toISOString(),
+      }).eq("id", workflowRunId).eq("workspace_id", data.workspaceId);
+      console.error("Revenue Recovery analysis failed", error instanceof Error ? error.name : "unknown");
+      throw new Error("Analysis could not be completed. The run is marked failed and can be retried.");
+    }
+  });
