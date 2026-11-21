@@ -178,7 +178,7 @@ export function buildRecoveryCandidates(records: Array<{ id: string; record_type
       const estimate = remainingValue > 0 ? remainingValue : total > 0 && totalValue > 0 ? Math.round(totalValue * Math.min(1, remaining / total)) : 0;
       candidates.push({
         record_id: record.id, category: "inactive_project", priority: age >= 90 ? "high" : "medium",
-        estimated_value_pence: Math.max(0, estimate), confidence_score: totalValue > 0 && total > 0 ? 0.88 : 0.58,
+        estimated_value_pence: Math.max(0, estimate), confidence_score: remainingValue > 0 ? 0.9 : totalValue > 0 && total > 0 ? 0.88 : 0.4,
         evidence: { inactive_days: age, remaining_sessions: remaining, total_sessions: total || null, project_value_pence: totalValue || null, remaining_value_pence: remainingValue || null, contact_available: hasContact, contact_allowed: contactAllowed && !blocked },
         recommendation: `Contact the client about continuing their ${String(data.project_name ?? "tattoo")} project. There are ${remaining} session(s) recorded as remaining and no next session booked.`,
       });
