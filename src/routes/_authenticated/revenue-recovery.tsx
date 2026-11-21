@@ -255,6 +255,13 @@ function RevenueRecovery() {
     finally { setBusy(false); }
   }
 
+  async function copyApproved(opportunity: Opportunity) {
+    if (!opportunity.draft_message) return;
+    const content = [opportunity.draft_subject, opportunity.draft_message].filter(Boolean).join("\\n\\n");
+    await navigator.clipboard.writeText(content);
+    setNotice("Approved message copied. It has not been sent.");
+  }
+
   async function changeStatus(opportunity: Opportunity, status: string) {
     setBusy(true); setError("");
     try {
@@ -401,7 +408,7 @@ function RevenueRecovery() {
                     const record = recordMap.get(opportunity.record_id);
                     if (!record) return null;
                     const draft = drafts[opportunity.id] ?? (opportunity.draft_subject && opportunity.draft_message ? { subject: opportunity.draft_subject, message: opportunity.draft_message } : undefined);
-                    const contactAllowed = opportunity.evidence.contact_allowed === true;
+                    const contactAllowed = opportunity.evidence.contact_allowed === true && opportunity.evidence.contact_available === true;
                     return (
                       <article key={opportunity.id} className="rounded-xl border border-border/70 bg-ink-deep/55 p-4 md:p-5">
                         <div className="flex flex-col justify-between gap-3 md:flex-row md:items-start">
@@ -441,7 +448,7 @@ function RevenueRecovery() {
                           {opportunity.status === "contacted" && <button onClick={() => void changeStatus(opportunity, "booked")} disabled={busy} className="rounded-full border border-border px-4 py-2 text-xs font-semibold hover:border-mint">Mark booked</button>}
                           {opportunity.status === "booked" && <div className="flex flex-wrap items-center gap-2"><input type="number" min="0.01" step="0.01" placeholder="Actual £ received" value={recoveredAmounts[opportunity.id] ?? ""} onChange={(e) => setRecoveredAmounts((current) => ({ ...current, [opportunity.id]: e.target.value }))} className="w-36 rounded-full border border-border bg-ink-elev px-3 py-2 text-xs text-ice"/><button onClick={() => void changeStatus(opportunity, "paid")} disabled={busy} className="rounded-full bg-mint px-4 py-2 text-xs font-bold text-ink-deep">Record recovered</button></div>}
                           {!["paid", "dismissed", "contacted", "booked"].includes(opportunity.status) && <button onClick={() => void changeStatus(opportunity, "dismissed")} disabled={busy} className="rounded-full border border-border px-4 py-2 text-xs text-muted-foreground hover:border-red-400/60 hover:text-red-300">Dismiss</button>}
-                          {opportunity.status === "approved" && <span className="text-[11px] text-muted-foreground">Approved only — copy and send using your studio's authorised channel.</span>}
+                          {opportunity.status === "approved" && <><button onClick={() => void copyApproved(opportunity)} className="rounded-full border border-mint/50 px-4 py-2 text-xs font-semibold text-mint hover:bg-mint/10">Copy approved message</button><span className="text-[11px] text-muted-foreground">Approved only — sending remains manual.</span></>}
                           {!contactAllowed && <span className="text-[11px] text-amber-300">Contact permission not recorded; message generation blocked.</span>}
                         </div>
                       </article>
