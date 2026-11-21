@@ -50,7 +50,7 @@ Dates should be ISO format (`YYYY-MM-DD`). Monetary columns are GBP. Consent val
 
 | Category | Rule | Financial estimate |
 | --- | --- | --- |
-| Inactive project | Last session at least 45 days ago; remaining sessions > 0; next session not booked; status not completed/cancelled | Recorded project value multiplied by remaining / total sessions where both are supplied; otherwise recorded project value; £0 if missing |
+| Inactive project | Last session at least 45 days ago; remaining sessions > 0; next session not booked; status not completed/cancelled | Explicit remaining value where supplied; otherwise recorded project value multiplied by remaining / total sessions where both are supplied; £0 if the remaining value cannot be derived |
 | Unconverted enquiry | At least 3 days old; status not booked/converted/lost/closed/spam | Recorded quoted value; £0 if missing |
 | Inactive client | At least 180 days since last booking; explicit marketing consent; no opt-out | Recorded average booking value; £0 if missing |
 
