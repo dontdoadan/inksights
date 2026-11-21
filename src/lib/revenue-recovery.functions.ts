@@ -172,6 +172,8 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
     sourceSystem: string;
     fileName: string;
     contentSha256: string;
+    rowsTotal: number;
+    rowsInvalid: number;
     clients: ClientCsvRow[];
   }) => {
     if (!/^[0-9a-f-]{36}$/i.test(data.workspaceId)) throw new Error("Invalid workspace.");
@@ -181,12 +183,18 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
       throw new Error("Import must contain between 1 and 5,000 valid client rows.");
     }
     if (data.fileName.length > 180) throw new Error("File name is too long.");
+    if (!Number.isInteger(data.rowsTotal) || data.rowsTotal < data.clients.length || data.rowsTotal > 5000) throw new Error("Invalid total row count.");
+    if (!Number.isInteger(data.rowsInvalid) || data.rowsInvalid < 0 || data.rowsTotal !== data.clients.length + data.rowsInvalid) throw new Error("Invalid row validation counts.");
     const seen = new Set<string>();
     for (const client of data.clients) {
+      if (!Number.isInteger(client.source_row_number) || client.source_row_number < 2 || client.source_row_number > data.rowsTotal + 1) throw new Error("Invalid source row number.");
       if (!client.source_record_id || client.source_record_id.length > 180 || seen.has(client.source_record_id)) {
         throw new Error("Client source IDs must be present, unique and no longer than 180 characters.");
       }
       seen.add(client.source_record_id);
+      if (client.display_name && client.display_name.length > 180) throw new Error("Client display names must be 180 characters or fewer.");
+      if (client.last_completed_booking_at && !Number.isFinite(Date.parse(client.last_completed_booking_at))) throw new Error("Invalid last booking date.");
+      if (client.future_booking_at && !Number.isFinite(Date.parse(client.future_booking_at))) throw new Error("Invalid future booking date.");
       if (!Number.isInteger(client.completed_sessions) || client.completed_sessions < 0) {
         throw new Error("Completed session counts must be non-negative whole numbers.");
       }
@@ -219,9 +227,9 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
       await admin.from("bt_import_rows").delete().eq("workspace_id", data.workspaceId).eq("import_job_id", importJobId);
       const { error } = await admin.from("bt_import_jobs").update({
         status: "validating",
-        rows_total: data.clients.length,
+        rows_total: data.rowsTotal,
         rows_valid: data.clients.length,
-        rows_invalid: 0,
+        rows_invalid: data.rowsInvalid,
         rows_duplicate: 0,
         completed_at: null,
       }).eq("id", importJobId).eq("workspace_id", data.workspaceId);
@@ -237,9 +245,9 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
           content_sha256: data.contentSha256.toLowerCase(),
           mapping_version: "clients-csv-v1",
           status: "validating",
-          rows_total: data.clients.length,
+          rows_total: data.rowsTotal,
           rows_valid: data.clients.length,
-          rows_invalid: 0,
+          rows_invalid: data.rowsInvalid,
           rows_duplicate: 0,
           created_by: userId,
         })
@@ -258,7 +266,7 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
       return {
         workspace_id: data.workspaceId,
         import_job_id: importJobId,
-        row_number: index + 1,
+        row_number: client.source_row_number,
         mapped_payload: client as unknown as import("@/integrations/supabase/types").Json,
         row_status: "valid" as const,
         validation_errors: [],
@@ -302,7 +310,7 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
 
     if (completeError) throw new Error("Records were imported, but the import job could not be marked complete.");
 
-    await admin.from("bt_audit_events").insert({
+    const { error: auditError } = await admin.from("bt_audit_events").insert({
       workspace_id: data.workspaceId,
       product_key: TOOL_PRODUCTS.revenueRecovery.key,
       actor_id: userId,
@@ -313,5 +321,6 @@ export const importRevenueRecoveryClients = createServerFn({ method: "POST" })
       event_data: { row_count: data.clients.length, source_system: data.sourceSystem, mapping_version: "clients-csv-v1" },
     });
 
-    return { importJobId, status: "imported", rowsImported: data.clients.length };
+    if (auditError) console.error("Revenue Recovery import audit event failed", { code: auditError.code });
+    return { importJobId, status: "imported", rowsImported: data.clients.length, rowsRejected: data.rowsInvalid, auditLogged: !auditError };
   });
