@@ -89,14 +89,22 @@ export function normalizeCsvRows(input: string, type: RecoveryRecordType): Norma
     if (!name && !email) throw new Error(`Row ${index + 2}: add at least a client name or email address.`);
 
     const marketingRaw = get(source, ["marketing_consent", "consent", "marketing permission", "email marketing consent"]);
+    const marketingConsentAt = parseDate(get(source, ["marketing_consent_at", "consent_date", "marketing_permission_date"]));
+    const marketingConsentSource = get(source, ["marketing_consent_source", "consent_source", "marketing_permission_source"]);
     const contactRaw = get(source, ["contact_permission", "contact allowed", "permission to contact", "follow_up_permission"]);
+    const contactPermissionAt = parseDate(get(source, ["contact_permission_at", "contact_permission_date"]));
+    const contactPermissionSource = get(source, ["contact_permission_source", "contact_permission_method"]);
     const dncRaw = get(source, ["do_not_contact", "dnc", "unsubscribe", "opted_out"]);
     const common = {
       client_name: name || email,
       client_email: email || null,
       client_phone: phone || null,
       marketing_consent: truthy(marketingRaw) && !falsey(marketingRaw),
+      marketing_consent_at: marketingConsentAt,
+      marketing_consent_source: marketingConsentSource || null,
       contact_permission: truthy(contactRaw) && !falsey(contactRaw),
+      contact_permission_at: contactPermissionAt,
+      contact_permission_source: contactPermissionSource || null,
       do_not_contact: truthy(dncRaw) || falsey(dncRaw) && ["yes", "true", "1"].includes(dncRaw.toLowerCase()),
       source_row: index + 2,
     };
@@ -165,7 +173,9 @@ export function buildRecoveryCandidates(records: Array<{ id: string; record_type
     const age = daysAgo(record.occurred_at ?? null);
     const hasContact = Boolean(record.client_email || record.client_phone);
     const blocked = data.do_not_contact === true;
-    const contactAllowed = data.contact_permission === true || data.marketing_consent === true;
+    const documentedMarketingConsent = data.marketing_consent === true && Boolean(data.marketing_consent_at) && Boolean(data.marketing_consent_source);
+    const documentedContactPermission = data.contact_permission === true && Boolean(data.contact_permission_at) && Boolean(data.contact_permission_source);
+    const contactAllowed = documentedContactPermission || documentedMarketingConsent;
 
     if (record.record_type === "projects") {
       const status = String(data.status ?? "").toLowerCase();
@@ -197,7 +207,7 @@ export function buildRecoveryCandidates(records: Array<{ id: string; record_type
     }
 
     if (record.record_type === "clients") {
-      const consent = data.marketing_consent === true;
+      const consent = documentedMarketingConsent;
       if (age === null || age < 180 || !consent || blocked) continue;
       const value = Number(data.average_booking_value_pence ?? record.amount_pence ?? 0);
       candidates.push({
