@@ -78,8 +78,8 @@ create table if not exists public.recovery_activities (
   action text not null check (char_length(action) between 1 and 80),
   details jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
-  foreign key (studio_id, opportunity_id) references public.recovery_opportunities(studio_id, id) on delete set null,
-  foreign key (studio_id, import_id) references public.recovery_imports(studio_id, id) on delete set null
+  foreign key (studio_id, opportunity_id) references public.recovery_opportunities(studio_id, id) on delete set null (opportunity_id),
+  foreign key (studio_id, import_id) references public.recovery_imports(studio_id, id) on delete set null (import_id)
 );
 
 create index if not exists recovery_activities_studio_created_idx
