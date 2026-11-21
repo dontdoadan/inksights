@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.15"
   }
   public: {
     Tables: {
@@ -28,6 +28,364 @@ export type Database = {
           seq?: number
         }
         Relationships: []
+      }
+      atlas_claim_requests: {
+        Row: {
+          authority_role: string
+          candidate_id: string | null
+          created_at: string
+          evidence_note: string
+          id: string
+          proposed_studio_name: string
+          proposed_town: string
+          proposed_website: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
+          studio_id: string | null
+          updated_at: string
+          user_id: string
+          verification_method: string
+        }
+        Insert: {
+          authority_role: string
+          candidate_id?: string | null
+          created_at?: string
+          evidence_note: string
+          id?: string
+          proposed_studio_name: string
+          proposed_town: string
+          proposed_website?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          studio_id?: string | null
+          updated_at?: string
+          user_id: string
+          verification_method: string
+        }
+        Update: {
+          authority_role?: string
+          candidate_id?: string | null
+          created_at?: string
+          evidence_note?: string
+          id?: string
+          proposed_studio_name?: string
+          proposed_town?: string
+          proposed_website?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          studio_id?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_method?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atlas_claim_requests_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "studio_candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atlas_claim_requests_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atlas_customer_enquiries: {
+        Row: {
+          consent_version: string
+          created_at: string
+          customer_email: string
+          customer_name: string
+          id: string
+          is_test: boolean
+          marketing_opt_in: boolean
+          privacy_notice_accepted_at: string
+          profile_id: string
+          recipient_notified_at: string | null
+          status: string
+          studio_id: string
+          tattoo_brief: string
+        }
+        Insert: {
+          consent_version: string
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          id?: string
+          is_test?: boolean
+          marketing_opt_in?: boolean
+          privacy_notice_accepted_at: string
+          profile_id: string
+          recipient_notified_at?: string | null
+          status?: string
+          studio_id: string
+          tattoo_brief: string
+        }
+        Update: {
+          consent_version?: string
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          id?: string
+          is_test?: boolean
+          marketing_opt_in?: boolean
+          privacy_notice_accepted_at?: string
+          profile_id?: string
+          recipient_notified_at?: string | null
+          status?: string
+          studio_id?: string
+          tattoo_brief?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atlas_customer_enquiries_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "atlas_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atlas_customer_enquiries_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atlas_profile_drafts: {
+        Row: {
+          about: string | null
+          created_at: string
+          id: string
+          instagram_url: string | null
+          proposed_public_address: string | null
+          reviewed_at: string | null
+          status: string
+          studio_id: string
+          styles: string[]
+          user_id: string
+          website_url: string | null
+        }
+        Insert: {
+          about?: string | null
+          created_at?: string
+          id?: string
+          instagram_url?: string | null
+          proposed_public_address?: string | null
+          reviewed_at?: string | null
+          status?: string
+          studio_id: string
+          styles?: string[]
+          user_id: string
+          website_url?: string | null
+        }
+        Update: {
+          about?: string | null
+          created_at?: string
+          id?: string
+          instagram_url?: string | null
+          proposed_public_address?: string | null
+          reviewed_at?: string | null
+          status?: string
+          studio_id?: string
+          styles?: string[]
+          user_id?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atlas_profile_drafts_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atlas_profiles: {
+        Row: {
+          about: string | null
+          cover_url: string | null
+          created_at: string
+          id: string
+          instagram_url: string | null
+          latitude: number | null
+          listing_status: string
+          longitude: number | null
+          name: string
+          owner_public_location_confirmed: boolean
+          postcode: string | null
+          premises_reviewed_by: string | null
+          premises_verified_at: string | null
+          premises_verified_until: string | null
+          public_address: string | null
+          published_at: string | null
+          reviewed_by: string | null
+          slug: string
+          studio_id: string
+          styles: string[]
+          town: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          about?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          instagram_url?: string | null
+          latitude?: number | null
+          listing_status?: string
+          longitude?: number | null
+          name: string
+          owner_public_location_confirmed?: boolean
+          postcode?: string | null
+          premises_reviewed_by?: string | null
+          premises_verified_at?: string | null
+          premises_verified_until?: string | null
+          public_address?: string | null
+          published_at?: string | null
+          reviewed_by?: string | null
+          slug: string
+          studio_id: string
+          styles?: string[]
+          town: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          about?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          instagram_url?: string | null
+          latitude?: number | null
+          listing_status?: string
+          longitude?: number | null
+          name?: string
+          owner_public_location_confirmed?: boolean
+          postcode?: string | null
+          premises_reviewed_by?: string | null
+          premises_verified_at?: string | null
+          premises_verified_until?: string | null
+          public_address?: string | null
+          published_at?: string | null
+          reviewed_by?: string | null
+          slug?: string
+          studio_id?: string
+          styles?: string[]
+          town?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atlas_profiles_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: true
+            referencedRelation: "studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atlas_publication_reviews: {
+        Row: {
+          decision: string
+          evidence_note: string
+          id: string
+          profile_draft_id: string | null
+          profile_id: string
+          reviewed_at: string
+          reviewer_id: string
+          source_url: string | null
+        }
+        Insert: {
+          decision: string
+          evidence_note: string
+          id?: string
+          profile_draft_id?: string | null
+          profile_id: string
+          reviewed_at?: string
+          reviewer_id: string
+          source_url?: string | null
+        }
+        Update: {
+          decision?: string
+          evidence_note?: string
+          id?: string
+          profile_draft_id?: string | null
+          profile_id?: string
+          reviewed_at?: string
+          reviewer_id?: string
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atlas_publication_reviews_profile_draft_id_fkey"
+            columns: ["profile_draft_id"]
+            isOneToOne: false
+            referencedRelation: "atlas_profile_drafts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atlas_publication_reviews_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "atlas_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      atlas_studio_links: {
+        Row: {
+          created_at: string
+          evidence: Json
+          reviewed_at: string
+          reviewer_id: string | null
+          studio_id: string
+          visibility_studio_id: string
+        }
+        Insert: {
+          created_at?: string
+          evidence?: Json
+          reviewed_at?: string
+          reviewer_id?: string | null
+          studio_id: string
+          visibility_studio_id: string
+        }
+        Update: {
+          created_at?: string
+          evidence?: Json
+          reviewed_at?: string
+          reviewer_id?: string | null
+          studio_id?: string
+          visibility_studio_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "atlas_studio_links_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: true
+            referencedRelation: "studios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "atlas_studio_links_visibility_studio_id_fkey"
+            columns: ["visibility_studio_id"]
+            isOneToOne: true
+            referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       audit_diagnoses: {
         Row: {
@@ -692,6 +1050,422 @@ export type Database = {
           },
         ]
       }
+      bt_approvals: {
+        Row: {
+          actor_id: string
+          created_at: string
+          decision: string
+          draft_digest: string
+          id: string
+          product_key: string
+          rationale: string | null
+          target_id: string
+          target_type: string
+          workspace_id: string
+        }
+        Insert: {
+          actor_id: string
+          created_at?: string
+          decision: string
+          draft_digest: string
+          id?: string
+          product_key: string
+          rationale?: string | null
+          target_id: string
+          target_type: string
+          workspace_id: string
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          decision?: string
+          draft_digest?: string
+          id?: string
+          product_key?: string
+          rationale?: string | null
+          target_id?: string
+          target_type?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bt_approvals_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bt_audit_events: {
+        Row: {
+          actor_id: string | null
+          actor_type: string
+          created_at: string
+          event_data: Json
+          event_key: string
+          id: string
+          product_key: string
+          target_id: string | null
+          target_type: string | null
+          workspace_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_type?: string
+          created_at?: string
+          event_data?: Json
+          event_key: string
+          id?: string
+          product_key: string
+          target_id?: string | null
+          target_type?: string | null
+          workspace_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          actor_type?: string
+          created_at?: string
+          event_data?: Json
+          event_key?: string
+          id?: string
+          product_key?: string
+          target_id?: string | null
+          target_type?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bt_audit_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bt_import_jobs: {
+        Row: {
+          completed_at: string | null
+          content_sha256: string
+          created_at: string
+          created_by: string | null
+          id: string
+          mapping_version: string
+          product_key: string
+          rows_duplicate: number
+          rows_invalid: number
+          rows_total: number
+          rows_valid: number
+          source_filename: string | null
+          source_system: string
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          content_sha256: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          mapping_version: string
+          product_key: string
+          rows_duplicate?: number
+          rows_invalid?: number
+          rows_total?: number
+          rows_valid?: number
+          source_filename?: string | null
+          source_system: string
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          content_sha256?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          mapping_version?: string
+          product_key?: string
+          rows_duplicate?: number
+          rows_invalid?: number
+          rows_total?: number
+          rows_valid?: number
+          source_filename?: string | null
+          source_system?: string
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bt_import_jobs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bt_import_rows: {
+        Row: {
+          created_at: string
+          id: string
+          import_job_id: string
+          mapped_payload: Json
+          row_hash: string
+          row_number: number
+          row_status: string
+          source_record_id: string | null
+          validation_errors: Json
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          import_job_id: string
+          mapped_payload: Json
+          row_hash: string
+          row_number: number
+          row_status?: string
+          source_record_id?: string | null
+          validation_errors?: Json
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          import_job_id?: string
+          mapped_payload?: Json
+          row_hash?: string
+          row_number?: number
+          row_status?: string
+          source_record_id?: string | null
+          validation_errors?: Json
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bt_import_rows_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bt_import_rows_workspace_id_import_job_id_fkey"
+            columns: ["workspace_id", "import_job_id"]
+            isOneToOne: false
+            referencedRelation: "bt_import_jobs"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
+      }
+      bt_usage_events: {
+        Row: {
+          created_at: string
+          event_key: string
+          id: string
+          product_key: string
+          source_ref: string | null
+          unit_type: string
+          units: number
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_key: string
+          id?: string
+          product_key: string
+          source_ref?: string | null
+          unit_type?: string
+          units?: number
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          event_key?: string
+          id?: string
+          product_key?: string
+          source_ref?: string | null
+          unit_type?: string
+          units?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bt_usage_events_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bt_workflow_runs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          idempotency_key: string
+          input_ref: Json
+          product_key: string
+          result_summary: Json
+          started_at: string | null
+          status: string
+          workflow_key: string
+          workflow_version: string
+          workspace_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          input_ref?: Json
+          product_key: string
+          result_summary?: Json
+          started_at?: string | null
+          status?: string
+          workflow_key: string
+          workflow_version: string
+          workspace_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          input_ref?: Json
+          product_key?: string
+          result_summary?: Json
+          started_at?: string | null
+          status?: string
+          workflow_key?: string
+          workflow_version?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bt_workflow_runs_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bt_workspace_members: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bt_workspace_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bt_workspace_products: {
+        Row: {
+          created_at: string
+          product_key: string
+          product_version: string
+          settings: Json
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          created_at?: string
+          product_key: string
+          product_version: string
+          settings?: Json
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          created_at?: string
+          product_key?: string
+          product_version?: string
+          settings?: Json
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bt_workspace_products_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bt_workspaces: {
+        Row: {
+          business_type: string
+          created_at: string
+          created_by: string | null
+          currency_code: string
+          display_name: string
+          id: string
+          source_studio_id: string | null
+          status: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          business_type?: string
+          created_at?: string
+          created_by?: string | null
+          currency_code?: string
+          display_name: string
+          id?: string
+          source_studio_id?: string | null
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          business_type?: string
+          created_at?: string
+          created_by?: string | null
+          currency_code?: string
+          display_name?: string
+          id?: string
+          source_studio_id?: string | null
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       client_aliases: {
         Row: {
           client_id: string | null
@@ -1042,6 +1816,476 @@ export type Database = {
           project_type?: string | null
           source?: string
           status?: string
+        }
+        Relationships: []
+      }
+      founding_checkout_slots: {
+        Row: {
+          assigned_at: string | null
+          assigned_invite_id: string | null
+          consumed_at: string | null
+          created_at: string
+          retired_at: string | null
+          slot_code: string
+          status: string
+          stripe_payment_link_id: string
+          stripe_payment_link_url: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_invite_id?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          retired_at?: string | null
+          slot_code: string
+          status?: string
+          stripe_payment_link_id: string
+          stripe_payment_link_url: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_invite_id?: string | null
+          consumed_at?: string | null
+          created_at?: string
+          retired_at?: string | null
+          slot_code?: string
+          status?: string
+          stripe_payment_link_id?: string
+          stripe_payment_link_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "founding_checkout_slots_invite_fkey"
+            columns: ["assigned_invite_id"]
+            isOneToOne: true
+            referencedRelation: "founding_studio_invites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      founding_studio_invites: {
+        Row: {
+          amount_due_minor: number
+          audit_id: string | null
+          checkout_started_at: string | null
+          completed_at: string | null
+          contact_name: string
+          contact_request_id: string | null
+          created_at: string
+          created_by: string | null
+          email: string
+          expires_at: string
+          failure_reason: string | null
+          id: string
+          list_value_minor: number
+          onboarding_status: string
+          onboarding_submitted_at: string | null
+          opened_at: string | null
+          order_id: string | null
+          reason: string
+          revoked_at: string | null
+          slot_code: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_payment_link_id: string
+          stripe_payment_link_url: string
+          stripe_session_id: string | null
+          studio_id: string | null
+          studio_name: string
+          token_hash: string
+          token_hint: string
+          updated_at: string
+          waiver_amount_minor: number
+          website: string | null
+        }
+        Insert: {
+          amount_due_minor?: number
+          audit_id?: string | null
+          checkout_started_at?: string | null
+          completed_at?: string | null
+          contact_name: string
+          contact_request_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          email: string
+          expires_at: string
+          failure_reason?: string | null
+          id?: string
+          list_value_minor?: number
+          onboarding_status?: string
+          onboarding_submitted_at?: string | null
+          opened_at?: string | null
+          order_id?: string | null
+          reason: string
+          revoked_at?: string | null
+          slot_code: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_payment_link_id: string
+          stripe_payment_link_url: string
+          stripe_session_id?: string | null
+          studio_id?: string | null
+          studio_name: string
+          token_hash: string
+          token_hint: string
+          updated_at?: string
+          waiver_amount_minor?: number
+          website?: string | null
+        }
+        Update: {
+          amount_due_minor?: number
+          audit_id?: string | null
+          checkout_started_at?: string | null
+          completed_at?: string | null
+          contact_name?: string
+          contact_request_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          expires_at?: string
+          failure_reason?: string | null
+          id?: string
+          list_value_minor?: number
+          onboarding_status?: string
+          onboarding_submitted_at?: string | null
+          opened_at?: string | null
+          order_id?: string | null
+          reason?: string
+          revoked_at?: string | null
+          slot_code?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_payment_link_id?: string
+          stripe_payment_link_url?: string
+          stripe_session_id?: string | null
+          studio_id?: string | null
+          studio_name?: string
+          token_hash?: string
+          token_hint?: string
+          updated_at?: string
+          waiver_amount_minor?: number
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "founding_studio_invites_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "audits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "founding_studio_invites_contact_request_id_fkey"
+            columns: ["contact_request_id"]
+            isOneToOne: false
+            referencedRelation: "public_contact_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "founding_studio_invites_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "founding_studio_invites_slot_code_fkey"
+            columns: ["slot_code"]
+            isOneToOne: true
+            referencedRelation: "founding_checkout_slots"
+            referencedColumns: ["slot_code"]
+          },
+          {
+            foreignKeyName: "founding_studio_invites_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      founding_studio_onboarding: {
+        Row: {
+          artist_count: number
+          audit_id: string
+          booking_process: string
+          data_available: string
+          instagram_url: string | null
+          invite_id: string
+          location: string
+          notes: string | null
+          primary_goal: string
+          stripe_session_id: string
+          submitted_at: string
+          updated_at: string
+        }
+        Insert: {
+          artist_count: number
+          audit_id: string
+          booking_process: string
+          data_available: string
+          instagram_url?: string | null
+          invite_id: string
+          location: string
+          notes?: string | null
+          primary_goal: string
+          stripe_session_id: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Update: {
+          artist_count?: number
+          audit_id?: string
+          booking_process?: string
+          data_available?: string
+          instagram_url?: string | null
+          invite_id?: string
+          location?: string
+          notes?: string | null
+          primary_goal?: string
+          stripe_session_id?: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "founding_studio_onboarding_audit_id_fkey"
+            columns: ["audit_id"]
+            isOneToOne: false
+            referencedRelation: "audits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "founding_studio_onboarding_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: true
+            referencedRelation: "founding_studio_invites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inksights_mail_events: {
+        Row: {
+          actor_id: string | null
+          details: Json
+          event_type: string
+          happened_at: string
+          id: number
+          outbox_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          details?: Json
+          event_type: string
+          happened_at?: string
+          id?: never
+          outbox_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          details?: Json
+          event_type?: string
+          happened_at?: string
+          id?: never
+          outbox_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inksights_mail_events_outbox_id_fkey"
+            columns: ["outbox_id"]
+            isOneToOne: false
+            referencedRelation: "inksights_mail_outbox"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inksights_mail_inbox: {
+        Row: {
+          created_at: string
+          folder_id: string | null
+          id: string
+          is_test: boolean
+          matched_outbox_id: string | null
+          outcome: string
+          preview: string | null
+          received_at: string | null
+          recipient: string | null
+          sender: string
+          subject: string | null
+          updated_at: string
+          zoho_message_id: string
+          zoho_thread_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          folder_id?: string | null
+          id?: string
+          is_test?: boolean
+          matched_outbox_id?: string | null
+          outcome?: string
+          preview?: string | null
+          received_at?: string | null
+          recipient?: string | null
+          sender: string
+          subject?: string | null
+          updated_at?: string
+          zoho_message_id: string
+          zoho_thread_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          folder_id?: string | null
+          id?: string
+          is_test?: boolean
+          matched_outbox_id?: string | null
+          outcome?: string
+          preview?: string | null
+          received_at?: string | null
+          recipient?: string | null
+          sender?: string
+          subject?: string | null
+          updated_at?: string
+          zoho_message_id?: string
+          zoho_thread_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inksights_mail_inbox_matched_outbox_id_fkey"
+            columns: ["matched_outbox_id"]
+            isOneToOne: false
+            referencedRelation: "inksights_mail_outbox"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inksights_mail_outbox: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          approved_digest: string | null
+          attempt_count: number
+          body: string
+          created_at: string
+          eligibility: string
+          eligibility_evidence: string | null
+          hubspot_contact_id: string | null
+          id: string
+          idempotency_key: string | null
+          is_test: boolean
+          last_error: string | null
+          purpose: string
+          recipient: string
+          sent_at: string | null
+          status: string
+          studio_id: string | null
+          subject: string
+          suppression_checked_at: string | null
+          updated_at: string
+          zoho_draft_id: string | null
+          zoho_message_id: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_digest?: string | null
+          attempt_count?: number
+          body: string
+          created_at?: string
+          eligibility?: string
+          eligibility_evidence?: string | null
+          hubspot_contact_id?: string | null
+          id?: string
+          idempotency_key?: string | null
+          is_test?: boolean
+          last_error?: string | null
+          purpose?: string
+          recipient: string
+          sent_at?: string | null
+          status?: string
+          studio_id?: string | null
+          subject: string
+          suppression_checked_at?: string | null
+          updated_at?: string
+          zoho_draft_id?: string | null
+          zoho_message_id?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_digest?: string | null
+          attempt_count?: number
+          body?: string
+          created_at?: string
+          eligibility?: string
+          eligibility_evidence?: string | null
+          hubspot_contact_id?: string | null
+          id?: string
+          idempotency_key?: string | null
+          is_test?: boolean
+          last_error?: string | null
+          purpose?: string
+          recipient?: string
+          sent_at?: string | null
+          status?: string
+          studio_id?: string | null
+          subject?: string
+          suppression_checked_at?: string | null
+          updated_at?: string
+          zoho_draft_id?: string | null
+          zoho_message_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inksights_mail_outbox_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inksights_mail_suppressions: {
+        Row: {
+          created_at: string
+          email: string
+          reason: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          reason: string
+          source: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          reason?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      inksights_mail_sync_state: {
+        Row: {
+          initialized: boolean
+          last_polled_at: string | null
+          mailbox: string
+          updated_at: string
+        }
+        Insert: {
+          initialized?: boolean
+          last_polled_at?: string | null
+          mailbox: string
+          updated_at?: string
+        }
+        Update: {
+          initialized?: boolean
+          last_polled_at?: string | null
+          mailbox?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -4015,11 +5259,15 @@ export type Database = {
       }
       orders: {
         Row: {
+          access_type: string | null
+          amount_collected_minor: number | null
           amount_total: number | null
           created_at: string
           currency: string | null
           customer_email: string | null
+          founding_invite_id: string | null
           id: string
+          list_value_minor: number | null
           metadata: Json
           offer_slug: string
           status: string
@@ -4031,13 +5279,18 @@ export type Database = {
           stripe_subscription_id: string | null
           updated_at: string
           user_id: string | null
+          waiver_amount_minor: number | null
         }
         Insert: {
+          access_type?: string | null
+          amount_collected_minor?: number | null
           amount_total?: number | null
           created_at?: string
           currency?: string | null
           customer_email?: string | null
+          founding_invite_id?: string | null
           id?: string
+          list_value_minor?: number | null
           metadata?: Json
           offer_slug: string
           status?: string
@@ -4049,13 +5302,18 @@ export type Database = {
           stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string | null
+          waiver_amount_minor?: number | null
         }
         Update: {
+          access_type?: string | null
+          amount_collected_minor?: number | null
           amount_total?: number | null
           created_at?: string
           currency?: string | null
           customer_email?: string | null
+          founding_invite_id?: string | null
           id?: string
+          list_value_minor?: number | null
           metadata?: Json
           offer_slug?: string
           status?: string
@@ -4067,8 +5325,17 @@ export type Database = {
           stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string | null
+          waiver_amount_minor?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_founding_invite_id_fkey"
+            columns: ["founding_invite_id"]
+            isOneToOne: false
+            referencedRelation: "founding_studio_invites"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       platform_admins: {
         Row: {
@@ -4143,6 +5410,7 @@ export type Database = {
           hubspot_synced_at: string | null
           id: string
           internal_notified_at: string | null
+          is_test: boolean
           location: string | null
           message: string
           metadata: Json
@@ -4152,6 +5420,7 @@ export type Database = {
           source: string
           status: string
           studio_name: string | null
+          test_reason: string | null
           topic: string
           updated_at: string
           website: string | null
@@ -4171,6 +5440,7 @@ export type Database = {
           hubspot_synced_at?: string | null
           id?: string
           internal_notified_at?: string | null
+          is_test?: boolean
           location?: string | null
           message: string
           metadata?: Json
@@ -4180,6 +5450,7 @@ export type Database = {
           source?: string
           status?: string
           studio_name?: string | null
+          test_reason?: string | null
           topic: string
           updated_at?: string
           website?: string | null
@@ -4199,6 +5470,7 @@ export type Database = {
           hubspot_synced_at?: string | null
           id?: string
           internal_notified_at?: string | null
+          is_test?: boolean
           location?: string | null
           message?: string
           metadata?: Json
@@ -4208,6 +5480,7 @@ export type Database = {
           source?: string
           status?: string
           studio_name?: string | null
+          test_reason?: string | null
           topic?: string
           updated_at?: string
           website?: string | null
@@ -4237,6 +5510,78 @@ export type Database = {
           window_started_at?: string
         }
         Relationships: []
+      }
+      public_tool_submissions: {
+        Row: {
+          area: string | null
+          canonical_studio_id: string | null
+          consent_version: string
+          dataset_version: string | null
+          id: string
+          normalized_inputs: Json
+          quality_status: string
+          result_snapshot: Json
+          source_type: string
+          studio_id: string | null
+          studio_name: string | null
+          studio_website: string | null
+          submission_key: string
+          submitted_at: string
+          tool_key: string
+          tool_version: string
+        }
+        Insert: {
+          area?: string | null
+          canonical_studio_id?: string | null
+          consent_version: string
+          dataset_version?: string | null
+          id?: string
+          normalized_inputs: Json
+          quality_status?: string
+          result_snapshot: Json
+          source_type?: string
+          studio_id?: string | null
+          studio_name?: string | null
+          studio_website?: string | null
+          submission_key: string
+          submitted_at?: string
+          tool_key: string
+          tool_version: string
+        }
+        Update: {
+          area?: string | null
+          canonical_studio_id?: string | null
+          consent_version?: string
+          dataset_version?: string | null
+          id?: string
+          normalized_inputs?: Json
+          quality_status?: string
+          result_snapshot?: Json
+          source_type?: string
+          studio_id?: string | null
+          studio_name?: string | null
+          studio_website?: string | null
+          submission_key?: string
+          submitted_at?: string
+          tool_key?: string
+          tool_version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_tool_submissions_canonical_studio_id_fkey"
+            columns: ["canonical_studio_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_tool_submissions_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "studios"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       qa_checks: {
         Row: {
@@ -4356,6 +5701,7 @@ export type Database = {
           hubspot_synced_at: string | null
           id: string
           internal_notified_at: string | null
+          is_test: boolean
           marketing_consent: boolean
           monthly_available_hours: number | null
           monthly_booked_hours: number | null
@@ -4371,6 +5717,7 @@ export type Database = {
           status: string
           studio_name: string
           team_size: number
+          test_reason: string | null
           website: string | null
         }
         Insert: {
@@ -4389,6 +5736,7 @@ export type Database = {
           hubspot_synced_at?: string | null
           id?: string
           internal_notified_at?: string | null
+          is_test?: boolean
           marketing_consent?: boolean
           monthly_available_hours?: number | null
           monthly_booked_hours?: number | null
@@ -4404,6 +5752,7 @@ export type Database = {
           status?: string
           studio_name: string
           team_size: number
+          test_reason?: string | null
           website?: string | null
         }
         Update: {
@@ -4422,6 +5771,7 @@ export type Database = {
           hubspot_synced_at?: string | null
           id?: string
           internal_notified_at?: string | null
+          is_test?: boolean
           marketing_consent?: boolean
           monthly_available_hours?: number | null
           monthly_booked_hours?: number | null
@@ -4437,6 +5787,7 @@ export type Database = {
           status?: string
           studio_name?: string
           team_size?: number
+          test_reason?: string | null
           website?: string | null
         }
         Relationships: []
@@ -4500,6 +5851,588 @@ export type Database = {
           },
         ]
       }
+      rr_actions: {
+        Row: {
+          action_type: string
+          created_at: string
+          created_by: string | null
+          draft_body: string | null
+          draft_digest: string | null
+          draft_subject: string | null
+          id: string
+          opportunity_id: string
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string
+          created_by?: string | null
+          draft_body?: string | null
+          draft_digest?: string | null
+          draft_subject?: string | null
+          id?: string
+          opportunity_id: string
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string
+          created_by?: string | null
+          draft_body?: string | null
+          draft_digest?: string | null
+          draft_subject?: string | null
+          id?: string
+          opportunity_id?: string
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_actions_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rr_actions_workspace_id_opportunity_id_fkey"
+            columns: ["workspace_id", "opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "rr_opportunities"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
+      }
+      rr_bookings: {
+        Row: {
+          balance_due_minor: number | null
+          balance_paid_minor: number | null
+          booking_value_minor: number | null
+          client_id: string | null
+          created_at: string
+          deposit_due_minor: number | null
+          deposit_paid_minor: number | null
+          id: string
+          project_id: string | null
+          scheduled_at: string | null
+          source_record_id: string
+          source_system: string
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          balance_due_minor?: number | null
+          balance_paid_minor?: number | null
+          booking_value_minor?: number | null
+          client_id?: string | null
+          created_at?: string
+          deposit_due_minor?: number | null
+          deposit_paid_minor?: number | null
+          id?: string
+          project_id?: string | null
+          scheduled_at?: string | null
+          source_record_id: string
+          source_system: string
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          balance_due_minor?: number | null
+          balance_paid_minor?: number | null
+          booking_value_minor?: number | null
+          client_id?: string | null
+          created_at?: string
+          deposit_due_minor?: number | null
+          deposit_paid_minor?: number | null
+          id?: string
+          project_id?: string | null
+          scheduled_at?: string | null
+          source_record_id?: string
+          source_system?: string
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_bookings_workspace_id_client_id_fkey"
+            columns: ["workspace_id", "client_id"]
+            isOneToOne: false
+            referencedRelation: "rr_clients"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "rr_bookings_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rr_bookings_workspace_id_project_id_fkey"
+            columns: ["workspace_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "rr_projects"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
+      }
+      rr_capacity_periods: {
+        Row: {
+          available_hours: number
+          booked_hours: number
+          created_at: string
+          id: string
+          period_end: string
+          period_start: string
+          realised_hourly_value_minor: number | null
+          source_record_id: string
+          source_system: string
+          workspace_id: string
+        }
+        Insert: {
+          available_hours?: number
+          booked_hours?: number
+          created_at?: string
+          id?: string
+          period_end: string
+          period_start: string
+          realised_hourly_value_minor?: number | null
+          source_record_id: string
+          source_system: string
+          workspace_id: string
+        }
+        Update: {
+          available_hours?: number
+          booked_hours?: number
+          created_at?: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          realised_hourly_value_minor?: number | null
+          source_record_id?: string
+          source_system?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_capacity_periods_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rr_clients: {
+        Row: {
+          completed_sessions: number
+          created_at: string
+          display_name: string | null
+          future_booking_at: string | null
+          has_contact_route: boolean
+          id: string
+          last_completed_booking_at: string | null
+          marketing_permission_state: string
+          source_record_id: string
+          source_system: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          completed_sessions?: number
+          created_at?: string
+          display_name?: string | null
+          future_booking_at?: string | null
+          has_contact_route?: boolean
+          id?: string
+          last_completed_booking_at?: string | null
+          marketing_permission_state?: string
+          source_record_id: string
+          source_system: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          completed_sessions?: number
+          created_at?: string
+          display_name?: string | null
+          future_booking_at?: string | null
+          has_contact_route?: boolean
+          id?: string
+          last_completed_booking_at?: string | null
+          marketing_permission_state?: string
+          source_record_id?: string
+          source_system?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_clients_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rr_enquiries: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          created_at_source: string
+          has_contact_route: boolean
+          id: string
+          quoted_value_minor: number | null
+          source_record_id: string
+          source_system: string
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          created_at_source: string
+          has_contact_route?: boolean
+          id?: string
+          quoted_value_minor?: number | null
+          source_record_id: string
+          source_system: string
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          created_at_source?: string
+          has_contact_route?: boolean
+          id?: string
+          quoted_value_minor?: number | null
+          source_record_id?: string
+          source_system?: string
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_enquiries_workspace_id_client_id_fkey"
+            columns: ["workspace_id", "client_id"]
+            isOneToOne: false
+            referencedRelation: "rr_clients"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "rr_enquiries_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rr_opportunities: {
+        Row: {
+          actionability: string
+          confidence: number
+          created_at: string
+          detected_at: string
+          evidence: Json
+          explanation: string
+          id: string
+          opportunity_key: string
+          opportunity_type: string
+          priority_score: number
+          product_key: string
+          recommended_action: string
+          rule_version: string
+          source_group_key: string
+          source_record_id: string
+          source_system: string
+          status: string
+          title: string
+          updated_at: string
+          value_base_minor: number | null
+          value_classification: string
+          value_high_minor: number | null
+          value_low_minor: number | null
+          workspace_id: string
+        }
+        Insert: {
+          actionability?: string
+          confidence: number
+          created_at?: string
+          detected_at?: string
+          evidence?: Json
+          explanation: string
+          id?: string
+          opportunity_key: string
+          opportunity_type: string
+          priority_score: number
+          product_key?: string
+          recommended_action: string
+          rule_version: string
+          source_group_key: string
+          source_record_id: string
+          source_system: string
+          status?: string
+          title: string
+          updated_at?: string
+          value_base_minor?: number | null
+          value_classification: string
+          value_high_minor?: number | null
+          value_low_minor?: number | null
+          workspace_id: string
+        }
+        Update: {
+          actionability?: string
+          confidence?: number
+          created_at?: string
+          detected_at?: string
+          evidence?: Json
+          explanation?: string
+          id?: string
+          opportunity_key?: string
+          opportunity_type?: string
+          priority_score?: number
+          product_key?: string
+          recommended_action?: string
+          rule_version?: string
+          source_group_key?: string
+          source_record_id?: string
+          source_system?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          value_base_minor?: number | null
+          value_classification?: string
+          value_high_minor?: number | null
+          value_low_minor?: number | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_opportunities_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rr_outcomes: {
+        Row: {
+          action_id: string | null
+          amount_minor: number | null
+          classification: string
+          currency_code: string
+          evidence_ref: string | null
+          id: string
+          notes: string | null
+          opportunity_id: string
+          outcome_type: string
+          recorded_at: string
+          recorded_by: string | null
+          workspace_id: string
+        }
+        Insert: {
+          action_id?: string | null
+          amount_minor?: number | null
+          classification?: string
+          currency_code?: string
+          evidence_ref?: string | null
+          id?: string
+          notes?: string | null
+          opportunity_id: string
+          outcome_type: string
+          recorded_at?: string
+          recorded_by?: string | null
+          workspace_id: string
+        }
+        Update: {
+          action_id?: string | null
+          amount_minor?: number | null
+          classification?: string
+          currency_code?: string
+          evidence_ref?: string | null
+          id?: string
+          notes?: string | null
+          opportunity_id?: string
+          outcome_type?: string
+          recorded_at?: string
+          recorded_by?: string | null
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_outcomes_workspace_id_action_id_fkey"
+            columns: ["workspace_id", "action_id"]
+            isOneToOne: false
+            referencedRelation: "rr_actions"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "rr_outcomes_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rr_outcomes_workspace_id_opportunity_id_fkey"
+            columns: ["workspace_id", "opportunity_id"]
+            isOneToOne: false
+            referencedRelation: "rr_opportunities"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
+      }
+      rr_payments: {
+        Row: {
+          amount_minor: number
+          booking_id: string | null
+          created_at: string
+          currency_code: string
+          id: string
+          paid_at: string | null
+          payment_type: string
+          project_id: string | null
+          source_record_id: string
+          source_system: string
+          status: string
+          workspace_id: string
+        }
+        Insert: {
+          amount_minor: number
+          booking_id?: string | null
+          created_at?: string
+          currency_code?: string
+          id?: string
+          paid_at?: string | null
+          payment_type?: string
+          project_id?: string | null
+          source_record_id: string
+          source_system: string
+          status?: string
+          workspace_id: string
+        }
+        Update: {
+          amount_minor?: number
+          booking_id?: string | null
+          created_at?: string
+          currency_code?: string
+          id?: string
+          paid_at?: string | null
+          payment_type?: string
+          project_id?: string | null
+          source_record_id?: string
+          source_system?: string
+          status?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_payments_workspace_id_booking_id_fkey"
+            columns: ["workspace_id", "booking_id"]
+            isOneToOne: false
+            referencedRelation: "rr_bookings"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "rr_payments_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rr_payments_workspace_id_project_id_fkey"
+            columns: ["workspace_id", "project_id"]
+            isOneToOne: false
+            referencedRelation: "rr_projects"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
+      }
+      rr_projects: {
+        Row: {
+          agreed_value_minor: number | null
+          client_id: string | null
+          created_at: string
+          has_contact_route: boolean
+          id: string
+          last_activity_at: string | null
+          next_session_at: string | null
+          paid_value_minor: number | null
+          sessions_completed: number | null
+          sessions_planned: number | null
+          source_record_id: string
+          source_system: string
+          status: string
+          updated_at: string
+          workspace_id: string
+        }
+        Insert: {
+          agreed_value_minor?: number | null
+          client_id?: string | null
+          created_at?: string
+          has_contact_route?: boolean
+          id?: string
+          last_activity_at?: string | null
+          next_session_at?: string | null
+          paid_value_minor?: number | null
+          sessions_completed?: number | null
+          sessions_planned?: number | null
+          source_record_id: string
+          source_system: string
+          status?: string
+          updated_at?: string
+          workspace_id: string
+        }
+        Update: {
+          agreed_value_minor?: number | null
+          client_id?: string | null
+          created_at?: string
+          has_contact_route?: boolean
+          id?: string
+          last_activity_at?: string | null
+          next_session_at?: string | null
+          paid_value_minor?: number | null
+          sessions_completed?: number | null
+          sessions_planned?: number | null
+          source_record_id?: string
+          source_system?: string
+          status?: string
+          updated_at?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rr_projects_workspace_id_client_id_fkey"
+            columns: ["workspace_id", "client_id"]
+            isOneToOne: false
+            referencedRelation: "rr_clients"
+            referencedColumns: ["workspace_id", "id"]
+          },
+          {
+            foreignKeyName: "rr_projects_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "bt_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scenarios: {
         Row: {
           audience: string
@@ -4533,29 +6466,277 @@ export type Database = {
         }
         Relationships: []
       }
-      spatial_ref_sys: {
+      seo_authority_outreach: {
         Row: {
-          auth_name: string | null
-          auth_srid: number | null
-          proj4text: string | null
-          srid: number
-          srtext: string | null
+          channel: string
+          created_at: string
+          evidence_url: string | null
+          external_message_id: string | null
+          id: string
+          message: string
+          notes: string | null
+          replied_at: string | null
+          sent_at: string | null
+          status: string
+          subject: string | null
+          target_id: string
+          updated_at: string
         }
         Insert: {
-          auth_name?: string | null
-          auth_srid?: number | null
-          proj4text?: string | null
-          srid: number
-          srtext?: string | null
+          channel: string
+          created_at?: string
+          evidence_url?: string | null
+          external_message_id?: string | null
+          id?: string
+          message: string
+          notes?: string | null
+          replied_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          target_id: string
+          updated_at?: string
         }
         Update: {
-          auth_name?: string | null
-          auth_srid?: number | null
-          proj4text?: string | null
-          srid?: number
-          srtext?: string | null
+          channel?: string
+          created_at?: string
+          evidence_url?: string | null
+          external_message_id?: string | null
+          id?: string
+          message?: string
+          notes?: string | null
+          replied_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string | null
+          target_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_authority_outreach_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "seo_authority_targets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seo_authority_targets: {
+        Row: {
+          authority_reason: string
+          contact_method: string | null
+          contact_value: string | null
+          created_at: string
+          domain: string | null
+          id: string
+          last_verified_at: string | null
+          metadata: Json
+          name: string
+          priority: string
+          source_url: string | null
+          status: string
+          target_key: string
+          target_type: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          authority_reason: string
+          contact_method?: string | null
+          contact_value?: string | null
+          created_at?: string
+          domain?: string | null
+          id?: string
+          last_verified_at?: string | null
+          metadata?: Json
+          name: string
+          priority?: string
+          source_url?: string | null
+          status?: string
+          target_key: string
+          target_type: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          authority_reason?: string
+          contact_method?: string | null
+          contact_value?: string | null
+          created_at?: string
+          domain?: string | null
+          id?: string
+          last_verified_at?: string | null
+          metadata?: Json
+          name?: string
+          priority?: string
+          source_url?: string | null
+          status?: string
+          target_key?: string
+          target_type?: string
+          updated_at?: string
+          url?: string | null
         }
         Relationships: []
+      }
+      seo_entity_profiles: {
+        Row: {
+          canonical_name: string
+          created_at: string
+          descriptor: string
+          desired_handle: string | null
+          id: string
+          last_verified_at: string | null
+          metadata: Json
+          platform: string
+          profile_key: string
+          profile_url: string | null
+          status: string
+          updated_at: string
+          verification_method: string | null
+        }
+        Insert: {
+          canonical_name?: string
+          created_at?: string
+          descriptor?: string
+          desired_handle?: string | null
+          id?: string
+          last_verified_at?: string | null
+          metadata?: Json
+          platform: string
+          profile_key: string
+          profile_url?: string | null
+          status?: string
+          updated_at?: string
+          verification_method?: string | null
+        }
+        Update: {
+          canonical_name?: string
+          created_at?: string
+          descriptor?: string
+          desired_handle?: string | null
+          id?: string
+          last_verified_at?: string | null
+          metadata?: Json
+          platform?: string
+          profile_key?: string
+          profile_url?: string | null
+          status?: string
+          updated_at?: string
+          verification_method?: string | null
+        }
+        Relationships: []
+      }
+      si_events: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          manifest_hash: string | null
+          note: string
+          report_id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          manifest_hash?: string | null
+          note?: string
+          report_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          manifest_hash?: string | null
+          note?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "si_events_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "report_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      si_progress: {
+        Row: {
+          attribution: string
+          intervention: string
+          learning: string
+          outcome: string
+          recommendation_id: string
+          report_id: string
+          status: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          attribution?: string
+          intervention?: string
+          learning?: string
+          outcome?: string
+          recommendation_id: string
+          report_id: string
+          status: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          attribution?: string
+          intervention?: string
+          learning?: string
+          outcome?: string
+          recommendation_id?: string
+          report_id?: string
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "si_progress_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "report_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      si_report_access: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          report_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          report_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          report_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "si_report_access_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "report_versions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       studio_aliases: {
         Row: {
@@ -4859,6 +7040,386 @@ export type Database = {
           },
         ]
       }
+      studio_profile_answer_history: {
+        Row: {
+          data_notice_version: string | null
+          field_key: string
+          id: number
+          measurement_end: string | null
+          measurement_start: string | null
+          new_value: Json
+          notice_acknowledged_at: string | null
+          previous_period_end: string | null
+          previous_period_start: string | null
+          previous_value: Json | null
+          recorded_at: string
+          source_ref: string | null
+          source_submission_id: string | null
+          source_type: string
+          studio_id: string
+          verification_status: string
+        }
+        Insert: {
+          data_notice_version?: string | null
+          field_key: string
+          id?: never
+          measurement_end?: string | null
+          measurement_start?: string | null
+          new_value: Json
+          notice_acknowledged_at?: string | null
+          previous_period_end?: string | null
+          previous_period_start?: string | null
+          previous_value?: Json | null
+          recorded_at?: string
+          source_ref?: string | null
+          source_submission_id?: string | null
+          source_type: string
+          studio_id: string
+          verification_status: string
+        }
+        Update: {
+          data_notice_version?: string | null
+          field_key?: string
+          id?: never
+          measurement_end?: string | null
+          measurement_start?: string | null
+          new_value?: Json
+          notice_acknowledged_at?: string | null
+          previous_period_end?: string | null
+          previous_period_start?: string | null
+          previous_value?: Json | null
+          recorded_at?: string
+          source_ref?: string | null
+          source_submission_id?: string | null
+          source_type?: string
+          studio_id?: string
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_profile_answer_history_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      studio_profile_answers: {
+        Row: {
+          answered_at: string
+          confidence: number | null
+          data_notice_version: string | null
+          field_key: string
+          measurement_end: string | null
+          measurement_start: string | null
+          notice_acknowledged_at: string | null
+          source_ref: string | null
+          source_submission_id: string | null
+          source_type: string
+          studio_id: string
+          updated_at: string
+          value_json: Json
+          verification_status: string
+        }
+        Insert: {
+          answered_at?: string
+          confidence?: number | null
+          data_notice_version?: string | null
+          field_key: string
+          measurement_end?: string | null
+          measurement_start?: string | null
+          notice_acknowledged_at?: string | null
+          source_ref?: string | null
+          source_submission_id?: string | null
+          source_type: string
+          studio_id: string
+          updated_at?: string
+          value_json: Json
+          verification_status?: string
+        }
+        Update: {
+          answered_at?: string
+          confidence?: number | null
+          data_notice_version?: string | null
+          field_key?: string
+          measurement_end?: string | null
+          measurement_start?: string | null
+          notice_acknowledged_at?: string | null
+          source_ref?: string | null
+          source_submission_id?: string | null
+          source_type?: string
+          studio_id?: string
+          updated_at?: string
+          value_json?: Json
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_profile_answers_source_submission_id_fkey"
+            columns: ["source_submission_id"]
+            isOneToOne: false
+            referencedRelation: "public_tool_submissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studio_profile_answers_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      studio_scoring_dimensions: {
+        Row: {
+          dimension_key: string
+          dimension_weight: number
+          label: string
+          model_id: string
+        }
+        Insert: {
+          dimension_key: string
+          dimension_weight: number
+          label: string
+          model_id: string
+        }
+        Update: {
+          dimension_key?: string
+          dimension_weight?: number
+          label?: string
+          model_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_scoring_dimensions_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "studio_scoring_models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      studio_scoring_metric_assessments: {
+        Row: {
+          benchmark_ref: string | null
+          benchmark_state: string
+          confidence: number | null
+          created_at: string
+          evidence_id: string | null
+          id: string
+          metric_value_id: string | null
+          normalised_score: number
+          observed_at: string
+          review_status: string
+          rule_id: string
+          scoring_basis: Json
+          source_ref: string | null
+          source_tier: string
+          studio_id: string
+        }
+        Insert: {
+          benchmark_ref?: string | null
+          benchmark_state: string
+          confidence?: number | null
+          created_at?: string
+          evidence_id?: string | null
+          id?: string
+          metric_value_id?: string | null
+          normalised_score: number
+          observed_at?: string
+          review_status?: string
+          rule_id: string
+          scoring_basis?: Json
+          source_ref?: string | null
+          source_tier: string
+          studio_id: string
+        }
+        Update: {
+          benchmark_ref?: string | null
+          benchmark_state?: string
+          confidence?: number | null
+          created_at?: string
+          evidence_id?: string | null
+          id?: string
+          metric_value_id?: string | null
+          normalised_score?: number
+          observed_at?: string
+          review_status?: string
+          rule_id?: string
+          scoring_basis?: Json
+          source_ref?: string | null
+          source_tier?: string
+          studio_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_scoring_metric_assessments_evidence_id_fkey"
+            columns: ["evidence_id"]
+            isOneToOne: false
+            referencedRelation: "intelligence_evidence"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studio_scoring_metric_assessments_metric_value_id_fkey"
+            columns: ["metric_value_id"]
+            isOneToOne: false
+            referencedRelation: "intelligence_metric_values"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studio_scoring_metric_assessments_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "studio_scoring_metric_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studio_scoring_metric_assessments_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      studio_scoring_metric_rules: {
+        Row: {
+          active: boolean
+          dimension_key: string
+          id: string
+          metric_key: string
+          metric_weight: number
+          model_id: string
+          scoring_method: string
+        }
+        Insert: {
+          active?: boolean
+          dimension_key: string
+          id?: string
+          metric_key: string
+          metric_weight?: number
+          model_id: string
+          scoring_method?: string
+        }
+        Update: {
+          active?: boolean
+          dimension_key?: string
+          id?: string
+          metric_key?: string
+          metric_weight?: number
+          model_id?: string
+          scoring_method?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_scoring_metric_rules_model_id_dimension_key_fkey"
+            columns: ["model_id", "dimension_key"]
+            isOneToOne: false
+            referencedRelation: "studio_scoring_dimensions"
+            referencedColumns: ["model_id", "dimension_key"]
+          },
+        ]
+      }
+      studio_scoring_models: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          min_coverage: number
+          model_key: string
+          name: string
+          status: string
+          tier: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          min_coverage: number
+          model_key: string
+          name: string
+          status?: string
+          tier: string
+          version: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          min_coverage?: number
+          model_key?: string
+          name?: string
+          status?: string
+          tier?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      studio_scoring_snapshots: {
+        Row: {
+          assessment_ids: string[]
+          coverage: number
+          dimension_scores: Json
+          engine_version: string
+          evidence_quality: number | null
+          id: string
+          model_id: string
+          period_end: string | null
+          period_start: string | null
+          score: number | null
+          scored_at: string
+          status: string
+          studio_id: string
+        }
+        Insert: {
+          assessment_ids?: string[]
+          coverage: number
+          dimension_scores?: Json
+          engine_version?: string
+          evidence_quality?: number | null
+          id?: string
+          model_id: string
+          period_end?: string | null
+          period_start?: string | null
+          score?: number | null
+          scored_at?: string
+          status: string
+          studio_id: string
+        }
+        Update: {
+          assessment_ids?: string[]
+          coverage?: number
+          dimension_scores?: Json
+          engine_version?: string
+          evidence_quality?: number | null
+          id?: string
+          model_id?: string
+          period_end?: string | null
+          period_start?: string | null
+          score?: number | null
+          scored_at?: string
+          status?: string
+          studio_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "studio_scoring_snapshots_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "studio_scoring_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "studio_scoring_snapshots_studio_id_fkey"
+            columns: ["studio_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       studio_source_observations: {
         Row: {
           candidate_id: string | null
@@ -5071,6 +7632,660 @@ export type Database = {
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "visibility_studios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tattoo_enquiries: {
+        Row: {
+          age_confirmed: boolean
+          budget_range: string | null
+          created_at: string
+          description: string
+          email: string
+          full_name: string
+          id: string
+          instagram_handle: string | null
+          is_test: boolean
+          marketing_consent: boolean
+          phone: string | null
+          placement: string
+          preferred_contact: string
+          privacy_accepted: boolean
+          project_type: string
+          reference_links: string | null
+          request_id: string
+          sessions: string
+          source_page: string
+          status: string
+          timeframe: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          age_confirmed?: boolean
+          budget_range?: string | null
+          created_at?: string
+          description: string
+          email: string
+          full_name: string
+          id?: string
+          instagram_handle?: string | null
+          is_test?: boolean
+          marketing_consent?: boolean
+          phone?: string | null
+          placement: string
+          preferred_contact: string
+          privacy_accepted?: boolean
+          project_type: string
+          reference_links?: string | null
+          request_id: string
+          sessions: string
+          source_page?: string
+          status?: string
+          timeframe?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          age_confirmed?: boolean
+          budget_range?: string | null
+          created_at?: string
+          description?: string
+          email?: string
+          full_name?: string
+          id?: string
+          instagram_handle?: string | null
+          is_test?: boolean
+          marketing_consent?: boolean
+          phone?: string | null
+          placement?: string
+          preferred_contact?: string
+          privacy_accepted?: boolean
+          project_type?: string
+          reference_links?: string | null
+          request_id?: string
+          sessions?: string
+          source_page?: string
+          status?: string
+          timeframe?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
+      tattoo_enquiry_attempts: {
+        Row: {
+          created_at: string
+          fingerprint: string
+          id: number
+          route: string
+        }
+        Insert: {
+          created_at?: string
+          fingerprint: string
+          id?: never
+          route?: string
+        }
+        Update: {
+          created_at?: string
+          fingerprint?: string
+          id?: never
+          route?: string
+        }
+        Relationships: []
+      }
+      tattoo_portfolio_2027_applications: {
+        Row: {
+          age_confirmed: boolean
+          artistic_direction: string
+          concept_description: string
+          created_at: string
+          email: string
+          existing_work: string | null
+          full_name: string
+          id: string
+          image_paths: Json
+          image_rights_confirmed: boolean
+          instagram_handle: string | null
+          internal_notes: string | null
+          marketing_consent: boolean
+          phone: string | null
+          placement: string
+          preferred_contact: string
+          privacy_accepted: boolean
+          project_preference: string | null
+          project_size: string
+          reference_links: string | null
+          request_id: string
+          source_page: string
+          status: string
+          timeframe: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          age_confirmed: boolean
+          artistic_direction: string
+          concept_description: string
+          created_at?: string
+          email: string
+          existing_work?: string | null
+          full_name: string
+          id?: string
+          image_paths?: Json
+          image_rights_confirmed?: boolean
+          instagram_handle?: string | null
+          internal_notes?: string | null
+          marketing_consent?: boolean
+          phone?: string | null
+          placement: string
+          preferred_contact: string
+          privacy_accepted: boolean
+          project_preference?: string | null
+          project_size: string
+          reference_links?: string | null
+          request_id: string
+          source_page?: string
+          status?: string
+          timeframe?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          age_confirmed?: boolean
+          artistic_direction?: string
+          concept_description?: string
+          created_at?: string
+          email?: string
+          existing_work?: string | null
+          full_name?: string
+          id?: string
+          image_paths?: Json
+          image_rights_confirmed?: boolean
+          instagram_handle?: string | null
+          internal_notes?: string | null
+          marketing_consent?: boolean
+          phone?: string | null
+          placement?: string
+          preferred_contact?: string
+          privacy_accepted?: boolean
+          project_preference?: string | null
+          project_size?: string
+          reference_links?: string | null
+          request_id?: string
+          source_page?: string
+          status?: string
+          timeframe?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_applications_project_preference_fkey"
+            columns: ["project_preference"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_project_summary"
+            referencedColumns: ["project_key"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_applications_project_preference_fkey"
+            columns: ["project_preference"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_projects"
+            referencedColumns: ["project_key"]
+          },
+        ]
+      }
+      tattoo_portfolio_2027_assessments: {
+        Row: {
+          application_id: string
+          artistic_potential: number
+          assessed_at: string
+          assessed_by: string | null
+          client_commitment: number
+          decision: string
+          feasibility: number
+          id: string
+          originality: number
+          portfolio_value: number
+          technical_challenge: number
+          total_score: number | null
+          visual_impact: number
+        }
+        Insert: {
+          application_id: string
+          artistic_potential: number
+          assessed_at?: string
+          assessed_by?: string | null
+          client_commitment: number
+          decision?: string
+          feasibility: number
+          id?: string
+          originality: number
+          portfolio_value: number
+          technical_challenge: number
+          total_score?: number | null
+          visual_impact: number
+        }
+        Update: {
+          application_id?: string
+          artistic_potential?: number
+          assessed_at?: string
+          assessed_by?: string | null
+          client_commitment?: number
+          decision?: string
+          feasibility?: number
+          id?: string
+          originality?: number
+          portfolio_value?: number
+          technical_challenge?: number
+          total_score?: number | null
+          visual_impact?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_assessments_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "tattoo_portfolio_2027_application_scores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_assessments_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "tattoo_portfolio_2027_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tattoo_portfolio_2027_attempts: {
+        Row: {
+          created_at: string
+          fingerprint: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          fingerprint: string
+          id?: never
+        }
+        Update: {
+          created_at?: string
+          fingerprint?: string
+          id?: never
+        }
+        Relationships: []
+      }
+      tattoo_portfolio_2027_bookings: {
+        Row: {
+          agreed_price_gbp: number
+          agreement_signed_at: string | null
+          application_id: string
+          booking_status: string
+          completed_at: string | null
+          created_at: string
+          deposit_required_gbp: number | null
+          first_session_at: string | null
+          id: string
+          image_permission_status: string
+          notes: string | null
+          project_key: string
+        }
+        Insert: {
+          agreed_price_gbp: number
+          agreement_signed_at?: string | null
+          application_id: string
+          booking_status?: string
+          completed_at?: string | null
+          created_at?: string
+          deposit_required_gbp?: number | null
+          first_session_at?: string | null
+          id?: string
+          image_permission_status?: string
+          notes?: string | null
+          project_key: string
+        }
+        Update: {
+          agreed_price_gbp?: number
+          agreement_signed_at?: string | null
+          application_id?: string
+          booking_status?: string
+          completed_at?: string | null
+          created_at?: string
+          deposit_required_gbp?: number | null
+          first_session_at?: string | null
+          id?: string
+          image_permission_status?: string
+          notes?: string | null
+          project_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_bookings_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "tattoo_portfolio_2027_application_scores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_bookings_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "tattoo_portfolio_2027_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_bookings_project_key_fkey"
+            columns: ["project_key"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_project_summary"
+            referencedColumns: ["project_key"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_bookings_project_key_fkey"
+            columns: ["project_key"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_projects"
+            referencedColumns: ["project_key"]
+          },
+        ]
+      }
+      tattoo_portfolio_2027_content: {
+        Row: {
+          asset_type: string
+          booking_id: string | null
+          caption: string | null
+          captured_at: string | null
+          created_at: string
+          id: string
+          performance_notes: string | null
+          permission_id: string | null
+          permission_status: string
+          permitted_channels: string[]
+          planned_publish_at: string | null
+          publication_url: string | null
+          published_at: string | null
+          storage_path: string | null
+        }
+        Insert: {
+          asset_type: string
+          booking_id?: string | null
+          caption?: string | null
+          captured_at?: string | null
+          created_at?: string
+          id?: string
+          performance_notes?: string | null
+          permission_id?: string | null
+          permission_status?: string
+          permitted_channels?: string[]
+          planned_publish_at?: string | null
+          publication_url?: string | null
+          published_at?: string | null
+          storage_path?: string | null
+        }
+        Update: {
+          asset_type?: string
+          booking_id?: string | null
+          caption?: string | null
+          captured_at?: string | null
+          created_at?: string
+          id?: string
+          performance_notes?: string | null
+          permission_id?: string | null
+          permission_status?: string
+          permitted_channels?: string[]
+          planned_publish_at?: string | null
+          publication_url?: string | null
+          published_at?: string | null
+          storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_content_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_booking_financials"
+            referencedColumns: ["booking_id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_content_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_content_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_image_permissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tattoo_portfolio_2027_image_permissions: {
+        Row: {
+          booking_id: string
+          consent_status: string
+          created_at: string
+          form_reference: string | null
+          granted_at: string | null
+          id: string
+          include_face: boolean
+          include_name: boolean
+          include_voice: boolean
+          notes: string | null
+          permission_text_version: string
+          permitted_channels: string[]
+          permitted_material: string
+          withdrawn_at: string | null
+        }
+        Insert: {
+          booking_id: string
+          consent_status?: string
+          created_at?: string
+          form_reference?: string | null
+          granted_at?: string | null
+          id?: string
+          include_face?: boolean
+          include_name?: boolean
+          include_voice?: boolean
+          notes?: string | null
+          permission_text_version: string
+          permitted_channels?: string[]
+          permitted_material?: string
+          withdrawn_at?: string | null
+        }
+        Update: {
+          booking_id?: string
+          consent_status?: string
+          created_at?: string
+          form_reference?: string | null
+          granted_at?: string | null
+          id?: string
+          include_face?: boolean
+          include_name?: boolean
+          include_voice?: boolean
+          notes?: string | null
+          permission_text_version?: string
+          permitted_channels?: string[]
+          permitted_material?: string
+          withdrawn_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_image_permissions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_booking_financials"
+            referencedColumns: ["booking_id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_image_permissions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tattoo_portfolio_2027_payments: {
+        Row: {
+          amount_gbp: number
+          booking_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          payment_reference: string | null
+          payment_type: string
+        }
+        Insert: {
+          amount_gbp: number
+          booking_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_reference?: string | null
+          payment_type: string
+        }
+        Update: {
+          amount_gbp?: number
+          booking_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_reference?: string | null
+          payment_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_booking_financials"
+            referencedColumns: ["booking_id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tattoo_portfolio_2027_projects: {
+        Row: {
+          active: boolean
+          artistic_direction: string
+          colour_approach: string
+          created_at: string
+          fixed_price_gbp: number
+          minimum_days: number
+          non_selected_estimate_gbp: number
+          placement: string
+          project_key: string
+          project_size: string
+          scope_summary: string
+          sort_order: number
+          standard_estimate_gbp: number
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          artistic_direction: string
+          colour_approach: string
+          created_at?: string
+          fixed_price_gbp: number
+          minimum_days: number
+          non_selected_estimate_gbp: number
+          placement: string
+          project_key: string
+          project_size: string
+          scope_summary: string
+          sort_order: number
+          standard_estimate_gbp: number
+          title: string
+        }
+        Update: {
+          active?: boolean
+          artistic_direction?: string
+          colour_approach?: string
+          created_at?: string
+          fixed_price_gbp?: number
+          minimum_days?: number
+          non_selected_estimate_gbp?: number
+          placement?: string
+          project_key?: string
+          project_size?: string
+          scope_summary?: string
+          sort_order?: number
+          standard_estimate_gbp?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      tattoo_portfolio_2027_sessions: {
+        Row: {
+          actual_tattooing_minutes: number | null
+          booking_id: string
+          break_minutes: number
+          created_at: string
+          ended_at: string
+          id: string
+          session_date: string
+          session_notes: string | null
+          session_number: number
+          started_at: string
+        }
+        Insert: {
+          actual_tattooing_minutes?: number | null
+          booking_id: string
+          break_minutes?: number
+          created_at?: string
+          ended_at: string
+          id?: string
+          session_date: string
+          session_notes?: string | null
+          session_number: number
+          started_at: string
+        }
+        Update: {
+          actual_tattooing_minutes?: number | null
+          booking_id?: string
+          break_minutes?: number
+          created_at?: string
+          ended_at?: string
+          id?: string
+          session_date?: string
+          session_notes?: string | null
+          session_number?: number
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_sessions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_booking_financials"
+            referencedColumns: ["booking_id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_sessions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_bookings"
             referencedColumns: ["id"]
           },
         ]
@@ -6176,48 +9391,6 @@ export type Database = {
       }
     }
     Views: {
-      geography_columns: {
-        Row: {
-          coord_dimension: number | null
-          f_geography_column: unknown
-          f_table_catalog: unknown
-          f_table_name: unknown
-          f_table_schema: unknown
-          srid: number | null
-          type: string | null
-        }
-        Relationships: []
-      }
-      geometry_columns: {
-        Row: {
-          coord_dimension: number | null
-          f_geometry_column: unknown
-          f_table_catalog: string | null
-          f_table_name: unknown
-          f_table_schema: unknown
-          srid: number | null
-          type: string | null
-        }
-        Insert: {
-          coord_dimension?: number | null
-          f_geometry_column?: unknown
-          f_table_catalog?: string | null
-          f_table_name?: unknown
-          f_table_schema?: unknown
-          srid?: number | null
-          type?: string | null
-        }
-        Update: {
-          coord_dimension?: number | null
-          f_geometry_column?: unknown
-          f_table_catalog?: string | null
-          f_table_name?: unknown
-          f_table_schema?: unknown
-          srid?: number | null
-          type?: string | null
-        }
-        Relationships: []
-      }
       ops_current_founder_brief: {
         Row: {
           business_key: string | null
@@ -6277,135 +9450,167 @@ export type Database = {
           },
         ]
       }
+      tattoo_portfolio_2027_application_scores: {
+        Row: {
+          artistic_direction: string | null
+          artistic_potential: number | null
+          assessed_at: string | null
+          client_commitment: number | null
+          created_at: string | null
+          decision: string | null
+          email: string | null
+          feasibility: number | null
+          full_name: string | null
+          id: string | null
+          instagram_handle: string | null
+          originality: number | null
+          phone: string | null
+          placement: string | null
+          portfolio_value: number | null
+          project_preference: string | null
+          project_size: string | null
+          status: string | null
+          technical_challenge: number | null
+          total_score: number | null
+          visual_impact: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_applications_project_preference_fkey"
+            columns: ["project_preference"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_project_summary"
+            referencedColumns: ["project_key"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_applications_project_preference_fkey"
+            columns: ["project_preference"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_projects"
+            referencedColumns: ["project_key"]
+          },
+        ]
+      }
+      tattoo_portfolio_2027_booking_financials: {
+        Row: {
+          actual_tattooing_hours: number | null
+          actual_tattooing_minutes: number | null
+          agreed_price_gbp: number | null
+          application_id: string | null
+          balance_remaining_gbp: number | null
+          booking_id: string | null
+          booking_status: string | null
+          collected_gbp_per_tattoo_hour: number | null
+          deposit_required_gbp: number | null
+          project_key: string | null
+          revenue_collected_gbp: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tattoo_portfolio_2027_bookings_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "tattoo_portfolio_2027_application_scores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_bookings_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: true
+            referencedRelation: "tattoo_portfolio_2027_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_bookings_project_key_fkey"
+            columns: ["project_key"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_project_summary"
+            referencedColumns: ["project_key"]
+          },
+          {
+            foreignKeyName: "tattoo_portfolio_2027_bookings_project_key_fkey"
+            columns: ["project_key"]
+            isOneToOne: false
+            referencedRelation: "tattoo_portfolio_2027_projects"
+            referencedColumns: ["project_key"]
+          },
+        ]
+      }
+      tattoo_portfolio_2027_campaign_dashboard: {
+        Row: {
+          actual_tattooing_hours: number | null
+          balance_remaining_gbp: number | null
+          confirmed_bookings: number | null
+          contracted_revenue_gbp: number | null
+          permissioned_content_assets: number | null
+          published_content_assets: number | null
+          qualified_applications: number | null
+          reserve_applications: number | null
+          revenue_collected_gbp: number | null
+          selected_applications: number | null
+          total_applications: number | null
+        }
+        Relationships: []
+      }
+      tattoo_portfolio_2027_project_summary: {
+        Row: {
+          application_count: number | null
+          booking_count: number | null
+          contracted_revenue_gbp: number | null
+          fixed_price_gbp: number | null
+          minimum_days: number | null
+          project_key: string | null
+          project_size: string | null
+          sort_order: number | null
+          title: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      _postgis_deprecate: {
-        Args: { newname: string; oldname: string; version: string }
-        Returns: undefined
+      atlas_admin_review_claim: {
+        Args: {
+          p_actor_id: string
+          p_authority_confirmed: boolean
+          p_claim_id: string
+          p_decision: string
+          p_evidence_summary: string
+          p_existing_studio_id?: string
+          p_existing_visibility_id?: string
+        }
+        Returns: Json
       }
-      _postgis_index_extent: {
-        Args: { col: string; tbl: unknown }
-        Returns: unknown
+      atlas_admin_review_publication: {
+        Args: {
+          p_action: string
+          p_actor_id: string
+          p_draft_id?: string
+          p_evidence_note: string
+          p_latitude?: number
+          p_longitude?: number
+          p_owner_public_location_confirmed?: boolean
+          p_profile_id: string
+          p_public_address?: string
+          p_source_url?: string
+        }
+        Returns: Json
       }
-      _postgis_pgsql_version: { Args: never; Returns: string }
-      _postgis_scripts_pgsql_version: { Args: never; Returns: string }
-      _postgis_selectivity: {
-        Args: { att_name: string; geom: unknown; mode?: string; tbl: unknown }
-        Returns: number
+      begin_founding_studio_checkout: {
+        Args: { p_token_hash: string }
+        Returns: {
+          checkout_email: string
+          checkout_url: string
+        }[]
       }
-      _postgis_stats: {
-        Args: { ""?: string; att_name: string; tbl: unknown }
+      calculate_studio_score_v1: {
+        Args: {
+          p_model_key: string
+          p_period_end?: string
+          p_period_start?: string
+          p_studio_id: string
+        }
         Returns: string
       }
-      _st_3dintersects: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      _st_contains: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      _st_containsproperly: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      _st_coveredby:
-        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      _st_covers:
-        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      _st_crosses: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      _st_dwithin: {
-        Args: {
-          geog1: unknown
-          geog2: unknown
-          tolerance: number
-          use_spheroid?: boolean
-        }
-        Returns: boolean
-      }
-      _st_equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      _st_intersects: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      _st_linecrossingdirection: {
-        Args: { line1: unknown; line2: unknown }
-        Returns: number
-      }
-      _st_longestline: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      _st_maxdistance: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      _st_orderingequals: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      _st_overlaps: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      _st_sortablehash: { Args: { geom: unknown }; Returns: number }
-      _st_touches: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      _st_voronoi: {
-        Args: {
-          clip?: unknown
-          g1: unknown
-          return_polygons?: boolean
-          tolerance?: number
-        }
-        Returns: unknown
-      }
-      _st_within: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      addauth: { Args: { "": string }; Returns: boolean }
-      addgeometrycolumn:
-        | {
-            Args: {
-              catalog_name: string
-              column_name: string
-              new_dim: number
-              new_srid_in: number
-              new_type: string
-              schema_name: string
-              table_name: string
-              use_typmod?: boolean
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              column_name: string
-              new_dim: number
-              new_srid: number
-              new_type: string
-              schema_name: string
-              table_name: string
-              use_typmod?: boolean
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              column_name: string
-              new_dim: number
-              new_srid: number
-              new_type: string
-              table_name: string
-              use_typmod?: boolean
-            }
-            Returns: string
-          }
       calculate_visibility_lso: {
         Args: {
           p_conversion: number
@@ -6416,7 +9621,15 @@ export type Database = {
         }
         Returns: number
       }
-      can_read_studio: { Args: { p_studio_id: string }; Returns: boolean }
+      claim_public_tool_submission_v1: {
+        Args: {
+          p_studio_id: string
+          p_submission_id: string
+          p_submission_key: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
       consume_public_endpoint_rate_limit: {
         Args: {
           p_endpoint: string
@@ -6426,39 +9639,23 @@ export type Database = {
         }
         Returns: boolean
       }
-      disablelongtransactions: { Args: never; Returns: string }
-      dropgeometrycolumn:
-        | {
-            Args: {
-              catalog_name: string
-              column_name: string
-              schema_name: string
-              table_name: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              column_name: string
-              schema_name: string
-              table_name: string
-            }
-            Returns: string
-          }
-        | { Args: { column_name: string; table_name: string }; Returns: string }
-      dropgeometrytable:
-        | {
-            Args: {
-              catalog_name: string
-              schema_name: string
-              table_name: string
-            }
-            Returns: string
-          }
-        | { Args: { schema_name: string; table_name: string }; Returns: string }
-        | { Args: { table_name: string }; Returns: string }
-      enablelongtransactions: { Args: never; Returns: string }
-      equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
+      create_founding_studio_invite: {
+        Args: {
+          p_contact_name: string
+          p_email: string
+          p_expires_at?: string
+          p_reason: string
+          p_studio_name: string
+          p_token_hash: string
+          p_token_hint: string
+          p_website: string
+        }
+        Returns: {
+          expires_at: string
+          invite_id: string
+          slot_code: string
+        }[]
+      }
       generate_studio_search_universe: {
         Args: { p_report_run_id?: string; p_studio_id: string }
         Returns: number
@@ -6467,111 +9664,11 @@ export type Database = {
         Args: { p_report_run_id: string }
         Returns: Json
       }
-      geometry: { Args: { "": string }; Returns: unknown }
-      geometry_above: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_below: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_cmp: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      geometry_contained_3d: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_contains: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_contains_3d: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_distance_box: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      geometry_distance_centroid: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      geometry_eq: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_ge: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_gt: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_le: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_left: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_lt: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_overabove: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_overbelow: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_overlaps: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_overlaps_3d: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_overleft: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_overright: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_right: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_same: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_same_3d: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geometry_within: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      geomfromewkt: { Args: { "": string }; Returns: unknown }
       get_search_provider_status: {
         Args: { p_studio_id?: string }
         Returns: Json
       }
-      gettransactionid: { Args: never; Returns: unknown }
       lock_golden_audit_run: { Args: { p_audit_id: string }; Returns: boolean }
-      longtransactionsenabled: { Args: never; Returns: boolean }
       persist_golden_audit_ledger: {
         Args: {
           p_audit_id: string
@@ -6586,49 +9683,29 @@ export type Database = {
         }
         Returns: Json
       }
-      populate_geometry_columns:
-        | { Args: { tbl_oid: unknown; use_typmod?: boolean }; Returns: number }
-        | { Args: { use_typmod?: boolean }; Returns: string }
-      postgis_constraint_dims: {
-        Args: { geomcolumn: string; geomschema: string; geomtable: string }
-        Returns: number
-      }
-      postgis_constraint_srid: {
-        Args: { geomcolumn: string; geomschema: string; geomtable: string }
-        Returns: number
-      }
-      postgis_constraint_type: {
-        Args: { geomcolumn: string; geomschema: string; geomtable: string }
-        Returns: string
-      }
-      postgis_extensions_upgrade: { Args: never; Returns: string }
-      postgis_full_version: { Args: never; Returns: string }
-      postgis_geos_version: { Args: never; Returns: string }
-      postgis_lib_build_date: { Args: never; Returns: string }
-      postgis_lib_revision: { Args: never; Returns: string }
-      postgis_lib_version: { Args: never; Returns: string }
-      postgis_libjson_version: { Args: never; Returns: string }
-      postgis_liblwgeom_version: { Args: never; Returns: string }
-      postgis_libprotobuf_version: { Args: never; Returns: string }
-      postgis_libxml_version: { Args: never; Returns: string }
-      postgis_proj_version: { Args: never; Returns: string }
-      postgis_scripts_build_date: { Args: never; Returns: string }
-      postgis_scripts_installed: { Args: never; Returns: string }
-      postgis_scripts_released: { Args: never; Returns: string }
-      postgis_svn_version: { Args: never; Returns: string }
-      postgis_type_name: {
+      process_founding_studio_checkout: {
         Args: {
-          coord_dimension: number
-          geomname: string
-          use_new_name?: boolean
+          p_amount_total: number
+          p_contact_name: string
+          p_currency: string
+          p_customer_id: string
+          p_email: string
+          p_event_id: string
+          p_livemode: boolean
+          p_payment_link_id: string
+          p_session_id: string
+          p_studio_name: string
+          p_website: string
         }
-        Returns: string
+        Returns: Json
       }
-      postgis_version: { Args: never; Returns: string }
-      postgis_wagyu_version: { Args: never; Returns: string }
       publish_visibility_report: {
         Args: { p_public_token: string; p_report_id: string }
         Returns: Json
+      }
+      reconcile_reviewed_studio_submissions_v1: {
+        Args: { p_legacy_studio_id: string }
+        Returns: number
       }
       record_integration_event: {
         Args: {
@@ -6672,614 +9749,60 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
-      st_3dclosestpoint: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
+      resolve_founding_studio_completion: {
+        Args: { p_session_id: string }
+        Returns: {
+          audit_id: string
+          contact_name: string
+          invite_status: string
+          onboarding_status: string
+          studio_name: string
+          website: string
+        }[]
       }
-      st_3ddistance: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
+      resolve_founding_studio_invite: {
+        Args: { p_token_hash: string }
+        Returns: {
+          amount_due_minor: number
+          can_checkout: boolean
+          contact_name: string
+          email_hint: string
+          expires_at: string
+          invite_status: string
+          list_value_minor: number
+          studio_name: string
+          waiver_amount_minor: number
+        }[]
       }
-      st_3dintersects: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
+      revoke_founding_studio_invite: {
+        Args: { p_invite_id: string }
+        Returns: undefined
       }
-      st_3dlongestline: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_3dmakebox: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_3dmaxdistance: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      st_3dshortestline: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_addpoint: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_angle:
-        | { Args: { line1: unknown; line2: unknown }; Returns: number }
-        | {
-            Args: { pt1: unknown; pt2: unknown; pt3: unknown; pt4?: unknown }
-            Returns: number
-          }
-      st_area:
-        | { Args: { geog: unknown; use_spheroid?: boolean }; Returns: number }
-        | { Args: { "": string }; Returns: number }
-      st_asencodedpolyline: {
-        Args: { geom: unknown; nprecision?: number }
+      si_command: {
+        Args: { p_action: string; p_payload?: Json; p_report?: string }
         Returns: string
       }
-      st_asewkt: { Args: { "": string }; Returns: string }
-      st_asgeojson:
-        | {
-            Args: { geog: unknown; maxdecimaldigits?: number; options?: number }
-            Returns: string
-          }
-        | {
-            Args: { geom: unknown; maxdecimaldigits?: number; options?: number }
-            Returns: string
-          }
-        | {
-            Args: {
-              geom_column?: string
-              maxdecimaldigits?: number
-              pretty_bool?: boolean
-              r: Record<string, unknown>
-            }
-            Returns: string
-          }
-        | { Args: { "": string }; Returns: string }
-      st_asgml:
-        | {
-            Args: {
-              geog: unknown
-              id?: string
-              maxdecimaldigits?: number
-              nprefix?: string
-              options?: number
-            }
-            Returns: string
-          }
-        | {
-            Args: { geom: unknown; maxdecimaldigits?: number; options?: number }
-            Returns: string
-          }
-        | { Args: { "": string }; Returns: string }
-        | {
-            Args: {
-              geog: unknown
-              id?: string
-              maxdecimaldigits?: number
-              nprefix?: string
-              options?: number
-              version: number
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              geom: unknown
-              id?: string
-              maxdecimaldigits?: number
-              nprefix?: string
-              options?: number
-              version: number
-            }
-            Returns: string
-          }
-      st_askml:
-        | {
-            Args: { geog: unknown; maxdecimaldigits?: number; nprefix?: string }
-            Returns: string
-          }
-        | {
-            Args: { geom: unknown; maxdecimaldigits?: number; nprefix?: string }
-            Returns: string
-          }
-        | { Args: { "": string }; Returns: string }
-      st_aslatlontext: {
-        Args: { geom: unknown; tmpl?: string }
-        Returns: string
-      }
-      st_asmarc21: { Args: { format?: string; geom: unknown }; Returns: string }
-      st_asmvtgeom: {
+      submit_founding_studio_onboarding: {
         Args: {
-          bounds: unknown
-          buffer?: number
-          clip_geom?: boolean
-          extent?: number
-          geom: unknown
+          p_artist_count: number
+          p_booking_process: string
+          p_data_available: string
+          p_instagram_url?: string
+          p_location: string
+          p_notes?: string
+          p_primary_goal: string
+          p_session_id: string
         }
-        Returns: unknown
-      }
-      st_assvg:
-        | {
-            Args: { geog: unknown; maxdecimaldigits?: number; rel?: number }
-            Returns: string
-          }
-        | {
-            Args: { geom: unknown; maxdecimaldigits?: number; rel?: number }
-            Returns: string
-          }
-        | { Args: { "": string }; Returns: string }
-      st_astext: { Args: { "": string }; Returns: string }
-      st_astwkb:
-        | {
-            Args: {
-              geom: unknown
-              prec?: number
-              prec_m?: number
-              prec_z?: number
-              with_boxes?: boolean
-              with_sizes?: boolean
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              geom: unknown[]
-              ids: number[]
-              prec?: number
-              prec_m?: number
-              prec_z?: number
-              with_boxes?: boolean
-              with_sizes?: boolean
-            }
-            Returns: string
-          }
-      st_asx3d: {
-        Args: { geom: unknown; maxdecimaldigits?: number; options?: number }
-        Returns: string
-      }
-      st_azimuth:
-        | { Args: { geog1: unknown; geog2: unknown }; Returns: number }
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: number }
-      st_boundingdiagonal: {
-        Args: { fits?: boolean; geom: unknown }
-        Returns: unknown
-      }
-      st_buffer:
-        | {
-            Args: { geom: unknown; options?: string; radius: number }
-            Returns: unknown
-          }
-        | {
-            Args: { geom: unknown; quadsegs: number; radius: number }
-            Returns: unknown
-          }
-      st_centroid: { Args: { "": string }; Returns: unknown }
-      st_clipbybox2d: {
-        Args: { box: unknown; geom: unknown }
-        Returns: unknown
-      }
-      st_closestpoint: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_collect: { Args: { geom1: unknown; geom2: unknown }; Returns: unknown }
-      st_concavehull: {
-        Args: {
-          param_allow_holes?: boolean
-          param_geom: unknown
-          param_pctconvex: number
-        }
-        Returns: unknown
-      }
-      st_contains: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      st_containsproperly: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      st_coorddim: { Args: { geometry: unknown }; Returns: number }
-      st_coveredby:
-        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      st_covers:
-        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      st_crosses: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      st_curvetoline: {
-        Args: { flags?: number; geom: unknown; tol?: number; toltype?: number }
-        Returns: unknown
-      }
-      st_delaunaytriangles: {
-        Args: { flags?: number; g1: unknown; tolerance?: number }
-        Returns: unknown
-      }
-      st_difference: {
-        Args: { geom1: unknown; geom2: unknown; gridsize?: number }
-        Returns: unknown
-      }
-      st_disjoint: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      st_distance:
-        | {
-            Args: { geog1: unknown; geog2: unknown; use_spheroid?: boolean }
-            Returns: number
-          }
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: number }
-      st_distancesphere:
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: number }
-        | {
-            Args: { geom1: unknown; geom2: unknown; radius: number }
-            Returns: number
-          }
-      st_distancespheroid: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      st_dwithin: {
-        Args: {
-          geog1: unknown
-          geog2: unknown
-          tolerance: number
-          use_spheroid?: boolean
-        }
-        Returns: boolean
-      }
-      st_equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      st_expand:
-        | { Args: { box: unknown; dx: number; dy: number }; Returns: unknown }
-        | {
-            Args: { box: unknown; dx: number; dy: number; dz?: number }
-            Returns: unknown
-          }
-        | {
-            Args: {
-              dm?: number
-              dx: number
-              dy: number
-              dz?: number
-              geom: unknown
-            }
-            Returns: unknown
-          }
-      st_force3d: { Args: { geom: unknown; zvalue?: number }; Returns: unknown }
-      st_force3dm: {
-        Args: { geom: unknown; mvalue?: number }
-        Returns: unknown
-      }
-      st_force3dz: {
-        Args: { geom: unknown; zvalue?: number }
-        Returns: unknown
-      }
-      st_force4d: {
-        Args: { geom: unknown; mvalue?: number; zvalue?: number }
-        Returns: unknown
-      }
-      st_generatepoints:
-        | { Args: { area: unknown; npoints: number }; Returns: unknown }
-        | {
-            Args: { area: unknown; npoints: number; seed: number }
-            Returns: unknown
-          }
-      st_geogfromtext: { Args: { "": string }; Returns: unknown }
-      st_geographyfromtext: { Args: { "": string }; Returns: unknown }
-      st_geohash:
-        | { Args: { geog: unknown; maxchars?: number }; Returns: string }
-        | { Args: { geom: unknown; maxchars?: number }; Returns: string }
-      st_geomcollfromtext: { Args: { "": string }; Returns: unknown }
-      st_geometricmedian: {
-        Args: {
-          fail_if_not_converged?: boolean
-          g: unknown
-          max_iter?: number
-          tolerance?: number
-        }
-        Returns: unknown
-      }
-      st_geometryfromtext: { Args: { "": string }; Returns: unknown }
-      st_geomfromewkt: { Args: { "": string }; Returns: unknown }
-      st_geomfromgeojson:
-        | { Args: { "": Json }; Returns: unknown }
-        | { Args: { "": Json }; Returns: unknown }
-        | { Args: { "": string }; Returns: unknown }
-      st_geomfromgml: { Args: { "": string }; Returns: unknown }
-      st_geomfromkml: { Args: { "": string }; Returns: unknown }
-      st_geomfrommarc21: { Args: { marc21xml: string }; Returns: unknown }
-      st_geomfromtext: { Args: { "": string }; Returns: unknown }
-      st_gmltosql: { Args: { "": string }; Returns: unknown }
-      st_hasarc: { Args: { geometry: unknown }; Returns: boolean }
-      st_hausdorffdistance: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      st_hexagon: {
-        Args: { cell_i: number; cell_j: number; origin?: unknown; size: number }
-        Returns: unknown
-      }
-      st_hexagongrid: {
-        Args: { bounds: unknown; size: number }
-        Returns: Record<string, unknown>[]
-      }
-      st_interpolatepoint: {
-        Args: { line: unknown; point: unknown }
-        Returns: number
-      }
-      st_intersection: {
-        Args: { geom1: unknown; geom2: unknown; gridsize?: number }
-        Returns: unknown
-      }
-      st_intersects:
-        | { Args: { geog1: unknown; geog2: unknown }; Returns: boolean }
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      st_isvaliddetail: {
-        Args: { flags?: number; geom: unknown }
-        Returns: Database["public"]["CompositeTypes"]["valid_detail"]
-        SetofOptions: {
-          from: "*"
-          to: "valid_detail"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      st_length:
-        | { Args: { geog: unknown; use_spheroid?: boolean }; Returns: number }
-        | { Args: { "": string }; Returns: number }
-      st_letters: { Args: { font?: Json; letters: string }; Returns: unknown }
-      st_linecrossingdirection: {
-        Args: { line1: unknown; line2: unknown }
-        Returns: number
-      }
-      st_linefromencodedpolyline: {
-        Args: { nprecision?: number; txtin: string }
-        Returns: unknown
-      }
-      st_linefromtext: { Args: { "": string }; Returns: unknown }
-      st_linelocatepoint: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      st_linetocurve: { Args: { geometry: unknown }; Returns: unknown }
-      st_locatealong: {
-        Args: { geometry: unknown; leftrightoffset?: number; measure: number }
-        Returns: unknown
-      }
-      st_locatebetween: {
-        Args: {
-          frommeasure: number
-          geometry: unknown
-          leftrightoffset?: number
-          tomeasure: number
-        }
-        Returns: unknown
-      }
-      st_locatebetweenelevations: {
-        Args: { fromelevation: number; geometry: unknown; toelevation: number }
-        Returns: unknown
-      }
-      st_longestline: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_makebox2d: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_makeline: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_makevalid: {
-        Args: { geom: unknown; params: string }
-        Returns: unknown
-      }
-      st_maxdistance: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: number
-      }
-      st_minimumboundingcircle: {
-        Args: { inputgeom: unknown; segs_per_quarter?: number }
-        Returns: unknown
-      }
-      st_mlinefromtext: { Args: { "": string }; Returns: unknown }
-      st_mpointfromtext: { Args: { "": string }; Returns: unknown }
-      st_mpolyfromtext: { Args: { "": string }; Returns: unknown }
-      st_multilinestringfromtext: { Args: { "": string }; Returns: unknown }
-      st_multipointfromtext: { Args: { "": string }; Returns: unknown }
-      st_multipolygonfromtext: { Args: { "": string }; Returns: unknown }
-      st_node: { Args: { g: unknown }; Returns: unknown }
-      st_normalize: { Args: { geom: unknown }; Returns: unknown }
-      st_offsetcurve: {
-        Args: { distance: number; line: unknown; params?: string }
-        Returns: unknown
-      }
-      st_orderingequals: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      st_overlaps: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: boolean
-      }
-      st_perimeter: {
-        Args: { geog: unknown; use_spheroid?: boolean }
-        Returns: number
-      }
-      st_pointfromtext: { Args: { "": string }; Returns: unknown }
-      st_pointm: {
-        Args: {
-          mcoordinate: number
-          srid?: number
-          xcoordinate: number
-          ycoordinate: number
-        }
-        Returns: unknown
-      }
-      st_pointz: {
-        Args: {
-          srid?: number
-          xcoordinate: number
-          ycoordinate: number
-          zcoordinate: number
-        }
-        Returns: unknown
-      }
-      st_pointzm: {
-        Args: {
-          mcoordinate: number
-          srid?: number
-          xcoordinate: number
-          ycoordinate: number
-          zcoordinate: number
-        }
-        Returns: unknown
-      }
-      st_polyfromtext: { Args: { "": string }; Returns: unknown }
-      st_polygonfromtext: { Args: { "": string }; Returns: unknown }
-      st_project: {
-        Args: { azimuth: number; distance: number; geog: unknown }
-        Returns: unknown
-      }
-      st_quantizecoordinates: {
-        Args: {
-          g: unknown
-          prec_m?: number
-          prec_x: number
-          prec_y?: number
-          prec_z?: number
-        }
-        Returns: unknown
-      }
-      st_reduceprecision: {
-        Args: { geom: unknown; gridsize: number }
-        Returns: unknown
-      }
-      st_relate: { Args: { geom1: unknown; geom2: unknown }; Returns: string }
-      st_removerepeatedpoints: {
-        Args: { geom: unknown; tolerance?: number }
-        Returns: unknown
-      }
-      st_segmentize: {
-        Args: { geog: unknown; max_segment_length: number }
-        Returns: unknown
-      }
-      st_setsrid:
-        | { Args: { geog: unknown; srid: number }; Returns: unknown }
-        | { Args: { geom: unknown; srid: number }; Returns: unknown }
-      st_sharedpaths: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_shortestline: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_simplifypolygonhull: {
-        Args: { geom: unknown; is_outer?: boolean; vertex_fraction: number }
-        Returns: unknown
-      }
-      st_split: { Args: { geom1: unknown; geom2: unknown }; Returns: unknown }
-      st_square: {
-        Args: { cell_i: number; cell_j: number; origin?: unknown; size: number }
-        Returns: unknown
-      }
-      st_squaregrid: {
-        Args: { bounds: unknown; size: number }
-        Returns: Record<string, unknown>[]
-      }
-      st_srid:
-        | { Args: { geog: unknown }; Returns: number }
-        | { Args: { geom: unknown }; Returns: number }
-      st_subdivide: {
-        Args: { geom: unknown; gridsize?: number; maxvertices?: number }
-        Returns: unknown[]
-      }
-      st_swapordinates: {
-        Args: { geom: unknown; ords: unknown }
-        Returns: unknown
-      }
-      st_symdifference: {
-        Args: { geom1: unknown; geom2: unknown; gridsize?: number }
-        Returns: unknown
-      }
-      st_symmetricdifference: {
-        Args: { geom1: unknown; geom2: unknown }
-        Returns: unknown
-      }
-      st_tileenvelope: {
-        Args: {
-          bounds?: unknown
-          margin?: number
-          x: number
-          y: number
-          zoom: number
-        }
-        Returns: unknown
-      }
-      st_touches: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      st_transform:
-        | {
-            Args: { from_proj: string; geom: unknown; to_proj: string }
-            Returns: unknown
-          }
-        | {
-            Args: { from_proj: string; geom: unknown; to_srid: number }
-            Returns: unknown
-          }
-        | { Args: { geom: unknown; to_proj: string }; Returns: unknown }
-      st_triangulatepolygon: { Args: { g1: unknown }; Returns: unknown }
-      st_union:
-        | { Args: { geom1: unknown; geom2: unknown }; Returns: unknown }
-        | {
-            Args: { geom1: unknown; geom2: unknown; gridsize: number }
-            Returns: unknown
-          }
-      st_voronoilines: {
-        Args: { extend_to?: unknown; g1: unknown; tolerance?: number }
-        Returns: unknown
-      }
-      st_voronoipolygons: {
-        Args: { extend_to?: unknown; g1: unknown; tolerance?: number }
-        Returns: unknown
-      }
-      st_within: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
-      st_wkbtosql: { Args: { wkb: string }; Returns: unknown }
-      st_wkttosql: { Args: { "": string }; Returns: unknown }
-      st_wrapx: {
-        Args: { geom: unknown; move: number; wrap: number }
-        Returns: unknown
-      }
-      unlockrows: { Args: { "": string }; Returns: number }
-      updategeometrysrid: {
-        Args: {
-          catalogn_name: string
-          column_name: string
-          new_srid_in: number
-          schema_name: string
-          table_name: string
-        }
-        Returns: string
+        Returns: {
+          audit_id: string
+        }[]
       }
     }
     Enums: {
       [_ in never]: never
     }
     CompositeTypes: {
-      geometry_dump: {
-        path: number[] | null
-        geom: unknown
-      }
-      valid_detail: {
-        valid: boolean | null
-        reason: string | null
-        location: unknown
-      }
+      [_ in never]: never
     }
   }
 }

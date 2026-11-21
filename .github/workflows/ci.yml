@@ -103,5 +103,8 @@ jobs:
       - name: Test Revenue Audit preview CORS policy
         run: node --test supabase/functions/revenue-audit-v1/cors_policy_test.mjs
 
+      - name: Test Revenue Recovery deterministic rules
+        run: node --experimental-strip-types --test tests/revenue-recovery-engine.test.mjs
+
       - name: Test Edge Function security boundaries
         run: deno test --allow-net=false supabase/functions/studio-visibility-report-v2/security_test.ts
