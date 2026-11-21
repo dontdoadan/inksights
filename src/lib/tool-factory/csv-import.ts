@@ -171,10 +171,15 @@ export function validateClientCsv(
         throw new Error(`Row ${rowNumber}: completed sessions must be a whole number greater than or equal to zero.`);
       }
 
+      const displayName = get("displayName") || null;
+      if (displayName && (/@/.test(displayName) || /\\+?\\d[\\d\\s().-]{7,}\\d/.test(displayName))) {
+        throw new Error(`Row ${rowNumber}: do not map email addresses or phone numbers into the display-name field.`);
+      }
+
       validRows.push({
         source_row_number: rowNumber,
         source_record_id: sourceRecordId,
-        display_name: get("displayName") || null,
+        display_name: displayName,
         last_completed_booking_at: parseIsoDate(get("lastCompletedBookingAt"), "last completed booking date", rowNumber),
         completed_sessions: completedSessions,
         future_booking_at: parseIsoDate(get("futureBookingAt"), "future booking date", rowNumber),
