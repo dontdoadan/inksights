@@ -113,7 +113,7 @@ Deno.serve(async (req: Request) => {
     try { draft = JSON.parse(String(content ?? "")); }
     catch { return json({ ok: false, error: "AI returned an invalid draft. Please try again." }, 502, origin); }
     const subject = clean(draft.subject, 120);
-    const message = clean(draft.message, 1800);
+    const message = cleanMessage(draft.message);
     if (!subject || !message || message.length < 30) return json({ ok: false, error: "AI returned an incomplete draft. Please try again." }, 502, origin);
     return json({ ok: true, subject, message, model: "gpt-4.1-mini" }, 200, origin);
   } catch (error) {
