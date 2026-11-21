@@ -10,7 +10,7 @@ create table public.bt_workspaces (
   timezone text not null default 'Europe/London',
   currency_code text not null default 'GBP' check (currency_code ~ '^[A-Z]{3}$'),
   status text not null default 'active' check (status in ('active','suspended','closed')),
-  created_by uuid references auth.users(id) on delete set null,
+  created_by uuid references auth.users(id) on delete restrict,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (id)
@@ -52,7 +52,7 @@ create table public.bt_import_jobs (
   rows_valid integer not null default 0 check (rows_valid >= 0),
   rows_invalid integer not null default 0 check (rows_invalid >= 0),
   rows_duplicate integer not null default 0 check (rows_duplicate >= 0),
-  created_by uuid references auth.users(id) on delete set null,
+  created_by uuid references auth.users(id) on delete restrict,
   completed_at timestamptz,
   created_at timestamptz not null default now(),
   unique (workspace_id,product_key,content_sha256),
@@ -109,7 +109,7 @@ create table public.bt_audit_events (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references public.bt_workspaces(id) on delete cascade,
   product_key text not null,
-  actor_id uuid references auth.users(id) on delete set null,
+  actor_id uuid references auth.users(id) on delete restrict,
   actor_type text not null default 'user' check (actor_type in ('user','system','service')),
   event_key text not null,
   target_type text,
@@ -161,7 +161,7 @@ create table public.rr_enquiries (
   updated_at timestamptz not null default now(),
   unique (workspace_id,source_system,source_record_id),
   unique (workspace_id,id),
-  foreign key (workspace_id,client_id) references public.rr_clients(workspace_id,id) on delete set null
+  foreign key (workspace_id,client_id) references public.rr_clients(workspace_id,id) on delete restrict
 );
 
 create table public.rr_projects (
@@ -182,7 +182,7 @@ create table public.rr_projects (
   updated_at timestamptz not null default now(),
   unique (workspace_id,source_system,source_record_id),
   unique (workspace_id,id),
-  foreign key (workspace_id,client_id) references public.rr_clients(workspace_id,id) on delete set null
+  foreign key (workspace_id,client_id) references public.rr_clients(workspace_id,id) on delete restrict
 );
 
 create table public.rr_bookings (
@@ -203,8 +203,8 @@ create table public.rr_bookings (
   updated_at timestamptz not null default now(),
   unique (workspace_id,source_system,source_record_id),
   unique (workspace_id,id),
-  foreign key (workspace_id,client_id) references public.rr_clients(workspace_id,id) on delete set null,
-  foreign key (workspace_id,project_id) references public.rr_projects(workspace_id,id) on delete set null
+  foreign key (workspace_id,client_id) references public.rr_clients(workspace_id,id) on delete restrict,
+  foreign key (workspace_id,project_id) references public.rr_projects(workspace_id,id) on delete restrict
 );
 
 create table public.rr_payments (
@@ -221,8 +221,8 @@ create table public.rr_payments (
   paid_at timestamptz,
   created_at timestamptz not null default now(),
   unique (workspace_id,source_system,source_record_id),
-  foreign key (workspace_id,booking_id) references public.rr_bookings(workspace_id,id) on delete set null,
-  foreign key (workspace_id,project_id) references public.rr_projects(workspace_id,id) on delete set null
+  foreign key (workspace_id,booking_id) references public.rr_bookings(workspace_id,id) on delete restrict,
+  foreign key (workspace_id,project_id) references public.rr_projects(workspace_id,id) on delete restrict
 );
 
 create table public.rr_capacity_periods (
@@ -278,7 +278,7 @@ create table public.rr_actions (
   draft_body text,
   draft_digest text,
   status text not null default 'draft' check (status in ('draft','approved','rejected','revoked','completed','cancelled')),
-  created_by uuid references auth.users(id) on delete set null,
+  created_by uuid references auth.users(id) on delete restrict,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unique (workspace_id,id),
@@ -296,10 +296,10 @@ create table public.rr_outcomes (
   classification text not null default 'reported' check (classification in ('reported','verified')),
   evidence_ref text,
   notes text,
-  recorded_by uuid references auth.users(id) on delete set null,
+  recorded_by uuid references auth.users(id) on delete restrict,
   recorded_at timestamptz not null default now(),
   foreign key (workspace_id,opportunity_id) references public.rr_opportunities(workspace_id,id) on delete restrict,
-  foreign key (workspace_id,action_id) references public.rr_actions(workspace_id,id) on delete set null
+  foreign key (workspace_id,action_id) references public.rr_actions(workspace_id,id) on delete restrict
 );
 
 -- Index workspace predicates and common product retrieval paths.
@@ -467,6 +467,13 @@ create policy rr_outcomes_read_member on public.rr_outcomes for select to authen
 using (exists (select 1 from public.bt_workspace_members m where m.workspace_id = rr_outcomes.workspace_id and m.user_id = (select auth.uid()) and m.active));
 create policy rr_outcomes_insert_manager on public.rr_outcomes for insert to authenticated
 with check (recorded_by = (select auth.uid()) and exists (select 1 from public.bt_workspace_members m where m.workspace_id = rr_outcomes.workspace_id and m.user_id = (select auth.uid()) and m.active and m.role in ('owner','admin','manager')));
+
+-- Remove inherited/default grants from public and client roles on these new tables.
+revoke all on public.bt_workspaces, public.bt_workspace_members, public.bt_workspace_products,
+  public.bt_import_jobs, public.bt_import_rows, public.bt_workflow_runs, public.bt_approvals,
+  public.bt_audit_events, public.bt_usage_events, public.rr_clients, public.rr_enquiries,
+  public.rr_projects, public.rr_bookings, public.rr_payments, public.rr_capacity_periods,
+  public.rr_opportunities, public.rr_actions, public.rr_outcomes from public, anon, authenticated;
 
 -- Explicit least-privilege grants. No anonymous access and no client-side delete.
 grant select on public.bt_workspaces, public.bt_workspace_members, public.bt_workspace_products to authenticated;
