@@ -3,17 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   buildRecoveryCandidates,
   normalizeCsvRows,
-  parseCsv,
   recoveryLabel,
-  recoveryTemplate,
   sha256,
   type RecoveryCategory,
   type RecoveryRecordType,
 } from "@/lib/revenue-recovery";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
-  Activity, ArrowDownToLine, ArrowLeft, ArrowRight, Check, ChevronDown,
-  CircleAlert, Clock3, FileSpreadsheet, Filter, LoaderCircle, LockKeyhole,
+  Activity, ArrowDownToLine, ArrowLeft, Check,
+  CircleAlert, Clock3, FileSpreadsheet, LoaderCircle, LockKeyhole,
   MessageSquareText, RefreshCw, ShieldCheck, Sparkles, Upload, Users,
   Wallet, X,
 } from "lucide-react";
@@ -118,17 +116,11 @@ function RevenueRecovery() {
     } finally { setLoading(false); }
   }, [loadStudioData, navigate, studioId]);
 
-  useEffect(() => { void load(); }, []); // Initial authenticated load only.
+  useEffect(() => { void load(); }, [load]);
 
-  async function changeStudio(id: string) {
+  function changeStudio(id: string) {
     setStudioId(id);
-    setRole("");
     setDrafts({});
-    const membership = await db.from("studio_members").select("role").eq("studio_id", id).eq("user_id", userId).eq("active", true).maybeSingle();
-    setRole(membership.data?.role ?? "");
-    setLoading(true);
-    try { await loadStudioData(id); } catch (e) { setError(e instanceof Error ? e.message : "Unable to load studio data."); }
-    finally { setLoading(false); }
   }
 
   async function logActivity(action: string, details: Record<string, unknown>, opportunityId?: string, importId?: string) {
@@ -311,6 +303,7 @@ function RevenueRecovery() {
   }
 
   const activeStudio = studios.find((studio) => studio.id === studioId);
+  const canManage = ["owner", "admin", "member"].includes(role);
 
   return (
     <div className="min-h-screen bg-ink-deep text-foreground">
@@ -336,7 +329,7 @@ function RevenueRecovery() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             {studios.length > 1 && <select value={studioId} onChange={(e) => void changeStudio(e.target.value)} className="rounded-full border border-border bg-ink-elev px-4 py-2.5 text-sm text-ice">{studios.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select>}
-            <button onClick={() => void analyseNow()} disabled={busy || loading || !studioId} className="inline-flex items-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep transition hover:brightness-110 disabled:opacity-50"><RefreshCw size={16} className={busy ? "animate-spin" : ""}/> Run analysis</button>
+            <button onClick={() => void analyseNow()} disabled={busy || loading || !studioId || !canManage} className="inline-flex items-center gap-2 rounded-full bg-mint px-5 py-3 text-sm font-bold text-ink-deep transition hover:brightness-110 disabled:opacity-50"><RefreshCw size={16} className={busy ? "animate-spin" : ""}/> Run analysis</button>
           </div>
         </div>
 
@@ -376,7 +369,7 @@ function RevenueRecovery() {
                   <Upload size={24} className="text-mint"/>
                   <span className="mt-3 text-sm font-semibold">{busy ? "Processing…" : "Choose a CSV file to import"}</span>
                   <span className="mt-1 text-xs text-muted-foreground">Maximum 10,000 rows per file · CSV only</span>
-                  <input type="file" accept=".csv,text/csv" className="sr-only" disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void importFile(file); e.currentTarget.value = ""; }}/>
+                  <input type="file" accept=".csv,text/csv" className="sr-only" disabled={busy || !canManage} onChange={(e) => { const file = e.target.files?.[0]; if (file) void importFile(file); e.currentTarget.value = ""; }}/>
                 </label>
                 <div className="mt-4 flex items-start gap-2 text-xs leading-5 text-muted-foreground"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-mint"/> Only import information you are authorised to process. Do not upload tattoo health-screening data, medical information or payment-card details. Reactivation messages require recorded marketing permission; other contact requires a documented contact basis.</div>
               </div>
@@ -440,7 +433,7 @@ function RevenueRecovery() {
                         )}
                         <div className="mt-4 flex flex-wrap items-center gap-2">
                           {!draft && !["dismissed", "paid"].includes(opportunity.status) && (
-                            <button onClick={() => void generateDraft(opportunity, record)} disabled={!contactAllowed || drafting === opportunity.id || busy} title={!contactAllowed ? "Contact permission is not recorded for this record." : "Generate a personalised AI draft"} className="inline-flex items-center gap-2 rounded-full border border-mint/50 px-4 py-2 text-xs font-bold text-mint hover:bg-mint/10 disabled:cursor-not-allowed disabled:opacity-40">
+                            <button onClick={() => void generateDraft(opportunity, record)} disabled={!canManage || !contactAllowed || drafting === opportunity.id || busy} title={!contactAllowed ? "Contact permission is not recorded for this record." : "Generate a personalised AI draft"} className="inline-flex items-center gap-2 rounded-full border border-mint/50 px-4 py-2 text-xs font-bold text-mint hover:bg-mint/10 disabled:cursor-not-allowed disabled:opacity-40">
                               {drafting === opportunity.id ? <LoaderCircle size={14} className="animate-spin"/> : <Sparkles size={14}/>} Generate AI draft
                             </button>
                           )}
