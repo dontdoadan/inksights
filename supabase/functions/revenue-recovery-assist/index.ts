@@ -30,6 +30,7 @@ function json(body: unknown, status: number, origin: string | null) {
   return new Response(JSON.stringify(body), { status, headers: headers(origin) });
 }
 const clean = (value: unknown, max = 500) => String(value ?? "").trim().replace(/\s+/g, " ").slice(0, max);
+const cleanMessage = (value: unknown) => String(value ?? "").trim().replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").slice(0, 1800);
 
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin");
